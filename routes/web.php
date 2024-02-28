@@ -4,8 +4,8 @@ use App\Http\Controllers\Adjustment\AdjustmentController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\CategoryController;
+use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,11 +30,12 @@ use Illuminate\Support\Facades\Route;
 //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // });
 
-Route::get('/', function () {
-    return view('templates.auth.login');
-});
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-Route::prefix('/product')->name('product.')->group(function () {
+// Route::get('/', function () {
+//     return view('templates.auth.login');
+//     // return view('auth.login');
+// });
+Route::get('/', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
     Route::get('/detail/{id}', [ProductController::class, 'show'])->name('show');
     Route::get('/create', [ProductController::class, 'create'])->name('create');
@@ -52,7 +53,7 @@ Route::prefix('/product')->name('product.')->group(function () {
         Route::get('/list', [UnitController::class, 'index'])->name('index');
     });
 });
-Route::prefix('adjustment')->name('adjustment.')->group(function () {
+Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.')->group(function () {
     Route::get('list', [AdjustmentController::class, 'index'])->name('index');
     Route::get('detail/{id}', [AdjustmentController::class, 'show'])->name('show');
     Route::get('create', [AdjustmentController::class, 'create'])->name('create');
