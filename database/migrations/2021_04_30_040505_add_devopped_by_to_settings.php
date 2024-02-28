@@ -17,7 +17,7 @@ class AddDevoppedByToSettings extends Migration
             Schema::table('settings', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
                 $table->string('developed_by', 192)->after('footer')->default('Stocky');
-    
+
             });
         }
     }

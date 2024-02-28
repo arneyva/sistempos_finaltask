@@ -25,12 +25,12 @@ class CreatePosSettings extends Migration
             $table->boolean('show_phone')->default(1);
             $table->boolean('show_address')->default(1);
             $table->timestamps(6);
-			$table->softDeletes();
+            $table->softDeletes();
         });
 
-         // Insert some stuff
-         DB::table('pos_settings')->insert(
-            array(
+        // Insert some stuff
+        DB::table('pos_settings')->insert(
+            [
                 'id' => 1,
                 'note_customer' => 'Thank You For Shopping With Us . Please Come Again',
                 'show_note' => 1,
@@ -40,8 +40,8 @@ class CreatePosSettings extends Migration
                 'show_email' => 1,
                 'show_phone' => 1,
                 'show_address' => 1,
-            )
-            
+            ]
+
         );
     }
 

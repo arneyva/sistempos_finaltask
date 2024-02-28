@@ -4,33 +4,29 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddForeignKeysToExpenseCategoriesTable extends Migration {
+class AddForeignKeysToExpenseCategoriesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('expense_categories', function (Blueprint $table) {
+            $table->foreign('user_id', 'expense_category_user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::table('expense_categories', function(Blueprint $table)
-		{
-			$table->foreign('user_id', 'expense_category_user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::table('expense_categories', function(Blueprint $table)
-		{
-			$table->dropForeign('expense_category_user_id');
-		});
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('expense_categories', function (Blueprint $table) {
+            $table->dropForeign('expense_category_user_id');
+        });
+    }
 }

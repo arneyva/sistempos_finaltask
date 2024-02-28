@@ -21,11 +21,11 @@ class AddFiledsToProductVariants extends Migration
         });
 
         DB::table('product_variants')->join('products', 'product_variants.product_id', '=', 'products.id')
-        ->update([
-            'product_variants.cost'  => DB::raw('products.cost'),
-            'product_variants.price' => DB::raw('products.price'),
-            'product_variants.code' => DB::raw("CONCAT(product_variants.name, '-', products.code)"),       
-        ]);
+            ->update([
+                'product_variants.cost' => DB::raw('products.cost'),
+                'product_variants.price' => DB::raw('products.price'),
+                'product_variants.code' => DB::raw("CONCAT(product_variants.name, '-', products.code)"),
+            ]);
     }
 
     /**
