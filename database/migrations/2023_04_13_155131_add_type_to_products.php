@@ -20,7 +20,6 @@ class AddTypeToProducts extends Migration
         // Set the value of the "type" column based on the value of the "is_variant" column
         DB::table('products')->update(['type' => DB::raw("IF(is_variant = 1, 'is_variant', 'is_single')")]);
 
-        
     }
 
     /**

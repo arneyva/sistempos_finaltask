@@ -15,6 +15,7 @@ return new class extends Migration
             $table->renameColumn('statut', 'status');
         });
     }
+
     /**
      * Reverse the migrations.
      */
