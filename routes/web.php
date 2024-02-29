@@ -7,6 +7,7 @@ use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Settings\WarehousesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,6 +62,17 @@ Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.
     Route::get('edit/{id}', [AdjustmentController::class, 'edit'])->name('edit');
     Route::patch('update/{id}', [AdjustmentController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [AdjustmentController::class, 'destroy'])->name('destroy');
+});
+Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
+    Route::prefix('warehouses')->name('warehouses.')->group(function () {
+        Route::get('list', [WarehousesController::class, 'index'])->name('index');
+        Route::get('detail/{id}', [AdjustmentController::class, 'show'])->name('show');
+        Route::get('create', [AdjustmentController::class, 'create'])->name('create');
+        Route::post('store', [AdjustmentController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [AdjustmentController::class, 'edit'])->name('edit');
+        Route::patch('update/{id}', [AdjustmentController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [AdjustmentController::class, 'destroy'])->name('destroy');
+    });
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -4,28 +4,13 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Brand</h4>
-                </div>
-            </div>
-            <div class="card-header d-flex justify-content-between">
-                <div class="input-group search-input" style="width: 30%">
-                    <span class="input-group-text d-inline" id="search-input">
-                        <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></circle>
-                            <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    </span>
-                    <input type="search" class="form-control" placeholder="Search...">
+                    <h4 class="card-title">All Warehouse</h4>
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
-
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#exampleModal">
                         Create+
@@ -42,21 +27,35 @@
                                 <div class="modal-body">
                                     <form action="">
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Brand Name *</label>
+                                            <label class="form-label" for="validationDefault01">Name *</label>
                                             <input type="text" class="form-control" id="validationDefault01" required
                                                 placeholder="input product cost">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Brand Name *</label>
+                                            <label class="form-label" for="validationDefault01">City *</label>
                                             <input type="text" class="form-control" id="validationDefault01" required
                                                 placeholder="input product cost">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Image</label>
-                                            <input type="file" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="validationDefault01">Mobile Phone *</label>
+                                            <input type="text" class="form-control" id="validationDefault01" required
                                                 placeholder="input product cost">
                                         </div>
-
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="validationDefault01">Zip Potscode *</label>
+                                            <input type="text" class="form-control" id="validationDefault01" required
+                                                placeholder="input product cost">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="validationDefault01">Email *</label>
+                                            <input type="text" class="form-control" id="validationDefault01" required
+                                                placeholder="input product cost">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="validationDefault01">Country *</label>
+                                            <input type="text" class="form-control" id="validationDefault01" required
+                                                placeholder="input product cost">
+                                        </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -74,47 +73,42 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Brand Name</th>
-                                <th>Description</th>
+                                <th>Name</th>
+                                <th>City</th>
+                                <th>Mobile Phone</th>
+                                <th>Zip Potscode</th>
+                                <th>Email</th>
+                                <th>Country</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary"
-                                            src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}" alt="profile">
-                                        <h6>Soft UI XD Version</h6>
-                                    </div>
+                                    ya
+                                </td>
+                                <td>
+                                    ya
+                                </td>
+                                <td>
+                                    ya
+                                </td>
+                                <td>
+                                    ya
+                                </td>
+                                <td>
+                                    ya
                                 </td>
                                 <td>
                                     ya
                                 </td>
                                 <td>
                                     <div class="inline">
-                                        <a href="cek.html">
-                                            <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
-                                                    stroke="#130F26"></path>
-                                                <circle cx="12" cy="12" r="5" stroke="#130F26"></circle>
-                                                <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
-                                                <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
-                                                    width="6" height="6">
-                                                    <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
-                                                </mask>
-                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
-                                                    fill="white">
-                                                </circle>
-                                            </svg>
-                                        </a>
                                         <a href="edit.html">
                                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M13.7476 20.4428H21.0002" stroke="currentColor" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round">
                                                 </path>
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
                                                     d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
