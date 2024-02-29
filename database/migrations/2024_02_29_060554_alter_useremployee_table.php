@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn(['statut']);
+            $table->boolean('status')->after('role_id')->default(1);
             $table->string('country', 192)->after('phone')->nullable();
             $table->string('city', 192)->nullable()->after('country');
             $table->string('province', 192)->nullable()->after('city');
@@ -34,7 +35,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['country', 'city', 'province', 'zipcode', 'address', 'gender', 'resume', 'document', 'birth_date', 'joining_date', 'remaining_leave', 'total_leave']);
+            $table->dropColumn(['country', 'city', 'province', 'zipcode', 'address', 'gender', 'resume', 'document', 'birth_date', 'joining_date', 'remaining_leave', 'total_leave', 'status']);
             $table->string('statut', 192)->nullable();
         });
     }
