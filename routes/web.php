@@ -8,6 +8,7 @@ use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Settings\WarehousesController;
+use App\Models\Brand;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,6 +51,7 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
     Route::prefix('/brand')->name('brand.')->group(function () {
         Route::get('/list', [BrandController::class, 'index'])->name('index');
         Route::post('/store', [BrandController::class, 'store'])->name('store');
+        Route::delete('/destroy/{id}', [BrandController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('/unit')->name('unit.')->group(function () {
         Route::get('/list', [UnitController::class, 'index'])->name('index');
@@ -81,4 +83,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

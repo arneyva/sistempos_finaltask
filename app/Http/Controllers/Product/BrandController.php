@@ -45,7 +45,7 @@ class BrandController extends Controller
         ]);
         $file = $request->file('image');
         if ($file) {
-            $fileName = time().'.'.$request->image->extension();
+            $fileName = time() . '.' . $request->image->extension();
             $path = $file->storeAs('images/brand', $fileName, 'public');
         } else {
             $path = null;
@@ -89,6 +89,8 @@ class BrandController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $brands = Brand::where('id', $id)->first();
+        $brands->delete();
+        return redirect()->route('product.brand.index')->with('success', 'Brand deleted successfully');
     }
 }
