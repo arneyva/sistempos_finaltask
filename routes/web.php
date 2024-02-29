@@ -8,7 +8,6 @@ use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Settings\WarehousesController;
-use App\Models\Brand;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -83,4 +82,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
