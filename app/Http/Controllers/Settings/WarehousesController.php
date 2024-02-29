@@ -72,7 +72,7 @@ class WarehousesController extends Controller
         ]);
 
         // return redirect('/settings/warehouses/index');
-        return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse Telah Ditambahkan');
+        return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouses created successfully');
     }
 
     /**

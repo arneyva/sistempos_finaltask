@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class BrandController extends Controller
 {
@@ -34,7 +35,29 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                Rule::unique(Brand::class, 'name')->whereNull('deleted_at'),
+            ],
+            'image' => 'nullable|image|mimes:jpeg,png,jpg',
+            'description' => 'nullable',
+        ]);
+        $file = $request->file('image');
+        if ($file) {
+            $fileName = time().'.'.$request->image->extension();
+            $path = $file->storeAs('images/brand', $fileName, 'public');
+        } else {
+            $path = null;
+        }
+
+        $brands = Brand::create([
+            'name' => $validated['name'],
+            'image' => $path,
+            'description' => $validated['description'],
+        ]);
+
+        return redirect()->route('product.brand.index')->with('success', 'Brand created successfully');
     }
 
     /**
