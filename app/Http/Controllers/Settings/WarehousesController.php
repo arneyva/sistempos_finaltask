@@ -1,20 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Product;
+namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
 use Illuminate\Http\Request;
 
-class BrandController extends Controller
+class WarehousesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // $brand = Brand::get
-        return view('templates.product.brand.index');
+        return view('templates.settings.warehouses.index');
     }
 
     /**

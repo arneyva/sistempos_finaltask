@@ -42,8 +42,8 @@
                     xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.25 12.2744L19.25 12.2744" stroke="currentColor" stroke-width="1.5"
                         stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M10.2998 18.2988L4.2498 12.2748L10.2998 6.24976" stroke="currentColor"
-                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M10.2998 18.2988L4.2498 12.2748L10.2998 6.24976" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
             </i>
         </div>
@@ -58,8 +58,8 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="../dashboard/index.html">
                         <i class="icon">
-                            <svg width="20" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg" class="icon-20">
+                            <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                class="icon-20">
                                 <path opacity="0.4"
                                     d="M16.0756 2H19.4616C20.8639 2 22.0001 3.14585 22.0001 4.55996V7.97452C22.0001 9.38864 20.8639 10.5345 19.4616 10.5345H16.0756C14.6734 10.5345 13.5371 9.38864 13.5371 7.97452V4.55996C13.5371 3.14585 14.6734 2 16.0756 2Z"
                                     fill="currentColor"></path>
@@ -97,8 +97,8 @@
                         </i>
                         <span class="item-name">Product</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -231,8 +231,8 @@
                         </i>
                         <span class="item-name">Adjustment</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -290,8 +290,8 @@
                         </i>
                         <span class="item-name">Purchase</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -361,8 +361,8 @@
                         </i>
                         <span class="item-name">Sales</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -435,8 +435,8 @@
                         </i>
                         <span class="item-name">Sales Return</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -506,8 +506,8 @@
                         </i>
                         <span class="item-name">Purchase Return</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -573,14 +573,14 @@
                                 <path fill-rule="evenodd" clip-rule="evenodd"
                                     d="M8.53162 2.93677C10.7165 1.66727 13.402 1.68946 15.5664 2.99489C17.7095 4.32691 19.012 6.70418 18.9998 9.26144C18.95 11.8019 17.5533 14.19 15.8075 16.0361C14.7998 17.1064 13.6726 18.0528 12.4488 18.856C12.3228 18.9289 12.1848 18.9777 12.0415 19C11.9036 18.9941 11.7693 18.9534 11.6508 18.8814C9.78243 17.6746 8.14334 16.134 6.81233 14.334C5.69859 12.8314 5.06584 11.016 5 9.13442C4.99856 6.57225 6.34677 4.20627 8.53162 2.93677ZM9.79416 10.1948C10.1617 11.1008 11.0292 11.6918 11.9916 11.6918C12.6221 11.6964 13.2282 11.4438 13.6748 10.9905C14.1214 10.5371 14.3715 9.92064 14.3692 9.27838C14.3726 8.29804 13.7955 7.41231 12.9073 7.03477C12.0191 6.65723 10.995 6.86235 10.3133 7.55435C9.63159 8.24635 9.42664 9.28872 9.79416 10.1948Z"
                                     fill="currentColor"></path>
-                                <ellipse opacity="0.4" cx="12" cy="21" rx="5"
-                                    ry="1" fill="currentColor"></ellipse>
+                                <ellipse opacity="0.4" cx="12" cy="21" rx="5" ry="1"
+                                    fill="currentColor"></ellipse>
                             </svg>
                         </i>
                         <span class="item-name">HRM</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -638,8 +638,8 @@
                         </i>
                         <span class="item-name">Transfer</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -712,8 +712,8 @@
                         </i>
                         <span class="item-name">Accounting</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -771,8 +771,8 @@
                         </i>
                         <span class="item-name">People</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -830,8 +830,8 @@
                         </i>
                         <span class="item-name">Settings</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -839,7 +839,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-settings" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/bootstrap-table.html">
+                            <a class="nav-link " href="{{ route('settings.warehouses.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -850,7 +850,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Bootstrap Table</span>
+                                <span class="item-name">Warehouse</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -888,8 +888,8 @@
                         </i>
                         <span class="item-name">Report</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
