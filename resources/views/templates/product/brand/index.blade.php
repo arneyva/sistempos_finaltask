@@ -1,6 +1,9 @@
 @extends('templates.main')
 @section('content')
     <div class="col-sm-12">
+        <div class="mt-3" style="justify-content-center">
+            @include('templates.alert')
+        </div>
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
@@ -25,7 +28,6 @@
                     <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
-
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#exampleModal">
                         Create+
@@ -40,29 +42,30 @@
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="">
+                                    <form action="{{ route('product.brand.store') }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
                                         <div class="col mb-3">
                                             <label class="form-label" for="validationDefault01">Brand Name *</label>
                                             <input type="text" class="form-control" id="validationDefault01" required
-                                                placeholder="input product cost">
+                                                placeholder="input brands" name="name">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Brand Name *</label>
+                                            <label class="form-label" for="validationDefault01">Description *</label>
                                             <input type="text" class="form-control" id="validationDefault01" required
-                                                placeholder="input product cost">
+                                                placeholder="input description" name="description">
                                         </div>
                                         <div class="col mb-3">
                                             <label class="form-label" for="validationDefault01">Image</label>
-                                            <input type="file" class="form-control" id="validationDefault01" required
-                                                placeholder="input product cost">
+                                            <input type="file" class="form-control" id="validationDefault01"
+                                                name="image">
                                         </div>
-
-                                    </form>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -85,12 +88,13 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary"
-                                                src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}" alt="profile">
+                                                src="{{ asset('hopeui/html/assets/images/brands/sample-brands.png') }}"
+                                                alt="profile">
                                             <h6>{{ $item->name }}</h6>
                                         </div>
                                     </td>
                                     <td>
-                                        ya
+                                        {{ $item->description }}
                                     </td>
                                     <td>
                                         <div class="inline">
