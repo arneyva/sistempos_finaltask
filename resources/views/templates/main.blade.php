@@ -44,7 +44,7 @@
     <!-- loader END -->
 
     {{-- side bar start --}}
-@include('templates.sidebar')
+    @include('templates.sidebar')
     {{-- side bar end --}}
     {{-- maincontent start --}}
     <main class="main-content">
@@ -53,7 +53,7 @@
             @include('templates.navbar')
             {{-- navbar end --}}
             <!-- Nav Header Component Start -->
-             @include('templates.navbar2')
+            @include('templates.navbar2')
             <!-- Nav Header Component End -->
             <!--Nav End-->
         </div>
@@ -65,10 +65,10 @@
         </div>
         {{-- content end --}}
         {{-- dwonload template start --}}
-        
+
         {{-- dwonload template end --}}
         <!-- Footer Section Start -->
-        
+
         <!-- Footer Section End -->
     </main>
     {{-- maincontent end --}}
@@ -83,7 +83,7 @@
                 stroke-linecap="round" stroke-linejoin="round"></circle>
         </svg>
     </a>
-    
+
     <!-- Wrapper End-->
     <!-- offcanvas start -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" data-bs-scroll="true"
@@ -92,16 +92,14 @@
             <div class="d-flex align-items-center">
                 <h3 class="offcanvas-title me-3" id="offcanvasExampleLabel">Settings</h3>
             </div>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                aria-label="Close"></button>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body data-scrollbar">
             <div class="row">
                 <div class="col-lg-12">
                     <h5 class="mb-3">Scheme</h5>
                     <div class="d-grid gap-3 grid-cols-3 mb-4">
-                        <div class="btn btn-border" data-setting="color-mode" data-name="color"
-                            data-value="auto">
+                        <div class="btn btn-border" data-setting="color-mode" data-name="color" data-value="auto">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path fill="currentColor" d="M7,2V13H10V22L17,10H13L17,2H7Z" />
@@ -109,8 +107,7 @@
                             <span class="ms-2 "> Auto </span>
                         </div>
 
-                        <div class="btn btn-border" data-setting="color-mode" data-name="color"
-                            data-value="dark">
+                        <div class="btn btn-border" data-setting="color-mode" data-name="color" data-value="dark">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path fill="currentColor"
@@ -147,30 +144,27 @@
                         </button>
                     </div>
                     <div class="grid-cols-5 mb-4 d-grid gap-x-2">
-                        <div class="btn btn-border bg-transparent" data-value="theme-color-blue"
-                            data-info="#573BFF" data-setting="color-mode1" data-name="color"
-                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                            data-bs-original-title="Theme-1">
+                        <div class="btn btn-border bg-transparent" data-value="theme-color-blue" data-info="#573BFF"
+                            data-setting="color-mode1" data-name="color" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="" data-bs-original-title="Theme-1">
                             <svg class="customizer-btn icon-32" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" width="32">
                                 <circle cx="12" cy="12" r="10" fill="#00C3F9" />
                                 <path d="M2,12 a1,1 1 1,0 20,0" fill="#573BFF" />
                             </svg>
                         </div>
-                        <div class="btn btn-border bg-transparent" data-value="theme-color-gray"
-                            data-info="#FD8D00" data-setting="color-mode1" data-name="color"
-                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                            data-bs-original-title="Theme-2">
+                        <div class="btn btn-border bg-transparent" data-value="theme-color-gray" data-info="#FD8D00"
+                            data-setting="color-mode1" data-name="color" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="" data-bs-original-title="Theme-2">
                             <svg class="customizer-btn icon-32" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" width="32">
                                 <circle cx="12" cy="12" r="10" fill="#91969E" />
                                 <path d="M2,12 a1,1 1 1,0 20,0" fill="#FD8D00" />
                             </svg>
                         </div>
-                        <div class="btn btn-border bg-transparent" data-value="theme-color-red"
-                            data-info="#366AF0" data-setting="color-mode1" data-name="color"
-                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                            data-bs-original-title="Theme-3">
+                        <div class="btn btn-border bg-transparent" data-value="theme-color-red" data-info="#366AF0"
+                            data-setting="color-mode1" data-name="color" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="" data-bs-original-title="Theme-3">
                             <svg class="customizer-btn icon-32" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" width="32">
                                 <circle cx="12" cy="12" r="10" fill="#DB5363" />
@@ -187,10 +181,9 @@
                                 <path d="M2,12 a1,1 1 1,0 20,0" fill="#6410F1" />
                             </svg>
                         </div>
-                        <div class="btn btn-border bg-transparent" data-value="theme-color-pink"
-                            data-info="#25C799" data-setting="color-mode1" data-name="color"
-                            data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                            data-bs-original-title="Theme-5">
+                        <div class="btn btn-border bg-transparent" data-value="theme-color-pink" data-info="#25C799"
+                            data-setting="color-mode1" data-name="color" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="" data-bs-original-title="Theme-5">
                             <svg class="customizer-btn icon-32" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" width="32">
                                 <circle cx="12" cy="12" r="10" fill="#E586B3" />
@@ -206,8 +199,7 @@
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/01.png') }}" alt="ltr"
                                 class="mode dark-img img-fluid btn-border p-0 flex-column active mb-2"
                                 data-setting="dir-mode" data-name="dir" data-value="ltr">
-                            <img src="{{ asset('hopeui/html/assets/images/settings/light/01.png') }}"
-                                alt="ltr"
+                            <img src="{{ asset('hopeui/html/assets/images/settings/light/01.png') }}" alt="ltr"
                                 class="mode light-img img-fluid btn-border p-0 flex-column active mb-2"
                                 data-setting="dir-mode" data-name="dir" data-value="ltr">
                             <span class=" mt-2"> LTR </span>
@@ -216,8 +208,8 @@
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/02.png') }}" alt=""
                                 class="mode dark-img img-fluid btn-border p-0 flex-column mb-2"
                                 data-setting="dir-mode" data-name="dir" data-value="rtl">
-                            <img src="{{ asset('hopeui/html/assets/images/settings/light/02.png') }}"
-                                alt="" class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
+                            <img src="{{ asset('hopeui/html/assets/images/settings/light/02.png') }}" alt=""
+                                class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
                                 data-setting="dir-mode" data-name="dir" data-value="rtl">
                             <span class="mt-2 "> RTL </span>
                         </div>
@@ -248,30 +240,29 @@
                     <div class="d-grid gap-3 grid-cols-3 mb-4">
                         <div class="text-center">
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/03.png') }}" alt="mini"
-                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2"
-                                data-setting="sidebar" data-name="sidebar-type" data-value="sidebar-mini">
-                            <img src="{{ asset('hopeui/html/assets/images/settings/light/03.png') }}"
-                                alt="mini" class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
+                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2" data-setting="sidebar"
+                                data-name="sidebar-type" data-value="sidebar-mini">
+                            <img src="{{ asset('hopeui/html/assets/images/settings/light/03.png') }}" alt="mini"
+                                class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
                                 data-setting="sidebar" data-name="sidebar-type" data-value="sidebar-mini">
                             <span class="mt-2">Mini</span>
                         </div>
                         <div class="text-center">
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/04.png') }}" alt="hover"
-                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2"
-                                data-setting="sidebar" data-name="sidebar-type" data-value="sidebar-hover"
-                                data-extra-value="sidebar-mini">
-                            <img src="{{ asset('hopeui/html/assets/images/settings/light/04.png') }}"
-                                alt="hover" class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
+                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2" data-setting="sidebar"
+                                data-name="sidebar-type" data-value="sidebar-hover" data-extra-value="sidebar-mini">
+                            <img src="{{ asset('hopeui/html/assets/images/settings/light/04.png') }}" alt="hover"
+                                class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
                                 data-setting="sidebar" data-name="sidebar-type" data-value="sidebar-hover"
                                 data-extra-value="sidebar-mini">
                             <span class="mt-2">Hover</span>
                         </div>
                         <div class="text-center">
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/05.png') }}" alt="boxed"
-                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2"
-                                data-setting="sidebar" data-name="sidebar-type" data-value="sidebar-boxed">
-                            <img src="{{ asset('hopeui/html/assets/images/settings/light/05.png') }}"
-                                alt="boxed" class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
+                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2" data-setting="sidebar"
+                                data-name="sidebar-type" data-value="sidebar-boxed">
+                            <img src="{{ asset('hopeui/html/assets/images/settings/light/05.png') }}" alt="boxed"
+                                class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
                                 data-setting="sidebar" data-name="sidebar-type" data-value="sidebar-boxed">
                             <span class="mt-2">Boxed</span>
                         </div>
@@ -281,8 +272,7 @@
                     <div class="d-grid gap-3 grid-cols-2 mb-4">
                         <div class="text-center">
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/06.png') }}"
-                                alt="rounded-one-side"
-                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2"
+                                alt="rounded-one-side" class="mode dark-img img-fluid btn-border p-0 flex-column mb-2"
                                 data-setting="sidebar" data-name="sidebar-item" data-value="navs-rounded">
                             <img src="{{ asset('hopeui/html/assets/images/settings/light/06.png') }}"
                                 alt="rounded-one-side"
@@ -314,9 +304,9 @@
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/09.png') }}" alt="pill-all"
                                 class="mode dark-img img-fluid btn-border p-0 flex-column" data-setting="sidebar"
                                 data-name="sidebar-item" data-value="navs-pill-all">
-                            <img src="{{ asset('hopeui/html/assets/images/settings/light/08.png') }}"
-                                alt="pill-all" class="mode light-img img-fluid btn-border p-0 flex-column"
-                                data-setting="sidebar" data-name="sidebar-item" data-value="navs-pill-all">
+                            <img src="{{ asset('hopeui/html/assets/images/settings/light/08.png') }}" alt="pill-all"
+                                class="mode light-img img-fluid btn-border p-0 flex-column" data-setting="sidebar"
+                                data-name="sidebar-item" data-value="navs-pill-all">
                             <span class="mt-2">Pill All</span>
                         </div>
                     </div>
@@ -325,35 +315,29 @@
                     <div class="d-grid gap-3 grid-cols-2 ">
                         <div class=" text-center">
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/11.png') }}" alt="image"
-                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2"
-                                data-setting="navbar" data-target=".iq-navbar" data-name="navbar-type"
-                                data-value="nav-glass">
-                            <img src="{{ asset('hopeui/html/assets/images/settings/light/10.png') }}"
-                                alt="image" class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
-                                data-setting="navbar" data-target=".iq-navbar" data-name="navbar-type"
-                                data-value="nav-glass">
+                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2" data-setting="navbar"
+                                data-target=".iq-navbar" data-name="navbar-type" data-value="nav-glass">
+                            <img src="{{ asset('hopeui/html/assets/images/settings/light/10.png') }}" alt="image"
+                                class="mode light-img img-fluid btn-border p-0 flex-column mb-2" data-setting="navbar"
+                                data-target=".iq-navbar" data-name="navbar-type" data-value="nav-glass">
                             <span class="mt-2">Glass</span>
                         </div>
                         <div class="text-center">
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/10.png') }}" alt="color"
-                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2"
-                                data-setting="navbar" data-target=".iq-navbar-header" data-name="navbar-type"
-                                data-value="navs-bg-color">
-                            <img src="{{ asset('hopeui/html/assets/images/settings/light/11.png') }}"
-                                alt="color" class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
-                                data-setting="navbar" data-target=".iq-navbar-header" data-name="navbar-type"
-                                data-value="navs-bg-color">
+                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2" data-setting="navbar"
+                                data-target=".iq-navbar-header" data-name="navbar-type" data-value="navs-bg-color">
+                            <img src="{{ asset('hopeui/html/assets/images/settings/light/11.png') }}" alt="color"
+                                class="mode light-img img-fluid btn-border p-0 flex-column mb-2" data-setting="navbar"
+                                data-target=".iq-navbar-header" data-name="navbar-type" data-value="navs-bg-color">
                             <span class="mt-2">Color</span>
                         </div>
                         <div class=" text-center">
                             <img src="{{ asset('hopeui/html/assets/images/settings/dark/12.png') }}" alt="sticky"
-                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2"
-                                data-setting="navbar" data-target=".iq-navbar" data-name="navbar-type"
-                                data-value="navs-sticky">
-                            <img src="{{ asset('hopeui/html/assets/images/settings/light/12.png') }}"
-                                alt="sticky" class="mode light-img img-fluid btn-border p-0 flex-column mb-2"
-                                data-setting="navbar" data-target=".iq-navbar" data-name="navbar-type"
-                                data-value="navs-sticky">
+                                class="mode dark-img img-fluid btn-border p-0 flex-column mb-2" data-setting="navbar"
+                                data-target=".iq-navbar" data-name="navbar-type" data-value="navs-sticky">
+                            <img src="{{ asset('hopeui/html/assets/images/settings/light/12.png') }}" alt="sticky"
+                                class="mode light-img img-fluid btn-border p-0 flex-column mb-2" data-setting="navbar"
+                                data-target=".iq-navbar" data-name="navbar-type" data-value="navs-sticky">
                             <span class="mt-2">Sticky</span>
                         </div>
                         <div class="text-center">
@@ -407,6 +391,13 @@
 
     <!-- App Script -->
     <script src="{{ asset('hopeui/html/assets/js/hope-ui.js') }}" defer></script>
+    {{-- <script>
+        $("document").ready(function() {
+            setTimeout(function() {
+                $("div.alert").remove();
+            }, 1500); // secs
+        });
+    </script> --}}
     @stack('script')
 
 </body>
