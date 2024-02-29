@@ -66,12 +66,12 @@ Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {
         Route::get('list', [WarehousesController::class, 'index'])->name('index');
-        Route::get('detail/{id}', [AdjustmentController::class, 'show'])->name('show');
-        Route::get('create', [AdjustmentController::class, 'create'])->name('create');
-        Route::post('store', [AdjustmentController::class, 'store'])->name('store');
-        Route::get('edit/{id}', [AdjustmentController::class, 'edit'])->name('edit');
-        Route::patch('update/{id}', [AdjustmentController::class, 'update'])->name('update');
-        Route::delete('destroy/{id}', [AdjustmentController::class, 'destroy'])->name('destroy');
+        Route::get('detail/{id}', [WarehousesController::class, 'show'])->name('show');
+        Route::get('create', [WarehousesController::class, 'create'])->name('create');
+        Route::post('store', [WarehousesController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [WarehousesController::class, 'edit'])->name('edit');
+        Route::patch('update/{id}', [WarehousesController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [WarehousesController::class, 'destroy'])->name('destroy');
     });
 });
 Route::middleware('auth')->group(function () {
