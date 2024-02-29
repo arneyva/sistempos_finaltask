@@ -15,20 +15,18 @@ class WarehouseSeeder extends Seeder
         Warehouse::firstOrCreate([
             'name' => 'Gudang Utama',
             'city' => 'Surakarta',
-            'telephone' => '089655443322',
-            'postcode' => '56434',
+            'mobile' => '089655443322',
+            'zip' => '56434',
             'email' => 'gudangutama@gmail.com',
             'country' => 'Indonesia',
-            'status' => 1,
         ]);
         Warehouse::firstOrCreate([
             'name' => 'Outlet 1',
             'city' => 'Surakarta',
-            'telephone' => '089655443323',
-            'postcode' => '56434',
+            'mobile' => '089655443323',
+            'zip' => '56434',
             'email' => 'outletsatu@gmail.com',
             'country' => 'Indonesia',
-            'status' => 1,
         ]);
     }
 }

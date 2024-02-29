@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\WarehouseStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,17 +18,30 @@ class Warehouse extends Model
     protected $fillable = [
         'name',
         'city',
-        'telephone',
-        'postcode',
+        'mobile',
+        'zip',
         'email',
         'country',
-        'status',
+        // 'status',
     ];
 
-    public function statusWarehouse(): Attribute
+    // public function statusWarehouse(): Attribute
+    // {
+    //     return new Attribute(
+    //         get: fn () => WarehouseStatus::getLabel($this->status),
+    //     );
+    // }
+
+    public function scopeFilter(Builder $query, $filters = [])
     {
-        return new Attribute(
-            get: fn () => WarehouseStatus::getLabel($this->status),
-        );
+        if (isset($filters['q'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('name', 'LIKE', '%'.$filters['q'].'%')
+                    ->orWhere('zip', 'LIKE', '%'.$filters['q'].'%')
+                    ->orWhere('city', 'LIKE', '%'.$filters['q'].'%');
+            });
+        }
+
+        return $query;
     }
 }
