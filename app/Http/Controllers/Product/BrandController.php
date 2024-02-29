@@ -89,6 +89,9 @@ class BrandController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $brands = Brand::where('id', $id)->first();
+        $brands->delete();
+
+        return redirect()->route('product.brand.index')->with('success', 'Brand deleted successfully');
     }
 }
