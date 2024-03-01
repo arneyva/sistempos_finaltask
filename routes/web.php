@@ -44,15 +44,21 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
     Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
     Route::patch('/update/{id}', [ProductController::class, 'update'])->name('update');
     Route::delete('/destroy/{id}', [ProductController::class, 'destroy'])->name('destroy');
+    // catgeory
     Route::prefix('/category')->name('category.')->group(function () {
         Route::get('/list', [CategoryController::class, 'index'])->name('index');
+        Route::post('/store', [CategoryController::class, 'store'])->name('store');
+        Route::delete('/destroy/{id}', [CategoryController::class, 'destroy'])->name('destroy');
+        Route::put('/update/{id}', [CategoryController::class, 'update'])->name('update');
     });
+    // brand
     Route::prefix('/brand')->name('brand.')->group(function () {
         Route::get('/list', [BrandController::class, 'index'])->name('index');
         Route::post('/store', [BrandController::class, 'store'])->name('store');
         Route::delete('/destroy/{id}', [BrandController::class, 'destroy'])->name('destroy');
         Route::put('/update/{id}', [BrandController::class, 'update'])->name('update');
     });
+    // unit
     Route::prefix('/unit')->name('unit.')->group(function () {
         Route::get('/list', [UnitController::class, 'index'])->name('index');
     });
