@@ -74,7 +74,23 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                Rule::unique(Category::class, 'name')->whereNull('deleted_at'),
+            ],
+            'code' => [
+                'required',
+                Rule::unique(Category::class, 'code')->whereNull('deleted_at'),
+            ],
+        ]);
+        $newvalue = [
+            'name' => $validated['name'],
+            'code' => $validated['code'],
+        ];
+        Category::where('id', $id)->update($newvalue);
+
+        return redirect()->route('product.category.index')->with('success', 'Category updated successfully');
     }
 
     /**
