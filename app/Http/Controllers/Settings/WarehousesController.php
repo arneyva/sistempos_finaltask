@@ -106,6 +106,7 @@ class WarehousesController extends Controller
     {
         $warehouses = Warehouse::where('id', $id)->first();
         $warehouses->delete();
+
         return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse deleted successfully');
     }
 }
