@@ -81,7 +81,31 @@ class BrandController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                Rule::unique(Brand::class, 'name')->whereNull('deleted_at'),
+            ],
+            'image' => 'nullable|image|mimes:jpeg,png,jpg',
+            'description' => 'nullable',
+        ]);
+        $newvalue = [
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+        ];
+        // if ($request->hasFile('image')) {
+        //     $request->validate([
+        //         'image' => 'required ',
+        //     ]);
+        //     $image = $request->file('image');
+        //     $extension = $image->extension();
+        //     $filename = date('ymdhis') . '.' . $extension;
+        //     Storage::disk('s3')->put($filename, file_get_contents($logo));
+        //     $newvalue['logo'] = $filename;
+        // }
+        Brand::where('id', $id)->update($newvalue);
+
+        return redirect()->route('product.brand.index')->with('success', 'Brand updated successfully');
     }
 
     /**

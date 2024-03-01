@@ -51,6 +51,7 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
         Route::get('/list', [BrandController::class, 'index'])->name('index');
         Route::post('/store', [BrandController::class, 'store'])->name('store');
         Route::delete('/destroy/{id}', [BrandController::class, 'destroy'])->name('destroy');
+        Route::put('/update/{id}', [BrandController::class, 'update'])->name('update');
     });
     Route::prefix('/unit')->name('unit.')->group(function () {
         Route::get('/list', [UnitController::class, 'index'])->name('index');
