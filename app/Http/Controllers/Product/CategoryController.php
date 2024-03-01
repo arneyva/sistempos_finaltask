@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
@@ -33,7 +34,23 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                Rule::unique(Category::class, 'name')->whereNull('deleted_at'),
+            ],
+            'code' => [
+                'required',
+                Rule::unique(Category::class, 'code')->whereNull('deleted_at'),
+            ],
+        ]);
+        $category = [
+            'name' => $validated['name'],
+            'code' => $validated['code'],
+        ];
+        Category::create($category);
+
+        return redirect()->route('product.category.index')->with('success', 'Category created successfully');
     }
 
     /**
