@@ -24,6 +24,6 @@ class Unit extends Model
     // self-referencing atau self-join
     public function baseUnit()
     {
-        return $this->belongsTo(Unit::class, 'base_unit')->onDelete('RESTRICT')->onUpdate('RESTRICT');
+        return $this->belongsTo(Unit::class, 'base_unit');  /*->onDelete('RESTRICT')->onUpdate('RESTRICT') taruh di migartion */
     }
 }
