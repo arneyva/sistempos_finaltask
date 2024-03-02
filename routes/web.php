@@ -61,6 +61,7 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
     // unit
     Route::prefix('/unit')->name('unit.')->group(function () {
         Route::get('/list', [UnitController::class, 'index'])->name('index');
+        Route::post('store', [UnitController::class, 'store'])->name('store');
     });
 });
 Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.')->group(function () {

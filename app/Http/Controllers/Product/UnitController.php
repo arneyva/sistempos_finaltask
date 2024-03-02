@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UnitController extends Controller
 {
@@ -33,7 +34,32 @@ class UnitController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                Rule::unique('units')->whereNull('deleted_at'),
+            ],
+            'ShortName' => [
+                'required',
+                Rule::unique('units')->whereNull('deleted_at'),
+            ],
+        ]);
+        if (! $request->base_unit) {
+            $operator = '*';
+            $operator_value = 1;
+        } else {
+            $operator = $request->operator;
+            $operator_value = $request->operator_value;
+        }
+        Unit::create([
+            'name' => $request['name'],
+            'ShortName' => $request['ShortName'],
+            'base_unit' => $request['base_unit'],
+            'operator' => $operator,
+            'operator_value' => $operator_value,
+        ]);
+
+        return redirect()->route('product.unit.index');
     }
 
     /**
