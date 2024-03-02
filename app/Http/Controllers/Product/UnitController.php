@@ -91,7 +91,7 @@ class UnitController extends Controller
      */
     public function destroy(string $id)
     {
-        $unit = Unit::Where('id', $id);
+        $unit = Unit::Where('id', $id)->first();
         $unit->delete();
 
         return redirect()->route('product.unit.index')->with('success', 'Unit deleted successfully');
