@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class UnitController extends Controller
@@ -12,7 +13,11 @@ class UnitController extends Controller
      */
     public function index()
     {
-        return view('templates.product.unit.index');
+        $unit = Unit::query()->latest()->get();
+
+        return view('templates.product.unit.index', [
+            'unit' => $unit,
+        ]);
     }
 
     /**
