@@ -6,6 +6,87 @@
                 <div class="header-title">
                     <h4 class="card-title">All Unit</h4>
                 </div>
+                {{-- <div class="header-title">
+                    <button type="button" class="btn btn-soft-primary">Filter</button>
+                    <button type="button" class="btn btn-soft-success">PDF</button>
+                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <button type="button" class="btn btn-soft-gray">Import Product</button>
+                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">
+                        Create+
+                    </button>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="">
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="validationDefault01">Name *</label>
+                                            <input type="text" class="form-control" id="validationDefault01" required
+                                                placeholder="input product cost">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="validationDefault01">Short Name*</label>
+                                            <input type="text" class="form-control" id="validationDefault01" required
+                                                placeholder="input product cost">
+                                        </div>
+                                        <div class="accordion" id="accordionExample">
+                                            <div class="accordion-item">
+                                                <h4 class="accordion-header" id="headingOne">
+                                                    <button class="accordion-button" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                        aria-expanded="true" aria-controls="collapseOne">
+                                                        Base Unit
+                                                    </button>
+                                                </h4>
+                                                <div id="collapseOne" class="accordion-collapse collapse show"
+                                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                    <div class="accordion-body">
+                                                        <label for="validationCustomUsername" class="form-label">Product
+                                                            Unit</label>
+                                                        <select class="form-select" id="validationDefault04" required>
+                                                            <option selected disabled value="">Choose...</option>
+                                                            <option>Gram</option>
+                                                            <option>Liter</option>
+                                                            <option>Meter</option>
+                                                            <option>Gram</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="accordion-body">
+                                                        <label for="validationCustomUsername"
+                                                            class="form-label">Operator</label>
+                                                        <select class="form-select" id="validationDefault04" required>
+                                                            <option selected disabled value="">Choose...</option>
+                                                            <option>Multiply (*)</option>
+                                                            <option>Devide (/)</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="accordion-body">
+                                                        <label class="form-label" for="validationDefault01">Operation value
+                                                            *</label>
+                                                        <input type="text" class="form-control" id="validationDefault01"
+                                                            required placeholder="input product cost">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> --}}
             </div>
             <div class="card-header d-flex justify-content-between">
                 <div class="input-group search-input" style="width: 30%">
@@ -29,7 +110,7 @@
                         data-bs-target="#exampleModal">
                         Create+
                     </button>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    {{-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -60,6 +141,82 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div> --}}
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('product.unit.store') }}" method="POST">
+                                        @csrf
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="validationDefault01">Name *</label>
+                                            <input type="text" class="form-control" id="validationDefault01" required
+                                                placeholder="input unit name" name="name">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="validationDefault01">Short Name*</label>
+                                            <input type="text" class="form-control" id="validationDefault01" required
+                                                placeholder="input short name" name="ShortName">
+                                        </div>
+                                        <div class="accordion" id="accordionExample">
+                                            <div class="accordion-item">
+                                                <h4 class="accordion-header" id="headingOne">
+                                                    <button class="accordion-button" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                        aria-expanded="true" aria-controls="collapseOne">
+                                                        Base Unit
+                                                    </button>
+                                                </h4>
+                                                <div id="collapseOne" class="accordion-collapse collapse show"
+                                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                    <div class="accordion-body">
+                                                        <label for="validationCustomUsername" class="form-label">Product
+                                                            Unit</label>
+                                                        <select class="form-select" id="validationDefault04"
+                                                            name="base_unit">
+                                                            <option value="">None</option>
+                                                            @foreach ($unit as $item)
+                                                                <option value="{{ $item->id }}">
+                                                                    {{ $item->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="accordion-body">
+                                                        <label for="validationCustomUsername"
+                                                            class="form-label">Operator</label>
+                                                        <select class="form-select" id="validationDefault04"
+                                                            name="operator">
+                                                            <option selected disabled value="">Choose...</option>
+                                                            <option value="{{ '*' }}">Multiply (*)</option>
+                                                            <option value="{{ '/' }}">Devide (/)</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="accordion-body">
+                                                        <label class="form-label" for="validationDefault01">Operation
+                                                            value
+                                                            *</label>
+                                                        <input type="text" class="form-control"
+                                                            id="validationDefault01" placeholder="1"
+                                                            name="operator_value">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-primary">Save changes</button>
                                 </div>
                                 </form>
