@@ -59,7 +59,7 @@ class UnitController extends Controller
             'operator_value' => $operator_value,
         ]);
 
-        return redirect()->route('product.unit.index');
+        return redirect()->route('product.unit.index')->with('success', 'Unit created successfully');
     }
 
     /**
@@ -91,6 +91,9 @@ class UnitController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $unit = Unit::Where('id', $id);
+        $unit->delete();
+
+        return redirect()->route('product.unit.index')->with('success', 'Unit deleted successfully');
     }
 }
