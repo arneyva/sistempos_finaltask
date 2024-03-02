@@ -31,7 +31,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['hourly_rate', 'basic_salary','employment_type', 'marital_status', 'facebook', 'skype', 'whatsapp', 'twitter', 'linkedin','leaving_date']);
+            $table->dropColumn(['hourly_rate', 'basic_salary', 'employment_type', 'marital_status', 'facebook', 'skype', 'whatsapp', 'twitter', 'linkedin', 'leaving_date']);
         });
     }
 };

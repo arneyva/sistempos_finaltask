@@ -8,23 +8,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Unit extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'units';
 
     protected $fillable = [
         'id',
         'name',
-        'short_name',
-        'base_unit_id',
+        'ShortName',
+        'base_unit',
         'operator',
         'operator_value',
-        'description',
     ];
 
     // self-referencing atau self-join
     public function baseUnit()
     {
-        return $this->belongsTo(Unit::class, 'base_unit_id')->onDelete('RESTRICT')->onUpdate('RESTRICT');
+        return $this->belongsTo(Unit::class, 'base_unit')->onDelete('RESTRICT')->onUpdate('RESTRICT');
     }
 }
