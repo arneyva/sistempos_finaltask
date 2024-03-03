@@ -29,15 +29,15 @@
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">
+                        data-bs-target="#createModal">
                         Create+
                     </button>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                                    <h5 class="modal-title" id="createModalLabel">Create</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -46,19 +46,18 @@
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Brand Name *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="name">Brand Name *</label>
+                                            <input type="text" class="form-control" id="name" required
                                                 placeholder="input brands" name="name">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Description *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="description">Description *</label>
+                                            <input type="text" class="form-control" id="description" required
                                                 placeholder="input description" name="description">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Image</label>
-                                            <input type="file" class="form-control" id="validationDefault01"
-                                                name="image">
+                                            <label class="form-label" for="image">Image</label>
+                                            <input type="file" class="form-control" id="image" name="image">
                                         </div>
                                 </div>
                                 <div class="modal-footer">
@@ -100,7 +99,7 @@
                                         <div class="inline">
                                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal"
-                                                data-bs-target="#editModal">
+                                                data-bs-target="#editModal{{ $item->id }}">
                                                 <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
                                                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                                 </path>
@@ -112,12 +111,13 @@
                                                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                                 </path>
                                             </svg>
-                                            <div class="modal fade" id="editModal" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1"
+                                                aria-labelledby="exampleModalLabel{{ $item->id }}" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Update</h5>
+                                                            <h5 class="modal-title"
+                                                                id="exampleModalLabel{{ $item->id }}">Update</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
@@ -127,26 +127,25 @@
                                                                 @csrf
                                                                 @method('PUT')
                                                                 <div class="col mb-3">
-                                                                    <label class="form-label"
-                                                                        for="validationDefault01">Brand Name *</label>
+                                                                    <label class="form-label" for="editname">Brand Name
+                                                                        *</label>
                                                                     <input type="text" class="form-control"
-                                                                        id="validationDefault01" required
-                                                                        placeholder="input brands" name="name"
-                                                                        value="{{ $item->name }}">
+                                                                        id="editname" required placeholder="input brands"
+                                                                        name="name" value="{{ $item->name }}">
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="validationDefault01">Description *</label>
+                                                                        for="editdescription">Description *</label>
                                                                     <input type="text" class="form-control"
-                                                                        id="validationDefault01" required
+                                                                        id="editdescription" required
                                                                         placeholder="input description" name="description"
                                                                         value="{{ $item->description }}">
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="validationDefault01">Image</label>
+                                                                        for="editimage">Image</label>
                                                                     <input type="file" class="form-control"
-                                                                        id="validationDefault01" name="image">
+                                                                        id="editimage" name="image">
                                                                 </div>
 
                                                         </div>
