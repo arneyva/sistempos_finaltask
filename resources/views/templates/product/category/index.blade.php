@@ -15,15 +15,15 @@
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">
+                        data-bs-target="#createModal">
                         Create+
                     </button>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                                    <h5 class="modal-title" id="createModalLabel">Create</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -31,13 +31,13 @@
                                     <form action="{{ route('product.category.store') }}" method="POST">
                                         @csrf
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Category Code *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="code">Category Code *</label>
+                                            <input type="text" class="form-control" id="code" required
                                                 placeholder="input category code" name="code">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Category Name *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="name">Category Name *</label>
+                                            <input type="text" class="form-control" id="name" required
                                                 placeholder="input category name" name="name">
                                         </div>
 
