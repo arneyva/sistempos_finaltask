@@ -76,7 +76,7 @@
                                         <div class="inline">
                                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal"
-                                                data-bs-target="#updateModal">
+                                                data-bs-target="#updateModal{{ $item->id }}">
                                                 <path d="M13.7476 20.4428H21.0002" stroke="currentColor" stroke-width="1.5"
                                                     stroke-linecap="round" stroke-linejoin="round">
                                                 </path>
@@ -88,12 +88,12 @@
                                                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                                 </path>
                                             </svg>
-                                            <div class="modal fade" id="updateModal" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="updateModal{{ $item->id }}" tabindex="-1"
+                                                aria-labelledby="updateModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Update</h5>
+                                                            <h5 class="modal-title" id="updateModalLabel">Update</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                                 aria-label="Close"></button>
                                                         </div>
@@ -105,17 +105,19 @@
                                                                 @csrf
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="validationDefault01">Category Code *</label>
+                                                                        for="editcode{{ $item->id }}">Category Code
+                                                                        *</label>
                                                                     <input type="text" class="form-control"
-                                                                        id="validationDefault01" required
+                                                                        id="editcode{{ $item->id }}" required
                                                                         placeholder="input category code" name="code"
                                                                         value="{{ $item->code }}">
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="validationDefault01">Category Name *</label>
+                                                                        for="editname{{ $item->id }}">Category Name
+                                                                        *</label>
                                                                     <input type="text" class="form-control"
-                                                                        id="validationDefault01" required
+                                                                        id="editname{{ $item->id }}" required
                                                                         placeholder="input category name" name="name"
                                                                         value="{{ $item->name }}">
                                                                 </div>
