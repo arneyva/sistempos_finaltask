@@ -127,25 +127,28 @@
                                                                 @csrf
                                                                 @method('PUT')
                                                                 <div class="col mb-3">
-                                                                    <label class="form-label" for="editname">Brand Name
+                                                                    <label class="form-label"
+                                                                        for="editname{{ $item->id }}">Brand Name
                                                                         *</label>
                                                                     <input type="text" class="form-control"
-                                                                        id="editname" required placeholder="input brands"
-                                                                        name="name" value="{{ $item->name }}">
+                                                                        id="editname{{ $item->id }}" required
+                                                                        placeholder="input brands" name="name"
+                                                                        value="{{ $item->name }}">
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="editdescription">Description *</label>
+                                                                        for="editdescription{{ $item->id }}">Description
+                                                                        *</label>
                                                                     <input type="text" class="form-control"
-                                                                        id="editdescription" required
+                                                                        id="editdescription{{ $item->id }}" required
                                                                         placeholder="input description" name="description"
                                                                         value="{{ $item->description }}">
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="editimage">Image</label>
+                                                                        for="editimage{{ $item->id }}">Image</label>
                                                                     <input type="file" class="form-control"
-                                                                        id="editimage" name="image">
+                                                                        id="editimage{{ $item->id }}" name="image">
                                                                 </div>
 
                                                         </div>
