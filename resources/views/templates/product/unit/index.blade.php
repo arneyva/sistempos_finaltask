@@ -213,9 +213,10 @@
                                                                                 <select class="form-select"
                                                                                     id="productunitedit{{ $item->id }}"
                                                                                     name="base_unit">
-                                                                                    <option value="" selected
-                                                                                        disabled>
-                                                                                        {{ $item->base_unit }}</option>
+                                                                                    <option
+                                                                                        value="{{ $item->base_unit }}">
+                                                                                        {{ $item->baseUnit->name ?? '-' }}
+                                                                                    </option>
                                                                                     @foreach ($unit as $loopItem)
                                                                                         <option
                                                                                             value="{{ $loopItem->id }}">
@@ -223,7 +224,6 @@
                                                                                     @endforeach
                                                                                 </select>
                                                                             </div>
-
                                                                             <div class="accordion-body">
                                                                                 <label
                                                                                     for="operatoredit{{ $item->id }}"
@@ -231,9 +231,9 @@
                                                                                 <select class="form-select"
                                                                                     id="operatoredit{{ $item->id }}"
                                                                                     name="operator">
-                                                                                    <option selected disabled
-                                                                                        value="">
-                                                                                        {{ $item->operator }}</option>
+                                                                                    <option value="{{ $item->operator }}">
+                                                                                        {{ $item->operator }}
+                                                                                    </option>
                                                                                     <option value="{{ '*' }}">
                                                                                         Multiply (*)</option>
                                                                                     <option value="{{ '/' }}">
@@ -247,7 +247,8 @@
                                                                                     *</label>
                                                                                 <input type="text" class="form-control"
                                                                                     id="operatorvalueedit{{ $item->id }}"
-                                                                                    placeholder="1" name="operator_value">
+                                                                                    placeholder="1" name="operator_value"
+                                                                                    value="{{ $item->operator_value }}">
                                                                             </div>
                                                                         </div>
                                                                     </div>

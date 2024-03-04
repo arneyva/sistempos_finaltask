@@ -83,7 +83,32 @@ class UnitController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                Rule::unique('units')->whereNull('deleted_at')->ignore($id),
+            ],
+            'ShortName' => [
+                'required',
+                Rule::unique('units')->whereNull('deleted_at')->ignore($id),
+            ],
+        ]);
+        if (! $request->base_unit) {
+            $operator = '*';
+            $operator_value = 1;
+        } else {
+            $operator = $request->operator;
+            $operator_value = $request->operator_value;
+        }
+        Unit::Where('id', $id)->update([
+            'name' => $request['name'],
+            'ShortName' => $request['ShortName'],
+            'base_unit' => $request['base_unit'],
+            'operator' => $operator,
+            'operator_value' => $operator_value,
+        ]);
+
+        return redirect()->route('product.unit.index')->with('success', 'Unit updated successfully');
     }
 
     /**
