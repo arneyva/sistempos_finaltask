@@ -9,87 +9,6 @@
                 <div class="header-title">
                     <h4 class="card-title">All Unit</h4>
                 </div>
-                {{-- <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
-                    <button type="button" class="btn btn-soft-gray">Import Product</button>
-                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">
-                        Create+
-                    </button>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="">
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Name *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
-                                                placeholder="input product cost">
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Short Name*</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
-                                                placeholder="input product cost">
-                                        </div>
-                                        <div class="accordion" id="accordionExample">
-                                            <div class="accordion-item">
-                                                <h4 class="accordion-header" id="headingOne">
-                                                    <button class="accordion-button" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                                                        aria-expanded="true" aria-controls="collapseOne">
-                                                        Base Unit
-                                                    </button>
-                                                </h4>
-                                                <div id="collapseOne" class="accordion-collapse collapse show"
-                                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <label for="validationCustomUsername" class="form-label">Product
-                                                            Unit</label>
-                                                        <select class="form-select" id="validationDefault04" required>
-                                                            <option selected disabled value="">Choose...</option>
-                                                            <option>Gram</option>
-                                                            <option>Liter</option>
-                                                            <option>Meter</option>
-                                                            <option>Gram</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="accordion-body">
-                                                        <label for="validationCustomUsername"
-                                                            class="form-label">Operator</label>
-                                                        <select class="form-select" id="validationDefault04" required>
-                                                            <option selected disabled value="">Choose...</option>
-                                                            <option>Multiply (*)</option>
-                                                            <option>Devide (/)</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="accordion-body">
-                                                        <label class="form-label" for="validationDefault01">Operation value
-                                                            *</label>
-                                                        <input type="text" class="form-control" id="validationDefault01"
-                                                            required placeholder="input product cost">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
             </div>
             <div class="card-header d-flex justify-content-between">
                 <div class="input-group search-input" style="width: 30%">
@@ -110,52 +29,15 @@
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">
+                        data-bs-target="#createModal">
                         Create+
                     </button>
-                    {{-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="{{ route('product.brand.store') }}" method="POST"
-                                        enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Brand Name *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
-                                                placeholder="input brands" name="name">
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Description *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
-                                                placeholder="input description" name="description">
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Image</label>
-                                            <input type="file" class="form-control" id="validationDefault01"
-                                                name="image">
-                                        </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div> --}}
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                                    <h5 class="modal-title" id="createModalLabel">Create</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -163,32 +45,31 @@
                                     <form action="{{ route('product.unit.store') }}" method="POST">
                                         @csrf
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Name *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="createname">Name *</label>
+                                            <input type="text" class="form-control" id="createname" required
                                                 placeholder="input unit name" name="name">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Short Name*</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="createshortname">Short Name*</label>
+                                            <input type="text" class="form-control" id="createshortname" required
                                                 placeholder="input short name" name="ShortName">
                                         </div>
-                                        <div class="accordion" id="accordionExample">
+                                        <div class="accordion" id="accordioncreate">
                                             <div class="accordion-item">
                                                 <h4 class="accordion-header" id="headingOne">
                                                     <button class="accordion-button" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapseOnecreate"
                                                         aria-expanded="true" aria-controls="collapseOne">
                                                         Base Unit
                                                     </button>
                                                 </h4>
-                                                <div id="collapseOne" class="accordion-collapse collapse show"
-                                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                <div id="collapseOnecreate" class="accordion-collapse collapse show"
+                                                    aria-labelledby="headingOne" data-bs-parent="#accordioncreate">
                                                     <div class="accordion-body">
-                                                        <label for="validationCustomUsername" class="form-label">Product
+                                                        <label for="productunitcreate" class="form-label">Product
                                                             Unit</label>
-                                                        <select class="form-select" id="validationDefault04"
-                                                            name="base_unit">
-                                                            <option value="">None</option>
+                                                        <select class="form-select" id="productunitcreate" name="base_unit">
+                                                            <option value="" selected disabled>Choose...</option>
                                                             @foreach ($unit as $item)
                                                                 <option value="{{ $item->id }}">
                                                                     {{ $item->name }}</option>
@@ -196,21 +77,19 @@
                                                         </select>
                                                     </div>
                                                     <div class="accordion-body">
-                                                        <label for="validationCustomUsername"
-                                                            class="form-label">Operator</label>
-                                                        <select class="form-select" id="validationDefault04"
-                                                            name="operator">
+                                                        <label for="operatorcreate" class="form-label">Operator</label>
+                                                        <select class="form-select" id="operatorcreate" name="operator">
                                                             <option selected disabled value="">Choose...</option>
                                                             <option value="{{ '*' }}">Multiply (*)</option>
                                                             <option value="{{ '/' }}">Devide (/)</option>
                                                         </select>
                                                     </div>
                                                     <div class="accordion-body">
-                                                        <label class="form-label" for="validationDefault01">Operation
+                                                        <label class="form-label" for="operatorvaluecreate">Operation
                                                             value
                                                             *</label>
                                                         <input type="text" class="form-control"
-                                                            id="validationDefault01" placeholder="1"
+                                                            id="operatorvaluecreate" placeholder="1"
                                                             name="operator_value">
                                                     </div>
                                                 </div>
@@ -261,23 +140,129 @@
                                     </td>
                                     <td>
                                         <div class="inline">
-                                            <a href="edit.html">
-                                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                    </path>
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                        d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
-                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                    </path>
-                                                </svg>
-                                            </a>
+                                            <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal"
+                                                data-bs-target="#editModal{{ $item->id }}">
+                                                <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                </path>
+                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                    d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
+                                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round"></path>
+                                                <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                </path>
+                                            </svg>
+
+
+                                            <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1"
+                                                aria-labelledby="editModalLabel{{ $item->id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="editModalLabel">Update</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="{{ route('product.unit.update', $item->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('PUT')
+                                                                <div class="col mb-3">
+                                                                    <label class="form-label"
+                                                                        for="editname{{ $item->id }}">Name
+                                                                        *</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editname{{ $item->id }}" required
+                                                                        placeholder="input unit name" name="name"
+                                                                        value="{{ $item->name }}">
+                                                                </div>
+                                                                <div class="col mb-3">
+                                                                    <label class="form-label"
+                                                                        for="editshortname{{ $item->id }}">Short
+                                                                        Name*</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editshortname{{ $item->id }}" required
+                                                                        placeholder="input short name" name="ShortName"
+                                                                        value="{{ $item->ShortName }}">
+                                                                </div>
+                                                                <div class="accordion"
+                                                                    id="accordionedit{{ $item->id }}">
+                                                                    <div class="accordion-item">
+                                                                        <h4 class="accordion-header"
+                                                                            id="headingOne{{ $item->id }}">
+                                                                            <button class="accordion-button"
+                                                                                type="button" data-bs-toggle="collapse"
+                                                                                data-bs-target="#collapseOneedit{{ $item->id }}"
+                                                                                aria-expanded="true"
+                                                                                aria-controls="collapseOne">
+                                                                                Base Unit
+                                                                            </button>
+                                                                        </h4>
+                                                                        <div id="collapseOneedit{{ $item->id }}"
+                                                                            class="accordion-collapse collapse show"
+                                                                            aria-labelledby="headingOne"
+                                                                            data-bs-parent="#accordionedit{{ $item->id }}">
+                                                                            <div class="accordion-body">
+                                                                                <label
+                                                                                    for="productunitedit{{ $item->id }}"
+                                                                                    class="form-label">Product
+                                                                                    Unit</label>
+                                                                                <select class="form-select"
+                                                                                    id="productunitedit{{ $item->id }}"
+                                                                                    name="base_unit">
+                                                                                    <option value="" selected
+                                                                                        disabled>
+                                                                                        {{ $item->base_unit }}</option>
+                                                                                    @foreach ($unit as $loopItem)
+                                                                                        <option
+                                                                                            value="{{ $loopItem->id }}">
+                                                                                            {{ $loopItem->name }}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+
+                                                                            <div class="accordion-body">
+                                                                                <label
+                                                                                    for="operatoredit{{ $item->id }}"
+                                                                                    class="form-label">Operator</label>
+                                                                                <select class="form-select"
+                                                                                    id="operatoredit{{ $item->id }}"
+                                                                                    name="operator">
+                                                                                    <option selected disabled
+                                                                                        value="">
+                                                                                        {{ $item->operator }}</option>
+                                                                                    <option value="{{ '*' }}">
+                                                                                        Multiply (*)</option>
+                                                                                    <option value="{{ '/' }}">
+                                                                                        Devide (/)</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="accordion-body">
+                                                                                <label class="form-label"
+                                                                                    for="operatorvalueedit{{ $item->id }}">Operation
+                                                                                    value
+                                                                                    *</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="operatorvalueedit{{ $item->id }}"
+                                                                                    placeholder="1" name="operator_value">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary">Save
+                                                                changes</button>
+                                                        </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <button type="button" data-bs-toggle="modal"
                                                 data-bs-target="#staticBackdrop{{ $item->id }}"
                                                 style="border: none; background: none; padding: 0; margin: 0;">
@@ -327,7 +312,7 @@
                                                             </div>
                                                         @else
                                                             <div class="modal-body">
-                                                                <p>"Are you sure you want to delete this data?"</p>
+                                                                <p>"Are you sure you want to delete this data"</p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
@@ -346,33 +331,30 @@
                                                 </div>
                                             </div>
                                         </div>
-                </div>
-                </td>
-                </tr>
-                @endforeach
-                </tbody>
-                </table>
-                <div class="bd-example" style="margin-left: 10px; margin-top:10px">
-                    <nav aria-label="Standard pagination example">
-                        <ul class="pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">«</span>
-                                </a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">»</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <div class="bd-example" style="margin-left: 10px; margin-top:10px">
+                        <nav aria-label="Standard pagination example">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                    </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 @endsection
