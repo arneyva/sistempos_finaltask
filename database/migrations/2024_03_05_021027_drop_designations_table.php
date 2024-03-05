@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        
+
         //drop all foreign child of designations
         // Schema::table('employees', function (Blueprint $table) {
         //     $table->dropForeign('employees_designation_id');
