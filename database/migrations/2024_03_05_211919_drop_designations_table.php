@@ -11,14 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-
-        //drop all foreign child of designations
-        // Schema::table('employees', function (Blueprint $table) {
-        //     $table->dropForeign('employees_designation_id');
-        //     // $table->dropColumn('designation_id');
-        // });
-        //
-        // drop designations table
         Schema::dropIfExists('designations');
     }
 
@@ -36,9 +28,5 @@ return new class extends Migration
             $table->timestamps(6);
             $table->softDeletes();
         });
-
-        // Schema::table('employees', function (Blueprint $table) {
-        //     $table->foreign('designation_id', 'employees_designation_id')->references('id')->on('designations')->onUpdate('RESTRICT')->onDelete('RESTRICT');
-        // });
     }
 };
