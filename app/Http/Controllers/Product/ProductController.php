@@ -36,7 +36,11 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $productRules = [
+            'code' => [
+                'required',
+            ],
+        ];
     }
 
     /**
