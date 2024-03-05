@@ -36,7 +36,7 @@ return new class extends Migration
             $table->dropForeign('department_department_head');
             // $table->dropColumn('department_head');
         });
-        
+
         //
         // drop designations table
         Schema::dropIfExists('employees');
@@ -90,22 +90,22 @@ return new class extends Migration
             // $table->integer('employee_id')->index('employee_accounts_employee_id');
             $table->foreign('employee_id', 'employee_accounts_employee_id')->references('id')->on('employees')->onUpdate('RESTRICT')->onDelete('RESTRICT');
         });
-        
+
         Schema::table('employee_experiences', function (Blueprint $table) {
             // $table->integer('employee_id')->index('employee_experience_employee_id');
             $table->foreign('employee_id', 'employee_experience_employee_id')->references('id')->on('employees')->onUpdate('RESTRICT')->onDelete('RESTRICT');
         });
-        
+
         Schema::table('attendances', function (Blueprint $table) {
             // $table->integer('employee_id')->index('attendances_employee_id');
             $table->foreign('employee_id', 'attendances_employee_id')->references('id')->on('employees')->onUpdate('RESTRICT')->onDelete('RESTRICT');
         });
-        
+
         Schema::table('leaves', function (Blueprint $table) {
             // $table->integer('employee_id')->index('leave_employee_id');
             $table->foreign('employee_id', 'leave_employee_id')->references('id')->on('employees')->onUpdate('RESTRICT')->onDelete('RESTRICT');
         });
-        
+
         Schema::table('departments', function (Blueprint $table) {
             // $table->integer('department_head')->index('department_department_head');
             $table->foreign('department_head', 'department_department_head')->references('id')->on('employees')->onUpdate('RESTRICT')->onDelete('RESTRICT');
