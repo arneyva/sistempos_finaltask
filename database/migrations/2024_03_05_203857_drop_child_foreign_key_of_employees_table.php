@@ -34,7 +34,7 @@ return new class extends Migration
         });
 
         Schema::table('departments', function (Blueprint $table) {
-            if (Schema::hasColumn('departments', 'employee_id')) {
+            if (Schema::hasColumn('departments', 'department_head')) {
                 $table->dropForeign('department_department_head');
                 
             }
