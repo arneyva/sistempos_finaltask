@@ -61,6 +61,9 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
     // unit
     Route::prefix('/unit')->name('unit.')->group(function () {
         Route::get('/list', [UnitController::class, 'index'])->name('index');
+        Route::post('store', [UnitController::class, 'store'])->name('store');
+        Route::put('update/{id}', [UnitController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [UnitController::class, 'destroy'])->name('destroy');
     });
 });
 Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.')->group(function () {

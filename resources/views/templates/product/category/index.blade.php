@@ -15,15 +15,15 @@
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">
+                        data-bs-target="#createModal">
                         Create+
                     </button>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                                    <h5 class="modal-title" id="createModalLabel">Create</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -31,13 +31,13 @@
                                     <form action="{{ route('product.category.store') }}" method="POST">
                                         @csrf
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Category Code *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="code">Category Code *</label>
+                                            <input type="text" class="form-control" id="code" required
                                                 placeholder="input category code" name="code">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Category Name *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="name">Category Name *</label>
+                                            <input type="text" class="form-control" id="name" required
                                                 placeholder="input category name" name="name">
                                         </div>
 
@@ -76,7 +76,7 @@
                                         <div class="inline">
                                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal"
-                                                data-bs-target="#updateModal">
+                                                data-bs-target="#updateModal{{ $item->id }}">
                                                 <path d="M13.7476 20.4428H21.0002" stroke="currentColor" stroke-width="1.5"
                                                     stroke-linecap="round" stroke-linejoin="round">
                                                 </path>
@@ -88,12 +88,12 @@
                                                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                                 </path>
                                             </svg>
-                                            <div class="modal fade" id="updateModal" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="updateModal{{ $item->id }}" tabindex="-1"
+                                                aria-labelledby="updateModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Update</h5>
+                                                            <h5 class="modal-title" id="updateModalLabel">Update</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                                 aria-label="Close"></button>
                                                         </div>
@@ -105,17 +105,19 @@
                                                                 @csrf
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="validationDefault01">Category Code *</label>
+                                                                        for="editcode{{ $item->id }}">Category Code
+                                                                        *</label>
                                                                     <input type="text" class="form-control"
-                                                                        id="validationDefault01" required
+                                                                        id="editcode{{ $item->id }}" required
                                                                         placeholder="input category code" name="code"
                                                                         value="{{ $item->code }}">
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="validationDefault01">Category Name *</label>
+                                                                        for="editname{{ $item->id }}">Category Name
+                                                                        *</label>
                                                                     <input type="text" class="form-control"
-                                                                        id="validationDefault01" required
+                                                                        id="editname{{ $item->id }}" required
                                                                         placeholder="input category name" name="name"
                                                                         value="{{ $item->name }}">
                                                                 </div>
@@ -130,33 +132,62 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <form action="{{ route('product.category.destroy', $item->id) }}"
-                                                method="POST" style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    style="border: none; background: none; padding: 0; margin: 0;">
-                                                    <svg class="icon-32" width="32" viewBox="0 0 24 24"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                                            d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
-                                                            stroke="currentColor" stroke-width="1.5"
-                                                            stroke-linecap="round" stroke-linejoin="round"></path>
-                                                        <path
-                                                            d="M14.4736 2.75024V5.65924C14.4736 7.07924 15.6216 8.23024 17.0416 8.23424H19.7966"
-                                                            stroke="currentColor" stroke-width="1.5"
-                                                            stroke-linecap="round" stroke-linejoin="round"></path>
-                                                        <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
-                                                            stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round">
-                                                        </path>
-                                                        <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
-                                                            stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round">
-                                                        </path>
-                                                    </svg>
-                                                </button>
-                                            </form>
+                                            {{-- button delete --}}
+                                            <button type="button" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal{{ $item->id }}"
+                                                style="border: none; background: none; padding: 0; margin: 0;">
+                                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
+                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round"></path>
+                                                    <path
+                                                        d="M14.4736 2.75024V5.65924C14.4736 7.07924 15.6216 8.23024 17.0416 8.23424H19.7966"
+                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round"></path>
+                                                    <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                    </path>
+                                                    <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                    </path>
+                                                </svg>
+                                            </button>
+                                            {{-- modal delete --}}
+                                            <div class="modal fade" id="deleteModal{{ $item->id }}"
+                                                data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                aria-labelledby="deleteModalLabel{{ $item->id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                id="deleteModalLabel{{ $item->id }}">
+                                                                {{ $item->name }}
+                                                            </h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>"Are you sure you want to delete this data?"</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close</button>
+                                                            <form
+                                                                action="{{ route('product.category.destroy', $item->id) }}"
+                                                                method="POST" style="display: inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Delete</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UnitController extends Controller
 {
@@ -12,7 +14,11 @@ class UnitController extends Controller
      */
     public function index()
     {
-        return view('templates.product.unit.index');
+        $unit = Unit::query()->latest()->get();
+
+        return view('templates.product.unit.index', [
+            'unit' => $unit,
+        ]);
     }
 
     /**
@@ -28,7 +34,32 @@ class UnitController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                Rule::unique('units')->whereNull('deleted_at'),
+            ],
+            'ShortName' => [
+                'required',
+                Rule::unique('units')->whereNull('deleted_at'),
+            ],
+        ]);
+        if (! $request->base_unit) {
+            $operator = '*';
+            $operator_value = 1;
+        } else {
+            $operator = $request->operator;
+            $operator_value = $request->operator_value;
+        }
+        Unit::create([
+            'name' => $request['name'],
+            'ShortName' => $request['ShortName'],
+            'base_unit' => $request['base_unit'],
+            'operator' => $operator,
+            'operator_value' => $operator_value,
+        ]);
+
+        return redirect()->route('product.unit.index')->with('success', 'Unit created successfully');
     }
 
     /**
@@ -52,7 +83,32 @@ class UnitController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                Rule::unique('units')->whereNull('deleted_at')->ignore($id),
+            ],
+            'ShortName' => [
+                'required',
+                Rule::unique('units')->whereNull('deleted_at')->ignore($id),
+            ],
+        ]);
+        if (! $request->base_unit) {
+            $operator = '*';
+            $operator_value = 1;
+        } else {
+            $operator = $request->operator;
+            $operator_value = $request->operator_value;
+        }
+        Unit::Where('id', $id)->update([
+            'name' => $request['name'],
+            'ShortName' => $request['ShortName'],
+            'base_unit' => $request['base_unit'],
+            'operator' => $operator,
+            'operator_value' => $operator_value,
+        ]);
+
+        return redirect()->route('product.unit.index')->with('success', 'Unit updated successfully');
     }
 
     /**
@@ -60,6 +116,9 @@ class UnitController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $unit = Unit::Where('id', $id)->first();
+        $unit->delete();
+
+        return redirect()->route('product.unit.index')->with('success', 'Unit deleted successfully');
     }
 }
