@@ -205,7 +205,7 @@
                                                 </div>
                                             </div>
                                             <button type="button" data-bs-toggle="modal"
-                                                data-bs-target="#staticBackdrop{{ $item->id }}"
+                                                data-bs-target="#deleteModal{{ $item->id }}"
                                                 style="border: none; background: none; padding: 0; margin: 0;">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -227,47 +227,35 @@
                                                     </path>
                                                 </svg>
                                             </button>
-                                            <div class="modal fade" id="staticBackdrop{{ $item->id }}"
+                                            {{-- modal delete --}}
+                                            <div class="modal fade" id="deleteModal{{ $item->id }}"
                                                 data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                aria-labelledby="staticBackdropLabel{{ $item->id }}"
-                                                aria-hidden="true">
+                                                aria-labelledby="deleteModalLabel{{ $item->id }}" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title"
-                                                                id="staticBackdropLabel{{ $item->id }}">
+                                                                id="deleteModalLabel{{ $item->id }}">
                                                                 {{ $item->name }}
                                                             </h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        @if ($item->base_unit == null)
-                                                            <div class="modal-body">
-                                                                <p>"Base Unit Cannot be deleted?"</p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger"
-                                                                    disabled>Delete</button>
-                                                            </div>
-                                                        @else
-                                                            <div class="modal-body">
-                                                                <p>"Are you sure you want to delete this data"</p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Close</button>
-                                                                <form
-                                                                    action="{{ route('product.unit.destroy', $item->id) }}"
-                                                                    method="POST" style="display: inline">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit"
-                                                                        class="btn btn-primary">Delete</button>
-                                                                </form>
-                                                            </div>
-                                                        @endif
+                                                        <div class="modal-body">
+                                                            <p>"Are you sure you want to delete this data?"</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close</button>
+                                                            <form
+                                                                action="{{ route('settings.warehouses.destroy', $item->id) }}"
+                                                                method="POST" style="display: inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Delete</button>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
