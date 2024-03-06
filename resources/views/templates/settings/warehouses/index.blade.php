@@ -15,15 +15,15 @@
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">
+                        data-bs-target="#createModal">
                         Create+
                     </button>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                                    <h5 class="modal-title" id="createModalLabel">Create</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -31,33 +31,33 @@
                                     <form action="{{ route('settings.warehouses.store') }}" method="POST">
                                         @csrf
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Name *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="name">Name *</label>
+                                            <input type="text" class="form-control" id="name" required
                                                 name="name" placeholder="input name">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">City *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="city">City *</label>
+                                            <input type="text" class="form-control" id="city" required
                                                 name="city" placeholder="input city">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Mobile Phone *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="phone">Mobile Phone *</label>
+                                            <input type="text" class="form-control" id="phone" required
                                                 name="mobile" placeholder="input mobile phone">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Zip Potscode *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="postcode">Zip Potscode *</label>
+                                            <input type="text" class="form-control" id="postcode" required
                                                 name="zip" placeholder="input postcode">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Email *</label>
-                                            <input type="email" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="email">Email *</label>
+                                            <input type="email" class="form-control" id="email" required
                                                 placeholder="input email" name="email">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Country *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
+                                            <label class="form-label" for="country">Country *</label>
+                                            <input type="text" class="form-control" id="country" required
                                                 name="country" placeholder="input country">
                                         </div>
                                 </div>
