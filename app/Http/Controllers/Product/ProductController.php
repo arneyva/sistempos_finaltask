@@ -28,12 +28,22 @@ class ProductController extends Controller
     {
         $category = Category::query()->get();
         $brand = Brand::query()->get();
-        $unit = Unit::query()->get();
+        $unit = Unit::query()->where('base_unit', null)->get();
 
         return view('templates.product.create', [
             'category' => $category,
             'brand' => $brand,
             'unit' => $unit,
+        ]);
+    }
+
+    public function getUnits(Request $request, $id)
+    {
+        $productUnit = Unit::findOrFail($id);
+        $relatedUnits = Unit::where('base_unit', $productUnit->id)->orWhere('id', $productUnit->id)->get();
+
+        return response()->json([
+            'related_units' => $relatedUnits,
         ]);
     }
 
