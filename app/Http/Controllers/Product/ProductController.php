@@ -3,7 +3,13 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -20,7 +26,15 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('templates.product.create');
+        $category = Category::query()->get();
+        $brand = Brand::query()->get();
+        $unit = Unit::query()->get();
+
+        return view('templates.product.create', [
+            'category' => $category,
+            'brand' => $brand,
+            'unit' => $unit,
+        ]);
     }
 
     /**
@@ -28,7 +42,22 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $productRules = [
+            'type' => 'required',
+            'code' => [
+                'required',
+                Rule::unique(Product::class, 'code')->whereNull('deleted_at'),
+                Rule::unique(ProductVariant::class, 'code')->whereNull('deleted_at'),
+            ],
+            'name' => [
+                'required',
+                Rule::unique(Product::class, 'name')->whereNull('deleted_at'),
+            ],
+            'cost' => Rule::requiredIf($request->type == 'is_single'),
+            'price' => Rule::requiredIf($request->type == 'is_single'),
+            'unit_id' => 'required',
+
+        ];
     }
 
     /**

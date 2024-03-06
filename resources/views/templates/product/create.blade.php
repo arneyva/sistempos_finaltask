@@ -55,59 +55,61 @@
                         <form>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault01">Create Product *</label>
-                                    <input type="text" class="form-control" id="validationDefault01" required
+                                    <label class="form-label" for="name">Name Product *</label>
+                                    <input type="text" class="form-control" id="name" required
                                         placeholder="input name">
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                {{-- <div class="col-md-6 mb-3">
                                     <label class="form-label" for="validationDefault03">Barcode Symbology *</label>
                                     <select class="form-select" id="validationDefault04" required>
-                                        <option selected disabled value="">Choose...</option>
+                                        <option value="CODE128">CODE128</option>
                                         <option>...</option>
                                     </select>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault02">Code Product *</label>
-                                    <input type="text" class="form-control" id="validationDefault02" required
+                                    <label class="form-label" for="codebaseproduct">Code Product *</label>
+                                    <input type="text" class="form-control" id="codebaseproduct" required
                                         placeholder="input code">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault02">Brand</label>
-                                    <select class="form-select" id="validationDefault04" required>
+                                    <label class="form-label" for="brand">Brand</label>
+                                    <select class="form-select" id="brand" required>
                                         <option selected disabled value="">Choose...</option>
-                                        <option>...</option>
+                                        @foreach ($brand as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault03">Category *</label>
-                                    <select class="form-select" id="validationDefault04" required>
+                                    <label class="form-label" for="category">Category *</label>
+                                    <select class="form-select" id="category" required>
                                         <option selected disabled value="">Choose...</option>
-                                        <option>...</option>
+                                        @foreach ($category as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                {{-- <div class="col-md-6 mb-3">
                                     <label class="form-label" for="validationDefault04">Tax Type</label>
                                     <select class="form-select" id="validationDefault04" required>
                                         <option selected disabled value="">Choose...</option>
                                         <option>...</option>
                                     </select>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault05">Tax</label>
+                                    <label class="form-label" for="tax">Tax</label>
                                     <div class="form-group input-group">
                                         <span class="input-group-text" id="basic-addon1">%</span>
-                                        <input type="text" class="form-control" id="validationCustomUsername"
-                                            aria-label="Username" aria-describedby="basic-addon1" required
-                                            placeholder="input tax">
+                                        <input type="text" class="form-control" id="tax" aria-label="Username"
+                                            aria-describedby="basic-addon1" required placeholder="input tax">
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault05">Description</label>
-                                    <input type="text" class="form-control" id="validationDefault05" required
+                                    <label class="form-label" for="description">Description</label>
+                                    <input type="text" class="form-control" id="description" required
                                         placeholder="a few words...">
                                 </div>
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -119,39 +121,42 @@
                         <form>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault02">Type</label>
-                                    <select class="form-select" id="validationDefault04" required>
+                                    <label class="form-label" for="type">Type</label>
+                                    <select class="form-select" id="type" required>
                                         <option selected disabled value="">Choose...</option>
-                                        <option>...</option>
+                                        <option value="is_single">Standart Product</option>
+                                        <option value="is_variant">Varied Product</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault01">Product Cost *</label>
-                                    <input type="text" class="form-control" id="validationDefault01" required
+                                    <label class="form-label" for="productcost">Product Cost *</label>
+                                    <input type="text" class="form-control" id="productcost" required
                                         placeholder="input product cost">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault03">Product Price *</label>
-                                    <input type="text" class="form-control" id="validationDefault03" required
+                                    <label class="form-label" for="productprice">Product Price *</label>
+                                    <input type="text" class="form-control" id="productprice" required
                                         placeholder="input product price">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="validationCustomUsername" class="form-label">Product Unit</label>
-                                    <select class="form-select" id="validationDefault04" required>
+                                    <label for="productunit" class="form-label">Product Unit</label>
+                                    <select class="form-select" id="productunit" required>
+                                        <option selected disabled value="">Choose...</option>
+                                        @foreach ($unit as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="saleunit" class="form-label">Sale Unit</label>
+                                    <select class="form-select" id="saleunit" required>
                                         <option selected disabled value="">Choose...</option>
                                         <option>...</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="validationCustomUsername" class="form-label">Sale Unit</label>
-                                    <select class="form-select" id="validationDefault04" required>
-                                        <option selected disabled value="">Choose...</option>
-                                        <option>...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="validationCustomUsername" class="form-label">Purchase Unit</label>
-                                    <select class="form-select" id="validationDefault04" required>
+                                    <label for="purchaseunit" class="form-label">Purchase Unit</label>
+                                    <select class="form-select" id="purchaseunit" required>
                                         <option selected disabled value="">Choose...</option>
                                         <option>...</option>
                                     </select>
@@ -160,7 +165,7 @@
                             </div>
 
                             <div class="form-group mt-2">
-                                <button class="btn btn-primary" type="submit">Submit form</button>
+                                <button class="btn btn-primary" type="submit">Create</button>
                             </div>
                         </form>
                     </div>
