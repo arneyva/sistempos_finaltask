@@ -11,55 +11,33 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //drop all foreign child of companies
-        Schema::table('office_shifts', function (Blueprint $table) {
-            if (Schema::hasColumn('office_shifts', 'company_id')) {
-                $table->dropForeign('office_shift_company_id');
-
+        $tables1 = ['attendances', 'employees', 'holidays'];
+        
+        foreach ($tables1 as $table1) {
+            if (Schema::hasTable($table1)) {
+                Schema::table($table1, function (Blueprint $table) use ($table1) {
+                    if (Schema::hasColumn($table1, 'company_id')) {
+                        $table->dropForeign($table1.'_company_id');
+                        $table->dropColumn('company_id');
+                    }
+                });
             }
-        });
+        }
+        
 
-        Schema::table('leaves', function (Blueprint $table) {
-            if (Schema::hasColumn('leaves', 'company_id')) {
-                $table->dropForeign('leave_company_id');
-
+        $tables2 = [ 'departments', 'designations','office_shifts', 'leaves'];
+        
+        foreach ($tables2 as $table2) {
+            if (Schema::hasTable($table2)) {
+                Schema::table($table2, function (Blueprint $table) use ($table2) {
+                    if (Schema::hasColumn($table2, 'company_id')) {
+                        $constraintName = substr($table2, 0, -1) . '_company_id';
+                        $table->dropForeign($constraintName);
+                        $table->dropColumn('company_id');
+                    }
+                });
             }
-        });
-
-        Schema::table('holidays', function (Blueprint $table) {
-            if (Schema::hasColumn('holidays', 'company_id')) {
-                $table->dropForeign('holidays_company_id');
-
-            }
-        });
-
-        Schema::table('employees', function (Blueprint $table) {
-            if (Schema::hasColumn('employees', 'company_id')) {
-                $table->dropForeign('employees_company_id');
-
-            }
-        });
-
-        Schema::table('designations', function (Blueprint $table) {
-            if (Schema::hasColumn('designations', 'company_id')) {
-                $table->dropForeign('designation_company_id');
-
-            }
-        });
-
-        Schema::table('attendances', function (Blueprint $table) {
-            if (Schema::hasColumn('attendances', 'company_id')) {
-                $table->dropForeign('attendances_company_id');
-
-            }
-        });
-
-        Schema::table('departments', function (Blueprint $table) {
-            if (Schema::hasColumn('departments', 'company_id')) {
-                $table->dropForeign('department_company_id');
-
-            }
-        });
+        }
     }
 
     /**
@@ -67,53 +45,39 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('office_shifts', function (Blueprint $table) {
-            if (Schema::hasColumn('office_shifts', 'company_id')) {
-                $table->foreign('office_shift_company_id');
+        $tables1 = ['attendances', 'employees', 'holidays'];
 
+        foreach ($tables1 as $table1) {
+            if (Schema::hasTable($table1)) {
+                Schema::table($table1, function (Blueprint $table) use ($table1) {
+                    if (Schema::hasColumn($table1, 'company_id')) {
+                        $table->foreign('company_id', $table1.'_company_id')->references('id')->on('companies')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+                    }
+                    if (!Schema::hasColumn($table1, 'company_id')) {
+                        $table->integer('company_id')->index($table1.'_company_id');
+                        $table->foreign('company_id', $table1.'_company_id')->references('id')->on('companies')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+                    }
+                });
             }
-        });
+        }
+        
 
-        Schema::table('leaves', function (Blueprint $table) {
-            if (Schema::hasColumn('leaves', 'company_id')) {
-                $table->foreign('leave_company_id');
-
+        $tables2 = [ 'departments', 'designations','office_shifts', 'leaves'];
+        
+        foreach ($tables2 as $table2) {
+            if (Schema::hasTable($table2)) {
+                Schema::table($table2, function (Blueprint $table) use ($table2) {
+                    if (Schema::hasColumn($table2, 'company_id')) {
+                        $constraintName = substr($table2, 0, -1) . '_company_id'; // Define the constraint name
+                        $table->foreign('company_id',$constraintName)->references('id')->on('companies')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+                    }
+                    if (!Schema::hasColumn($table2, 'company_id')) {
+                        $constraintName = substr($table2, 0, -1) . '_company_id'; // Define the constraint name
+                        $table->integer('company_id')->index($constraintName);
+                        $table->foreign('company_id',$constraintName)->references('id')->on('companies')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+                    }
+                });
             }
-        });
-
-        Schema::table('holidays', function (Blueprint $table) {
-            if (Schema::hasColumn('holidays', 'company_id')) {
-                $table->foreign('holidays_company_id');
-
-            }
-        });
-
-        Schema::table('employees', function (Blueprint $table) {
-            if (Schema::hasColumn('employees', 'company_id')) {
-                $table->foreign('employees_company_id');
-
-            }
-        });
-
-        Schema::table('designations', function (Blueprint $table) {
-            if (Schema::hasColumn('designations', 'company_id')) {
-                $table->foreign('designation_company_id');
-
-            }
-        });
-
-        Schema::table('attendances', function (Blueprint $table) {
-            if (Schema::hasColumn('attendances', 'company_id')) {
-                $table->foreign('attendances_company_id');
-
-            }
-        });
-
-        Schema::table('departments', function (Blueprint $table) {
-            if (Schema::hasColumn('departments', 'company_id')) {
-                $table->foreign('department_company_id');
-
-            }
-        });
+        }
     }
 };

@@ -11,13 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //drop all foreign child of designations
-        Schema::table('employees', function (Blueprint $table) {
-            if (Schema::hasColumn('employees', 'designation_id')) {
-                $table->dropForeign('employees_designation_id');
+        
 
-            }
-        });
+        if (Schema::hasTable('employees')) {
+            Schema::table('employees', function (Blueprint $table) {
+                if (Schema::hasColumn($table->getTable(), 'designation_id')) {
+                    $table->dropForeign('employees_designation_id');
+                    $table->dropColumn('designation_id');
+                }
+            });
+        }
+
     }
 
     /**
@@ -25,11 +29,18 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('employees', function (Blueprint $table) {
-            if (Schema::hasColumn('employees', 'designation_id')) {
-                $table->foreign('employees_designation_id');
 
-            }
-        });
+        if (Schema::hasTable('employees')) {
+            Schema::table('employees', function (Blueprint $table) {
+                if (Schema::hasColumn($table->getTable(), 'designation_id')) {
+                    $table->foreign('designation_id', 'employees_designation_id')->references('id')->on('employees')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+                }
+                if (!Schema::hasColumn($table->getTable(), 'designation_id')) {
+                    $table->integer('designation_id')->index('employees_designation_id');
+                    $table->foreign('designation_id', 'employees_designation_id')->references('id')->on('employees')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+                }
+            });
+        }
+
     }
 };
