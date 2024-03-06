@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::table('employees', function (Blueprint $table) {
             if (Schema::hasColumn('employees', 'designation_id')) {
                 $table->dropForeign('employees_designation_id');
-                
+
             }
         });
     }
@@ -28,7 +28,7 @@ return new class extends Migration
         Schema::table('employees', function (Blueprint $table) {
             if (Schema::hasColumn('employees', 'designation_id')) {
                 $table->foreign('employees_designation_id');
-                
+
             }
         });
     }

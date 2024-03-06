@@ -66,6 +66,7 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
         Route::delete('destroy/{id}', [UnitController::class, 'destroy'])->name('destroy');
     });
 });
+Route::get('/product/get-units/{id}', [ProductController::class, 'getUnits'])->name('product.getUnits');
 Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.')->group(function () {
     Route::get('list', [AdjustmentController::class, 'index'])->name('index');
     Route::get('detail/{id}', [AdjustmentController::class, 'show'])->name('show');
