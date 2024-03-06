@@ -7,8 +7,11 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\ProductWarehouse;
 use App\Models\Unit;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
@@ -56,61 +59,80 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $productRules = [
-            'type' => 'required',
-            'code' => [
-                'required',
-                Rule::unique(Product::class, 'code')->whereNull('deleted_at'),
-                Rule::unique(ProductVariant::class, 'code')->whereNull('deleted_at'),
-            ],
-            'name' => [
-                'required',
-                Rule::unique(Product::class, 'name')->whereNull('deleted_at'),
-            ],
-            'cost' => Rule::requiredIf($request->type == 'is_single'),
-            'price' => Rule::requiredIf($request->type == 'is_single'),
-            'category_id' => [
-                'required',
-                Rule::exists(Category::class, 'id'),
-            ],
-            'brand_id' => [
-                'required',
-                Rule::exists(Brand::class, 'id'),
-            ],
-            'unit_id' => 'required',
-            'unit_sale_id' => 'required',
-            'unit_purchase_id' => 'required',
-            'TaxNet' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg',
-            'note' => 'nullable',
-            'is_imei' => 'required',
-            'not_selling' => 'required',
-        ];
-        $productValue = new Product();
-        $productValue->type = $request['type'];
-        if ($request['type'] == 'is_single') {
-            $productValue->cost = $request['cost'];
-            $productValue->price = $request['price'];
-        } else {
-            $productValue->cost = 0;
-            $productValue->price = 0;
+        try {
+
+            DB::beginTransaction();
+            $productRules = [
+                'type' => 'required',
+                'code' => [
+                    'required',
+                    Rule::unique(Product::class, 'code')->whereNull('deleted_at'),
+                    Rule::unique(ProductVariant::class, 'code')->whereNull('deleted_at'),
+                ],
+                'name' => [
+                    'required',
+                    Rule::unique(Product::class, 'name')->whereNull('deleted_at'),
+                ],
+                'cost' => Rule::requiredIf($request->type == 'is_single'),
+                'price' => Rule::requiredIf($request->type == 'is_single'),
+                'category_id' => [
+                    'required',
+                    Rule::exists(Category::class, 'id'),
+                ],
+                'brand_id' => [
+                    'required',
+                    Rule::exists(Brand::class, 'id'),
+                ],
+                'unit_id' => 'required',
+                'unit_sale_id' => 'required',
+                'unit_purchase_id' => 'required',
+                'TaxNet' => 'required',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg',
+                'note' => 'nullable',
+                'is_imei' => 'required',
+                'not_selling' => 'required',
+            ];
+            $productValue = new Product();
+            $productValue->type = $request['type'];
+            if ($request['type'] == 'is_single') {
+                $productValue->cost = $request['cost'];
+                $productValue->price = $request['price'];
+            } else {
+                $productValue->cost = 0;
+                $productValue->price = 0;
+            }
+            $productValue->name = $request['name'];
+            $productValue->code = $request['code'];
+            $productValue->Type_barcode = 'CODE128';
+            $productValue->category_id = $request['category_id'];
+            $productValue->brand_id = $request['brand_id'];
+            $productValue->unit_id = $request['unit_id'];
+            $productValue->unit_purchase_id = $request['unit_purchase_id'];
+            $productValue->unit_sale_id = $request['unit_sale_id'];
+            $productValue->TaxNet = $request['TaxNet'];
+            $productValue->note = $request['note'];
+            $productValue->is_imei = $request->has('is_imei') ? 1 : 0;
+            $productValue->not_selling = $request->has('not_selling') ? 1 : 0;
+
+            $productValue->save();
+
+            // proses managament stock di outlet/warehouse
+            $warehouse = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
+            foreach ($warehouse as $warehouse) {
+                $product_warehouse[] = [
+                    'product_id' => $productValue->id,
+                    'warehouse_id' => $warehouse,
+                    'manage_stock' => 0,
+                    'qte' => 0,
+                ];
+            }
+            ProductWarehouse::insert($product_warehouse);
+            DB::commit();
+
+            return redirect()->route('product.index')->with('success', 'Product created successfully');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
         }
-        $productValue->name = $request['name'];
-        $productValue->code = $request['code'];
-        $productValue->Type_barcode = 'CODE128';
-        $productValue->category_id = $request['category_id'];
-        $productValue->brand_id = $request['brand_id'];
-        $productValue->unit_id = $request['unit_id'];
-        $productValue->unit_purchase_id = $request['unit_purchase_id'];
-        $productValue->unit_sale_id = $request['unit_sale_id'];
-        $productValue->TaxNet = $request['TaxNet'];
-        $productValue->note = $request['note'];
-        $productValue->is_imei = $request->has('is_imei') ? 1 : 0;
-        $productValue->not_selling = $request->has('not_selling') ? 1 : 0;
-
-        $productValue->save();
-
-        return redirect()->route('product.index')->with('success', 'Product created successfully');
     }
 
     /**
