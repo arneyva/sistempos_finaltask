@@ -154,8 +154,6 @@
                                                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                                 </path>
                                             </svg>
-
-
                                             <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1"
                                                 aria-labelledby="editModalLabel{{ $item->id }}" aria-hidden="true">
                                                 <div class="modal-dialog">
@@ -332,6 +330,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </td>
                             @endforeach
                         </tbody>
                     </table>

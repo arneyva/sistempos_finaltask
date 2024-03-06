@@ -96,7 +96,40 @@ class WarehousesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $updateRules = $request->validate([
+            'name' => [
+                'required',
+                Rule::unique(Warehouse::class, 'name')->whereNull('deleted_at')->ignore($id),
+            ],
+            'city' => [
+                'required',
+            ],
+            'mobile' => [
+                'required',
+                Rule::unique(Warehouse::class, 'mobile')->whereNull('deleted_at')->ignore($id),
+            ],
+            'zip' => [
+                'required',
+            ],
+            'email' => [
+                'required',
+                Rule::unique(Warehouse::class, 'email')->whereNull('deleted_at')->ignore($id),
+            ],
+            'country' => [
+                'required',
+            ],
+        ]);
+
+        $warehouses = Warehouse::where('id', $id)->update([
+            'name' => $updateRules['name'],
+            'city' => $updateRules['city'],
+            'mobile' => $updateRules['mobile'],
+            'zip' => $updateRules['zip'],
+            'email' => $updateRules['email'],
+            'country' => $updateRules['country'],
+        ]);
+
+        return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse updated successfully');
     }
 
     /**
