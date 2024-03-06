@@ -77,11 +77,11 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => [
                 'required',
-                Rule::unique(Category::class, 'name')->whereNull('deleted_at'),
+                Rule::unique(Category::class, 'name')->whereNull('deleted_at')->ignore($id),
             ],
             'code' => [
                 'required',
-                Rule::unique(Category::class, 'code')->whereNull('deleted_at'),
+                Rule::unique(Category::class, 'code')->whereNull('deleted_at')->ignore($id),
             ],
         ]);
         $newvalue = [

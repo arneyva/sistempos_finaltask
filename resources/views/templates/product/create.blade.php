@@ -37,6 +37,9 @@
 @section('content')
     {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">
+        <div class="mt-3" style="justify-content-center">
+            @include('templates.alert')
+        </div>
     </div>
     {{-- part 2  sisi kiri --}}
     <div class="col-md-12 col-lg-8">
@@ -51,21 +54,22 @@
                     </div>
                     {{--  --}}
                     <div class="card-body">
-                        <form>
+                        <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data">
+                            @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="name">Name Product *</label>
                                     <input type="text" class="form-control" id="name" required
-                                        placeholder="input name">
+                                        placeholder="input name" name="name">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="codebaseproduct">Code Product *</label>
                                     <input type="text" class="form-control" id="codebaseproduct" required
-                                        placeholder="input code">
+                                        placeholder="input code" name="code">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="brand">Brand</label>
-                                    <select class="form-select" id="brand" required>
+                                    <select class="form-select" id="brand" required name="brand_id">
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($brand as $item)
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -74,7 +78,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="category">Category *</label>
-                                    <select class="form-select" id="category" required>
+                                    <select class="form-select" id="category" required name="category_id">
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($category as $item)
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -86,16 +90,16 @@
                                     <div class="form-group input-group">
                                         <span class="input-group-text" id="basic-addon1">%</span>
                                         <input type="text" class="form-control" id="tax" aria-label="Username"
-                                            aria-describedby="basic-addon1" required placeholder="input tax">
+                                            aria-describedby="basic-addon1" required placeholder="input tax" name="TaxNet">
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="description">Description</label>
                                     <input type="text" class="form-control" id="description" required
-                                        placeholder="a few words...">
+                                        placeholder="a few words..." name="note">
                                 </div>
                             </div>
-                        </form>
+
                     </div>
                 </div>
             </div>
@@ -103,54 +107,65 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     {{--  --}}
                     <div class="card-body">
-                        <form>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="type">Type</label>
-                                    <select class="form-select" id="type" required>
-                                        <option selected disabled value="">Choose...</option>
-                                        <option value="is_single">Standart Product</option>
-                                        <option value="is_variant">Varied Product</option>
-                                    </select>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="type">Type</label>
+                                <select class="form-select" id="type" required name="type">
+                                    <option selected disabled value="">Choose...</option>
+                                    <option value="is_single">Standart Product</option>
+                                    <option value="is_variant">Varied Product</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="productcost">Product Cost *</label>
+                                <input type="text" class="form-control" id="productcost" required
+                                    placeholder="input product cost" name="cost">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="productprice">Product Price *</label>
+                                <input type="text" class="form-control" id="productprice" required
+                                    placeholder="input product price" name="price">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="productunit" class="form-label">Product Unit</label>
+                                <select class="form-select" id="productunit" required name="unit_id">
+                                    <option selected disabled value="">Choose...</option>
+                                    @foreach ($unit as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="saleunit" class="form-label">Sale Unit</label>
+                                <select class="form-select" id="saleunit" required name="unit_sale_id">
+                                    <option selected disabled value="">Choose...</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="purchaseunit" class="form-label">Purchase Unit</label>
+                                <select class="form-select" id="purchaseunit" required name="unit_purchase_id">
+                                    <option selected disabled value="">Choose...</option>
+                                    <option>...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="is_imei" name="is_imei">
+                                    <label class="form-check-label" for="is_imei">Product has Imei/Serial
+                                        Number</label>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="productcost">Product Cost *</label>
-                                    <input type="text" class="form-control" id="productcost" required
-                                        placeholder="input product cost">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="productprice">Product Price *</label>
-                                    <input type="text" class="form-control" id="productprice" required
-                                        placeholder="input product price">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="productunit" class="form-label">Product Unit</label>
-                                    <select class="form-select" id="productunit" required>
-                                        <option selected disabled value="">Choose...</option>
-                                        @foreach ($unit as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="saleunit" class="form-label">Sale Unit</label>
-                                    <select class="form-select" id="saleunit" required>
-                                        <option selected disabled value="">Choose...</option>
-                                        <option>...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="purchaseunit" class="form-label">Purchase Unit</label>
-                                    <select class="form-select" id="purchaseunit" required>
-                                        <option selected disabled value="">Choose...</option>
-                                        <option>...</option>
-                                    </select>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="not_selling" name="not_selling">
+                                    <label class="form-check-label" for="not_selling">This Product Not For Selling
+                                        Number</label>
                                 </div>
                             </div>
-                            <div class="form-group mt-2">
-                                <button class="btn btn-primary" type="submit">Create</button>
-                            </div>
-                        </form>
+                        </div>
+                        <div class="form-group mt-2">
+                            <button class="btn btn-primary" type="submit">Create</button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -189,7 +204,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -204,6 +218,7 @@
             </div>
         </div>
     </div>
+    </form>
     {{-- end --}}
 @endsection
 @push('script')

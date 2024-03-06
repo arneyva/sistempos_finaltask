@@ -65,9 +65,48 @@ class ProductController extends Controller
             ],
             'cost' => Rule::requiredIf($request->type == 'is_single'),
             'price' => Rule::requiredIf($request->type == 'is_single'),
+            'category_id' => [
+                'required',
+                Rule::exists(Category::class, 'id'),
+            ],
+            'brand_id' => [
+                'required',
+                Rule::exists(Brand::class, 'id'),
+            ],
             'unit_id' => 'required',
-
+            'unit_sale_id' => 'required',
+            'unit_purchase_id' => 'required',
+            'TaxNet' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg',
+            'note' => 'nullable',
+            'is_imei' => 'required',
+            'not_selling' => 'required',
         ];
+        $productValue = new Product();
+        $productValue->type = $request['type'];
+        if ($request['type'] == 'is_single') {
+            $productValue->cost = $request['cost'];
+            $productValue->price = $request['price'];
+        } else {
+            $productValue->cost = 0;
+            $productValue->price = 0;
+        }
+        $productValue->name = $request['name'];
+        $productValue->code = $request['code'];
+        $productValue->Type_barcode = 'CODE128';
+        $productValue->category_id = $request['category_id'];
+        $productValue->brand_id = $request['brand_id'];
+        $productValue->unit_id = $request['unit_id'];
+        $productValue->unit_purchase_id = $request['unit_purchase_id'];
+        $productValue->unit_sale_id = $request['unit_sale_id'];
+        $productValue->TaxNet = $request['TaxNet'];
+        $productValue->note = $request['note'];
+        $productValue->is_imei = $request->has('is_imei') ? 1 : 0;
+        $productValue->not_selling = $request->has('not_selling') ? 1 : 0;
+
+        $productValue->save();
+
+        return redirect()->route('product.index')->with('success', 'Product created successfully');
     }
 
     /**
