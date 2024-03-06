@@ -18,7 +18,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('templates.product.index');
+        $product = Product::query()->latest()->get();
+
+        return view('templates.product.index', [
+            'product' => $product,
+        ]);
     }
 
     /**
