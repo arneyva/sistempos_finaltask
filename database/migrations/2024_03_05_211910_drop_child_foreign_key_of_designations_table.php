@@ -11,7 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        
 
         if (Schema::hasTable('employees')) {
             Schema::table('employees', function (Blueprint $table) {
@@ -35,7 +34,7 @@ return new class extends Migration
                 if (Schema::hasColumn($table->getTable(), 'designation_id')) {
                     $table->foreign('designation_id', 'employees_designation_id')->references('id')->on('employees')->onUpdate('RESTRICT')->onDelete('RESTRICT');
                 }
-                if (!Schema::hasColumn($table->getTable(), 'designation_id')) {
+                if (! Schema::hasColumn($table->getTable(), 'designation_id')) {
                     $table->integer('designation_id')->index('employees_designation_id');
                     $table->foreign('designation_id', 'employees_designation_id')->references('id')->on('employees')->onUpdate('RESTRICT')->onDelete('RESTRICT');
                 }
