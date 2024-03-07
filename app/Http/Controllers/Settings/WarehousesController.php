@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\ProductWarehouse;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class WarehousesController extends Controller
@@ -39,40 +42,62 @@ class WarehousesController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                Rule::unique(Warehouse::class, 'name')->whereNull('deleted_at'),
-            ],
-            'city' => [
-                'required',
-            ],
-            'mobile' => [
-                'required',
-                Rule::unique(Warehouse::class, 'mobile')->whereNull('deleted_at'),
-            ],
-            'zip' => [
-                'required',
-            ],
-            'email' => [
-                'required',
-                Rule::unique(Warehouse::class, 'email')->whereNull('deleted_at'),
-            ],
-            'country' => [
-                'required',
-            ],
-        ]);
-        $warehouses = Warehouse::create([
-            'name' => $validated['name'],
-            'city' => $validated['city'],
-            'mobile' => $validated['mobile'],
-            'zip' => $validated['zip'],
-            'email' => $validated['email'],
-            'country' => $validated['country'],
-        ]);
+        try {
+            DB::beginTransaction();
+            $validated = $request->validate([
+                'name' => [
+                    'required',
+                    Rule::unique(Warehouse::class, 'name')->whereNull('deleted_at'),
+                ],
+                'city' => [
+                    'required',
+                ],
+                'mobile' => [
+                    'required',
+                    Rule::unique(Warehouse::class, 'mobile')->whereNull('deleted_at'),
+                ],
+                'zip' => [
+                    'required',
+                ],
+                'email' => [
+                    'required',
+                    Rule::unique(Warehouse::class, 'email')->whereNull('deleted_at'),
+                ],
+                'country' => [
+                    'required',
+                ],
+            ]);
+            $warehouses = Warehouse::create([
+                'name' => $validated['name'],
+                'city' => $validated['city'],
+                'mobile' => $validated['mobile'],
+                'zip' => $validated['zip'],
+                'email' => $validated['email'],
+                'country' => $validated['country'],
+            ]);
 
-        // return redirect('/settings/warehouses/index');
-        return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouses created successfully');
+            $products = Product::where('deleted_at', '=', null)->get(['id', 'type']);
+            if ($products) {
+                foreach ($products as $products) {
+                    $product_warehouse = [];
+                    // handle product standart
+                    $product_warehouse[] = [
+                        'product_id' => $products->id,
+                        'warehouse_id' => $warehouses->id,
+                        'product_variant_id' => null,
+                        'manage_stock' => 1,
+                        'qte' => 0,
+                    ];
+                    ProductWarehouse::insert($product_warehouse);
+                    DB::commit();
+                }
+            }
+
+            // return redirect('/settings/warehouses/index');
+            return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouses created successfully');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
     }
 
     /**
