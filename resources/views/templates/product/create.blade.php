@@ -149,6 +149,39 @@
                                     <option>...</option>
                                 </select>
                             </div>
+                            {{-- handel produk variant --}}
+                            <div class="col-md-12 mb-3" id="createvariant">
+                                <div class="row">
+                                    <div class="col-md-9 mb-3">
+                                        <input type="text" class="form-control" id="variantNameInput" required
+                                            placeholder="Enter Variant Name">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-soft-primary" id="createVariantBtn"
+                                            type="button">Create</button>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="table-responsive">
+                                            <table id="variantTable" class="table table-striped mb-0" role="grid">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Variant Name</th>
+                                                        <th>Variant code</th>
+                                                        <th>Variant cost</th>
+                                                        <th>Variant price</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="variantTableBody">
+                                                    {{-- Table rows will be dynamically added here --}}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{--  --}}
                             <div class="col-md-6 mb-3">
                                 <div class="form-check mb-3">
                                     <input type="checkbox" class="form-check-input" id="is_imei" name="is_imei">
@@ -160,6 +193,7 @@
                                     <label class="form-check-label" for="not_selling">This Product Not For Selling
                                         Number</label>
                                 </div>
+
                             </div>
                         </div>
                         <div class="form-group mt-2">
@@ -289,15 +323,18 @@
             var typeSelect = document.getElementById("type");
             var productCostField = document.getElementById("productcost");
             var productPriceField = document.getElementById("productprice");
+            var productVariantField = document.getElementById("createvariant");
 
             typeSelect.addEventListener("change", function() {
                 var selectedType = this.value;
                 if (selectedType === "is_variant") {
                     productCostField.disabled = true;
                     productPriceField.disabled = true;
+                    productVariantField.style.display = "block";
                 } else {
                     productCostField.disabled = false;
                     productPriceField.disabled = false;
+                    productVariantField.style.display = "none";
                 }
             });
 
@@ -306,8 +343,60 @@
             if (initialType === "is_variant") {
                 productCostField.disabled = true;
                 productPriceField.disabled = true;
+                productVariantField.style.display = "block";
             }
         });
+        document.addEventListener("DOMContentLoaded", function() {
+            var createVariantBtn = document.getElementById("createVariantBtn");
+            var variantNameInput = document.getElementById("variantNameInput");
+            var variantTableBody = document.getElementById("variantTableBody");
+
+            createVariantBtn.addEventListener("click", function() {
+                var variantName = variantNameInput.value;
+
+                if (variantName.trim() === "") {
+                    alert("Please enter a variant name.");
+                    return;
+                }
+
+                addVariantRow(variantName);
+                variantNameInput.value = ""; // Reset the input field after adding the variant
+            });
+
+            function addVariantRow(variantName) {
+                var newRow = document.createElement("tr");
+                newRow.innerHTML = `
+        <td>${variantName}</td>
+        <td contenteditable="true" class="variant-code"></td>
+        <td contenteditable="true" class="variant-cost"></td>
+        <td contenteditable="true" class="variant-price"></td>
+        <td>
+            <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
+        </td>
+    `;
+                variantTableBody.appendChild(newRow);
+
+                // Add event listener for delete button
+                newRow.querySelector(".delete-variant").addEventListener("click", function() {
+                    newRow.remove(); // Remove the row when delete button is clicked
+                });
+            }
+
+        });
+        var variantTable = document.getElementById("variantTable");
+
+        function saveVariantData() {
+            var rows = variantTable.querySelectorAll("tbody tr");
+
+            rows.forEach(function(row) {
+                var variantName = row.cells[0].textContent; // Ambil nama varian dari kolom pertama
+                var variantCode = row.cells[1].textContent; // Ambil kode varian dari kolom kedua
+                var variantCost = row.cells[2].textContent; // Ambil biaya varian dari kolom ketiga
+                var variantPrice = row.cells[3].textContent; // Ambil harga varian dari kolom keempat
+
+                // Lakukan sesuatu dengan data varian yang sudah diambil, misalnya simpan ke dalam array atau kirim ke server
+            });
+        }
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
