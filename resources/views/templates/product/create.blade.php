@@ -56,6 +56,7 @@
                     <div class="card-body">
                         <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data">
                             @csrf
+                            <input type="hidden" id="variantData" name="variants">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="name">Name Product *</label>
@@ -153,7 +154,7 @@
                             <div class="col-md-12 mb-3" id="createvariant">
                                 <div class="row">
                                     <div class="col-md-9 mb-3">
-                                        <input type="text" class="form-control" id="variantNameInput" required
+                                        <input type="text" class="form-control" id="variantNameInput"
                                             placeholder="Enter Variant Name">
                                     </div>
                                     <div class="col-md-3 mb-3">
@@ -180,7 +181,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             {{--  --}}
                             <div class="col-md-6 mb-3">
                                 <div class="form-check mb-3">
@@ -300,25 +300,8 @@
                 logoUpload.value = '';
             })
         });
-
-        // handle is_variant dan is_single
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     var typeSelect = document.getElementById("type");
-        //     var productCostField = document.getElementById("productcost");
-        //     var productPriceField = document.getElementById("productprice");
-
-        //     typeSelect.addEventListener("change", function() {
-        //         var selectedType = this.value;
-        //         if (selectedType === "is_variant") {
-        //             productCostField.disabled = true;
-        //             // productCostField.placeholder = 'Choose Module Category';
-        //             productPriceField.disabled = "true";
-        //         } else {
-        //             productCostField.style.display = "block";
-        //             productPriceField.style.display = "block";
-        //         }
-        //     });
-        // });
+    </script>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
             var typeSelect = document.getElementById("type");
             var productCostField = document.getElementById("productcost");
@@ -328,6 +311,8 @@
             typeSelect.addEventListener("change", function() {
                 var selectedType = this.value;
                 if (selectedType === "is_variant") {
+                    productCostField.value = ""; // Kosongkan nilai input biaya produk
+                    productPriceField.value = ""; // Kosongkan nilai input harga produk
                     productCostField.disabled = true;
                     productPriceField.disabled = true;
                     productVariantField.style.display = "block";
@@ -341,6 +326,8 @@
             // Set status awal
             var initialType = typeSelect.value;
             if (initialType === "is_variant") {
+                productCostField.value = ""; // Kosongkan nilai input biaya produk
+                productPriceField.value = ""; // Kosongkan nilai input harga produk
                 productCostField.disabled = true;
                 productPriceField.disabled = true;
                 productVariantField.style.display = "block";
@@ -350,15 +337,12 @@
             var createVariantBtn = document.getElementById("createVariantBtn");
             var variantNameInput = document.getElementById("variantNameInput");
             var variantTableBody = document.getElementById("variantTableBody");
-
             createVariantBtn.addEventListener("click", function() {
                 var variantName = variantNameInput.value;
-
                 if (variantName.trim() === "") {
                     alert("Please enter a variant name.");
                     return;
                 }
-
                 addVariantRow(variantName);
                 variantNameInput.value = ""; // Reset the input field after adding the variant
             });
@@ -366,10 +350,10 @@
             function addVariantRow(variantName) {
                 var newRow = document.createElement("tr");
                 newRow.innerHTML = `
-        <td>${variantName}</td>
-        <td contenteditable="true" class="variant-code"></td>
-        <td contenteditable="true" class="variant-cost"></td>
-        <td contenteditable="true" class="variant-price"></td>
+        <td><input required class="form-control" type="text" style="border-color: #DF4141;" value="${variantName}" name="variants[][name]"></td>
+        <td contenteditable="true" class="variant-code"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[][code]"></td>
+        <td contenteditable="true" class="variant-cost"><input required class="form-control" type="text" style="border-color: #DF4141;"  name="variants[][cost]"></td>
+        <td contenteditable="true" class="variant-price"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[][price]"></td>
         <td>
             <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
         </td>
