@@ -53,9 +53,10 @@
                         </div>
                     </div>
                     {{--  --}}
-                    <div class="card-body">
-                        <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data">
-                            @csrf
+                    <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data"
+                        onsubmit="saveVariantData()">
+                        @csrf
+                        <div class="card-body">
                             <input type="hidden" id="variantData" name="variants">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -100,8 +101,7 @@
                                         placeholder="a few words..." name="note">
                                 </div>
                             </div>
-
-                    </div>
+                        </div>
                 </div>
             </div>
             <div class="col-md-12">
@@ -158,8 +158,8 @@
                                             placeholder="Enter Variant Name">
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <button class="btn btn-soft-primary" id="createVariantBtn"
-                                            type="button">Create</button>
+                                        <button class="btn btn-soft-primary" id="createVariantBtn" type="button">Add
+                                            +</button>
                                     </div>
                                     <div class="card-body p-3">
                                         <div class="table-responsive">
@@ -333,6 +333,7 @@
                 productVariantField.style.display = "block";
             }
         });
+
         document.addEventListener("DOMContentLoaded", function() {
             var createVariantBtn = document.getElementById("createVariantBtn");
             var variantNameInput = document.getElementById("variantNameInput");
@@ -350,14 +351,14 @@
             function addVariantRow(variantName) {
                 var newRow = document.createElement("tr");
                 newRow.innerHTML = `
-        <td><input required class="form-control" type="text" style="border-color: #DF4141;" value="${variantName}" name="variants[][name]"></td>
-        <td contenteditable="true" class="variant-code"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[][code]"></td>
-        <td contenteditable="true" class="variant-cost"><input required class="form-control" type="text" style="border-color: #DF4141;"  name="variants[][cost]"></td>
-        <td contenteditable="true" class="variant-price"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[][price]"></td>
-        <td>
-            <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
-        </td>
-    `;
+                    <td><input required class="form-control" type="text" style="border-color: #DF4141;" value="${variantName}" name="variants[name]"></td>
+                    <td contenteditable="true" class="variant-code"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[code]"></td>
+                    <td contenteditable="true" class="variant-cost"><input required class="form-control" type="text" style="border-color: #DF4141;"  name="variants[cost]"></td>
+                    <td contenteditable="true" class="variant-price"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[price]"></td>
+                    <td>
+                        <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
+                    </td>
+                `;
                 variantTableBody.appendChild(newRow);
 
                 // Add event listener for delete button
@@ -365,23 +366,32 @@
                     newRow.remove(); // Remove the row when delete button is clicked
                 });
             }
-
         });
-        var variantTable = document.getElementById("variantTable");
 
+        // Menangani penyimpanan data produk varian sebelum formulir disubmit
         function saveVariantData() {
-            var rows = variantTable.querySelectorAll("tbody tr");
+            var variantsData = [];
+            var rows = document.getElementById("variantTableBody").querySelectorAll("tr");
 
             rows.forEach(function(row) {
-                var variantName = row.cells[0].textContent; // Ambil nama varian dari kolom pertama
-                var variantCode = row.cells[1].textContent; // Ambil kode varian dari kolom kedua
-                var variantCost = row.cells[2].textContent; // Ambil biaya varian dari kolom ketiga
-                var variantPrice = row.cells[3].textContent; // Ambil harga varian dari kolom keempat
+                var variantName = row.cells[0].querySelector('input').value;
+                var variantCode = row.cells[1].querySelector('input').value;
+                var variantCost = row.cells[2].querySelector('input').value;
+                var variantPrice = row.cells[3].querySelector('input').value;
 
-                // Lakukan sesuatu dengan data varian yang sudah diambil, misalnya simpan ke dalam array atau kirim ke server
+                variantsData.push({
+                    name: variantName,
+                    code: variantCode,
+                    cost: variantCost,
+                    price: variantPrice
+                });
             });
+
+            // Simpan data produk varian ke dalam input tersembunyi sebelum formulir disubmit
+            document.getElementById("variantData").value = JSON.stringify(variantsData);
         }
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var productUnitSelect = document.getElementById("productunit");
