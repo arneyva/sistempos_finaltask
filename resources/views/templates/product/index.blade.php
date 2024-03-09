@@ -44,7 +44,11 @@
                                         </div>
                                     </td>
                                     <td>
-                                        {{ $item->type }}
+                                        @if ($item->type === 'is_variant')
+                                            <button type="button" class="btn btn-soft-primary">Varied Product</button>
+                                        @else
+                                            <button type="button" class="btn btn-soft-danger">Single Product</button>
+                                        @endif
                                     </td>
                                     <td>{{ $item->code }}</td>
                                     <td>{{ $item->brand->name }}</td>
