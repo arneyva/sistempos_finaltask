@@ -12,7 +12,10 @@ use App\Models\Unit;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+
+use function Laravel\Prompts\alert;
 
 class ProductController extends Controller
 {
@@ -60,7 +63,6 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
-
             DB::beginTransaction();
             $productRules = [
                 'type' => 'required',
@@ -92,6 +94,7 @@ class ProductController extends Controller
                 'is_imei' => 'required',
                 'not_selling' => 'required',
             ];
+
             $productValue = new Product();
             $productValue->type = $request['type'];
             if ($request['type'] == 'is_single') {
@@ -113,9 +116,48 @@ class ProductController extends Controller
             $productValue->note = $request['note'];
             $productValue->is_imei = $request->has('is_imei') ? 1 : 0;
             $productValue->not_selling = $request->has('not_selling') ? 1 : 0;
-
             $productValue->save();
+            // handle produk bervariant
+            if ($request['type'] == 'is_variant') {
+                $productRules['variants'] = 'required|array|min:1';
+                if (! empty($request['variants'])) {
+                    foreach ($request['variants'] as $variantData) {
+                        // Lakukan iterasi di sini
+                        $variantRules = [
+                            'name' => 'required',
+                            'code' => 'required',
+                            'cost' => 'required',
+                            'price' => 'required',
+                        ];
+                        $validator = Validator::make($variantData, $variantRules);
+                        // Validasi Variants di Backend
+                        if ($validator->fails()) {
+                            // Menghentikan proses penyimpanan produk jika validasi untuk salah satu variant gagal
+                            return response()->json(['errors' => $validator->errors()], 422);
+                        }
+                        // Tampilkan Error di Frontend
+                        alert('error', $validator->errors()->first());
+                    }
+                } else {
+                    // Handle jika $request['variants'] kosong atau tidak valid
+                    alert('astagfir');
 
+                    return redirect()->back()->with('success', 'Variants cannot be empty or invalid.');
+                }
+                $productVariant = [];
+                // Jika validasi berhasil, Anda dapat menyimpan data varian
+                foreach ($request['variants'] as $variantData) {
+                    $productVariant = new ProductVariant();
+                    $productVariant->product_id = $productValue->id;
+                    $productVariant->name = $variantData['name'];
+                    $productVariant->code = $variantData['code'];
+                    $productVariant->cost = $variantData['cost'];
+                    $productVariant->price = $variantData['price'];
+                    // Anda mungkin perlu menyimpan data varian lainnya sesuai kebutuhan
+                    $productVariant->save();
+                }
+            }
+            //
             // proses managament stock di outlet/warehouse
             $warehouse = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
             foreach ($warehouse as $warehouse) {
