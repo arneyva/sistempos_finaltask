@@ -23,5 +23,16 @@ class UserSeeder extends Seeder
             'status' => 1,
             'is_all_warehouses' => 1,
         ]);
+        User::firstOrCreate([
+            'firstname' => 'admin',
+            'lastname' => 'admin',
+            'username' => 'admin',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('password'),
+            'phone' => '089655443321',
+            'gender' => 'perempuan',
+            'status' => 1,
+            'is_all_warehouses' => 1,
+        ]);
     }
 }
