@@ -51,7 +51,9 @@
                                         @endif
                                     </td>
                                     <td>{{ $item->code }}</td>
-                                    <td>{{ $item->brand->name }}</td>
+                                    <td>
+                                        {{ $item->brand->name }}
+                                    </td>
                                     <td>
                                         {{ $item->category->name }}
                                     </td>
