@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -34,6 +35,16 @@ class Product extends Model
         'not_selling',
         'is_active',
     ];
+
+    /**
+     * Get all of the variant for the Product
+     *
+     * @return \Illuminate\DatProductVariant\Eloquent\Relations\HasMany
+     */
+    public function variant(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id', 'id');
+    }
 
     public function brand()
     {
