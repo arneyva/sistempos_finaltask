@@ -98,13 +98,16 @@ class ProductController extends Controller
             if ($request['type'] == 'is_single') {
                 $productValue->cost = $request['cost'];
                 $productValue->price = $request['price'];
+                $productValue->is_variant = 0;
             } else {
                 $productValue->cost = 0;
                 $productValue->price = 0;
+                $productValue->is_variant = 1;
             }
             $productValue->name = $request['name'];
             $productValue->code = $request['code'];
             $productValue->Type_barcode = 'CODE128';
+            $productValue->tax_method = 'Exclusive';
             $productValue->category_id = $request['category_id'];
             $productValue->brand_id = $request['brand_id'];
             $productValue->unit_id = $request['unit_id'];
@@ -257,13 +260,27 @@ class ProductController extends Controller
             }
             // proses managament stock di outlet/warehouse
             $warehouse = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
+            $productVariants = ProductVariant::where('product_id', $productValue->id)->whereNull('deleted_at')->get();
             foreach ($warehouse as $warehouse) {
-                $product_warehouse[] = [
-                    'product_id' => $productValue->id,
-                    'warehouse_id' => $warehouse,
-                    'manage_stock' => 0,
-                    'qte' => 0,
-                ];
+                // handle product variants
+                if ($productValue->is_variant == 1) {
+                    foreach ($productVariants as $productVariant) {
+                        $product_warehouse[] = [
+                            'product_id' => $productValue->id,
+                            'warehouse_id' => $warehouse,
+                            'product_variant_id' => $productVariant->id,
+                            'manage_stock' => 1,
+
+                        ];
+                    }
+                } else {
+                    $product_warehouse[] = [
+                        'product_id' => $productValue->id,
+                        'warehouse_id' => $warehouse,
+                        'manage_stock' => 1,
+
+                    ];
+                }
             }
             ProductWarehouse::insert($product_warehouse);
             DB::commit();
