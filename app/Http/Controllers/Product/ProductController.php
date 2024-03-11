@@ -62,12 +62,16 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             // rules produk utama
-            $productRules = [
+            $productRules = $request->validate([
                 'type' => 'required',
                 'code' => [
                     'required',
-                    Rule::unique(Product::class, 'code')->whereNull('deleted_at'),
-                    Rule::unique(ProductVariant::class, 'code')->whereNull('deleted_at'),
+                    Rule::unique('products')->where(function ($query) {
+                        return $query->where('deleted_at', '=', null);
+                    }),
+                    Rule::unique('product_variants')->where(function ($query) {
+                        return $query->where('deleted_at', '=', null);
+                    }),
                 ],
                 'name' => [
                     'required',
@@ -89,9 +93,9 @@ class ProductController extends Controller
                 'TaxNet' => 'required',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg',
                 'note' => 'nullable',
-                'is_imei' => 'required',
-                'not_selling' => 'required',
-            ];
+                'is_imei' => 'nullable',
+                'not_selling' => 'nullable',
+            ]);
             // memasukan data ke produk utama
             $productValue = new Product();
             $productValue->type = $request['type'];

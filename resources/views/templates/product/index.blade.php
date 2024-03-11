@@ -1,6 +1,9 @@
 @extends('templates.main')
 @section('content')
     <div class="col-sm-12">
+        <div class="mt-3" style="justify-content-center">
+            @include('templates.alert')
+        </div>
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">

@@ -63,11 +63,17 @@
                                     <label class="form-label" for="name">Name Product *</label>
                                     <input type="text" class="form-control" id="name" required
                                         placeholder="input name" name="name">
+                                    @error('name')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="codebaseproduct">Code Product *</label>
                                     <input type="text" class="form-control" id="codebaseproduct" required
                                         placeholder="input code" name="code">
+                                    @error('code')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="brand">Brand</label>
@@ -93,6 +99,9 @@
                                         <span class="input-group-text" id="basic-addon1">%</span>
                                         <input type="text" class="form-control" id="tax" aria-label="Username"
                                             aria-describedby="basic-addon1" required placeholder="input tax" name="TaxNet">
+                                        @error('TaxNet')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
