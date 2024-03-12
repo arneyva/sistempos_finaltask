@@ -62,7 +62,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="name">Name Product *</label>
                                     <input type="text" class="form-control" id="name" required
-                                        placeholder="input name" name="name">
+                                        placeholder="input name" name="name" value="{{ Session::get('name') }}">
                                     @error('name')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -76,7 +76,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="codebaseproduct">Code Product *</label>
                                     <input type="text" class="form-control" id="codebaseproduct" required
-                                        placeholder="input code" name="code">
+                                        placeholder="input code" name="code" value="{{ Session::get('code') }}">
                                     @error('code')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -92,7 +92,9 @@
                                     <select class="form-select" id="brand" required name="brand_id">
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($brand as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            <option value="{{ $item->id }}"
+                                                {{ old('brand_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('brand_id')
@@ -110,7 +112,9 @@
                                     <select class="form-select" id="category" required name="category_id">
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($category as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            <option value="{{ $item->id }}"
+                                                {{ old('category_id') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('category_id')
@@ -129,7 +133,7 @@
                                         <span class="input-group-text" id="basic-addon1">%</span>
                                         <input type="text" class="form-control" id="tax" aria-label="Username"
                                             aria-describedby="basic-addon1" required placeholder="input tax"
-                                            name="TaxNet">
+                                            name="TaxNet" value="{{ Session::get('TaxNet') }}">
                                     </div>
                                     @error('TaxNet')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -143,8 +147,8 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="description">Note</label>
-                                    <input type="text" class="form-control" id="description" required
-                                        placeholder="a few words..." name="note">
+                                    <input type="text" class="form-control" id="description"
+                                        placeholder="a few words..." name="note" value="{{ Session::get('note') }}">
                                     @error('note')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -161,33 +165,54 @@
             </div>
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
-                    {{--  --}}
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="type">Type</label>
                                 <select class="form-select" id="type" required name="type">
                                     <option selected disabled value="">Choose...</option>
-                                    <option value="is_single">Standart Product</option>
-                                    <option value="is_variant">Varied Product</option>
+                                    <option value="is_single" {{ old('type') == 'is_single' ? 'selected' : '' }}>Standart
+                                        Product</option>
+                                    <option value="is_variant" {{ old('type') == 'is_variant' ? 'selected' : '' }}>Varied
+                                        Product</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="productcost">Product Cost *</label>
                                 <input type="text" class="form-control" id="productcost" required
-                                    placeholder="input product cost" name="cost">
+                                    placeholder="input product cost" name="cost" value="{{ Session::get('cost') }}">
+                                @error('cost')
+                                    <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                        role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                        <span style="margin-left: 3px"> {{ $message }}</span>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                            aria-label="Close"
+                                            style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                    </div>
+                                @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="productprice">Product Price *</label>
                                 <input type="text" class="form-control" id="productprice" required
-                                    placeholder="input product price" name="price">
+                                    placeholder="input product price" name="price"
+                                    value="{{ Session::get('price') }}">
+                                @error('price')
+                                    <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                        role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                        <span style="margin-left: 3px"> {{ $message }}</span>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                            aria-label="Close"
+                                            style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                    </div>
+                                @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="productunit" class="form-label">Product Unit</label>
                                 <select class="form-select" id="productunit" required name="unit_id">
                                     <option selected disabled value="">Choose...</option>
                                     @foreach ($unit as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>

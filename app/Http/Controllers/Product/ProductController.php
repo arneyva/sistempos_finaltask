@@ -12,6 +12,7 @@ use App\Models\Unit;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
@@ -61,6 +62,13 @@ class ProductController extends Controller
     {
         try {
             DB::beginTransaction();
+            // session jika gagal
+            Session::flash('name', $request->name);
+            Session::flash('code', $request->code);
+            Session::flash('cost', $request->cost);
+            Session::flash('price', $request->price);
+            Session::flash('TaxNet', $request->TaxNet);
+            Session::flash('note', $request->note);
             // rules produk utama
             $productRules = $request->validate([
                 'type' => 'required',
@@ -77,8 +85,14 @@ class ProductController extends Controller
                     'required',
                     Rule::unique(Product::class, 'name')->whereNull('deleted_at'),
                 ],
-                'cost' => Rule::requiredIf($request->type == 'is_single'),
-                'price' => Rule::requiredIf($request->type == 'is_single'),
+                'cost' => [
+                    Rule::requiredIf($request->type == 'is_single'),
+                    'numeric', 'regex:/^\d+(\.\d{1,2})?$/',
+                ],
+                'price' => [
+                    Rule::requiredIf($request->type == 'is_single'),
+                    'numeric', 'regex:/^\d+(\.\d{1,2})?$/',
+                ],
                 'category_id' => [
                     'required',
                     Rule::exists(Category::class, 'id'),
