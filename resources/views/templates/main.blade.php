@@ -394,7 +394,7 @@
     <script>
         $("document").ready(function() {
             setTimeout(function() {
-                $("div.alert").remove();
+                $("div.alert1").remove();
             }, 1500); // secs
         });
     </script>
