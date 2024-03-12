@@ -90,7 +90,7 @@ class ProductController extends Controller
                 'unit_id' => 'required',
                 'unit_sale_id' => 'required',
                 'unit_purchase_id' => 'required',
-                'TaxNet' => 'required',
+                'TaxNet' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg',
                 'note' => 'nullable',
                 'is_imei' => 'nullable',

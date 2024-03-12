@@ -64,7 +64,13 @@
                                     <input type="text" class="form-control" id="name" required
                                         placeholder="input name" name="name">
                                     @error('name')
-                                        <p class="text-danger">{{ $message }}</p>
+                                        <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                            role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                            <span style="margin-left: 3px"> {{ $message }}</span>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                                aria-label="Close"
+                                                style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                        </div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -72,7 +78,13 @@
                                     <input type="text" class="form-control" id="codebaseproduct" required
                                         placeholder="input code" name="code">
                                     @error('code')
-                                        <p class="text-danger">{{ $message }}</p>
+                                        <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                            role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                            <span style="margin-left: 3px"> {{ $message }}</span>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                                aria-label="Close"
+                                                style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                        </div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -83,6 +95,15 @@
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('brand_id')
+                                        <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                            role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                            <span style="margin-left: 3px"> {{ $message }}</span>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                                aria-label="Close"
+                                                style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                        </div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="category">Category *</label>
@@ -92,22 +113,47 @@
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('category_id')
+                                        <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                            role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                            <span style="margin-left: 3px"> {{ $message }}</span>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                                aria-label="Close"
+                                                style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                        </div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="tax">Tax</label>
                                     <div class="form-group input-group">
                                         <span class="input-group-text" id="basic-addon1">%</span>
                                         <input type="text" class="form-control" id="tax" aria-label="Username"
-                                            aria-describedby="basic-addon1" required placeholder="input tax" name="TaxNet">
-                                        @error('TaxNet')
-                                            <p class="text-danger">{{ $message }}</p>
-                                        @enderror
+                                            aria-describedby="basic-addon1" required placeholder="input tax"
+                                            name="TaxNet">
                                     </div>
+                                    @error('TaxNet')
+                                        <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                            role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                            <span style="margin-left: 3px"> {{ $message }}</span>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                                aria-label="Close"
+                                                style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                        </div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="description">Description</label>
+                                    <label class="form-label" for="description">Note</label>
                                     <input type="text" class="form-control" id="description" required
                                         placeholder="a few words..." name="note">
+                                    @error('note')
+                                        <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                            role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                            <span style="margin-left: 3px"> {{ $message }}</span>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                                aria-label="Close"
+                                                style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                        </div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
