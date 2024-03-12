@@ -402,7 +402,8 @@
                     productVariantField.style.display = "none";
                 }
             });
-
+            // Sembunyikan area pembuatan varian produk secara default
+            productVariantField.style.display = "none";
             // Set status awal
             var initialType = typeSelect.value;
             if (initialType === "is_variant") {
