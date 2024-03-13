@@ -419,12 +419,30 @@
             var createVariantBtn = document.getElementById("createVariantBtn");
             var variantNameInput = document.getElementById("variantNameInput");
             var variantTableBody = document.getElementById("variantTableBody");
+
             createVariantBtn.addEventListener("click", function() {
-                var variantName = variantNameInput.value;
-                if (variantName.trim() === "") {
+                var variantName = variantNameInput.value.trim();
+
+                if (variantName === "") {
                     alert("Please enter a variant name.");
                     return;
                 }
+
+                // Memeriksa apakah nama variant sudah ada
+                var isDuplicate = false;
+                var rows = variantTableBody.querySelectorAll("tr");
+                rows.forEach(function(row) {
+                    var existingName = row.cells[0].querySelector('input').value.trim();
+                    if (existingName === variantName) {
+                        isDuplicate = true;
+                    }
+                });
+
+                if (isDuplicate) {
+                    alert("Variant name already exists.");
+                    return;
+                }
+
                 addVariantRow(variantName);
                 variantNameInput.value = ""; // Reset the input field after adding the variant
             });
@@ -432,14 +450,14 @@
             function addVariantRow(variantName) {
                 var newRow = document.createElement("tr");
                 newRow.innerHTML = `
-                    <td><input required class="form-control" type="text" style="border-color: #DF4141;" value="${variantName}" name="variants[name]"></td>
-                    <td contenteditable="true" class="variant-code"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[code]"></td>
-                    <td contenteditable="true" class="variant-cost"><input required class="form-control" type="text" style="border-color: #DF4141;"  name="variants[cost]"></td>
-                    <td contenteditable="true" class="variant-price"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[price]"></td>
-                    <td>
-                        <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
-                    </td>
-                `;
+            <td><input required class="form-control" type="text" style="border-color: #DF4141;" value="${variantName}" name="variants[name]"></td>
+            <td contenteditable="true" class="variant-code"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[code]"></td>
+            <td contenteditable="true" class="variant-cost"><input required class="form-control" type="text" style="border-color: #DF4141;"  name="variants[cost]"></td>
+            <td contenteditable="true" class="variant-price"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[price]"></td>
+            <td>
+                <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
+            </td>
+        `;
                 variantTableBody.appendChild(newRow);
 
                 // Add event listener for delete button
@@ -454,11 +472,16 @@
             var variantsData = [];
             var rows = document.getElementById("variantTableBody").querySelectorAll("tr");
 
+            // Menyimpan semua kode dalam array untuk memeriksanya
+            var codes = [];
             rows.forEach(function(row) {
                 var variantName = row.cells[0].querySelector('input').value;
                 var variantCode = row.cells[1].querySelector('input').value;
                 var variantCost = row.cells[2].querySelector('input').value;
                 var variantPrice = row.cells[3].querySelector('input').value;
+
+                // Menambahkan kode ke dalam array
+                codes.push(variantCode)
 
                 variantsData.push({
                     name: variantName,
@@ -467,9 +490,20 @@
                     price: variantPrice
                 });
             });
+            // Memeriksa duplikat kode
+            if (checkDuplicateCodes(codes)) {
+                alert("Duplicate code found.");
+                event.preventDefault();
+                return;
+            }
 
             // Simpan data produk varian ke dalam input tersembunyi sebelum formulir disubmit
             document.getElementById("variantData").value = JSON.stringify(variantsData);
+        }
+        // Fungsi untuk memeriksa duplikat kode
+        function checkDuplicateCodes(codes) {
+            var uniqueCodes = new Set(codes); // Membuat set untuk mendapatkan nilai unik
+            return uniqueCodes.size !== codes.length; // Jika panjang set kurang dari panjang array, berarti ada duplikat
         }
     </script>
 
