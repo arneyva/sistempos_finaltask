@@ -490,6 +490,11 @@
                     price: variantPrice
                 });
             });
+            if (variantsData.length === 0) {
+                alert("Please add at least one variant.");
+                event.preventDefault();
+                return;
+            }
             // Memeriksa duplikat kode
             if (checkDuplicateCodes(codes)) {
                 alert("Duplicate code found.");
