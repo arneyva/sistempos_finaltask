@@ -483,6 +483,19 @@
                 // Menambahkan kode ke dalam array
                 codes.push(variantCode)
 
+                // Memeriksa apakah input cost dan price numerik
+                if (isNaN(variantCost) || isNaN(variantPrice)) {
+                    alert("Cost and price must be numeric.");
+                    event.preventDefault();
+                    return;
+                }
+                // 
+                if (variantCost == '' || variantPrice == '') {
+                    alert("Cost and price cannot be empty.");
+                    event.preventDefault();
+                    return;
+                }
+
                 variantsData.push({
                     name: variantName,
                     code: variantCode,
