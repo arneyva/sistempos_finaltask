@@ -140,142 +140,34 @@ class ProductController extends Controller
             if ($request->type == 'is_variant') {
                 $productRules['variants'] = [
                     'required',
-                    function ($attribute, $value, $fail) use ($request) {
-                        // check if array is not empty
-                        if (empty($value)) {
-                            $fail('The variants array is required.');
-
-                            return;
-                        }
-                        // check for duplicate codes in variants array
-                        $variants = json_decode($request->variants, true);
-                        if ($variants) {
-                            foreach ($variants as $variant) {
-                                if (! array_key_exists('text', $variant) || empty($variant['text'])) {
-                                    $fail('Variant Name cannot be empty.');
-
-                                    return;
-                                } elseif (! array_key_exists('code', $variant) || empty($variant['code'])) {
-                                    $fail('Variant code cannot be empty.');
-
-                                    return;
-                                } elseif (! array_key_exists('cost', $variant) || empty($variant['cost'])) {
-                                    $fail('Variant cost cannot be empty.');
-
-                                    return;
-                                } elseif (! array_key_exists('price', $variant) || empty($variant['price'])) {
-                                    $fail('Variant price cannot be empty.');
-
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('The variants data is invalid.');
-
-                            return;
-                        }
-                        //check if variant name empty
-                        $names = array_column($variants, 'text');
-                        if ($names) {
-                            foreach ($names as $name) {
-                                if (empty($name)) {
-                                    $fail('Variant Name cannot be empty.');
-
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('Variant Name cannot be empty.');
-
-                            return;
-                        }
-                        //check if variant cost empty
-                        $all_cost = array_column($variants, 'cost');
-                        if ($all_cost) {
-                            foreach ($all_cost as $cost) {
-                                if (empty($cost)) {
-                                    $fail('Variant Cost cannot be empty.');
-
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('Variant Cost cannot be empty.');
-
-                            return;
-                        }
-                        //check if variant price empty
-                        $all_price = array_column($variants, 'price');
-                        if ($all_price) {
-                            foreach ($all_price as $price) {
-                                if (empty($price)) {
-                                    $fail('Variant Price cannot be empty.');
-
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('Variant Price cannot be empty.');
-
-                            return;
-                        }
-                        //check if code empty
-                        $codes = array_column($variants, 'code');
-                        if ($codes) {
-                            foreach ($codes as $code) {
-                                if (empty($code)) {
-                                    $fail('Variant code cannot be empty.');
-
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('Variant code cannot be empty.');
-
-                            return;
-                        }
-                        //check if code Duplicate
-                        if (count(array_unique($codes)) !== count($codes)) {
-                            $fail('Duplicate codes found in variants array.');
-
-                            return;
-                        }
-                        // check for duplicate codes in product_variants table
-                        $duplicateCodes = DB::table('product_variants')
-                            ->whereIn('code', $codes)
-                            ->whereNull('deleted_at')
-                            ->pluck('code')
-                            ->toArray();
-                        if (! empty($duplicateCodes)) {
-                            $fail('This code : '.implode(', ', $duplicateCodes).' already used');
-                        }
-                        // check for duplicate codes in products table
-                        $duplicateCodes_products = DB::table('products')
-                            ->whereIn('code', $codes)
-                            ->whereNull('deleted_at')
-                            ->pluck('code')
-                            ->toArray();
-                        if (! empty($duplicateCodes_products)) {
-                            $fail('This code : '.implode(', ', $duplicateCodes_products).' already used');
-                        }
-                    },
                 ];
             }
             // Store Variants Product
             if ($request['type'] == 'is_variant') {
                 $variants = json_decode($request->variants);
+                $errors = [];
 
                 foreach ($variants as $variant) {
-                    $Product_variants_data[] = [
-                        'product_id' => $productValue->id,
-                        'name' => $variant->name,
-                        'cost' => $variant->cost,
-                        'price' => $variant->price,
-                        'code' => $variant->code,
-                    ];
+                    if (ProductVariant::where('code', $variant->code)->exists()) {
+                        $errors[] = 'The code '.$variant->code.' has already been taken.';
+                    } else {
+                        $Product_variants_data[] = [
+                            'product_id' => $productValue->id,
+                            'name' => $variant->name,
+                            'cost' => $variant->cost,
+                            'price' => $variant->price,
+                            'code' => $variant->code,
+                        ];
+                    }
                 }
+
+                if (! empty($errors)) {
+                    return redirect()->back()->withErrors(['variants' => $errors])->withInput();
+                }
+
                 ProductVariant::insert($Product_variants_data);
             }
+
             // proses managament stock di outlet/warehouse
             $warehouse = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
             $productVariants = ProductVariant::where('product_id', $productValue->id)->whereNull('deleted_at')->get();
