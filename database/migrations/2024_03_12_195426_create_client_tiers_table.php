@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('total_sales');
             $table->float('total_amount', 10, 0);
             $table->integer('last_sale');
+            $table->float('discount', 10, 0);
             $table->timestamps(6);
             $table->softDeletes();
         });
