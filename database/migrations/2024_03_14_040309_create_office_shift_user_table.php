@@ -11,17 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('client_tiers', function (Blueprint $table) {
+        Schema::create('office_shift_user', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->integer('id', true);
-            $table->string('tier', 191);
-            $table->integer('total_sales');
-            $table->float('total_amount', 10, 0);
-            $table->integer('last_sale');
-            $table->float('discount', 10, 0);
-            $table->float('score', 10, 0);
+            $table->integer('user_id')->index('office_shift_user_user_id');
+            $table->integer('office_shift_id')->index('office_shift_user_office_shift_id');
             $table->timestamps(6);
-            $table->softDeletes();
         });
     }
 
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_tiers');
+        Schema::dropIfExists('office_shift_user');
     }
 };
