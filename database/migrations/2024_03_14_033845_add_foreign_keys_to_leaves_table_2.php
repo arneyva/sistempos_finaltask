@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasTable('leaves') && Schema::hasTable('users') ) {
+        if (Schema::hasTable('leaves') && Schema::hasTable('users')) {
             Schema::table('leaves', function (Blueprint $table) {
                 if (Schema::hasColumn($table->getTable(), 'user_id')) {
                     $table->foreign('user_id', 'leave_user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
-                }
-                else {
+                } else {
                     $table->integer('user_id')->index('leave_user_id');
                     $table->foreign('user_id', 'leave_user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
                 }
