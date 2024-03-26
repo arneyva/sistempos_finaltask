@@ -43,9 +43,19 @@
                                         <div class="d-flex align-items-center">
                                             <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary"
                                                 src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}" alt="profile">
-                                            <h6>{{ $item->name }}</h6>
+                                            <div class="d-flex flex-column">
+                                                <!-- Mengatur flex-direction menjadi column untuk list -->
+                                                @if ($item->type === 'is_variant')
+                                                    @foreach ($item->variant as $ppp)
+                                                        <h6 style="margin-top:10px"> * {{ $ppp->name }}</h6>
+                                                    @endforeach
+                                                @else
+                                                    <h6>{{ $item->name }}</h6>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
+
                                     <td>
                                         @if ($item->type === 'is_variant')
                                             <button type="button" class="btn btn-soft-primary">Varied Product</button>
@@ -61,16 +71,35 @@
                                         {{ $item->category->name }}
                                     </td>
                                     <td>
-                                        Rp. {{ $item->cost }}
+                                        <div class="d-flex flex-column">
+                                            <!-- Mengatur flex-direction menjadi column untuk list -->
+                                            @if ($item->type === 'is_variant')
+                                                @foreach ($item->variant as $ppp)
+                                                    <h6 style="margin-top:10px"> Rp. {{ $ppp->cost }}</h6>
+                                                @endforeach
+                                            @else
+                                                Rp. {{ $item->cost }}
+                                            @endif
+                                        </div>
                                     </td>
                                     <td>
-                                        Rp. {{ $item->price }}
+
+                                        <div class="d-flex flex-column">
+                                            <!-- Mengatur flex-direction menjadi column untuk list -->
+                                            @if ($item->type === 'is_variant')
+                                                @foreach ($item->variant as $ppp)
+                                                    <h6 style="margin-top:10px"> Rp. {{ $ppp->price }}</h6>
+                                                @endforeach
+                                            @else
+                                                Rp. {{ $item->price }}
+                                            @endif
+                                        </div>
                                     </td>
                                     <td>
                                         {{ $item->unit->name }}
                                     </td>
                                     <td>
-                                        ya
+                                        {{ $item->warehouse->count() }}
                                     </td>
                                     <td>
                                         <div class="inline">
@@ -118,10 +147,12 @@
                                                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
                                                     <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                     <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                 </svg>
                                             </a>
