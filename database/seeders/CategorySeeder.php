@@ -28,5 +28,44 @@ class CategorySeeder extends Seeder
             'code' => 'Selfcare-02',
             'name' => 'Alat Mandi',
         ]);
+        Category::firstOrCreate([
+            'code' => 'FOOD-03',
+            'name' => 'Minuman',
+        ]);
+
+        Category::firstOrCreate([
+            'code' => 'FOOD-04',
+            'name' => 'Makanan Instan',
+        ]);
+
+        Category::firstOrCreate([
+            'code' => 'FOOD-05',
+            'name' => 'Buah-buahan',
+        ]);
+
+        Category::firstOrCreate([
+            'code' => 'FOOD-06',
+            'name' => 'Daging dan Ayam',
+        ]);
+
+        Category::firstOrCreate([
+            'code' => 'FOOD-07',
+            'name' => 'Ikan dan Produk Laut',
+        ]);
+
+        Category::firstOrCreate([
+            'code' => 'FOOD-08',
+            'name' => 'Sayuran',
+        ]);
+
+        Category::firstOrCreate([
+            'code' => 'FOOD-09',
+            'name' => 'Produk Susu',
+        ]);
+
+        Category::firstOrCreate([
+            'code' => 'FOOD-10',
+            'name' => 'Produk Organik',
+        ]);
     }
 }

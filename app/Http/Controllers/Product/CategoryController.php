@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $category = Category::query()->latest()->get();
+        $category = Category::query()->latest()->paginate(5);
 
         return view('templates.product.category.index', [
             'category' => $category,
