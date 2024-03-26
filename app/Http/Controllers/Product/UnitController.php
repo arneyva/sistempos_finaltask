@@ -14,7 +14,7 @@ class UnitController extends Controller
      */
     public function index()
     {
-        $unit = Unit::query()->latest()->get();
+        $unit = Unit::query()->latest()->paginate(5);
 
         return view('templates.product.unit.index', [
             'unit' => $unit,
