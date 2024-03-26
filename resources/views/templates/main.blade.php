@@ -392,11 +392,11 @@
     <!-- App Script -->
     <script src="{{ asset('hopeui/html/assets/js/hope-ui.js') }}" defer></script>
     <script>
-        // $("document").ready(function() {
-        //     setTimeout(function() {
-        //         $("div.alert1").remove();
-        //     }, 1500); // secs
-        // });
+        $("document").ready(function() {
+            setTimeout(function() {
+                $("div.alert1").remove();
+            }, 1500); // secs
+        });
     </script>
     @stack('script')
 
