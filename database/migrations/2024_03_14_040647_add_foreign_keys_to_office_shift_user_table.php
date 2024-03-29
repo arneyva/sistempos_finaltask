@@ -15,16 +15,14 @@ return new class extends Migration
             Schema::table('office_shift_user', function (Blueprint $table) {
                 if (Schema::hasColumn($table->getTable(), 'office_shift_id')) {
                     $table->foreign('office_shift_id', 'office_shift_user_office_shift_id')->references('id')->on('office_shifts')->onUpdate('RESTRICT')->onDelete('RESTRICT');
-                }
-                else {
+                } else {
                     $table->integer('office_shift_id')->index('office_shift_user_office_shift_id');
                     $table->foreign('office_shift_id', 'office_shift_user_office_shift_id')->references('id')->on('office_shifts')->onUpdate('RESTRICT')->onDelete('RESTRICT');
                 }
 
                 if (Schema::hasColumn($table->getTable(), 'user_id')) {
                     $table->foreign('user_id', 'office_shift_user_user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
-                }
-                else {
+                } else {
                     $table->integer('user_id')->index('office_shift_user_user_id');
                     $table->foreign('user_id', 'office_shift_user_user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
                 }

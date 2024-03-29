@@ -15,7 +15,7 @@ class BrandController extends Controller
     public function index()
     {
         // $brand = Brand::get
-        $brands = Brand::query()->latest()->get();
+        $brands = Brand::query()->latest()->paginate(5);
 
         return view('templates.product.brand.index', [
             'brands' => $brands,

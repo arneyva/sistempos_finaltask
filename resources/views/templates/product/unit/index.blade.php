@@ -12,7 +12,7 @@
             </div>
             <div class="card-header d-flex justify-content-between">
                 <div class="input-group search-input" style="width: 30%">
-                    <span class="input-group-text d-inline" id="search-input">
+                    <span class="input-group-text d-inline" id="searchIcon">
                         <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
@@ -334,27 +334,36 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="bd-example" style="margin-left: 10px; margin-top:10px">
-                        <nav aria-label="Standard pagination example">
-                            <ul class="pagination">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <span aria-hidden="true">«</span>
-                                    </a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                        <span aria-hidden="true">»</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
+                    <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
+                        {{ $unit->links() }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.querySelector('.search-input input');
+            const rows = document.querySelectorAll('#basic-table tbody tr');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.trim().toLowerCase();
+
+                rows.forEach(row => {
+                    const nameColumn = row.querySelector('td:first-child').textContent.trim()
+                        .toLowerCase();
+                    const shortNameColumn = row.querySelector('td:nth-child(2)').textContent.trim()
+                        .toLowerCase();
+
+                    if (nameColumn.includes(searchTerm) || shortNameColumn.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

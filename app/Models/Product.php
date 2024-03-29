@@ -60,4 +60,9 @@ class Product extends Model
     {
         return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
+
+    public function warehouse(): HasMany
+    {
+        return $this->hasMany(ProductWarehouse::class, 'product_id', 'id');
+    }
 }

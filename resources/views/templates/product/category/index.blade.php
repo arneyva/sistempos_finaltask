@@ -9,6 +9,20 @@
                 <div class="header-title">
                     <h4 class="card-title">All Category</h4>
                 </div>
+            </div>
+            <div class="card-header d-flex justify-content-between">
+                <div class="input-group search-input" style="width: 30%">
+                    <span class="input-group-text d-inline" id="search-input">
+                        <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round"></circle>
+                            <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </span>
+                    <input type="search" class="form-control" placeholder="Search...">
+                </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
@@ -40,7 +54,6 @@
                                             <input type="text" class="form-control" id="name" required
                                                 placeholder="input category name" name="name">
                                         </div>
-
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -94,8 +107,8 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="updateModalLabel">Update</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <form
@@ -194,27 +207,36 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="bd-example" style="margin-left: 10px; margin-top:10px">
-                        <nav aria-label="Standard pagination example">
-                            <ul class="pagination">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <span aria-hidden="true">«</span>
-                                    </a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                        <span aria-hidden="true">»</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
+                    <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
+                        {{ $category->links() }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.querySelector('.search-input input');
+            const rows = document.querySelectorAll('#basic-table tbody tr');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.trim().toLowerCase();
+
+                rows.forEach(row => {
+                    const nameColumn = row.querySelector('td:first-child').textContent.trim()
+                        .toLowerCase();
+                    const shortNameColumn = row.querySelector('td:nth-child(2)').textContent.trim()
+                        .toLowerCase();
+
+                    if (nameColumn.includes(searchTerm) || shortNameColumn.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+@endpush
