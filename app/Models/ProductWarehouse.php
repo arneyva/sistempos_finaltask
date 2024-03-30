@@ -26,8 +26,8 @@ class ProductWarehouse extends Model
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
 
-    public function productVariants()
+    public function variant()
     {
-        return $this->hasMany(ProductVariant::class, 'product_variant_id', 'id');
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id', 'id');
     }
 }

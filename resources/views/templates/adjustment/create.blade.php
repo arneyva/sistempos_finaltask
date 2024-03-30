@@ -16,41 +16,27 @@
                     </div>
                     {{--  --}}
                     <div class="card-body">
-                        <form>
+                        <form action="{{ route('adjustment.store') }}" method="POST">
+                            @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="validationDefault01">Warehouse/Outlet *</label>
-                                    <select class="form-select" id="validationDefault04" required>
+                                    <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
                                         <option selected disabled value="">Choose...</option>
-                                        <option>...</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="exampleInputdate">Date *</label>
-                                    <input type="date" class="form-control" id="exampleInputdate" value="2019-12-18">
+                                    <input type="date" class="form-control" id="exampleInputdate" name="date"
+                                        value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    {{-- <label class="form-label" for="validationDefault02">Code Product *</label>
-                                    <input type="text" class="form-control" id="validationDefault02" required
-                                        placeholder="input code"> --}}
-                                    <div class="input-group search-input">
-                                        <span class="input-group-text" id="search-input">
-                                            <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor"
-                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                </circle>
-                                                <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor"
-                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                </path>
-                                            </svg>
-                                        </span>
-                                        <input type="search" class="form-control"
-                                            placeholder="Search/Scan Product by Name or Code">
-                                    </div>
+                                    <select class="form-select" id="selectProduct" name="product" required>
+                                        <option selected disabled value="">Choose...</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <div class="table-responsive mt-4">
+                                    <div class="table-responsive">
                                         <table id="basic-table" class="table table-striped mb-0" role="grid">
                                             <thead>
                                                 <tr>
@@ -63,61 +49,16 @@
                                                     <th></th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>ya</td>
-                                                    <td>
-                                                        ya
-                                                    </td>
-                                                    <td>
-                                                        ya
-                                                    </td>
-                                                    <td>
-                                                        ya
-                                                    </td>
-                                                    <td>
-                                                        ya
-                                                    </td>
-                                                    <td>
-                                                        <div class="inline">
-
-                                                            <a href="hapus.html">
-                                                                <svg class="icon-32" width="32" viewBox="0 0 24 24"
-                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                                        d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                    </path>
-                                                                    <path
-                                                                        d="M14.4736 2.75024V5.65924C14.4736 7.07924 15.6216 8.23024 17.0416 8.23424H19.7966"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                    </path>
-                                                                    <path d="M13.5759 14.6481L10.1099 11.1821"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                    </path>
-                                                                    <path d="M10.1108 14.6481L13.5768 11.1821"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                    </path>
-                                                                </svg>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                            <tbody id="product-table-body"> <!-- Tambahkan id pada tbody -->
+                                                <!-- Isi dari tbody akan diisi secara dinamis menggunakan JavaScript -->
                                             </tbody>
                                         </table>
-
-
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="validationDefault05">Description</label>
-                                    <input type="text" class="form-control" id="validationDefault05" required
-                                        placeholder="a few words...">
+                                    <input type="text" class="form-control" id="validationDefault05" name="notes"
+                                        required placeholder="a few words...">
                                 </div>
                             </div>
                             <div class="form-group mt-2">
@@ -130,3 +71,139 @@
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        $(document).ready(function() {
+            var dataEntered = false; // Menyimpan status apakah data sudah dimasukkan atau belum
+            $("#selectWarehouse").select2({
+                placeholder: 'Choose Warehouse',
+                ajax: {
+                    url: "{{ route('adjustment.warehouse') }}",
+                    processResults: function({
+                        data
+                    }) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.name
+                                }
+                            })
+                        }
+                    }
+                }
+            });
+
+            // Initialize select box for products as Select2
+            $("#selectProduct").select2({
+                placeholder: 'Choose Product',
+                // disabled: true jadi semua ke disable 
+            });
+
+            // Add event listener for change in product select
+            $("#selectProduct").change(function() {
+                var productId = $(this).val();
+                var productCode = $("#selectProduct option:selected").data('product_code');
+                var productName = $("#selectProduct option:selected").text();
+                var stock = 1; // Dapatkan stok dari data yang Anda terima dari server
+                addProductToTable(productId, productCode, productName, stock, );
+                dataEntered = true; // Setel status bahwa data telah dimasukkan
+                $("#selectWarehouse").prop('disabled',
+                    true); // Menonaktifkan dropdown gudang setelah data dimasukkan
+            });
+
+            // Tambahkan event listener untuk perubahan pada select produk gudang
+            $("#selectWarehouse").change(function() {
+                updateCategoryDropdown();
+            });
+
+            function updateCategoryDropdown() {
+                if (!dataEntered) {
+                    let warehouseId = $('#selectWarehouse').val();
+                    $.ajax({
+                        url: "{{ url('adjustment/product-warehouse') }}/" + warehouseId,
+                        type: 'GET',
+                        success: function(response) {
+                            let data = response.data;
+                            let options = [];
+
+                            // Tambahkan placeholder secara eksplisit
+                            options.push({
+                                id: '',
+                                text: 'Choose Product'
+                            });
+
+                            if (data.length > 0) {
+                                // Tambahkan opsi produk dari gudang
+                                options = options.concat($.map(data, function(item) {
+                                    let cekvariant = item.product.is_variant;
+                                    if (cekvariant == 1) {
+                                        return {
+                                            id: item.id,
+                                            // text: item.product.name
+                                            text: `${item.variant.code} - ${item.variant.name} (${item.product.name})`
+                                        };
+                                    } else {
+                                        return {
+                                            id: item.id,
+                                            // text: item.product.name
+                                            product_code: item.product.code,
+                                            text: `${item.product.code} - ${item.product.name}`
+                                        };
+                                    }
+                                }));
+                            } else {
+                                options.push({
+                                    id: '',
+                                    text: 'No Products'
+                                });
+                            }
+
+                            // Empty the select element first
+                            $("#selectProduct").empty();
+
+                            // Set placeholder and add dynamic options
+                            $("#selectProduct").select2({
+                                placeholder: 'Choose Product',
+                                data: options
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                }
+            }
+
+
+            // Fungsi untuk menambahkan produk gudang ke dalam tabel
+            function addProductToTable(productId, productCode, productName, stock) {
+                var tableBody = $("#product-table-body");
+                var rowCount = tableBody.find("tr").length + 1;
+                var newRow = "<tr>" +
+                    "<td>" + rowCount + "</td>" +
+                    "<td>" + productId + "</td>" +
+                    "<td>" + productName + "</td>" +
+                    "<td>" + stock + "</td>" +
+                    "<td><input type='number' class='form-control' name='qty[]' min='0' required></td>" +
+                    "<td><select class='form-select' name='type[]'><option value='add'>Add</option><option value='sub'>Subtract</option></select></td>" +
+                    "<td><button type='button' class='btn btn-danger btn-sm delete-row'>Delete</button></td>" +
+                    "</tr>";
+                tableBody.append(newRow);
+            }
+
+            // Event listener untuk menghapus baris dari tabel
+            $(document).on("click", ".delete-row", function() {
+                $(this).closest("tr").remove();
+                updateRowNumbers();
+            });
+
+            // Fungsi untuk memperbarui nomor urut setelah penghapusan baris
+            function updateRowNumbers() {
+                $("#product-table-body").find("tr").each(function(index) {
+                    $(this).find("td:first").text(index + 1);
+                });
+            }
+        });
+    </script>
+@endpush
