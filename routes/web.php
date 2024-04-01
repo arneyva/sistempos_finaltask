@@ -77,8 +77,8 @@ Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.
     Route::patch('update/{id}', [AdjustmentController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [AdjustmentController::class, 'destroy'])->name('destroy');
     //
-    Route::get('warehouse', [AdjustmentController::class, 'warehouse'])->name('warehouse');
-    Route::get('product-warehouse/{id}', [AdjustmentController::class, 'getProductWarehouse']);
+    Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
+    Route::get('show_product_data/{id}/{variant_id}', [AdjustmentController::class, 'show_product_data']);
 });
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {

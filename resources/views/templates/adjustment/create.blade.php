@@ -20,9 +20,12 @@
                             @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault01">Warehouse/Outlet *</label>
+                                    <label class="form-label" for="selectWarehouse">Warehouse/Outlet *</label>
                                     <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
                                         <option selected disabled value="">Choose...</option>
+                                        @foreach ($warehouse as $wh)
+                                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -31,25 +34,28 @@
                                         value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <select class="form-select" id="selectProduct" name="product" required>
-                                        <option selected disabled value="">Choose...</option>
+                                    <label class="form-label" for="selectProduct">Product *</label>
+                                    <select class="form-select" id="selectProduct" disabled required>
+                                        <option selected disabled value="">Choose warehouse first...</option>
                                     </select>
                                 </div>
+                                <!-- Tambahkan bagian untuk menampilkan tabel produk -->
+                                <!-- Dalam contoh ini, tabel produk akan ditampilkan di bawah dropdown produk -->
                                 <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
-                                        <table id="basic-table" class="table table-striped mb-0" role="grid">
+                                        <table id="product-table" class="table table-striped mb-0" role="grid">
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
                                                     <th>Code</th>
                                                     <th>Name</th>
                                                     <th>Stock</th>
-                                                    <th>Qty</th>
-                                                    <th>type</th>
+                                                    <th>Quantity</th>
+                                                    <th>Type</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="product-table-body"> <!-- Tambahkan id pada tbody -->
+                                            <tbody id="product-table-body">
                                                 <!-- Isi dari tbody akan diisi secara dinamis menggunakan JavaScript -->
                                             </tbody>
                                         </table>
@@ -71,137 +77,67 @@
         </div>
     </div>
 @endsection
+
 @push('script')
     <script>
-        $(document).ready(function() {
-            var dataEntered = false; // Menyimpan status apakah data sudah dimasukkan atau belum
-            $("#selectWarehouse").select2({
-                placeholder: 'Choose Warehouse',
-                ajax: {
-                    url: "{{ route('adjustment.warehouse') }}",
-                    processResults: function({
-                        data
-                    }) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.name
-                                }
-                            })
-                        }
+        $('#selectWarehouse').on('change', function() {
+            var warehouseId = $(this).val();
+            if (warehouseId) {
+                $.ajax({
+                    url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        $('#selectProduct').empty().append(
+                            '<option selected disabled value="">Choose...</option>');
+                        $.each(data, function(key, value) {
+                            $('#selectProduct').append('<option value="' + value.id +
+                                '" data-variant-id="' + value.product_variant_id + '">' +
+                                value.name + '</option>');
+                        });
+                        $('#selectProduct').prop('disabled', false);
                     }
-                }
-            });
+                });
+            } else {
+                $('#selectProduct').empty().prop('disabled', true);
+            }
+        });
+        $('#selectProduct').on('change', function() {
+            var productId = $(this).val();
+            var warehouseId = $('#selectWarehouse').val();
+            var variantId = $(this).find(':selected').data('variant-id');
 
-            // Initialize select box for products as Select2
-            $("#selectProduct").select2({
-                placeholder: 'Choose Product',
-                // disabled: true jadi semua ke disable 
-            });
-
-            // Add event listener for change in product select
-            $("#selectProduct").change(function() {
-                var productId = $(this).val();
-                var productCode = $("#selectProduct option:selected").data('product_code');
-                var productName = $("#selectProduct option:selected").text();
-                var stock = 1; // Dapatkan stok dari data yang Anda terima dari server
-                addProductToTable(productId, productCode, productName, stock, );
-                dataEntered = true; // Setel status bahwa data telah dimasukkan
-                $("#selectWarehouse").prop('disabled',
-                    true); // Menonaktifkan dropdown gudang setelah data dimasukkan
-            });
-
-            // Tambahkan event listener untuk perubahan pada select produk gudang
-            $("#selectWarehouse").change(function() {
-                updateCategoryDropdown();
-            });
-
-            function updateCategoryDropdown() {
-                if (!dataEntered) {
-                    let warehouseId = $('#selectWarehouse').val();
-                    $.ajax({
-                        url: "{{ url('adjustment/product-warehouse') }}/" + warehouseId,
-                        type: 'GET',
-                        success: function(response) {
-                            let data = response.data;
-                            let options = [];
-
-                            // Tambahkan placeholder secara eksplisit
-                            options.push({
-                                id: '',
-                                text: 'Choose Product'
-                            });
-
-                            if (data.length > 0) {
-                                // Tambahkan opsi produk dari gudang
-                                options = options.concat($.map(data, function(item) {
-                                    let cekvariant = item.product.is_variant;
-                                    if (cekvariant == 1) {
-                                        return {
-                                            id: item.id,
-                                            // text: item.product.name
-                                            text: `${item.variant.code} - ${item.variant.name} (${item.product.name})`
-                                        };
-                                    } else {
-                                        return {
-                                            id: item.id,
-                                            // text: item.product.name
-                                            product_code: item.product.code,
-                                            text: `${item.product.code} - ${item.product.name}`
-                                        };
-                                    }
-                                }));
-                            } else {
-                                options.push({
-                                    id: '',
-                                    text: 'No Products'
-                                });
-                            }
-
-                            // Empty the select element first
-                            $("#selectProduct").empty();
-
-                            // Set placeholder and add dynamic options
-                            $("#selectProduct").select2({
-                                placeholder: 'Choose Product',
-                                data: options
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                        }
-                    });
-                }
+            // Periksa jika variantId adalah null, maka atur nilai variantId menjadi null
+            if (!variantId) {
+                variantId = null;
             }
 
+            if (productId && warehouseId) {
+                $.ajax({
+                    url: '/adjustment/show_product_data/' + productId + '/' + variantId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        // Buat objek untuk baris tabel
+                        var row = '<tr>';
+                        row += '<td>#</td>';
+                        row += '<td>' + data.code + '</td>';
+                        row += '<td>' + data.name + '</td>';
+                        row += '<td>' + data.qty + '</td>';
+                        row += '<td><input type="number" class="form-control" name="details[' + data
+                            .id + '][quantity]" value="0" min="0"></td>';
+                        row += '<td><select class="form-select" name="details[' + data.id +
+                            '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
+                        row += '<td><input type="hidden" name="details[' + data.id +
+                            '][product_id]" value="' + data.id + '"></td>';
+                        row += '<td><input type="hidden" name="details[' + data.id +
+                            '][product_variant_id]" value="' + (variantId || '') +
+                            '"></td>';
+                        row += '</tr>';
 
-            // Fungsi untuk menambahkan produk gudang ke dalam tabel
-            function addProductToTable(productId, productCode, productName, stock) {
-                var tableBody = $("#product-table-body");
-                var rowCount = tableBody.find("tr").length + 1;
-                var newRow = "<tr>" +
-                    "<td>" + rowCount + "</td>" +
-                    "<td>" + productId + "</td>" +
-                    "<td>" + productName + "</td>" +
-                    "<td>" + stock + "</td>" +
-                    "<td><input type='number' class='form-control' name='qty[]' min='0' required></td>" +
-                    "<td><select class='form-select' name='type[]'><option value='add'>Add</option><option value='sub'>Subtract</option></select></td>" +
-                    "<td><button type='button' class='btn btn-danger btn-sm delete-row'>Delete</button></td>" +
-                    "</tr>";
-                tableBody.append(newRow);
-            }
-
-            // Event listener untuk menghapus baris dari tabel
-            $(document).on("click", ".delete-row", function() {
-                $(this).closest("tr").remove();
-                updateRowNumbers();
-            });
-
-            // Fungsi untuk memperbarui nomor urut setelah penghapusan baris
-            function updateRowNumbers() {
-                $("#product-table-body").find("tr").each(function(index) {
-                    $(this).find("td:first").text(index + 1);
+                        // Masukkan baris ke dalam tbody
+                        $('#product-table-body').append(row);
+                    }
                 });
             }
         });
