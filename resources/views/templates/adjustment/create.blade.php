@@ -16,108 +16,55 @@
                     </div>
                     {{--  --}}
                     <div class="card-body">
-                        <form>
+                        <form action="{{ route('adjustment.store') }}" method="POST">
+                            @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault01">Warehouse/Outlet *</label>
-                                    <select class="form-select" id="validationDefault04" required>
+                                    <label class="form-label" for="selectWarehouse">Warehouse/Outlet *</label>
+                                    <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
                                         <option selected disabled value="">Choose...</option>
-                                        <option>...</option>
+                                        @foreach ($warehouse as $wh)
+                                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="exampleInputdate">Date *</label>
-                                    <input type="date" class="form-control" id="exampleInputdate" value="2019-12-18">
+                                    <input type="date" class="form-control" id="exampleInputdate" name="date"
+                                        value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    {{-- <label class="form-label" for="validationDefault02">Code Product *</label>
-                                    <input type="text" class="form-control" id="validationDefault02" required
-                                        placeholder="input code"> --}}
-                                    <div class="input-group search-input">
-                                        <span class="input-group-text" id="search-input">
-                                            <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor"
-                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                </circle>
-                                                <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor"
-                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                </path>
-                                            </svg>
-                                        </span>
-                                        <input type="search" class="form-control"
-                                            placeholder="Search/Scan Product by Name or Code">
-                                    </div>
+                                    <label class="form-label" for="selectProduct">Product *</label>
+                                    <select class="form-select" id="selectProduct" disabled required>
+                                        <option selected disabled value="">Choose warehouse first...</option>
+                                    </select>
                                 </div>
+                                <!-- Tambahkan bagian untuk menampilkan tabel produk -->
+                                <!-- Dalam contoh ini, tabel produk akan ditampilkan di bawah dropdown produk -->
                                 <div class="col-md-12 mb-3">
-                                    <div class="table-responsive mt-4">
-                                        <table id="basic-table" class="table table-striped mb-0" role="grid">
+                                    <div class="table-responsive">
+                                        <table id="product-table" class="table table-striped mb-0" role="grid">
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
                                                     <th>Code</th>
                                                     <th>Name</th>
                                                     <th>Stock</th>
-                                                    <th>Qty</th>
-                                                    <th>type</th>
+                                                    <th>Quantity</th>
+                                                    <th>Type</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>ya</td>
-                                                    <td>
-                                                        ya
-                                                    </td>
-                                                    <td>
-                                                        ya
-                                                    </td>
-                                                    <td>
-                                                        ya
-                                                    </td>
-                                                    <td>
-                                                        ya
-                                                    </td>
-                                                    <td>
-                                                        <div class="inline">
-
-                                                            <a href="hapus.html">
-                                                                <svg class="icon-32" width="32" viewBox="0 0 24 24"
-                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                                        d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                    </path>
-                                                                    <path
-                                                                        d="M14.4736 2.75024V5.65924C14.4736 7.07924 15.6216 8.23024 17.0416 8.23424H19.7966"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                    </path>
-                                                                    <path d="M13.5759 14.6481L10.1099 11.1821"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                    </path>
-                                                                    <path d="M10.1108 14.6481L13.5768 11.1821"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                    </path>
-                                                                </svg>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                            <tbody id="product-table-body">
+                                                <!-- Isi dari tbody akan diisi secara dinamis menggunakan JavaScript -->
                                             </tbody>
                                         </table>
-
-
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="validationDefault05">Description</label>
-                                    <input type="text" class="form-control" id="validationDefault05" required
-                                        placeholder="a few words...">
+                                    <input type="text" class="form-control" id="validationDefault05" name="notes"
+                                        required placeholder="a few words...">
                                 </div>
                             </div>
                             <div class="form-group mt-2">
@@ -130,3 +77,69 @@
         </div>
     </div>
 @endsection
+
+@push('script')
+    <script>
+        $('#selectWarehouse').on('change', function() {
+            var warehouseId = $(this).val();
+            if (warehouseId) {
+                $.ajax({
+                    url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        $('#selectProduct').empty().append(
+                            '<option selected disabled value="">Choose...</option>');
+                        $.each(data, function(key, value) {
+                            $('#selectProduct').append('<option value="' + value.id +
+                                '" data-variant-id="' + value.product_variant_id + '">' +
+                                value.name + '</option>');
+                        });
+                        $('#selectProduct').prop('disabled', false);
+                    }
+                });
+            } else {
+                $('#selectProduct').empty().prop('disabled', true);
+            }
+        });
+        $('#selectProduct').on('change', function() {
+            var productId = $(this).val();
+            var warehouseId = $('#selectWarehouse').val();
+            var variantId = $(this).find(':selected').data('variant-id');
+
+            // Periksa jika variantId adalah null, maka atur nilai variantId menjadi null
+            if (!variantId) {
+                variantId = null;
+            }
+
+            if (productId && warehouseId) {
+                $.ajax({
+                    url: '/adjustment/show_product_data/' + productId + '/' + variantId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        // Buat objek untuk baris tabel
+                        var row = '<tr>';
+                        row += '<td>#</td>';
+                        row += '<td>' + data.code + '</td>';
+                        row += '<td>' + data.name + '</td>';
+                        row += '<td>' + data.qty + '</td>';
+                        row += '<td><input type="number" class="form-control" name="details[' + data
+                            .id + '][quantity]" value="0" min="0"></td>';
+                        row += '<td><select class="form-select" name="details[' + data.id +
+                            '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
+                        row += '<td><input type="hidden" name="details[' + data.id +
+                            '][product_id]" value="' + data.id + '"></td>';
+                        row += '<td><input type="hidden" name="details[' + data.id +
+                            '][product_variant_id]" value="' + (variantId || '') +
+                            '"></td>';
+                        row += '</tr>';
+
+                        // Masukkan baris ke dalam tbody
+                        $('#product-table-body').append(row);
+                    }
+                });
+            }
+        });
+    </script>
+@endpush
