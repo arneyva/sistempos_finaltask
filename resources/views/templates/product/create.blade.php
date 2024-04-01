@@ -89,7 +89,8 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="brand">Brand</label>
-                                    <select class="form-select" id="brand" required name="brand_id">
+                                    <select class="form-select select2" id="brand" required name="brand_id"
+                                        data-placeholder="Select a Brand ">
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($brand as $item)
                                             <option value="{{ $item->id }}"
@@ -109,7 +110,8 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="category">Category *</label>
-                                    <select class="form-select" id="category" required name="category_id">
+                                    <select class="form-select select2" id="category" required name="category_id"
+                                        data-placeholder="Select a Category">>
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($category as $item)
                                             <option value="{{ $item->id }}"
@@ -208,7 +210,8 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="productunit" class="form-label">Product Unit</label>
-                                <select class="form-select" id="productunit" required name="unit_id">
+                                <select class="form-select select2" id="productunit" required name="unit_id"
+                                    data-placeholder="Select a Product Unit">
                                     <option selected disabled value="">Choose...</option>
                                     @foreach ($unit as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}
@@ -218,14 +221,16 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="saleunit" class="form-label">Sale Unit</label>
-                                <select class="form-select" id="saleunit" required name="unit_sale_id">
+                                <select class="form-select select2" id="saleunit" required name="unit_sale_id"
+                                    data-placeholder="Select a Sale Unit">
                                     <option selected disabled value="">Choose...</option>
                                     <option>...</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="purchaseunit" class="form-label">Purchase Unit</label>
-                                <select class="form-select" id="purchaseunit" required name="unit_purchase_id">
+                                <select class="form-select select2" id="purchaseunit" required name="unit_purchase_id"
+                                    data-placeholder="Select a Purchase Unit">
                                     <option selected disabled value="">Choose...</option>
                                     <option>...</option>
                                 </select>
@@ -528,7 +533,7 @@
         }
     </script>
 
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             var productUnitSelect = document.getElementById("productunit");
             var saleUnitSelect = document.getElementById("saleunit");
@@ -569,6 +574,40 @@
                 }
                 selectElement.selectedIndex = 0;
             }
+        });
+    </script> --}}
+    <script>
+        $(document).ready(function() {
+            // Initialize Select2
+            $('.select2').select2();
+
+            // Event listener for product unit change
+            $('#productunit').change(function() {
+                var productId = $(this).val();
+
+                // Fetch related units via AJAX
+                $.ajax({
+                    url: '/product/get-units/' + productId,
+                    type: 'GET',
+                    success: function(response) {
+                        // Clear previous options
+                        $('#saleunit').empty();
+                        $('#purchaseunit').empty();
+
+                        // Append new options
+                        $.each(response.related_units, function(key, value) {
+                            $('#saleunit').append('<option value="' + value.id + '">' +
+                                value.name + '</option>');
+                            $('#purchaseunit').append('<option value="' + value.id +
+                                '">' + value.name + '</option>');
+                        });
+
+                        // Refresh Select2
+                        $('#saleunit').select2();
+                        $('#purchaseunit').select2();
+                    }
+                });
+            });
         });
     </script>
 @endpush
