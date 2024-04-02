@@ -19,7 +19,21 @@ class AdjustmentController extends Controller
      */
     public function index()
     {
-        return view('templates.adjustment.index');
+        // , 'details', 'user'
+        $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->get();
+        // foreach logik
+        foreach ($adjustment as $adjustmentdata) {
+            $item['id'] = $adjustmentdata->id;
+            $item['date'] = $adjustmentdata->date;
+            $item['Ref'] = $adjustmentdata->Ref;
+            $item['warehouse'] = $adjustmentdata['warehouse']->name;
+            $item['items'] = $adjustmentdata['items'];
+            $data[] = $item;
+        }
+
+        return view('templates.adjustment.index', [
+            'data' => $data,
+        ]);
     }
 
     /**
