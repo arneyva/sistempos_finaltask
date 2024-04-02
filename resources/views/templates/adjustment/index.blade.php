@@ -140,94 +140,91 @@
                                                     fill="white">
                                                 </circle>
                                             </svg>
-                                            {{--  --}}
                                             <div class="modal fade" id="detailModal{{ $item['id'] }}" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
+                                                role="dialog" aria-labelledby="showDetailsLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Create</h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            <h5 class="modal-title" id="showDetailsLabel">
+                                                                Adjustment Detail</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <form action="">
-                                                                <div class="col mb-3">
-                                                                    <label class="form-label"
-                                                                        for="validationDefault01">Name *</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="validationDefault01" required
-                                                                        placeholder="input product cost">
+                                                            <div class="row">
+                                                                <div class="col-lg-5 col-md-12 col-sm-12 mt-3">
+                                                                    <table
+                                                                        class="table table-hover table-bordered table-sm">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>{{ __('Date') }}</td>
+                                                                                <th>{{ $item['date'] }}</th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('Reference') }}</td>
+                                                                                <th>{{ $item['Ref'] }}</th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('Warehouse') }}</td>
+                                                                                <th>{{ $item['warehouse'] }}</th>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
                                                                 </div>
-                                                                <div class="col mb-3">
-                                                                    <label class="form-label"
-                                                                        for="validationDefault01">Short Name*</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="validationDefault01" required
-                                                                        placeholder="input product cost">
-                                                                </div>
-                                                                <div class="accordion" id="accordionExample">
-                                                                    <div class="accordion-item">
-                                                                        <h4 class="accordion-header" id="headingOne">
-                                                                            <button class="accordion-button"
-                                                                                type="button" data-bs-toggle="collapse"
-                                                                                data-bs-target="#collapseOne"
-                                                                                aria-expanded="true"
-                                                                                aria-controls="collapseOne">
-                                                                                Base Unit
-                                                                            </button>
-                                                                        </h4>
-                                                                        <div id="collapseOne"
-                                                                            class="accordion-collapse collapse show"
-                                                                            aria-labelledby="headingOne"
-                                                                            data-bs-parent="#accordionExample">
-                                                                            <div class="accordion-body">
-                                                                                <label for="validationCustomUsername"
-                                                                                    class="form-label">Product Unit</label>
-                                                                                <select class="form-select"
-                                                                                    id="validationDefault04" required>
-                                                                                    <option selected disabled
-                                                                                        value="">Choose...</option>
-                                                                                    <option>Gram</option>
-                                                                                    <option>Liter</option>
-                                                                                    <option>Meter</option>
-                                                                                    <option>Gram</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="accordion-body">
-                                                                                <label for="validationCustomUsername"
-                                                                                    class="form-label">Operator</label>
-                                                                                <select class="form-select"
-                                                                                    id="validationDefault04" required>
-                                                                                    <option selected disabled
-                                                                                        value="">Choose...</option>
-                                                                                    <option>Multiply (*)</option>
-                                                                                    <option>Devide (/)</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="accordion-body">
-                                                                                <label class="form-label"
-                                                                                    for="validationDefault01">Operation
-                                                                                    value *</label>
-                                                                                <input type="text" class="form-control"
-                                                                                    id="validationDefault01" required
-                                                                                    placeholder="input product cost">
-                                                                            </div>
-                                                                        </div>
+                                                                <div class="col-lg-7 col-md-12 col-sm-12 mt-3">
+                                                                    <div class="table-responsive">
+                                                                        <table
+                                                                            class="table table-hover table-bordered table-sm">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th scope="col">
+                                                                                        {{ __('ProductName') }}</th>
+                                                                                    <th scope="col">
+                                                                                        {{ __('CodeProduct') }}</th>
+                                                                                    <th scope="col">
+                                                                                        {{ __('Quantity') }}</th>
+                                                                                    <th scope="col">{{ __('Type') }}
+                                                                                    </th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach ($item['details_product'] as $key => $product)
+                                                                                    <tr>
+                                                                                        <td>{{ $product }}</td>
+                                                                                        <td>{{ $item['details_code'][$key] }}
+                                                                                        </td>
+                                                                                        <td>{{ $item['details_quantity'][$key] }}
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @if ($item['details_type'][$key] == 'add')
+                                                                                                {{ __('Addition') }}
+                                                                                            @elseif($item['details_type'][$key] == 'sub')
+                                                                                                {{ __('Subtraction') }}
+                                                                                            @endif
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                @endforeach
+                                                                            </tbody>
+                                                                        </table>
                                                                     </div>
                                                                 </div>
+                                                            </div>
+                                                            <hr>
+                                                            {{-- @if ($adjustment->note)
+                                                                <div class="row mt-4">
+                                                                    <div class="col-md-12">
+                                                                        <p>{{ $adjustment->note }}</p>
+                                                                    </div>
+                                                                </div>
+                                                            @endif --}}
+                                                        </div>
 
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Close</button>
-                                                            <button type="button" class="btn btn-primary">Save
-                                                                changes</button>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+
                                             {{--  --}}
                                             <a href="edit.html">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
