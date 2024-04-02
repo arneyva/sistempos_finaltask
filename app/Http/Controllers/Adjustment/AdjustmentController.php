@@ -36,18 +36,21 @@ class AdjustmentController extends Controller
             $detail_product = [];
             $detail_product_variant = [];
             $detail_code = [];
+            $detail_code_variant = [];
             $detail_quantity = [];
             $detail_type = [];
             foreach ($Adjustment_data as $detail) {
-                $detail_product[] = $detail->product_id;
-                $detail_product_variant[] = $detail->product_variant_id;
+                $detail_product[] = $detail->product->name;
+                $detail_product_variant[] = $detail->productVariant->name ?? null;
                 $detail_code[] = $detail->product->code;
+                $detail_code_variant[] = $detail->productVariant->code ?? null;
                 $detail_quantity[] = $detail->quantity;
                 $detail_type[] = $detail->type;
             }
             $item['details_product'] = $detail_product;
             $item['details_product_variant'] = $detail_product_variant;
             $item['details_code'] = $detail_code;
+            $item['details_code_variant'] = $detail_code_variant;
             $item['details_quantity'] = $detail_quantity;
             $item['details_type'] = $detail_type;
             $data[] = $item;

@@ -147,10 +147,6 @@
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="showDetailsLabel">
                                                                 Adjustment Detail</h5>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <div class="row">
@@ -192,8 +188,20 @@
                                                                             <tbody>
                                                                                 @foreach ($item['details_product'] as $key => $product)
                                                                                     <tr>
-                                                                                        <td>{{ $product }}</td>
-                                                                                        <td>{{ $item['details_code'][$key] }}
+                                                                                        {{-- <td>{{ $product }}</td> --}}
+                                                                                        <td>
+                                                                                            @if ($item['details_product_variant'][$key])
+                                                                                                {{ $item['details_product'][$key] . ' - ' . $item['details_product_variant'][$key] }}
+                                                                                            @else
+                                                                                                {{ $item['details_product'][$key] }}
+                                                                                            @endif
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @if ($item['details_code_variant'][$key])
+                                                                                                {{ $item['details_code'][$key] . ' - ' . $item['details_code_variant'][$key] }}
+                                                                                            @else
+                                                                                                {{ $item['details_code'][$key] }}
+                                                                                            @endif
                                                                                         </td>
                                                                                         <td>{{ $item['details_quantity'][$key] }}
                                                                                         </td>
