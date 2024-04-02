@@ -89,7 +89,8 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="brand">Brand</label>
-                                    <select class="form-select" id="brand" required name="brand_id">
+                                    <select class="form-select select2" id="brand" required name="brand_id"
+                                        data-placeholder="Select a Brand ">
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($brand as $item)
                                             <option value="{{ $item->id }}"
@@ -109,7 +110,8 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="category">Category *</label>
-                                    <select class="form-select" id="category" required name="category_id">
+                                    <select class="form-select select2" id="category" required name="category_id"
+                                        data-placeholder="Select a Category">>
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($category as $item)
                                             <option value="{{ $item->id }}"
@@ -208,7 +210,8 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="productunit" class="form-label">Product Unit</label>
-                                <select class="form-select" id="productunit" required name="unit_id">
+                                <select class="form-select select2" id="productunit" required name="unit_id"
+                                    data-placeholder="Select a Product Unit">
                                     <option selected disabled value="">Choose...</option>
                                     @foreach ($unit as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}
@@ -218,14 +221,16 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="saleunit" class="form-label">Sale Unit</label>
-                                <select class="form-select" id="saleunit" required name="unit_sale_id">
+                                <select class="form-select select2" id="saleunit" required name="unit_sale_id"
+                                    data-placeholder="Select a Sale Unit">
                                     <option selected disabled value="">Choose...</option>
                                     <option>...</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="purchaseunit" class="form-label">Purchase Unit</label>
-                                <select class="form-select" id="purchaseunit" required name="unit_purchase_id">
+                                <select class="form-select select2" id="purchaseunit" required name="unit_purchase_id"
+                                    data-placeholder="Select a Purchase Unit">
                                     <option selected disabled value="">Choose...</option>
                                     <option>...</option>
                                 </select>
@@ -381,149 +386,6 @@
             })
         });
     </script>
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var typeSelect = document.getElementById("type");
-            var productCostField = document.getElementById("productcost");
-            var productPriceField = document.getElementById("productprice");
-            var productVariantField = document.getElementById("createvariant");
-
-            typeSelect.addEventListener("change", function() {
-                var selectedType = this.value;
-                if (selectedType === "is_variant") {
-                    productCostField.value = ""; // Kosongkan nilai input biaya produk
-                    productPriceField.value = ""; // Kosongkan nilai input harga produk
-                    productCostField.disabled = true;
-                    productPriceField.disabled = true;
-                    productVariantField.style.display = "block";
-                } else {
-                    productCostField.disabled = false;
-                    productPriceField.disabled = false;
-                    productVariantField.style.display = "none";
-                }
-            });
-            // Sembunyikan area pembuatan varian produk secara default
-            productVariantField.style.display = "none";
-            // Set status awal
-            var initialType = typeSelect.value;
-            if (initialType === "is_variant") {
-                productCostField.value = ""; // Kosongkan nilai input biaya produk
-                productPriceField.value = ""; // Kosongkan nilai input harga produk
-                productCostField.disabled = true;
-                productPriceField.disabled = true;
-                productVariantField.style.display = "block";
-            }
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
-            var createVariantBtn = document.getElementById("createVariantBtn");
-            var variantNameInput = document.getElementById("variantNameInput");
-            var variantTableBody = document.getElementById("variantTableBody");
-
-            createVariantBtn.addEventListener("click", function() {
-                var variantName = variantNameInput.value.trim();
-
-                if (variantName === "") {
-                    alert("Please enter a variant name.");
-                    return;
-                }
-
-                // Memeriksa apakah nama variant sudah ada
-                var isDuplicate = false;
-                var rows = variantTableBody.querySelectorAll("tr");
-                rows.forEach(function(row) {
-                    var existingName = row.cells[0].querySelector('input').value.trim();
-                    if (existingName === variantName) {
-                        isDuplicate = true;
-                    }
-                });
-
-                if (isDuplicate) {
-                    alert("Variant name already exists.");
-                    return;
-                }
-
-                addVariantRow(variantName);
-                variantNameInput.value = ""; // Reset the input field after adding the variant
-            });
-
-            function addVariantRow(variantName) {
-                var newRow = document.createElement("tr");
-                newRow.innerHTML = `
-            <td><input required class="form-control" type="text" style="border-color: #DF4141;" value="${variantName}" name="variants[name]"></td>
-            <td contenteditable="true" class="variant-code"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[code]"></td>
-            <td contenteditable="true" class="variant-cost"><input required class="form-control" type="text" style="border-color: #DF4141;"  name="variants[cost]"></td>
-            <td contenteditable="true" class="variant-price"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[price]"></td>
-            <td>
-                <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
-            </td>
-        `;
-                variantTableBody.appendChild(newRow);
-
-                // Add event listener for delete button
-                newRow.querySelector(".delete-variant").addEventListener("click", function() {
-                    newRow.remove(); // Remove the row when delete button is clicked
-                });
-            }
-        });
-
-        // Menangani penyimpanan data produk varian sebelum formulir disubmit
-        function saveVariantData() {
-            var variantsData = [];
-            var rows = document.getElementById("variantTableBody").querySelectorAll("tr");
-
-            // Menyimpan semua kode dalam array untuk memeriksanya
-            var codes = [];
-            rows.forEach(function(row) {
-                var variantName = row.cells[0].querySelector('input').value;
-                var variantCode = row.cells[1].querySelector('input').value;
-                var variantCost = row.cells[2].querySelector('input').value;
-                var variantPrice = row.cells[3].querySelector('input').value;
-
-                // Menambahkan kode ke dalam array
-                codes.push(variantCode)
-
-                // Memeriksa apakah input cost dan price numerik
-                if (isNaN(variantCost) || isNaN(variantPrice)) {
-                    alert("Cost and price must be numeric.");
-                    event.preventDefault();
-                    return;
-                }
-                // 
-                if (variantCost == '' || variantPrice == '') {
-                    alert("Cost and price cannot be empty.");
-                    event.preventDefault();
-                    return;
-                }
-
-                variantsData.push({
-                    name: variantName,
-                    code: variantCode,
-                    cost: variantCost,
-                    price: variantPrice
-                });
-            });
-            if (variantsData.length === 0) {
-                alert("Please add at least one variant.");
-                event.preventDefault();
-                return;
-            }
-            // Memeriksa duplikat kode
-            if (checkDuplicateCodes(codes)) {
-                alert("Duplicate code found.");
-                event.preventDefault();
-                return;
-            }
-
-            // Simpan data produk varian ke dalam input tersembunyi sebelum formulir disubmit
-            document.getElementById("variantData").value = JSON.stringify(variantsData);
-        }
-        // Fungsi untuk memeriksa duplikat kode
-        function checkDuplicateCodes(codes) {
-            var uniqueCodes = new Set(codes); // Membuat set untuk mendapatkan nilai unik
-            return uniqueCodes.size !== codes.length; // Jika panjang set kurang dari panjang array, berarti ada duplikat
-        }
-    </script> --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var typeSelect = document.getElementById("type");
@@ -671,7 +533,7 @@
         }
     </script>
 
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             var productUnitSelect = document.getElementById("productunit");
             var saleUnitSelect = document.getElementById("saleunit");
@@ -712,6 +574,40 @@
                 }
                 selectElement.selectedIndex = 0;
             }
+        });
+    </script> --}}
+    <script>
+        $(document).ready(function() {
+            // Initialize Select2
+            $('.select2').select2();
+
+            // Event listener for product unit change
+            $('#productunit').change(function() {
+                var productId = $(this).val();
+
+                // Fetch related units via AJAX
+                $.ajax({
+                    url: '/product/get-units/' + productId,
+                    type: 'GET',
+                    success: function(response) {
+                        // Clear previous options
+                        $('#saleunit').empty();
+                        $('#purchaseunit').empty();
+
+                        // Append new options
+                        $.each(response.related_units, function(key, value) {
+                            $('#saleunit').append('<option value="' + value.id + '">' +
+                                value.name + '</option>');
+                            $('#purchaseunit').append('<option value="' + value.id +
+                                '">' + value.name + '</option>');
+                        });
+
+                        // Refresh Select2
+                        $('#saleunit').select2();
+                        $('#purchaseunit').select2();
+                    }
+                });
+            });
         });
     </script>
 @endpush

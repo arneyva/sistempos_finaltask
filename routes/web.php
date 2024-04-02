@@ -67,6 +67,7 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
     });
 });
 Route::get('/product/get-units/{id}', [ProductController::class, 'getUnits'])->name('product.getUnits');
+
 Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.')->group(function () {
     Route::get('list', [AdjustmentController::class, 'index'])->name('index');
     Route::get('detail/{id}', [AdjustmentController::class, 'show'])->name('show');
@@ -75,6 +76,9 @@ Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.
     Route::get('edit/{id}', [AdjustmentController::class, 'edit'])->name('edit');
     Route::patch('update/{id}', [AdjustmentController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [AdjustmentController::class, 'destroy'])->name('destroy');
+    //
+    Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
+    Route::get('show_product_data/{id}/{variant_id}', [AdjustmentController::class, 'show_product_data']);
 });
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {

@@ -29,7 +29,10 @@
 
     <!-- RTL Css -->
     <link rel="stylesheet" href="{{ asset('hopeui/html/assets/css/rtl.min.css') }}">
-
+    {{-- select2 css --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    {{-- bootsrap css --}}
+    @stack('style')
 
 </head>
 
@@ -391,6 +394,14 @@
 
     <!-- App Script -->
     <script src="{{ asset('hopeui/html/assets/js/hope-ui.js') }}" defer></script>
+
+    {{-- jquery --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{-- selecet2 js --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    {{-- bootsrap js --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         $("document").ready(function() {
             setTimeout(function() {
@@ -399,7 +410,6 @@
         });
     </script>
     @stack('script')
-
 </body>
 
 </html>

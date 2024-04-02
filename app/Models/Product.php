@@ -36,14 +36,19 @@ class Product extends Model
         'is_active',
     ];
 
-    /**
-     * Get all of the variant for the Product
-     *
-     * @return \Illuminate\DatProductVariant\Eloquent\Relations\HasMany
-     */
-    public function variant(): HasMany
+    public function ProductVariant()
     {
-        return $this->hasMany(ProductVariant::class, 'product_id', 'id');
+        return $this->belongsTo(ProductVariant::class);
+    }
+
+    public function PurchaseDetail()
+    {
+        return $this->belongsTo('App\Models\PurchaseDetail');
+    }
+
+    public function SaleDetail()
+    {
+        return $this->belongsTo('App\Models\SaleDetail');
     }
 
     public function brand()
