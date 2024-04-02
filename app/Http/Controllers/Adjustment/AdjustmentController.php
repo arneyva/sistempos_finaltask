@@ -22,15 +22,35 @@ class AdjustmentController extends Controller
         // , 'details', 'user'
         $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->get();
         // foreach logik
+        $data = [];
         foreach ($adjustment as $adjustmentdata) {
             $item['id'] = $adjustmentdata->id;
             $item['date'] = $adjustmentdata->date;
             $item['Ref'] = $adjustmentdata->Ref;
             $item['warehouse'] = $adjustmentdata['warehouse']->name;
             $item['items'] = $adjustmentdata['items'];
+            // logik adjustment detail
+            $Adjustment_data = AdjustmentDetail::where('adjustment_id', $adjustmentdata->id)
+                ->where('deleted_at', '=', null)->get();
+            // dd($Adjustment_data);
+            $detail_product = [];
+            $detail_code = [];
+            $detail_quantity = [];
+            $detail_type = [];
+            foreach ($Adjustment_data as $detail) {
+                $detail_product[] = $detail->product_id;
+                $detail_code[] = $detail->product->code;
+                $detail_quantity[] = $detail->quantity;
+                $detail_type[] = $detail->type;
+            }
+            $item['details_product'] = $detail_product;
+            $item['details_code'] = $detail_code;
+            $item['details_quantity'] = $detail_quantity;
+            $item['details_type'] = $detail_type;
             $data[] = $item;
         }
 
+        // dd($data);
         return view('templates.adjustment.index', [
             'data' => $data,
         ]);
@@ -59,7 +79,7 @@ class AdjustmentController extends Controller
             //array ke2 di tambah 1
             $inMsg = $nwMsg[1] + 1;
             // array item pertama ditambah dengan array item kedua
-            $code = $nwMsg[0].'_'.$inMsg;
+            $code = $nwMsg[0] . '_' . $inMsg;
         } else {
             $code = 'AD_1'; // AD=pertama 1=kedua
         }
@@ -97,8 +117,8 @@ class AdjustmentController extends Controller
             if ($product_warehouse->product_variant_id) { //jika memiliki data product_variant_id
                 $item['product_variant_id'] = $product_warehouse->product_variant_id;
                 $item['code'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
-                $item['Variant'] = '['.$product_warehouse['productVariant']->name.']'.$product_warehouse['product']->name; //code ngambil dari relasi productVariant
-                $item['name'] = '['.$product_warehouse['productVariant']->name.']'.$product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['Variant'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['name'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
                 $item['barcode'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
 
                 $product_price = $product_warehouse['productVariant']->price; //code ngambil dari relasi productVariant
@@ -213,7 +233,7 @@ class AdjustmentController extends Controller
             $product_price = $product_variant_data['price'];
             $product_cost = $product_variant_data['cost'];
             $item['code'] = $product_variant_data['code'];
-            $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
+            $item['name'] = '[' . $product_variant_data['name'] . ']' . $Product_data['name'];
 
             //product is_service
         } else {
