@@ -122,25 +122,113 @@
                                     </td>
                                     <td>
                                         <div class="inline">
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
-                                                        stroke="#130F26"></path>
-                                                    <circle cx="12" cy="12" r="5" stroke="#130F26">
+                                            <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal"
+                                                data-bs-target="#detailModal{{ $item['id'] }}">
+                                                <path
+                                                    d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
+                                                    stroke="#130F26"></path>
+                                                <circle cx="12" cy="12" r="5" stroke="#130F26">
+                                                </circle>
+                                                <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
+                                                <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
+                                                    width="6" height="6">
+                                                    <circle cx="12" cy="12" r="3" fill="#130F26">
                                                     </circle>
-                                                    <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
-                                                    <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
-                                                        width="6" height="6">
-                                                        <circle cx="12" cy="12" r="3" fill="#130F26">
-                                                        </circle>
-                                                    </mask>
-                                                    <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
-                                                        fill="white">
-                                                    </circle>
-                                                </svg>
-                                            </a>
+                                                </mask>
+                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
+                                                    fill="white">
+                                                </circle>
+                                            </svg>
+                                            {{--  --}}
+                                            <div class="modal fade" id="detailModal{{ $item['id'] }}" tabindex="-1"
+                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="">
+                                                                <div class="col mb-3">
+                                                                    <label class="form-label"
+                                                                        for="validationDefault01">Name *</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="validationDefault01" required
+                                                                        placeholder="input product cost">
+                                                                </div>
+                                                                <div class="col mb-3">
+                                                                    <label class="form-label"
+                                                                        for="validationDefault01">Short Name*</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="validationDefault01" required
+                                                                        placeholder="input product cost">
+                                                                </div>
+                                                                <div class="accordion" id="accordionExample">
+                                                                    <div class="accordion-item">
+                                                                        <h4 class="accordion-header" id="headingOne">
+                                                                            <button class="accordion-button"
+                                                                                type="button" data-bs-toggle="collapse"
+                                                                                data-bs-target="#collapseOne"
+                                                                                aria-expanded="true"
+                                                                                aria-controls="collapseOne">
+                                                                                Base Unit
+                                                                            </button>
+                                                                        </h4>
+                                                                        <div id="collapseOne"
+                                                                            class="accordion-collapse collapse show"
+                                                                            aria-labelledby="headingOne"
+                                                                            data-bs-parent="#accordionExample">
+                                                                            <div class="accordion-body">
+                                                                                <label for="validationCustomUsername"
+                                                                                    class="form-label">Product Unit</label>
+                                                                                <select class="form-select"
+                                                                                    id="validationDefault04" required>
+                                                                                    <option selected disabled
+                                                                                        value="">Choose...</option>
+                                                                                    <option>Gram</option>
+                                                                                    <option>Liter</option>
+                                                                                    <option>Meter</option>
+                                                                                    <option>Gram</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="accordion-body">
+                                                                                <label for="validationCustomUsername"
+                                                                                    class="form-label">Operator</label>
+                                                                                <select class="form-select"
+                                                                                    id="validationDefault04" required>
+                                                                                    <option selected disabled
+                                                                                        value="">Choose...</option>
+                                                                                    <option>Multiply (*)</option>
+                                                                                    <option>Devide (/)</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="accordion-body">
+                                                                                <label class="form-label"
+                                                                                    for="validationDefault01">Operation
+                                                                                    value *</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    id="validationDefault01" required
+                                                                                    placeholder="input product cost">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close</button>
+                                                            <button type="button" class="btn btn-primary">Save
+                                                                changes</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{--  --}}
                                             <a href="edit.html">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
