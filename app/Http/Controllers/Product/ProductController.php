@@ -20,14 +20,6 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index()
-    // {
-    //     $product = Product::query()->latest()->get();
-
-    //     return view('templates.product.index', [
-    //         'product' => $product,
-    //     ]);
-    // }
     public function index()
     {
         // ambil data product utama
