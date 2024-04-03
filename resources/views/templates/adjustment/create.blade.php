@@ -114,7 +114,7 @@
 
             if (productId && warehouseId) {
                 $.ajax({
-                    url: '/adjustment/show_product_data/' + productId + '/' + variantId,
+                    url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' + warehouseId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
