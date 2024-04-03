@@ -20,7 +20,7 @@ class AdjustmentController extends Controller
     public function index()
     {
         // , 'details', 'user'
-        $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->get();
+        $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->latest()->get();
         // foreach logik
         $data = [];
         foreach ($adjustment as $adjustmentdata) {
@@ -192,13 +192,14 @@ class AdjustmentController extends Controller
         return response()->json($data);
     }
 
-    public function show_product_data($id, $variant_id)
+    public function show_product_data($id, $variant_id, $warehouse_id)
     {
 
         $Product_data = Product::with('unit')
             ->where('id', $id)
             ->where('deleted_at', '=', null)
             ->first();
+        //ngambil dari relasi productWarehouse (id)
 
         $data = [];
         $item['id'] = $Product_data['id']; //id product
@@ -220,13 +221,14 @@ class AdjustmentController extends Controller
 
         $item['is_imei'] = $Product_data['is_imei'];
         $item['not_selling'] = $Product_data['not_selling'];
-        // $item['qty']         = $Product_data['warehouse']->qty;
+        // $item['qty']         = $stock->qty ?? 'cek';
 
         //product single
         if ($Product_data['type'] == 'is_single') {
+            $stock = ProductWarehouse::where('product_id', $Product_data['id'])->where('warehouse_id', $warehouse_id)->first();
             $product_price = $Product_data['price'];
             $product_cost = $Product_data['cost'];
-
+            $item['qty'] = $stock->qty;
             $item['code'] = $Product_data['code'];
             $item['name'] = $Product_data['name'];
 
@@ -235,11 +237,13 @@ class AdjustmentController extends Controller
 
             $product_variant_data = ProductVariant::where('product_id', $id)
                 ->where('id', $variant_id)->first();
+            $stock = ProductWarehouse::where('product_id', $Product_data['id'])->where('product_variant_id', $variant_id)->where('warehouse_id', $warehouse_id)->first();
 
             $product_price = $product_variant_data['price'];
             $product_cost = $product_variant_data['cost'];
             $item['code'] = $product_variant_data['code'];
             $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
+            $item['qty'] = $stock->qty;
 
             //product is_service
         } else {
