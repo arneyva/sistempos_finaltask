@@ -80,66 +80,83 @@
 
 @push('script')
     <script>
-        $('#selectWarehouse').on('change', function() {
-            var warehouseId = $(this).val();
-            if (warehouseId) {
-                $.ajax({
-                    url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(data) {
-                        $('#selectProduct').empty().append(
-                            '<option selected disabled value="">Choose...</option>');
-                        $.each(data, function(key, value) {
-                            $('#selectProduct').append('<option value="' + value.id +
-                                '" data-variant-id="' + value.product_variant_id + '">' +
-                                value.name + '</option>');
-                        });
-                        $('#selectProduct').prop('disabled', false);
-                    }
-                });
-            } else {
-                $('#selectProduct').empty().prop('disabled', true);
-            }
-        });
-        $('#selectProduct').on('change', function() {
-            var productId = $(this).val();
-            var warehouseId = $('#selectWarehouse').val();
-            var variantId = $(this).find(':selected').data('variant-id');
+        // Fungsi untuk menambahkan event listener untuk tombol delete di dalam tbody
+        $(document).ready(function() {
+            $('#product-table-body').on('click', '.delete-row', function() {
+                $(this).closest('tr')
+                    .remove(); // Menghapus baris tabel yang berisi tombol delete yang diklik
+            });
+            // Event listener untuk perubahan pada pilihan gudang
+            $('#selectWarehouse').on('change', function() {
+                var warehouseId = $(this).val();
+                if (warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#selectProduct').empty().append(
+                                '<option selected disabled value="">Choose...</option>');
+                            $.each(data, function(key, value) {
+                                $('#selectProduct').append('<option value="' + value
+                                    .id +
+                                    '" data-variant-id="' + value
+                                    .product_variant_id + '">' +
+                                    value.name + '</option>');
+                            });
+                            $('#selectProduct').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#selectProduct').empty().prop('disabled', true);
+                }
+            });
 
-            // Periksa jika variantId adalah null, maka atur nilai variantId menjadi null
-            if (!variantId) {
-                variantId = null;
-            }
+            // Event listener untuk perubahan pada pilihan produk
+            $('#selectProduct').on('change', function() {
+                var productId = $(this).val();
+                var warehouseId = $('#selectWarehouse').val();
+                var variantId = $(this).find(':selected').data('variant-id');
 
-            if (productId && warehouseId) {
-                $.ajax({
-                    url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' + warehouseId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(data) {
-                        // Buat objek untuk baris tabel
-                        var row = '<tr>';
-                        row += '<td>#</td>';
-                        row += '<td>' + data.code + '</td>';
-                        row += '<td>' + data.name + '</td>';
-                        row += '<td>' + data.qty + '</td>';
-                        row += '<td><input type="number" class="form-control" name="details[' + data
-                            .id + '][quantity]" value="0" min="0"></td>';
-                        row += '<td><select class="form-select" name="details[' + data.id +
-                            '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
-                        row += '<td><input type="hidden" name="details[' + data.id +
-                            '][product_id]" value="' + data.id + '"></td>';
-                        row += '<td><input type="hidden" name="details[' + data.id +
-                            '][product_variant_id]" value="' + (variantId || '') +
-                            '"></td>';
-                        row += '</tr>';
+                // Periksa jika variantId adalah null, maka atur nilai variantId menjadi null
+                if (!variantId) {
+                    variantId = null;
+                }
 
-                        // Masukkan baris ke dalam tbody
-                        $('#product-table-body').append(row);
-                    }
-                });
-            }
+                if (productId && warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
+                            warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            // Buat objek untuk baris tabel
+                            var row = '<tr>';
+                            row += '<td>#</td>';
+                            row += '<td>' + data.code + '</td>';
+                            row += '<td>' + data.name + '</td>';
+                            row += '<td>' + data.qty + '</td>';
+                            row +=
+                                '<td><input type="number" class="form-control" name="details[' +
+                                data
+                                .id + '][quantity]" value="0" min="0"></td>';
+                            row += '<td><select class="form-select" name="details[' + data.id +
+                                '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][product_id]" value="' + data.id + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][product_variant_id]" value="' + (variantId || '') +
+                                '"></td>';
+                            row +=
+                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>'; // Tombol delete ditambahkan di sini
+                            row += '</tr>';
+
+                            // Masukkan baris ke dalam tbody
+                            $('#product-table-body').append(row);
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endpush
