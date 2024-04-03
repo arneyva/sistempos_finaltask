@@ -23,7 +23,7 @@ class ProductController extends Controller
     public function index()
     {
         // ambil data product utama
-        $products = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null)->get();
+        $products = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null)->latest()->paginate(10);
         //ambil data
         $items = [];
         foreach ($products as $product) {
@@ -69,6 +69,7 @@ class ProductController extends Controller
         // dd($items);
         return view('templates.product.index', [
             'items' => $items,
+            'products' => $products,
         ]);
     }
 

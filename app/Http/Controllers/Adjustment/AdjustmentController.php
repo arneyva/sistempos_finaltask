@@ -20,7 +20,7 @@ class AdjustmentController extends Controller
     public function index()
     {
         // , 'details', 'user'
-        $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->latest()->get();
+        $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->latest()->paginate(10);
         // foreach logik
         $data = [];
         foreach ($adjustment as $adjustmentdata) {
@@ -59,6 +59,7 @@ class AdjustmentController extends Controller
         // dd($data);
         return view('templates.adjustment.index', [
             'data' => $data,
+            'adjustment' => $adjustment,
         ]);
     }
 
