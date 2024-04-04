@@ -17,12 +17,7 @@ class WarehousesController extends Controller
      */
     public function index()
     {
-        // $warehouses = Warehouse::query()->latest()->filter($request->query())
-        // ->paginate($request->query('limit') ?? 10);
-        // return view('university.index', [
-        //     'university' => $university,
-        // ]);
-        $warehouses = Warehouse::query()->latest()->get();
+        $warehouses = Warehouse::query()->latest()->paginate(1);
 
         return view('templates.settings.warehouses.index', [
             'warehouses' => $warehouses,
