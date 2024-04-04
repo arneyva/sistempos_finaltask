@@ -27,7 +27,7 @@ class AdjustmentController extends Controller
             $item['id'] = $adjustmentdata->id;
             $item['date'] = $adjustmentdata->date;
             $item['Ref'] = $adjustmentdata->Ref;
-            $item['warehouse'] = $adjustmentdata['warehouse']->name;
+            $item['warehouse'] = $adjustmentdata['warehouse']->name ?? 'deleted';
             $item['items'] = $adjustmentdata['items'];
             // logik adjustment detail
             $Adjustment_data = AdjustmentDetail::where('adjustment_id', $adjustmentdata->id)

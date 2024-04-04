@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductWarehouse;
 use App\Models\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -159,6 +160,9 @@ class WarehousesController extends Controller
     {
         $warehouses = Warehouse::where('id', $id)->first();
         $warehouses->delete();
+        ProductWarehouse::where('warehouse_id', $id)->update([
+            'deleted_at' => Carbon::now(),
+        ]);
 
         return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse deleted successfully');
     }

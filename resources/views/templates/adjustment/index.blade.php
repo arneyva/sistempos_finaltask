@@ -1,4 +1,12 @@
 @extends('templates.main')
+<style>
+    .warehousedeleted {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #ffefef;
+        color: #F24D4D;
+    }
+</style>
 @section('content')
     <div class="col-sm-12">
         <div class="card">
@@ -115,7 +123,12 @@
                                         {{ $item['Ref'] }}
                                     </td>
                                     <td>
-                                        {{ $item['warehouse'] }}
+                                        {{-- {{ $item['warehouse'] }} --}}
+                                        @if ($item['warehouse'] === 'deleted')
+                                            <span class="warehousedeleted">warehouse deleted</span>
+                                        @else
+                                            {{ $item['warehouse'] }}
+                                        @endif
                                     </td>
                                     <td>
                                         {{ $item['items'] }} Items
