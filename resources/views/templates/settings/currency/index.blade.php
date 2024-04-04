@@ -127,59 +127,31 @@
                                                                 @method('PATCH')
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="editname{{ $item->id }}">Name
+                                                                        for="editname{{ $item->id }}">Code
                                                                         *</label>
                                                                     <input type="text" class="form-control"
                                                                         id="editname{{ $item->id }}" required
-                                                                        placeholder="input unit name" name="name"
+                                                                        placeholder="input code" name="code"
+                                                                        value="{{ $item->code }}">
+                                                                </div>
+                                                                <div class="col mb-3">
+                                                                    <label class="form-label"
+                                                                        for="city{{ $item->id }}">Name
+                                                                        *</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="city{{ $item->id }}" required
+                                                                        name="name" placeholder="input name"
                                                                         value="{{ $item->name }}">
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="city{{ $item->id }}">City
-                                                                        *</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="city{{ $item->id }}" required
-                                                                        name="city" placeholder="input city"
-                                                                        value="{{ $item->city }}">
-                                                                </div>
-                                                                <div class="col mb-3">
-                                                                    <label class="form-label"
-                                                                        for="phone{{ $item->id }}">Mobile Phone
+                                                                        for="phone{{ $item->id }}">Symbol
                                                                         *</label>
                                                                     <input type="text" class="form-control"
                                                                         id="phone{{ $item->id }}" required
-                                                                        name="mobile" placeholder="input mobile phone"
-                                                                        value="{{ $item->mobile }}">
+                                                                        name="symbol" placeholder="input symbol"
+                                                                        value="{{ $item->symbol }}">
                                                                 </div>
-                                                                <div class="col mb-3">
-                                                                    <label class="form-label"
-                                                                        for="postcode{{ $item->id }}">Zip Potscode
-                                                                        *</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="postcode{{ $item->id }}" required
-                                                                        name="zip" placeholder="input postcode"
-                                                                        value="{{ $item->zip }}">
-                                                                </div>
-                                                                <div class="col mb-3">
-                                                                    <label class="form-label"
-                                                                        for="email{{ $item->id }}">Email
-                                                                        *</label>
-                                                                    <input type="email" class="form-control"
-                                                                        id="email{{ $item->id }}" required
-                                                                        placeholder="input email" name="email"
-                                                                        value="{{ $item->email }}">
-                                                                </div>
-                                                                <div class="col mb-3">
-                                                                    <label class="form-label"
-                                                                        for="country{{ $item->id }}">Country
-                                                                        *</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="country{{ $item->id }}" required
-                                                                        name="country" placeholder="input country"
-                                                                        value="{{ $item->country }}">
-                                                                </div>
-
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
