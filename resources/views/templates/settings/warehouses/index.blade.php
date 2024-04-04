@@ -9,6 +9,20 @@
                 <div class="header-title">
                     <h4 class="card-title">All Warehouse</h4>
                 </div>
+            </div>
+            <div class="card-header d-flex justify-content-between">
+                <div class="input-group search-input" style="width: 30%">
+                    <span class="input-group-text d-inline" id="searchIcon">
+                        <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round"></circle>
+                            <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </span>
+                    <input type="search" class="form-control" placeholder="Search...">
+                </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
@@ -62,7 +76,8 @@
                                         </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-primary">Save changes</button>
                                 </div>
                                 </form>
@@ -71,7 +86,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-body p-0">
                 <div class="table-responsive mt-4">
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
@@ -274,3 +288,28 @@
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.querySelector('.search-input input');
+            const rows = document.querySelectorAll('#basic-table tbody tr');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.trim().toLowerCase();
+
+                rows.forEach(row => {
+                    const nameColumn = row.querySelector('td:first-child').textContent.trim()
+                        .toLowerCase();
+                    const shortNameColumn = row.querySelector('td:nth-child(2)').textContent.trim()
+                        .toLowerCase();
+
+                    if (nameColumn.includes(searchTerm) || shortNameColumn.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+@endpush
