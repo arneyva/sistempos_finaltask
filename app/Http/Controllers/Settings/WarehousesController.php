@@ -82,7 +82,7 @@ class WarehousesController extends Controller
                         'warehouse_id' => $warehouses->id,
                         'product_variant_id' => null,
                         'manage_stock' => 1,
-                        'qte' => 0,
+                        'qty' => 0,
                     ];
                     ProductWarehouse::insert($product_warehouse);
                     DB::commit();

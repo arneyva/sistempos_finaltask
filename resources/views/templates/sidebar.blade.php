@@ -854,7 +854,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/table-data.html">
+                            <a class="nav-link "href="{{ route('settings.currency.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -864,8 +864,8 @@
                                         </g>
                                     </svg>
                                 </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Datatable</span>
+                                <i class="sidenav-mini-icon"> C </i>
+                                <span class="item-name">Currency</span>
                             </a>
                         </li>
                     </ul>
