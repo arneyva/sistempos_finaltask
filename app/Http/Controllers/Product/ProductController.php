@@ -40,7 +40,7 @@ class ProductController extends Controller
                 $item['unit'] = $product['unit']->ShortName;
                 // handle jumlah barang
                 $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
             } elseif ($product->type == 'is_variant') {
                 //untuk product variant
                 $item['type'] = 'Variant Product';
@@ -61,7 +61,7 @@ class ProductController extends Controller
                 $item['name'] = $variant_name;
                 // handle jumlah barang
                 $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
             }
             $items[] = $item;
         }
@@ -193,7 +193,7 @@ class ProductController extends Controller
 
                 foreach ($variants as $variant) {
                     if (ProductVariant::where('code', $variant->code)->exists()) {
-                        $errors[] = 'The code ' . $variant->code . ' has already been taken.';
+                        $errors[] = 'The code '.$variant->code.' has already been taken.';
                     } else {
                         $Product_variants_data[] = [
                             'product_id' => $productValue->id,
@@ -205,7 +205,7 @@ class ProductController extends Controller
                     }
                 }
 
-                if (!empty($errors)) {
+                if (! empty($errors)) {
                     return redirect()->back()->withErrors(['variants' => $errors])->withInput();
                 }
 
