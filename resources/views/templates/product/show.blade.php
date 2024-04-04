@@ -5,63 +5,44 @@
         <div class="row row-cols-1">
             <div class="overflow-hidden d-slider1 ">
                 <ul class="p-0 m-0 mb-2 swiper-wrapper list-inline">
-                    <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="700">
-                        <div class="card-body">
-                            <div class="progress-widget">
-                                <div id="circle-progress-01"
-                                    class="text-center circle-progress-01 circle-progress circle-progress-primary"
-                                    data-min-value="0" data-max-value="100" data-value="90" data-type="percent">
-                                    {{-- <svg class="card-slie-arrow icon-24" width="24" viewBox="0 0 24 24">
-                                        <path fill="currentColor" d="M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z" />
-                                    </svg> --}}
+                    @if ($data[0]['is_variant'] == 'Yes')
+                        @foreach ($data[0]['CountQTY_variants'] as $variant)
+                            <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="700">
+                                <div class="card-body">
+                                    <div class="progress-widget">
+                                        <div class="progress-detail">
+                                            <p class="mb-2">{{ $variant['mag'] }}</p>
+                                            <p class="mb-2">{{ $variant['variant'] }}</p>
+                                            <span class="mb-2"
+                                                style="padding: 7px;
+                                            border-radius: 7px;
+                                            background-color: #ffefef;
+                                            color: #F24D4D;">
+                                                Stock Alert : 15</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="progress-detail">
-                                    <p class="mb-2">Warehouse</p>
-                                    <h6 class="counter">Stock : 10</h4>
-                                        <h6 class="counter" style="color:red">Stock Alert : 10</h4>
-
+                            </li>
+                        @endforeach
+                    @else
+                        @foreach ($data[0]['CountQTY'] as $qty)
+                            <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="700">
+                                <div class="card-body">
+                                    <div class="progress-widget">
+                                        <div class="progress-detail">
+                                            <p class="mb-2">{{ $qty['mag'] }}</p>
+                                            <span class="mb-2"
+                                                style="padding: 7px;
+                                        border-radius: 7px;
+                                        background-color: #ffefef;
+                                        color: #F24D4D;">
+                                                Stock Alert : 15</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="700">
-                        <div class="card-body">
-                            <div class="progress-widget">
-                                <div id="circle-progress-02"
-                                    class="text-center circle-progress-01 circle-progress circle-progress-primary"
-                                    data-min-value="0" data-max-value="100" data-value="90" data-type="percent">
-                                    {{-- <svg class="card-slie-arrow icon-24" width="24" viewBox="0 0 24 24">
-                                        <path fill="currentColor" d="M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z" />
-                                    </svg> --}}
-                                </div>
-                                <div class="progress-detail">
-                                    <p class="mb-2">Outlet A </p>
-                                    <h6 class="counter">Stock : 20</h4>
-                                        <h6 class="counter" style="color:red">Stock Alert : 15</h4>
-
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="700">
-                        <div class="card-body">
-                            <div class="progress-widget">
-                                <div id="circle-progress-03"
-                                    class="text-center circle-progress-01 circle-progress circle-progress-primary"
-                                    data-min-value="0" data-max-value="100" data-value="90" data-type="percent">
-                                    {{-- <svg class="card-slie-arrow icon-24" width="24" viewBox="0 0 24 24">
-                                        <path fill="currentColor" d="M5,17.59L15.59,7H9V5H19V15H17V8.41L6.41,19L5,17.59Z" />
-                                    </svg> --}}
-                                </div>
-                                <div class="progress-detail">
-                                    <p class="mb-2">Outlet B</p>
-                                    <h6 class="counter">Stock : 12</h4>
-                                        <h6 class="counter" style="color:red">Stock Alert : 10</h4>
-
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                            </li>
+                        @endforeach
+                    @endif
                 </ul>
                 <div class="swiper-button swiper-button-next"></div>
                 <div class="swiper-button swiper-button-prev"></div>
