@@ -7,6 +7,7 @@ use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\WarehousesController;
 use Illuminate\Support\Facades\Route;
 
@@ -89,6 +90,15 @@ Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->
         Route::get('edit/{id}', [WarehousesController::class, 'edit'])->name('edit');
         Route::patch('update/{id}', [WarehousesController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [WarehousesController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('currency')->name('currency.')->group(function () {
+        Route::get('list', [CurrencyController::class, 'index'])->name('index');
+        Route::get('detail/{id}', [CurrencyController::class, 'show'])->name('show');
+        Route::get('create', [CurrencyController::class, 'create'])->name('create');
+        Route::post('store', [CurrencyController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [CurrencyController::class, 'edit'])->name('edit');
+        Route::patch('update/{id}', [CurrencyController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [CurrencyController::class, 'destroy'])->name('destroy');
     });
 });
 Route::middleware('auth')->group(function () {
