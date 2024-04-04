@@ -79,55 +79,45 @@ class CurrencyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // public function update(Request $request, string $id)
-    // {
-    //     $updateRules = $request->validate([
-    //         'name' => [
-    //             'required',
-    //             Rule::unique(Warehouse::class, 'name')->whereNull('deleted_at')->ignore($id),
-    //         ],
-    //         'city' => [
-    //             'required',
-    //         ],
-    //         'mobile' => [
-    //             'required',
-    //             Rule::unique(Warehouse::class, 'mobile')->whereNull('deleted_at')->ignore($id),
-    //         ],
-    //         'zip' => [
-    //             'required',
-    //         ],
-    //         'email' => [
-    //             'required',
-    //             Rule::unique(Warehouse::class, 'email')->whereNull('deleted_at')->ignore($id),
-    //         ],
-    //         'country' => [
-    //             'required',
-    //         ],
-    //     ]);
+    public function update(Request $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $updateRules = $request->validate([
+                'code' => [
+                    'required',
+                    Rule::unique(Currency::class, 'code')->whereNull('deleted_at')->ignore($id),
+                ],
+                'name' => [
+                    'required',
+                    Rule::unique(Currency::class, 'name')->whereNull('deleted_at')->ignore($id),
+                ],
+                'symbol' => [
+                    'required',
+                ],
+            ]);
 
-    //     $warehouses = Warehouse::where('id', $id)->update([
-    //         'name' => $updateRules['name'],
-    //         'city' => $updateRules['city'],
-    //         'mobile' => $updateRules['mobile'],
-    //         'zip' => $updateRules['zip'],
-    //         'email' => $updateRules['email'],
-    //         'country' => $updateRules['country'],
-    //     ]);
+            $currency = Currency::where('id', $id)->update([
+                'name' => $updateRules['name'],
+                'code' => $updateRules['code'],
+                'symbol' => $updateRules['symbol'],
+            ]);
+            DB::commit();
 
-    //     return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse updated successfully');
-    // }
+            return redirect()->route('settings.currency.index')->with('success', 'Data Warehouse updated successfully');
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
 
     /**
      * Remove the specified resource from storage.
      */
-    // public function destroy(string $id)
-    // {
-    //     $warehouses = Warehouse::where('id', $id)->first();
-    //     $warehouses->delete();
-    //     ProductWarehouse::where('warehouse_id', $id)->update([
-    //         'deleted_at' => Carbon::now(),
-    //     ]);
+    public function destroy(string $id)
+    {
+        $currency = Currency::where('id', $id)->first();
+        $currency->delete();
 
-    //     return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse deleted successfully');
-    // }
+        return redirect()->route('settings.currency.index')->with('success', 'Data Warehouse deleted successfully');
+    }
 }
