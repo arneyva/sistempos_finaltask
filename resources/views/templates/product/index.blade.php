@@ -88,7 +88,7 @@
                                     <td>{{ $item['quantity'] }}</td>
                                     <td>
                                         <div class="inline">
-                                            <a href="cek.html">
+                                            <a href="{{ route('product.show', $item['id']) }}">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path
@@ -105,7 +105,7 @@
                                                     </circle>
                                                 </svg>
                                             </a>
-                                            <a href="edit.html">
+                                            <a href="{{ route('product.edit', $item['id']) }}">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
