@@ -22,10 +22,54 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::query()->latest()->get();
+        // ambil data product utama
+        $products = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null)->latest()->paginate(10);
+        //ambil data
+        $items = [];
+        foreach ($products as $product) {
+            $item['id'] = $product->id;
+            $item['code'] = $product->code;
+            $item['category'] = $product['category']->name;
+            $item['brand'] = $product['brand']->name;
+            // untuk product single
+            if ($product->type == 'is_single') {
+                $item['name'] = $product->name;
+                $item['type'] = 'Single Product';
+                $item['cost'] = $product->cost;
+                $item['price'] = $product->price;
+                $item['unit'] = $product['unit']->ShortName;
+                // handle jumlah barang
+                $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
+                $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+            } elseif ($product->type == 'is_variant') {
+                //untuk product variant
+                $item['type'] = 'Variant Product';
+                $item['unit'] = $product['unit']->ShortName;
+                $product_variant_data = ProductVariant::where('product_id', $product->id)
+                    ->where('deleted_at', '=', null)
+                    ->get();
+                $variant_costs = [];
+                $variant_price = [];
+                $variant_name = [];
+                foreach ($product_variant_data as $product_variant) {
+                    $variant_costs[] = $product_variant->cost;
+                    $variant_price[] = $product_variant->price;
+                    $variant_name[] = $product_variant->name;
+                }
+                $item['cost'] = $variant_costs;
+                $item['price'] = $variant_price;
+                $item['name'] = $variant_name;
+                // handle jumlah barang
+                $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
+                $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+            }
+            $items[] = $item;
+        }
 
+        // dd($items);
         return view('templates.product.index', [
-            'product' => $product,
+            'items' => $items,
+            'products' => $products,
         ]);
     }
 
@@ -206,7 +250,77 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        return view('templates.product.show');
+        $product = Product::where('deleted_at', '=', null)->findOrFail($id);
+        // belom  pakai spatie
+        $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        $item['id'] = $product->id;
+        $item['type'] = $product->type;
+        $item['code'] = $product->code;
+        $item['Type_barcode'] = $product->Type_barcode;
+        $item['name'] = $product->name;
+        $item['cost'] = $product->cost;
+        $item['tax'] = $product->TaxNet;
+        $item['price'] = $product->price;
+        $item['cateogry'] = $product['category']->name;
+        $item['brand'] = $product['brand']->name ?? 'N/D';
+        $item['unit'] = $product['unit']->ShortName;
+        // type
+        if ($product->type == 'is_single') {
+            $item['type_name'] = 'Single';
+            $item['unit'] = $product['unit']->ShortName;
+        } else {
+            $item['type_name'] = 'Variant';
+            $item['unit'] = $product['unit']->ShortName;
+        }
+        // is variant
+        if ($product->is_variant) {
+            $item['is_variant'] = 'Yes';
+            $productVariants = ProductVariant::where('product_id', $product->id)->where('deleted_at', '=', null)->get();
+            foreach ($productVariants as $variant) {
+                $ProductVariant['code'] = $variant->code;
+                $ProductVariant['name'] = $variant->name;
+                $ProductVariant['cost'] = $variant->cost;
+                $ProductVariant['price'] = $variant->price;
+
+                // hitung kuantitas produk
+                $item['products_variants_data'][] = $ProductVariant;
+                foreach ($warehouses as $warehouse) {
+                    $product_warehouse = DB::table('product_warehouse')
+                        ->where('product_id', $id)
+                        ->where('deleted_at', '=', null)
+                        ->where('warehouse_id', $warehouse->id)
+                        ->where('product_variant_id', $variant->id)
+                        ->select(DB::raw('SUM(product_warehouse.qty) AS sum'))
+                        ->first();
+
+                    $war_var['mag'] = $warehouse->name;
+                    $war_var['variant'] = $variant->name;
+                    $war_var['qte'] = $product_warehouse->sum;
+                    $item['CountQTY_variants'][] = $war_var;
+                }
+            }
+        } else {
+            $item['is_variant'] = 'No';
+            $item['CountQTY_variants'] = [];
+        }
+        foreach ($warehouses as $warehouse) {
+            $product_warehouse_data = DB::table('product_warehouse')
+                ->where('product_id', $id)
+                ->where('deleted_at', '=', null)
+                ->where('warehouse_id', $warehouse->id)
+                ->select(DB::raw('SUM(product_warehouse.qty) AS sum'))
+                ->first();
+
+            $war['mag'] = $warehouse->name;
+            $war['qty'] = $product_warehouse_data->sum;
+            $item['CountQTY'][] = $war;
+        }
+        $data[] = $item;
+
+        // dd($data);
+        return view('templates.product.show', [
+            'data' => $data,
+        ]);
     }
 
     /**

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\Adjustment;
 use App\Models\Product;
 use App\Models\ProductWarehouse;
 use App\Models\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 
 class WarehousesController extends Controller
@@ -17,12 +20,7 @@ class WarehousesController extends Controller
      */
     public function index()
     {
-        // $warehouses = Warehouse::query()->latest()->filter($request->query())
-        // ->paginate($request->query('limit') ?? 10);
-        // return view('university.index', [
-        //     'university' => $university,
-        // ]);
-        $warehouses = Warehouse::query()->latest()->get();
+        $warehouses = Warehouse::query()->latest()->paginate(1);
 
         return view('templates.settings.warehouses.index', [
             'warehouses' => $warehouses,
@@ -86,7 +84,7 @@ class WarehousesController extends Controller
                         'warehouse_id' => $warehouses->id,
                         'product_variant_id' => null,
                         'manage_stock' => 1,
-                        'qte' => 0,
+                        'qty' => 0,
                     ];
                     ProductWarehouse::insert($product_warehouse);
                     DB::commit();
@@ -163,8 +161,25 @@ class WarehousesController extends Controller
     public function destroy(string $id)
     {
         $warehouses = Warehouse::where('id', $id)->first();
-        $warehouses->delete();
+        $adjustment = Adjustment::where('warehouse_id', $id)->first();
+        try {
+            DB::beginTransaction();
+            if ($warehouses && ! $adjustment) {
+                $warehouses->delete();
+                ProductWarehouse::where('warehouse_id', $id)->update([
+                    'deleted_at' => Carbon::now(),
+                ]);
 
-        return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse deleted successfully');
+                DB::commit();
+
+                return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse deleted successfully');
+            } else {
+                return redirect()->back()->with('errorzz', 'Warehouse cannot be deleted because it is used in adjustments !!');
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return redirect()->back()->with('error', 'Data Warehouse deleted failed');
+        }
     }
 }

@@ -1,6 +1,6 @@
 <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all ">
     <div class="sidebar-header d-flex align-items-center justify-content-start">
-        <a href="../dashboard/index.html" class="navbar-brand">
+        <a href="{{ route('dashboard') }}" class="navbar-brand">
 
             <!--Logo start-->
             <div class="logo-main">
@@ -56,7 +56,7 @@
                     <hr class="hr-horizontal">
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="../dashboard/index.html">
+                    <a class="nav-link active" aria-current="page" href="{{ route('dashboard') }}">
                         <i class="icon">
                             <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                                 class="icon-20">
@@ -647,7 +647,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-form" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/form/form-element.html">
+                            <a class="nav-link " href="{{ route('transfer.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -658,7 +658,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> E </i>
-                                <span class="item-name">Elements</span>
+                                <span class="item-name">All Transfer</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -854,7 +854,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/table-data.html">
+                            <a class="nav-link "href="{{ route('settings.currency.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -864,8 +864,8 @@
                                         </g>
                                     </svg>
                                 </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Datatable</span>
+                                <i class="sidenav-mini-icon"> C </i>
+                                <span class="item-name">Currency</span>
                             </a>
                         </li>
                     </ul>
