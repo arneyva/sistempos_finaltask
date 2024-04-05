@@ -9,6 +9,7 @@ use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\WarehousesController;
+use App\Http\Controllers\Transfer\TransferController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -80,6 +81,15 @@ Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.
     //
     Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
     Route::get('show_product_data/{id}/{variant_id}/{warehouse_id}', [AdjustmentController::class, 'show_product_data']);
+});
+Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->group(function () {
+    Route::get('list', [TransferController::class, 'index'])->name('index');
+    Route::get('detail/{id}', [TransferController::class, 'show'])->name('show');
+    Route::get('create', [TransferController::class, 'create'])->name('create');
+    Route::post('store', [TransferController::class, 'store'])->name('store');
+    Route::get('edit/{id}', [TransferController::class, 'edit'])->name('edit');
+    Route::patch('update/{id}', [TransferController::class, 'update'])->name('update');
+    Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
 });
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {

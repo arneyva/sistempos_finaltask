@@ -12,7 +12,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Adjustments
+                    <h4 class="card-title">All Transfers
                     </h4>
                 </div>
                 <div class="header-title">
@@ -24,7 +24,7 @@
                         data-bs-target="#exampleModal">
                         Create+
                     </button> --}}
-                    <a href="{{ route('adjustment.create') }}"><button type="button" class="btn btn-soft-primary">Create
+                    <a href="{{ route('transfer.create') }}"><button type="button" class="btn btn-soft-primary">Create
                             +</button></a>
                     {{-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                         aria-hidden="true">
@@ -107,14 +107,16 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Reference</th>
-                                <th>Warehouse/Outlet</th>
+                                <th>From Warehouse/Outlet</th>
+                                <th>To Warehouse/Outlet</th>
                                 <th>Total Products</th>
-
+                                <th>Grand Total</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($data as $item)
+                            {{-- @foreach ($data as $item)
                                 <tr>
                                     <td>
                                         {{ $item['date'] }}
@@ -123,7 +125,6 @@
                                         {{ $item['Ref'] }}
                                     </td>
                                     <td>
-                                        {{-- {{ $item['warehouse'] }} --}}
                                         @if ($item['warehouse'] === 'deleted')
                                             <span class="warehousedeleted">warehouse deleted</span>
                                         @else
@@ -200,7 +201,7 @@
                                                                             <tbody>
                                                                                 @foreach ($item['details_product'] as $key => $product)
                                                                                     <tr>
-                                                                                        {{-- <td>{{ $product }}</td> --}}
+
                                                                                         <td>
                                                                                             @if ($item['details_product_variant'][$key])
                                                                                                 {{ $item['details_product'][$key] . ' - ' . $item['details_product_variant'][$key] }}
@@ -232,20 +233,14 @@
                                                                 </div>
                                                             </div>
                                                             <hr>
-                                                            {{-- @if ($adjustment->note)
-                                                                <div class="row mt-4">
-                                                                    <div class="col-md-12">
-                                                                        <p>{{ $adjustment->note }}</p>
-                                                                    </div>
-                                                                </div>
-                                                            @endif --}}
+                                                            }
                                                         </div>
 
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            {{--  --}}
+
                                             <a href="edit.html">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -285,17 +280,17 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @endforeach --}}
                         </tbody>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                        {{ $adjustment->links() }}
+                        {{-- {{ $adjustment->links() }} --}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -322,8 +317,8 @@
                                         Base Unit
                                     </button>
                                 </h4>
-                                <div id="collapseOne" class="accordion-collapse collapse show"
-                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                                    data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
                                         <label for="validationCustomUsername" class="form-label">Product Unit</label>
                                         <select class="form-select" id="validationDefault04" required>
@@ -359,5 +354,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 @endsection
