@@ -1,6 +1,6 @@
 <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all ">
     <div class="sidebar-header d-flex align-items-center justify-content-start">
-        <a href="../dashboard/index.html" class="navbar-brand">
+        <a href="{{ route('dashboard') }}" class="navbar-brand">
 
             <!--Logo start-->
             <div class="logo-main">
@@ -56,7 +56,7 @@
                     <hr class="hr-horizontal">
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="../dashboard/index.html">
+                    <a class="nav-link active" aria-current="page" href="{{ route('dashboard') }}">
                         <i class="icon">
                             <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                                 class="icon-20">
