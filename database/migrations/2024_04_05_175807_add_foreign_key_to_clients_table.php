@@ -33,6 +33,7 @@ return new class extends Migration
         if (Schema::hasTable('clients')) {
             Schema::table('clients', function (Blueprint $table) {
                 if (Schema::hasColumn($table->getTable(), 'client_tier_id')) {
+                    DB::table('clients')->delete();
                     $table->dropForeign('clients_client_tier_id');
                     $table->dropColumn('client_tier_id');
                 }
