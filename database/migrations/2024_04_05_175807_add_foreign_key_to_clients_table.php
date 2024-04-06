@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -16,7 +17,7 @@ return new class extends Migration
                 if (Schema::hasColumn($table->getTable(), 'client_tier_id')) {
                     $table->foreign('client_tier_id', 'clients_client_tier_id')->references('id')->on('client_tiers')->onUpdate('RESTRICT')->onDelete('RESTRICT');
                 } else {
-                    $table->truncate();
+                    DB::table('clients')->delete();
                     $table->integer('client_tier_id')->index('clients_client_tier_id');
                     $table->foreign('client_tier_id', 'clients_client_tier_id')->references('id')->on('client_tiers')->onUpdate('RESTRICT')->onDelete('RESTRICT');
                 }
@@ -32,7 +33,6 @@ return new class extends Migration
         if (Schema::hasTable('clients')) {
             Schema::table('clients', function (Blueprint $table) {
                 if (Schema::hasColumn($table->getTable(), 'client_tier_id')) {
-                    $table->truncate();
                     $table->dropForeign('clients_client_tier_id');
                     $table->dropColumn('client_tier_id');
                 }
