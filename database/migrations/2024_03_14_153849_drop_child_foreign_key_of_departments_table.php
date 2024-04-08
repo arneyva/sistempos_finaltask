@@ -30,8 +30,7 @@ return new class extends Migration
             Schema::table('leaves', function (Blueprint $table) {
                 if (Schema::hasColumn($table->getTable(), 'department_id')) {
                     $table->foreign('department_id', 'leave_department_id')->references('id')->on('departments')->onUpdate('RESTRICT')->onDelete('RESTRICT');
-                }
-                else {
+                } else {
                     $table->integer('department_id')->index('leave_department_id');
                     $table->foreign('department_id', 'leave_department_id')->references('id')->on('departments')->onUpdate('RESTRICT')->onDelete('RESTRICT');
                 }

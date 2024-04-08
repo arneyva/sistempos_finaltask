@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Attendance
- * 
+ *
  * @property int $id
  * @property int $user_id
  * @property Carbon $date
@@ -30,40 +30,38 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
- * 
  * @property User $user
- *
- * @package App\Models
  */
 class Attendance extends Model
 {
-	use SoftDeletes;
-	protected $table = 'attendances';
+    use SoftDeletes;
 
-	protected $casts = [
-		'user_id' => 'int',
-		'date' => 'datetime',
-		'clock_in_out' => 'bool'
-	];
+    protected $table = 'attendances';
 
-	protected $fillable = [
-		'user_id',
-		'date',
-		'clock_in',
-		'clock_in_ip',
-		'clock_out',
-		'clock_out_ip',
-		'clock_in_out',
-		'depart_early',
-		'late_time',
-		'overtime',
-		'total_work',
-		'total_rest',
-		'status'
-	];
+    protected $casts = [
+        'user_id' => 'int',
+        'date' => 'datetime',
+        'clock_in_out' => 'bool',
+    ];
 
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
+    protected $fillable = [
+        'user_id',
+        'date',
+        'clock_in',
+        'clock_in_ip',
+        'clock_out',
+        'clock_out_ip',
+        'clock_in_out',
+        'depart_early',
+        'late_time',
+        'overtime',
+        'total_work',
+        'total_rest',
+        'status',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
