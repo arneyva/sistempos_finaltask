@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class ClientTier
- * 
+ *
  * @property int $id
  * @property string $tier
  * @property float $discount
@@ -21,29 +21,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
- * 
  * @property Collection|Client[] $clients
- *
- * @package App\Models
  */
 class ClientTier extends Model
 {
-	use SoftDeletes;
-	protected $table = 'client_tiers';
+    use SoftDeletes;
 
-	protected $casts = [
-		'discount' => 'float',
-		'score' => 'float'
-	];
+    protected $table = 'client_tiers';
 
-	protected $fillable = [
-		'tier',
-		'discount',
-		'score'
-	];
+    protected $casts = [
+        'discount' => 'float',
+        'score' => 'float',
+    ];
 
-	public function clients()
-	{
-		return $this->hasMany(Client::class);
-	}
+    protected $fillable = [
+        'tier',
+        'discount',
+        'score',
+    ];
+
+    public function clients()
+    {
+        return $this->hasMany(Client::class);
+    }
 }
