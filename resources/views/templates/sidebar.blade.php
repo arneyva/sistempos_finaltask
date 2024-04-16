@@ -370,7 +370,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-user" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/app/user-profile.html">
+                            <a class="nav-link " href="{{ route('sale.create') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -381,7 +381,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> U </i>
-                                <span class="item-name">User Profile</span>
+                                <span class="item-name">Create Sale</span>
                             </a>
                         </li>
                         <li class="nav-item">
