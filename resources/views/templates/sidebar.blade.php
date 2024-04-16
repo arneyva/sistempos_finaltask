@@ -886,7 +886,7 @@
                                     fill="currentColor" />
                             </svg>
                         </i>
-                        <span class="item-name">Report</span>
+                        <span class="item-name">Reports</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -897,7 +897,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-icons" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/icons/solid.html">
+                            <a class="nav-link " href="{{ route('reports.payments') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -908,7 +908,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> S </i>
-                                <span class="item-name">Solid</span>
+                                <span class="item-name">Payments</span>
                             </a>
                         </li>
                         <li class="nav-item">
