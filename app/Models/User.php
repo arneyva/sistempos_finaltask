@@ -8,9 +8,8 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -18,7 +17,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * Class User
- * 
+ *
  * @property int $id
  * @property string $firstname
  * @property string $lastname
@@ -55,7 +54,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property string|null $remember_token
- * 
  * @property Collection|Adjustment[] $adjustments
  * @property Collection|Attendance[] $attendances
  * @property Collection|ExpenseCategory[] $expense_categories
@@ -74,157 +72,156 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Collection|Shipment[] $shipments
  * @property Collection|Transfer[] $transfers
  * @property Collection|Warehouse[] $warehouses
- *
- * @package App\Models
  */
 class User extends Authenticatable
 {
-	use SoftDeletes, HasApiTokens, HasFactory, HasRoles, Notifiable;
-	protected $table = 'users';
+    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
-	protected $casts = [
-		'birth_date' => 'datetime',
-		'joining_date' => 'datetime',
-		'remaining_leave' => 'int',
-		'total_leave' => 'int',
-		'hourly_rate' => 'float',
-		'basic_salary' => 'float',
-		'leaving_date' => 'datetime',
-		'status' => 'bool',
-		'is_all_warehouses' => 'bool',
-		'email_verified_at' => 'datetime',
+    protected $table = 'users';
+
+    protected $casts = [
+        'birth_date' => 'datetime',
+        'joining_date' => 'datetime',
+        'remaining_leave' => 'int',
+        'total_leave' => 'int',
+        'hourly_rate' => 'float',
+        'basic_salary' => 'float',
+        'leaving_date' => 'datetime',
+        'status' => 'bool',
+        'is_all_warehouses' => 'bool',
+        'email_verified_at' => 'datetime',
         'password' => 'hashed',
-	];
+    ];
 
-	protected $hidden = [
-		'password',
-		'remember_token'
-	];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-	protected $fillable = [
-		'firstname',
-		'lastname',
-		'username',
-		'email',
-		'password',
-		'avatar',
-		'phone',
-		'country',
-		'city',
-		'province',
-		'zipcode',
-		'address',
-		'gender',
-		'resume',
-		'document',
-		'birth_date',
-		'joining_date',
-		'remaining_leave',
-		'total_leave',
-		'hourly_rate',
-		'basic_salary',
-		'employment_type',
-		'marital_status',
-		'facebook',
-		'skype',
-		'whatsapp',
-		'twitter',
-		'linkedin',
-		'leaving_date',
-		'status',
-		'is_all_warehouses',
-		'remember_token'
-	];
+    protected $fillable = [
+        'firstname',
+        'lastname',
+        'username',
+        'email',
+        'password',
+        'avatar',
+        'phone',
+        'country',
+        'city',
+        'province',
+        'zipcode',
+        'address',
+        'gender',
+        'resume',
+        'document',
+        'birth_date',
+        'joining_date',
+        'remaining_leave',
+        'total_leave',
+        'hourly_rate',
+        'basic_salary',
+        'employment_type',
+        'marital_status',
+        'facebook',
+        'skype',
+        'whatsapp',
+        'twitter',
+        'linkedin',
+        'leaving_date',
+        'status',
+        'is_all_warehouses',
+        'remember_token',
+    ];
 
-	public function adjustments()
-	{
-		return $this->hasMany(Adjustment::class);
-	}
+    public function adjustments()
+    {
+        return $this->hasMany(Adjustment::class);
+    }
 
-	public function attendances()
-	{
-		return $this->hasMany(Attendance::class);
-	}
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 
-	public function expense_categories()
-	{
-		return $this->hasMany(ExpenseCategory::class);
-	}
+    public function expense_categories()
+    {
+        return $this->hasMany(ExpenseCategory::class);
+    }
 
-	public function expenses()
-	{
-		return $this->hasMany(Expense::class);
-	}
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
 
-	public function leaves()
-	{
-		return $this->hasMany(Leave::class);
-	}
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class);
+    }
 
-	public function office_shifts()
-	{
-		return $this->belongsToMany(OfficeShift::class)
-					->withPivot('id')
-					->withTimestamps();
-	}
+    public function office_shifts()
+    {
+        return $this->belongsToMany(OfficeShift::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
 
-	public function payment_purchase_returns()
-	{
-		return $this->hasMany(PaymentPurchaseReturn::class);
-	}
+    public function payment_purchase_returns()
+    {
+        return $this->hasMany(PaymentPurchaseReturn::class);
+    }
 
-	public function payment_purchases()
-	{
-		return $this->hasMany(PaymentPurchase::class);
-	}
+    public function payment_purchases()
+    {
+        return $this->hasMany(PaymentPurchase::class);
+    }
 
-	public function payment_sale_returns()
-	{
-		return $this->hasMany(PaymentSaleReturn::class);
-	}
+    public function payment_sale_returns()
+    {
+        return $this->hasMany(PaymentSaleReturn::class);
+    }
 
-	public function payment_sales()
-	{
-		return $this->hasMany(PaymentSale::class);
-	}
+    public function payment_sales()
+    {
+        return $this->hasMany(PaymentSale::class);
+    }
 
-	public function purchase_returns()
-	{
-		return $this->hasMany(PurchaseReturn::class);
-	}
+    public function purchase_returns()
+    {
+        return $this->hasMany(PurchaseReturn::class);
+    }
 
-	public function purchases()
-	{
-		return $this->hasMany(Purchase::class);
-	}
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 
-	public function quotations()
-	{
-		return $this->hasMany(Quotation::class);
-	}
+    public function quotations()
+    {
+        return $this->hasMany(Quotation::class);
+    }
 
-	public function sale_returns()
-	{
-		return $this->hasMany(SaleReturn::class);
-	}
+    public function sale_returns()
+    {
+        return $this->hasMany(SaleReturn::class);
+    }
 
-	public function sales()
-	{
-		return $this->hasMany(Sale::class);
-	}
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
 
-	public function shipments()
-	{
-		return $this->hasMany(Shipment::class);
-	}
+    public function shipments()
+    {
+        return $this->hasMany(Shipment::class);
+    }
 
-	public function transfers()
-	{
-		return $this->hasMany(Transfer::class);
-	}
+    public function transfers()
+    {
+        return $this->hasMany(Transfer::class);
+    }
 
-	public function warehouses()
-	{
-		return $this->belongsToMany(Warehouse::class);
-	}
+    public function warehouses()
+    {
+        return $this->belongsToMany(Warehouse::class);
+    }
 }
