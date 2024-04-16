@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RoleAndPermissionSeeder extends Seeder
@@ -17,13 +17,12 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        //{{==================================================================}}\\
+        //{{=============================== Permissions ==============================}}\\
+        //{{==================================================================}}\\
 
-    //{{==================================================================}}\\
-//{{=============================== Permissions ==============================}}\\
-    //{{==================================================================}}\\
-
-    //------------------------------- product --------------------------\\
-    //------------------------------------------------------------------\\
+        //------------------------------- product --------------------------\\
+        //------------------------------------------------------------------\\
 
         $ProductPermissions = [
             'create product',
@@ -35,8 +34,8 @@ class RoleAndPermissionSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permissionName]);
         }
 
-    //------------------------------- adjustment --------------------------\\
-    //------------------------------------------------------------------\\
+        //------------------------------- adjustment --------------------------\\
+        //------------------------------------------------------------------\\
 
         $AdjustmentPermissions = [
             'create adjustment',
@@ -48,9 +47,9 @@ class RoleAndPermissionSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permissionName]);
         }
 
-    //------------------------------- Users --------------------------\\
-    //------------------------------------------------------------------\\
-    
+        //------------------------------- Users --------------------------\\
+        //------------------------------------------------------------------\\
+
         $UserPermissions = [
             'create user',
             'edit user',
@@ -61,8 +60,8 @@ class RoleAndPermissionSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permissionName]);
         }
 
-//{{=========================================================================}}\\
-    //{{==================================================================}}\\
+        //{{=========================================================================}}\\
+        //{{==================================================================}}\\
         //{{==========================================================}}\\
 
         //create role and give permission into it
@@ -70,9 +69,9 @@ class RoleAndPermissionSeeder extends Seeder
 
         $role2 = Role::create(['name' => 'inventaris']);
         $role2->givePermissionTo([
-            $ProductPermissions, $AdjustmentPermissions
+            $ProductPermissions, $AdjustmentPermissions,
         ]);
-        
+
         $role3 = Role::create(['name' => 'staff']);
         $role3->givePermissionTo([]);
 
