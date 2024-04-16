@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
+
 class UserSeeder extends Seeder
 {
     /**
@@ -12,7 +13,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate([
+        $user1=User::firstOrCreate([
             'firstname' => 'user',
             'lastname' => 'user',
             'username' => 'user',
@@ -23,7 +24,7 @@ class UserSeeder extends Seeder
             'status' => 1,
             'is_all_warehouses' => 1,
         ]);
-        User::firstOrCreate([
+        $user2=User::firstOrCreate([
             'firstname' => 'admin',
             'lastname' => 'admin',
             'username' => 'admin',
@@ -34,5 +35,6 @@ class UserSeeder extends Seeder
             'status' => 1,
             'is_all_warehouses' => 1,
         ]);
+        $user2->assignRole('superadmin');
     }
 }
