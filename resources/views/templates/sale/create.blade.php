@@ -11,7 +11,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Create Transfer</h4>
+                            <h4 class="card-title">Create Sale</h4>
                         </div>
                     </div>
                     {{--  --}}
@@ -29,7 +29,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="selectWarehouse">To Warehouse/Outlet *</label>
+                                    <label class="form-label" for="selectWarehouse">Customer *</label>
                                     <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
                                         <option selected disabled value="">Choose...</option>
                                         {{-- @foreach ($warehouse as $wh)
@@ -57,12 +57,12 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Product</th>
-                                                    <th>Net Unit Cost</th>
+                                                    <th>Net Unit Price</th>
                                                     <th>Stock</th>
                                                     <th>Quantity</th>
                                                     <th>Discount</th>
                                                     <th>Tax</th>
-                                                    <th>SubTotal</th>
+                                                    <th>Subtotal</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -72,6 +72,7 @@
                                         </table>
                                     </div>
                                 </div>
+                                <div class="col-md-6 mb-3"></div>
                                 <div class="col-md-6 mb-3">
                                     <table id="basic-table" class="table table-hover table-bordered table-sm"
                                         role="grid">
@@ -150,31 +151,117 @@
                                                 </div>
                                             @enderror
                                         </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label" for="brand">Status</label>
+                                            <select class="form-select select2" id="brand" required name="brand_id"
+                                                data-placeholder="Select a Brand ">
+                                                <option value="">Completed</option>
+                                                <option value="">Pending</option>
+                                                <option value="">Ordered</option>
+                                            </select>
+                                            @error('brand_id')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label" for="brand">Payment Status</label>
+                                            <select class="form-select select2" id="brand" required name="brand_id"
+                                                data-placeholder="Select a Brand ">
+                                                <option value="">Paid</option>
+                                                <option value="">Partial</option>
+                                                <option value="">Pending</option>
+                                            </select>
+                                            @error('brand_id')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label" for="brand">Payment Choice</label>
+                                            <select class="form-select select2" id="brand" required name="brand_id"
+                                                data-placeholder="Select a Brand ">
+                                                <option value="">Cash</option>
+                                                <option value="">Credit Card</option>
+                                                <option value="">Other</option>
+                                            </select>
+                                            @error('brand_id')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label" for="codebaseproduct">Received Amount *</label>
+                                            <div class="form-group input-group">
+                                                <input type="text" class="form-control" id="codebaseproduct" required
+                                                    placeholder="input tax" name="code"
+                                                    value="{{ Session::get('code') }}">
+                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                            </div>
+                                            @error('code')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label" for="codebaseproduct">Paying Amount *</label>
+                                            <div class="form-group input-group">
+                                                <input type="text" class="form-control" id="codebaseproduct" required
+                                                    placeholder="input discount" name="code"
+                                                    value="{{ Session::get('code') }}">
+                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                            </div>
+                                            @error('code')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label" for="codebaseproduct">Change Return *</label>
+                                            <div class="form-group input-group">
+                                                <input type="text" class="form-control" id="codebaseproduct" required
+                                                    placeholder="input shipping" name="code"
+                                                    value="{{ Session::get('code') }}">
+                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                            </div>
+                                            @error('code')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="brand">Status</label>
-                                    <select class="form-select select2" id="brand" required name="brand_id"
-                                        data-placeholder="Select a Brand ">
-                                        <option selected disabled value="">Choose...</option>
-                                        {{-- @foreach ($brand as $item)
-                                            <option value="{{ $item->id }}"
-                                                {{ old('brand_id') == $item->id ? 'selected' : '' }}>
-                                                {{ $item->name }}
-                                            </option>
-                                        @endforeach --}}
-                                    </select>
-                                    @error('brand_id')
-                                        <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                            role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                            <span style="margin-left: 3px"> {{ $message }}</span>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
-                                                aria-label="Close"
-                                                style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                        </div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-12 mb-3">
                                     <label class="form-label" for="validationDefault05">Description</label>
                                     <input type="text" class="form-control" id="validationDefault05" name="notes"
                                         required placeholder="a few words...">

@@ -46,7 +46,7 @@
                                         <table id="product-table" class="table table-striped mb-0" role="grid">
                                             <thead>
                                                 <tr>
-                                                    <th>No</th>
+                                                    <th>#</th>
                                                     <th>Code</th>
                                                     <th>Name</th>
                                                     <th>Stock</th>
