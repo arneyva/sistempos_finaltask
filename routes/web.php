@@ -94,6 +94,7 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
 });
 Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(function () {
     Route::get('list', [SaleController::class, 'index'])->name('index');
+    Route::get('shipments', [SaleController::class, 'shipments'])->name('shipments');
     Route::get('detail/{id}', [SaleController::class, 'show'])->name('show');
     Route::get('create', [SaleController::class, 'create'])->name('create');
     Route::post('store', [SaleController::class, 'store'])->name('store');

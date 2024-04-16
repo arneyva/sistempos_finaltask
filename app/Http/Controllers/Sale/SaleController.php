@@ -16,6 +16,11 @@ class SaleController extends Controller
         return view('templates.sale.index');
     }
 
+    public function shipments()
+    {
+        return view('templates.sale.shipments');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
