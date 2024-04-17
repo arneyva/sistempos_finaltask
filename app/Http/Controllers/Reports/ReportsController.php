@@ -45,4 +45,9 @@ class ReportsController extends Controller
     {
         return view('templates.reports.supplier');
     }
+
+    public function supplierDetail($id)
+    {
+        return view('templates.reports.supplier-detail');
+    }
 }
