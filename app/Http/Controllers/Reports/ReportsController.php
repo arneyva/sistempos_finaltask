@@ -15,4 +15,9 @@ class ReportsController extends Controller
     {
         return view('templates.reports.profit-loss');
     }
+
+    public function quantityAlerts()
+    {
+        return view('templates.reports.quantity-alerts');
+    }
 }

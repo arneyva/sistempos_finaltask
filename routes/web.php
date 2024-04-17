@@ -109,6 +109,7 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {
     Route::get('payments', [ReportsController::class, 'payments'])->name('payments');
     Route::get('profit-loss', [ReportsController::class, 'profitLoss'])->name('profit-loss');
+    Route::get('quantity-alerts', [ReportsController::class, 'quantityAlerts'])->name('quantity-alerts');
 });
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {
