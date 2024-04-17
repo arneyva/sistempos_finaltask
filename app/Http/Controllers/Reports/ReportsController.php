@@ -40,4 +40,9 @@ class ReportsController extends Controller
     {
         return view('templates.reports.customers-detail');
     }
+
+    public function supplier()
+    {
+        return view('templates.reports.supplier');
+    }
 }
