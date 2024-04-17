@@ -50,4 +50,9 @@ class ReportsController extends Controller
     {
         return view('templates.reports.supplier-detail');
     }
+
+    public function topSellingProduct()
+    {
+        return view('templates.reports.top-selling-product');
+    }
 }
