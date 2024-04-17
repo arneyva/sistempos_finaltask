@@ -10,4 +10,9 @@ class ReportsController extends Controller
     {
         return view('templates.reports.payments');
     }
+
+    public function profitLoss()
+    {
+        return view('templates.reports.profit-loss');
+    }
 }
