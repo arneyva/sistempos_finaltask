@@ -115,7 +115,7 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::get('customers', [ReportsController::class, 'customers'])->name('customers');
     Route::get('customers/{id}', [ReportsController::class, 'customersDetail'])->name('customers-detail');
     Route::get('supplier', [ReportsController::class, 'supplier'])->name('supplier');
-    Route::get('customers/{id}', [ReportsController::class, 'customersDetail'])->name('customers-detail');
+    Route::get('supplier/{id}', [ReportsController::class, 'supplierDetail'])->name('supplier-detail');
 });
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {
