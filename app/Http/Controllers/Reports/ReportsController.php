@@ -25,4 +25,9 @@ class ReportsController extends Controller
     {
         return view('templates.reports.stock');
     }
+
+    public function stockDetail($id)
+    {
+        return view('templates.reports.stock-detail');
+    }
 }
