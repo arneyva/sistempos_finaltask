@@ -55,4 +55,9 @@ class ReportsController extends Controller
     {
         return view('templates.reports.top-selling-product');
     }
+
+    public function warehouse()
+    {
+        return view('templates.reports.warehouse');
+    }
 }
