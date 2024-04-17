@@ -30,4 +30,14 @@ class ReportsController extends Controller
     {
         return view('templates.reports.stock-detail');
     }
+
+    public function customers()
+    {
+        return view('templates.reports.customers');
+    }
+
+    public function customersDetail($id)
+    {
+        return view('templates.reports.customers-detail');
+    }
 }
