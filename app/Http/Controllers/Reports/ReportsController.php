@@ -20,4 +20,9 @@ class ReportsController extends Controller
     {
         return view('templates.reports.quantity-alerts');
     }
+
+    public function stock()
+    {
+        return view('templates.reports.stock');
+    }
 }

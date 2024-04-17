@@ -3,8 +3,8 @@
     .warehousedeleted {
         padding: 7px;
         border-radius: 7px;
-        background-color: #ffefef;
-        color: #F24D4D;
+        background-color: #eff8ff;
+        color: #377b9d;
     }
 </style>
 @section('content')
@@ -15,12 +15,13 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Product Quantity Alerts
+                    <h4 class="card-title">Stock Report
                     </h4>
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-3">
+                    {{-- <label class="form-label" for="selectWarehouse">Warehouse/Outlet *</label> --}}
                     <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
                         <option selected disabled value="">Warehouse/Outlet</option>
                         <option value="">Warehouse 1</option>
@@ -28,6 +29,20 @@
                             <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                         @endforeach --}}
                     </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="input-group search-input">
+                        <span class="input-group-text d-inline" id="search-input">
+                            <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"></circle>
+                                <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </span>
+                        <input type="search" class="form-control" placeholder="Search...">
+                    </div>
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-success">PDF</button>
@@ -42,9 +57,9 @@
                             <tr>
                                 <th>Code</th>
                                 <th>Product</th>
-                                <th>Warehouse</th>
-                                <th>Quantity</th>
-                                <th>Alert Quantity</th>
+                                <th>Category</th>
+                                <th>Current Stock</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,7 +69,22 @@
                                 <td>Warehouse 1</td>
                                 <td>19</td>
                                 <td>
-                                    <span class="warehousedeleted">10</span>
+                                    <a href="#" class="warehousedeleted">Report
+                                        {{-- <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
+                                                stroke="#130F26"></path>
+                                            <circle cx="12" cy="12" r="5" stroke="#130F26"></circle>
+                                            <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
+                                            <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9" width="6"
+                                                height="6">
+                                                <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
+                                            </mask>
+                                            <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5" fill="white">
+                                            </circle>
+                                        </svg> --}}
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>
