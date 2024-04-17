@@ -289,25 +289,18 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Date</th>
                                                             <th>Reference</th>
-                                                            <th>Product Name</th>
-                                                            <th>Customer</th>
+                                                            <th>Customer Name</th>
+                                                            <th>Sale Ref</th>
                                                             <th>Warehouse</th>
-                                                            <th>Quantity</th>
-                                                            <th>Subtotal</th>
+                                                            <th>Grand Total</th>
+                                                            <th>Paid</th>
+                                                            <th>Due</th>
+                                                            <th>Status</th>
+                                                            <th>Payment</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>17-04-24</td>
-                                                            <td>SR-01</td>
-                                                            <td>Ultamilk</td>
-                                                            <td>Budi</td>
-                                                            <td>Warehouse 1</td>
-                                                            <td>30 pc</td>
-                                                            <td>Rp. 40000</td>
-                                                        </tr>
                                                     </tbody>
                                                 </table>
                                                 <div class="bd-example"
@@ -345,19 +338,12 @@
                                                         <tr>
                                                             <th>Date</th>
                                                             <th>Reference</th>
-                                                            <th>Product Name</th>
-                                                            <th>Warehouse</th>
+                                                            <th>Sale</th>
+                                                            <th>Paid by</th>
+                                                            <th>Amount</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>17-04-24</td>
-                                                            <td>PR-01</td>
-                                                            <td>Ultamilk</td>
-
-                                                            <td>Warehouse 1</td>
-
-                                                        </tr>
                                                     </tbody>
                                                 </table>
                                                 <div class="bd-example"
