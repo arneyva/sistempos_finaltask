@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             'email' => 'user@gmail.com',
             'password' => bcrypt('password'),
             'phone' => '089655443322',
-            'gender' => 'laki-laki',
+            'gender' => 'Laki-laki',
             'status' => 1,
             'is_all_warehouses' => 1,
         ]);
@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
             'phone' => '089655443321',
-            'gender' => 'perempuan',
+            'gender' => 'Perempuan',
             'status' => 1,
             'is_all_warehouses' => 1,
         ]);
