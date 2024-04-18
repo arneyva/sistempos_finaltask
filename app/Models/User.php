@@ -87,8 +87,8 @@ class User extends Authenticatable
         'hourly_rate' => 'float',
         'basic_salary' => 'float',
         'leaving_date' => 'datetime',
-        'status' => 'bool',
-        'is_all_warehouses' => 'bool',
+        'status' => 'integer',
+        'is_all_warehouses' => 'integer',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
