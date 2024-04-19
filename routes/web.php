@@ -7,12 +7,12 @@ use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\Reports\ReportsController;
 use App\Http\Controllers\Sale\SaleController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*

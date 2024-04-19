@@ -780,7 +780,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-people" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="">
+                            <a class="nav-link " href="{{ route('people.users.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
