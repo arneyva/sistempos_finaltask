@@ -69,7 +69,8 @@ class RoleAndPermissionSeeder extends Seeder
 
         $role2 = Role::create(['name' => 'inventaris']);
         $role2->givePermissionTo([
-            $ProductPermissions, $AdjustmentPermissions,
+            $ProductPermissions, 
+            $AdjustmentPermissions,
         ]);
 
         $role3 = Role::create(['name' => 'staff']);

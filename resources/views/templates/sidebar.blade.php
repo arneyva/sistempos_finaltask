@@ -780,7 +780,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-people" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/bootstrap-table.html">
+                            <a class="nav-link " href="">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -791,7 +791,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Bootstrap Table</span>
+                                <span class="item-name">User</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -806,7 +806,22 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Datatable</span>
+                                <span class="item-name">Customer</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="../dashboard/table/table-data.html">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> D </i>
+                                <span class="item-name">Supplier</span>
                             </a>
                         </li>
                     </ul>
