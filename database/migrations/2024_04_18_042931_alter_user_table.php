@@ -14,7 +14,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
-                if ( Schema::hasColumn($table->getTable(), 'gender')) {
+                if (Schema::hasColumn($table->getTable(), 'gender')) {
                     DB::table('users')->delete();
                     $table->dropColumn('gender');
                 }
@@ -35,7 +35,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
-                if ( Schema::hasColumn($table->getTable(), 'gender')) {
+                if (Schema::hasColumn($table->getTable(), 'gender')) {
                     DB::table('users')->delete();
                     $table->dropColumn('gender');
                 }

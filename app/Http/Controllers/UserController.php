@@ -2,21 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\OfficeShift;
-use Spatie\Permission\Models\Role;
-use App\Models\ProductWarehouse;
+use App\Models\User;
 use App\Models\Warehouse;
-use App\Models\UserWarehouse;
-use App\utils\helpers;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use File;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManagerStatic as Image;
-use \Nwidart\Modules\Facades\Module;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -60,7 +52,7 @@ class UserController extends Controller
             'allUsers' => User::all(),
             'office_shifts' => OfficeShift::all(),
             'warehouses' => Warehouse::all(),
-            'roles' =>  Role::all()
+            'roles' => Role::all(),
         ]);
     }
 
@@ -73,7 +65,7 @@ class UserController extends Controller
             'users' => User::all(),
             'office_shifts' => OfficeShift::all(),
             'warehouses' => Warehouse::all(),
-            'roles' =>  Role::all()
+            'roles' => Role::all(),
         ]);
     }
 
@@ -91,7 +83,7 @@ class UserController extends Controller
             'avatar' => 'nullable|file|image|max:1024',
             'phone' => 'required|numeric|min:10|max:20',
             'gender' => 'required',
-            'role' => 'required'
+            'role' => 'required',
         ];
 
         $message = [
@@ -109,27 +101,26 @@ class UserController extends Controller
         if ($request->hasFile('avatar')) {
 
             $image = $request->file('avatar');
-            $filename = rand(11111111, 99999999) . $image->getClientOriginalName();
+            $filename = rand(11111111, 99999999).$image->getClientOriginalName();
 
             $image_resize = Image::make($image->getRealPath());
             $image_resize->resize(128, 128);
-            $image_resize->save(public_path('/hopeui/html/assets/images/avatars' . $filename));
+            $image_resize->save(public_path('/hopeui/html/assets/images/avatars'.$filename));
 
         } else {
             $filename = 'no_avatar.png';
         }
 
-
         $User = new User;
         $User->firstname = $request['firstname'];
-        $User->lastname  = $request['lastname'];
-        $User->username  = $request['username'];
-        $User->email     = $request['email'];
-        $User->phone     = $request['phone'];
-        $User->gender     = $request['gender'];
-        $User->password  = Hash::make($request['password']);
-        $User->avatar    = $filename;
-        $User->status   = 1;
+        $User->lastname = $request['lastname'];
+        $User->username = $request['username'];
+        $User->email = $request['email'];
+        $User->phone = $request['phone'];
+        $User->gender = $request['gender'];
+        $User->password = Hash::make($request['password']);
+        $User->avatar = $filename;
+        $User->status = 1;
         $User->warehouses()->sync($request['workLocation']);
         $User->assignRole($request['role']);
         $User->save();
@@ -142,7 +133,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        
+
     }
 
     /**
@@ -150,7 +141,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+
     }
 
     /**

@@ -133,14 +133,14 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-	public function scopeFilter($query, array $filters)
+    public function scopeFilter($query, array $filters)
     {
 
         $query->when($filters['search'] ?? false, function ($query, $search) {
             return $query
-                ->where('firstname', 'like', '%' . $search . '%')
-                ->orWhere('lastname', 'like', '%' . $search . '%')
-                ->orWhere('email', 'like', '%' . $search . '%');
+                ->where('firstname', 'like', '%'.$search.'%')
+                ->orWhere('lastname', 'like', '%'.$search.'%')
+                ->orWhere('email', 'like', '%'.$search.'%');
         });
     }
 

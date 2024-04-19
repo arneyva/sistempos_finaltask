@@ -8,16 +8,13 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Enums\WarehouseStatus;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Warehouse
- * 
+ *
  * @property int $id
  * @property string $name
  * @property string|null $city
@@ -28,7 +25,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
- * 
  * @property Collection|Adjustment[] $adjustments
  * @property Collection|Expense[] $expenses
  * @property Collection|Product[] $products
@@ -40,77 +36,76 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property Collection|Setting[] $settings
  * @property Collection|Transfer[] $transfers
  * @property Collection|User[] $users
- *
- * @package App\Models
  */
 class Warehouse extends Model
 {
-	use SoftDeletes,HasFactory;
-	protected $table = 'warehouses';
+    use HasFactory,SoftDeletes;
 
-	protected $fillable = [
-		'name',
-		'city',
-		'mobile',
-		'zip',
-		'email',
-		'country'
-	];
+    protected $table = 'warehouses';
 
-	public function adjustments()
-	{
-		return $this->hasMany(Adjustment::class);
-	}
+    protected $fillable = [
+        'name',
+        'city',
+        'mobile',
+        'zip',
+        'email',
+        'country',
+    ];
 
-	public function expenses()
-	{
-		return $this->hasMany(Expense::class);
-	}
+    public function adjustments()
+    {
+        return $this->hasMany(Adjustment::class);
+    }
 
-	public function products()
-	{
-		return $this->belongsToMany(Product::class)
-					->withPivot('id', 'product_variant_id', 'manage_stock', 'stock_alert', 'qty', 'deleted_at')
-					->withTimestamps();
-	}
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
 
-	public function purchase_returns()
-	{
-		return $this->hasMany(PurchaseReturn::class);
-	}
+    public function products()
+    {
+        return $this->belongsToMany(Product::class)
+            ->withPivot('id', 'product_variant_id', 'manage_stock', 'stock_alert', 'qty', 'deleted_at')
+            ->withTimestamps();
+    }
 
-	public function purchases()
-	{
-		return $this->hasMany(Purchase::class);
-	}
+    public function purchase_returns()
+    {
+        return $this->hasMany(PurchaseReturn::class);
+    }
 
-	public function quotations()
-	{
-		return $this->hasMany(Quotation::class);
-	}
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 
-	public function sale_returns()
-	{
-		return $this->hasMany(SaleReturn::class);
-	}
+    public function quotations()
+    {
+        return $this->hasMany(Quotation::class);
+    }
 
-	public function sales()
-	{
-		return $this->hasMany(Sale::class);
-	}
+    public function sale_returns()
+    {
+        return $this->hasMany(SaleReturn::class);
+    }
 
-	public function settings()
-	{
-		return $this->hasMany(Setting::class);
-	}
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
 
-	public function transfers()
-	{
-		return $this->hasMany(Transfer::class, 'to_warehouse_id');
-	}
+    public function settings()
+    {
+        return $this->hasMany(Setting::class);
+    }
 
-	public function users()
-	{
-		return $this->belongsToMany(User::class);
-	}
+    public function transfers()
+    {
+        return $this->hasMany(Transfer::class, 'to_warehouse_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }
