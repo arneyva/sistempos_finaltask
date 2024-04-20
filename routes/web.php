@@ -7,9 +7,12 @@ use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Reports\ReportsController;
+use App\Http\Controllers\Sale\SaleController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -91,6 +94,32 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
     Route::patch('update/{id}', [TransferController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
 });
+Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(function () {
+    Route::get('list', [SaleController::class, 'index'])->name('index');
+    Route::get('shipments', [SaleController::class, 'shipments'])->name('shipments');
+    Route::get('detail/{id}', [SaleController::class, 'show'])->name('show');
+    Route::get('create', [SaleController::class, 'create'])->name('create');
+    Route::post('store', [SaleController::class, 'store'])->name('store');
+    Route::get('edit/{id}', [SaleController::class, 'edit'])->name('edit');
+    Route::patch('update/{id}', [SaleController::class, 'update'])->name('update');
+    Route::delete('destroy/{id}', [SaleController::class, 'destroy'])->name('destroy');
+    //
+    Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
+    Route::get('show_product_data/{id}/{variant_id}/{warehouse_id}', [AdjustmentController::class, 'show_product_data']);
+});
+Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {
+    Route::get('payments', [ReportsController::class, 'payments'])->name('payments');
+    Route::get('profit-loss', [ReportsController::class, 'profitLoss'])->name('profit-loss');
+    Route::get('quantity-alerts', [ReportsController::class, 'quantityAlerts'])->name('quantity-alerts');
+    Route::get('stock', [ReportsController::class, 'stock'])->name('stock');
+    Route::get('stock/{id}', [ReportsController::class, 'stockDetail'])->name('stock-detail');
+    Route::get('customers', [ReportsController::class, 'customers'])->name('customers');
+    Route::get('customers/{id}', [ReportsController::class, 'customersDetail'])->name('customers-detail');
+    Route::get('supplier', [ReportsController::class, 'supplier'])->name('supplier');
+    Route::get('supplier/{id}', [ReportsController::class, 'supplierDetail'])->name('supplier-detail');
+    Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
+    Route::get('warehouse', [ReportsController::class, 'warehouse'])->name('warehouse');
+});
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {
         Route::get('list', [WarehousesController::class, 'index'])->name('index');
@@ -109,6 +138,13 @@ Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->
         Route::get('edit/{id}', [CurrencyController::class, 'edit'])->name('edit');
         Route::patch('update/{id}', [CurrencyController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [CurrencyController::class, 'destroy'])->name('destroy');
+    });
+});
+Route::prefix('people')->middleware(['auth', 'verified'])->name('people.')->group(function () {
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('list', [UserController::class, 'index'])->name('index');
+        Route::get('create', [UserController::class, 'create'])->name('create');
+        Route::post('store', [UserController::class, 'store'])->name('store');
     });
 });
 Route::middleware('auth')->group(function () {

@@ -404,7 +404,7 @@ class AdjustmentController extends Controller
             AdjustmentDetail::insert($orderDetails);
             DB::commit();
 
-            return redirect()->route('adjustment.index')->with('success', 'Product created successfully');
+            return redirect()->route('adjustment.index')->with('success', 'Adjustment created successfully');
         } catch (\Throwable $e) {
             DB::rollBack();
 

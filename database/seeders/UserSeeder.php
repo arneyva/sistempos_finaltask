@@ -12,27 +12,28 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate([
+        $user1 = User::firstOrCreate([
             'firstname' => 'user',
             'lastname' => 'user',
             'username' => 'user',
             'email' => 'user@gmail.com',
             'password' => bcrypt('password'),
             'phone' => '089655443322',
-            'gender' => 'laki-laki',
+            'gender' => 'Laki-laki',
             'status' => 1,
             'is_all_warehouses' => 1,
         ]);
-        User::firstOrCreate([
+        $user2 = User::firstOrCreate([
             'firstname' => 'admin',
             'lastname' => 'admin',
             'username' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
             'phone' => '089655443321',
-            'gender' => 'perempuan',
+            'gender' => 'Perempuan',
             'status' => 1,
             'is_all_warehouses' => 1,
         ]);
+        $user2->assignRole('superadmin');
     }
 }
