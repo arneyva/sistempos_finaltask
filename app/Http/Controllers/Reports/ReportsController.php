@@ -60,4 +60,9 @@ class ReportsController extends Controller
     {
         return view('templates.reports.warehouse');
     }
+
+    public function sale()
+    {
+        return view('templates.reports.sale');
+    }
 }
