@@ -406,6 +406,8 @@
     {{-- bootsrap js --}}
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --}}
     <script src="{{ asset('/sw.js') }}"></script>
+    {{-- chartjs --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         if ("serviceWorker" in navigator) {
             // Register a service worker hosted at the root of the

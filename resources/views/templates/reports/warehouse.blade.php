@@ -89,8 +89,8 @@
                                         <div class="progress-widget">
                                             <div
                                                 class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
-                                                    alt="purchase" style="max-height: 70px;max-width: 70px">
+                                                <img src="{{ asset('hopeui/html/assets/images/sales.svg') }}" alt="purchase"
+                                                    style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
                                                 <p class="mb-2">Sales</p>
@@ -123,7 +123,7 @@
                                         <div class="progress-widget">
                                             <div
                                                 class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
+                                                <img src="{{ asset('hopeui/html/assets/images/purchase-return.png') }}"
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
@@ -140,12 +140,12 @@
                                         <div class="progress-widget">
                                             <div
                                                 class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
+                                                <img src="{{ asset('hopeui/html/assets/images/sales-return.png') }}"
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
                                                 <p class="mb-2">Sales Return</p>
-                                                <h4 class="counter">$185K</h4>
+                                                <h4 class="counter">$375K</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -167,7 +167,7 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#adjustment" role="tab"
-                                            aria-selected="false">Purchases Payments</a>
+                                            aria-selected="false">Purchases Return</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#expenses" role="tab"
@@ -345,11 +345,15 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Date</th>
                                                             <th>Reference</th>
-                                                            <th>Sale</th>
-                                                            <th>Paid by</th>
-                                                            <th>Amount</th>
+                                                            <th>Supplier</th>
+                                                            <th>Warehouse</th>
+                                                            <th>Purchase ref</th>
+                                                            <th>Grand Total</th>
+                                                            <th>Paid</th>
+                                                            <th>Due</th>
+                                                            <th>Status</th>
+                                                            <th>Payment Status</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -358,6 +362,86 @@
                                                 <div class="bd-example"
                                                     style="margin-left: 10px; margin-top:10px; margin-right:10px">
                                                     {{-- {{ $sales->links() }} --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="expenses" class="tab-pane fade">
+                                        <div class="card-header d-flex justify-content-between">
+                                            <div class="input-group search-input" style="width: 30%">
+                                                <span class="input-group-text d-inline" id="search-input">
+                                                    <svg class="icon-18" width="18" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <circle cx="11.7669" cy="11.7666" r="8.98856"
+                                                            stroke="currentColor" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round"></circle>
+                                                        <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor"
+                                                            stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round"></path>
+                                                    </svg>
+                                                </span>
+                                                <input type="search" class="form-control" placeholder="Search...">
+                                            </div>
+                                            <div class="header-title">
+                                                <button type="button" class="btn btn-soft-success">PDF</button>
+                                                <button type="button" class="btn btn-soft-danger">Excel</button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div class="table-responsive mt-4">
+                                                <table id="basic-table" class="table table-striped mb-0" role="grid">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th>Reference</th>
+                                                            <th>Warehouse</th>
+                                                            <th>Details</th>
+                                                            <th>Amount</th>
+                                                            <th>Category</th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                                <div class="bd-example"
+                                                    style="margin-left: 10px; margin-top:10px; margin-right:10px">
+                                                    {{-- {{ $sales->links() }} --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-12 mt-5">
+                                <div class="row">
+                                    <div class="col-md-12 col-xl-6">
+                                        <div class="card" data-aos="fade-up" data-aos-delay="900">
+                                            <div class="flex-wrap card-header d-flex justify-content-between">
+                                                <div class="header-title">
+                                                    <h4 class="card-title">Total Items & Quantity</h4>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="flex-wrap d-flex align-items-center justify-content-between">
+                                                    <div> <canvas id="chartjs1"
+                                                            class="col-md-8 col-lg-8 myChart"></canvas></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-xl-6">
+                                        <div class="card" data-aos="fade-up" data-aos-delay="900">
+                                            <div class="flex-wrap card-header d-flex justify-content-between">
+                                                <div class="header-title">
+                                                    <h4 class="card-title">Value by Cost and Price</h4>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="flex-wrap d-flex align-items-center justify-content-between">
+                                                    <div>
+                                                        <canvas id="chartjs2" class="col-md-8 col-lg-8 myChart"></canvas>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -373,4 +457,61 @@
 @endsection
 
 @push('script')
+    <script>
+        var ctx = document.getElementById('chartjs1').getContext('2d');
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Warehouse 1', 'Warehouse 2', 'Warehouse 3'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3],
+                    // backgroundColor: [
+                    //     'red',
+                    //     'blue',
+                    //     'yellow'
+                    // ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'right', // Atur posisi legenda di sini
+                        labels: {
+                            font: {
+                                size: 16 // Atur ukuran font legenda di sini
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    <script>
+        const ctx1 = document.getElementById('chartjs2');
+        new Chart(ctx1, {
+            type: 'pie',
+            data: {
+                labels: ['warehouse1', 'warehouse2', 'Warehouse 3'],
+                datasets: [{
+                    label: 'warehouse1',
+                    data: [12, 30, 40],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'right', // Atur posisi legenda di sini
+                        labels: {
+                            font: {
+                                size: 16 // Atur ukuran font legenda di sini
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 @endpush
