@@ -73,7 +73,7 @@
 @section('content')
     <div class="col-sm-12">
         <div class="card">
-            <input class="card-title"
+            <input class="input-group-text d-inline"
                 style="align-self:center;margin-top:20px;border-radius:5px;padding-left:20px;border-color:#b19785"
                 type="text" name="daterange" value='{{ date('m/d/Y') }} - {{ date('m/d/Y') }}' />
             <div class="card-header d-flex justify-content-between">
