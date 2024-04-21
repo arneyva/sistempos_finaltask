@@ -78,7 +78,7 @@
                 type="text" name="daterange" value='{{ date('m/d/Y') }} - {{ date('m/d/Y') }}' />
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Sale Report</h4>
+                    <h4 class="card-title">Purchase Report</h4>
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
@@ -108,7 +108,7 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Reference</th>
-                                <th>Customer</th>
+                                <th>Supplier</th>
                                 <th>Warehouse</th>
                                 <th>Status</th>
                                 <th>Grand Total</th>
