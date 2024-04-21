@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             'phone' => '089655443322',
             'gender' => 'Laki-laki',
             'status' => 1,
-            'is_all_warehouses' => 1,
+            'avatar' => 'no_avatar.png',
         ]);
         $user2 = User::firstOrCreate([
             'firstname' => 'admin',
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
             'phone' => '089655443321',
             'gender' => 'Perempuan',
             'status' => 1,
-            'is_all_warehouses' => 1,
+            'avatar' => 'no_avatar.png',
         ]);
         $user2->assignRole('superadmin');
     }
