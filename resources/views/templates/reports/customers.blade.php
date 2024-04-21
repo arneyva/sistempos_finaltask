@@ -70,7 +70,47 @@
                                     </a>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Budi</td>
+                                <td>070171027</td>
+                                <td>1</td>
+                                <td>2000</td>
+                                <td>2000</td>
+                                <td>2000</td>
+                                <td>2000</td>
+                                <td>
+                                    <a href="#" class="warehousedeleted" style="margin-right: 10px">Report
+                                    </a>
+                                    <a href="#" class="pdfstyle">Pdf
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Budi</td>
+                                <td>070171027</td>
+                                <td>1</td>
+                                <td>2000</td>
+                                <td>2000</td>
+                                <td>2000</td>
+                                <td>2000</td>
+                                <td>
+                                    <a href="#" class="warehousedeleted" style="margin-right: 10px">Report
+                                    </a>
+                                    <a href="#" class="pdfstyle">Pdf
+                                    </a>
+                                </td>
+                            </tr>
                         </tbody>
+                        <tr>
+                            <td style="background-color: #dfd5ce"></td>
+                            <td style="background-color: #dfd5ce"></td>
+                            <td style="background-color: #dfd5ce">Total</td>
+                            <td style="background-color: #dfd5ce">Rp 10000</td>
+                            <td style="background-color: #dfd5ce">Rp 10000</td>
+                            <td style="background-color: #dfd5ce">Rp 10000</td>
+                            <td style="background-color: #dfd5ce">Rp 10000</td>
+                            <td style="background-color: #dfd5ce"></td>
+                        </tr>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-right: 10px; margin-top:10px">
                         {{-- {{ $brands->links() }} --}}
