@@ -100,7 +100,7 @@ class UserController extends Controller
             $avatarBase64 = $request->input('avatar');
 
             $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
-            $filename = uniqid() . '.png';
+            $filename = uniqid().'.png';
 
             $tempFilePath = public_path('/hopeui/html/assets/images/avatars/temp'.$filename);
             file_put_contents($tempFilePath, $avatarBinaryData);
@@ -138,8 +138,7 @@ class UserController extends Controller
         $role = Role::find($request['role']);
         if ($role->name == 'inventaris') {
             $user->warehouses()->sync(1);
-        } 
-        else {
+        } else {
             $user->warehouses()->sync($request['workLocation']);
         }
 
