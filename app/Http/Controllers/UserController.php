@@ -80,7 +80,6 @@ class UserController extends Controller
             'username' => 'required|min:3|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'avatar' => 'nullable|file|image|max:1024',
             'phone' => 'required|numeric|min:10|max:20',
             'gender' => 'required',
             'role' => 'required',
@@ -92,40 +91,63 @@ class UserController extends Controller
             'min' => 'Minimal :min karakter',
             'max' => 'Maksimal :max karakter',
             'unique' => ':attribute sudah terdaftar',
-            'image' => 'File hanya boleh gambar!',
-            'avatar.max' => 'Maksimal :max kb',
             'gender.required' => 'Pilih salah satu!',
         ];
         $validateData = $request->validate($rules, $message);
 
-        if ($request->hasFile('avatar')) {
+        if ($request->input('avatar') !== null) {
 
-            $image = $request->file('avatar');
-            $filename = rand(11111111, 99999999).$image->getClientOriginalName();
+            $avatarBase64 = $request->input('avatar');
 
-            $image_resize = Image::make($image->getRealPath());
+            $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
+            $filename = uniqid() . '.png';
+
+            $tempFilePath = public_path('/hopeui/html/assets/images/avatars/temp'.$filename);
+            file_put_contents($tempFilePath, $avatarBinaryData);
+
+            $image_resize = Image::make($tempFilePath);
             $image_resize->resize(128, 128);
             $image_resize->save(public_path('/hopeui/html/assets/images/avatars'.$filename));
+        }
+        // if ($request->hasFile('avatar')) {
 
-        } else {
+        //     $image = $request->file('avatar');
+        //     $filename = rand(11111111, 99999999).$image->getClientOriginalName();
+
+        //     $image_resize = Image::make($image->getRealPath());
+        //     $image_resize->resize(128, 128);
+        //     $image_resize->save(public_path('/hopeui/html/assets/images/avatars'.$filename));
+
+        else {
             $filename = 'no_avatar.png';
         }
 
-        $User = new User;
-        $User->firstname = $request['firstname'];
-        $User->lastname = $request['lastname'];
-        $User->username = $request['username'];
-        $User->email = $request['email'];
-        $User->phone = $request['phone'];
-        $User->gender = $request['gender'];
-        $User->password = Hash::make($request['password']);
-        $User->avatar = $filename;
-        $User->status = 1;
-        $User->warehouses()->sync($request['workLocation']);
-        $User->assignRole($request['role']);
-        $User->save();
+        $user = new User;
+        $user->firstname = $request['firstname'];
+        $user->lastname = $request['lastname'];
+        $user->username = $request['username'];
+        $user->email = $request['email'];
+        $user->phone = $request['phone'];
+        $user->gender = $request['gender'];
+        $user->password = Hash::make($request['password']);
+        $user->avatar = $filename;
+        $user->status = 1;
+        $user->save();
 
-        return redirect()->route('people.users.index?orderBy=newest')->with('success', 'User berhasil ditambahkan');
+        $user->assignRole($request['role']);
+        $role = Role::find($request['role']);
+        if ($role->name == 'inventaris') {
+            $user->warehouses()->sync(1);
+        } 
+        else {
+            $user->warehouses()->sync($request['workLocation']);
+        }
+
+        if ($user->can('access outlets')) {
+            $user->warehouses()->sync($request['outletAccess']);
+        }
+
+        return redirect()->route('people.users.index', ['orderBy' => 'newest'])->with('success', 'User berhasil ditambahkan');
     }
 
     /**

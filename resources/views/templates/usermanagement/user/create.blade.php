@@ -32,7 +32,7 @@
         <div class="card-body">
             <div class="form-group">
                 <div class="profile-img-edit position-relative">
-                    <img src="/hopeui/html/assets/images/avatars/no_avatar.png" alt="profile-pic" class="theme-color-default-img profile-pic rounded avatar-100">
+                    <img src="/hopeui/html/assets/images/avatars/no_avatar.png" id="firstImage" alt="profile-pic" class="theme-color-default-img profile-pic rounded avatar-100">
                     <button type="button" class="upload-icone bg-primary" id="chooseImageButton">
                         <svg class="upload-button icon-14" width="14" viewBox="0 0 24 24">
                             <path fill="#ffffff" d="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z" />
@@ -42,12 +42,16 @@
                 </div>
                 <input type="hidden" id="croppedImageData" name="avatar">
                 <div class="img-extension mt-3">
-                    <div class="d-inline-block align-items-center">
+                    <div class="d-inline-block align-items-center py-1">
                         <span>Only</span>
-                        <a href="">.jpg</a>
-                        <a href="">.png</a>
-                        <a href="">.jpeg</a>
+                        <a href="#">.jpg</a>
+                        <a href="#">.png</a>
+                        <a href="#">.jpeg</a>
                         <span>allowed</span>
+                    </div>
+                    <div class="d-inline-block align-items-center">
+                        <span>Max. File size</span>
+                        <a href="#">10 MB</a>
                     </div>
                 </div>
                 <div id="mainPage" style="display: none;">
@@ -208,13 +212,38 @@
 
     $("body").on("change", ".image", function(e) {
     var files = e.target.files;
+    var maxFileSizeInBytes = 10 * 1024 * 1024;
+    var allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+    if (files && files.length > 0) {
+        file = files[0];
+
+    var fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+            // Display an error message
+            alert("Only .jpg, .jpeg, and .png files are allowed.");
+
+            // Optionally, clear the file input
+            $(this).val('');
+            return; // Exit the function early
+        }
+    
+    if (file.size > maxFileSizeInBytes) {
+        // Display an error message
+        alert("File size exceeds the maximum allowed size.");
+
+        // Optionally, clear the file input
+        $(this).val('');
+        return; // Exit the function early
+    }
+
+
     var done = function(url) {
         image.src = url;
         bs_modal.modal('show');
     };
 
-    if (files && files.length > 0) {
-        file = files[0];
 
         if (URL) {
             done(URL.createObjectURL(file));
@@ -249,9 +278,10 @@
         });
         var croppedImage = canvas.toDataURL(); // Get the cropped image as base64 data URL
         $("#croppedImage").attr("src", croppedImage); // Set the src attribute of the image element on the main page
+        $("#firstImage").attr("src", croppedImage); // Set the src attribute of the image element on the main page
         $("#croppedImageData").val(croppedImage); // Set the cropped image data to a hidden input field in the form
         bs_modal.modal('hide'); // Close the modal
-        $("#mainPage").show(); // Show the submit button on the main page
+        // $("#mainPage").show(); // Show the submit button on the main page
     });
 
     document.getElementById('chooseImageButton').addEventListener('click', function () {

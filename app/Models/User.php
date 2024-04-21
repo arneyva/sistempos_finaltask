@@ -88,7 +88,6 @@ class User extends Authenticatable
         'basic_salary' => 'float',
         'leaving_date' => 'datetime',
         'status' => 'integer',
-        'is_all_warehouses' => 'integer',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
@@ -129,7 +128,6 @@ class User extends Authenticatable
         'linkedin',
         'leaving_date',
         'status',
-        'is_all_warehouses',
         'remember_token',
     ];
 
