@@ -120,6 +120,7 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
     Route::get('warehouse', [ReportsController::class, 'warehouse'])->name('warehouse');
     Route::get('sale', [ReportsController::class, 'sale'])->name('sale');
+    Route::get('purchase', [ReportsController::class, 'purchase'])->name('purchase');
 });
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {
