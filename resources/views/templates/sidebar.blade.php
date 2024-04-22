@@ -755,6 +755,7 @@
                 <li>
                     <hr class="hr-horizontal">
                 </li>
+                @role('superadmin')
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-people" role="button"
                         aria-expanded="false" aria-controls="sidebar-people">
@@ -829,6 +830,7 @@
                 <li>
                     <hr class="hr-horizontal">
                 </li>
+                @endrole
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-settings" role="button"
                         aria-expanded="false" aria-controls="sidebar-settings">
