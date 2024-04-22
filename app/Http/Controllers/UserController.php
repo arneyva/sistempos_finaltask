@@ -15,6 +15,12 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function __construct()
+    {
+        $this->middleware('role:superadmin');
+    }
+
     public function index()
     {
         $orderBy = 'firstname';
@@ -83,6 +89,7 @@ class UserController extends Controller
             'phone' => 'required|numeric|min:10|max:20',
             'gender' => 'required',
             'role' => 'required',
+            'workLocation' => 'required',
         ];
 
         $message = [
@@ -92,12 +99,14 @@ class UserController extends Controller
             'max' => 'Maksimal :max karakter',
             'unique' => ':attribute sudah terdaftar',
             'gender.required' => 'Pilih salah satu!',
+            'role.required' => 'Pilih salah satu!',
+            'workLocation.required' => 'Pilih salah satu!',
         ];
         $validateData = $request->validate($rules, $message);
 
         if ($request->input('avatar') !== null) {
 
-            $avatarBase64 = $request->input('avatar');
+            $avatarBase64 = $request->input('avatar'); 
 
             $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
             $filename = uniqid() . '.png';
@@ -108,6 +117,7 @@ class UserController extends Controller
             $image_resize = Image::make($tempFilePath);
             $image_resize->resize(128, 128);
             $image_resize->save(public_path('/hopeui/html/assets/images/avatars'.$filename));
+            unlink($tempFilePath);
         }
         // if ($request->hasFile('avatar')) {
 
@@ -125,18 +135,18 @@ class UserController extends Controller
         $user = new User;
         $user->firstname = $request['firstname'];
         $user->lastname = $request['lastname'];
-        $user->username = $request['username'];
-        $user->email = $request['email'];
-        $user->phone = $request['phone'];
+        $user->username = $request['username']; 
+        $user->email = $request['email']; 
+        $user->phone = $request['phone']; 
         $user->gender = $request['gender'];
-        $user->password = Hash::make($request['password']);
-        $user->avatar = $filename;
+        $user->password = Hash::make($request['password']); 
+        $user->avatar = $filename; 
         $user->status = 1;
         $user->save();
 
-        $user->assignRole($request['role']);
         $role = Role::find($request['role']);
-        if ($role->name == 'inventaris') {
+        $user->assignRole($request['role']);
+        if ($role->name === 'inventaris') {
             $user->warehouses()->sync(1);
         } 
         else {
