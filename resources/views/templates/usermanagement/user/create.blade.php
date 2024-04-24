@@ -1,7 +1,6 @@
 @extends('templates.main')
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"  />
-
 <style type="text/css">
     img {
         display: block;
@@ -18,9 +17,11 @@
 </style>
 
 @section('content')
-<div class="mt-3" style="justify-content-center">
+<form action="{{ route('people.users.store') }}" method="POST" class="row" enctype="multipart/form-data">
+                @csrf
+<!-- <div class="mt-3" style="justify-content-center">
     @include('templates.alert')
-</div>
+</div> -->
 
 <div class="col-xl-3 col-lg-4">
     <div class="card">
@@ -60,17 +61,32 @@
             </div>
             <div class="form-group">
                 <label class="form-label" for="username">Username:</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Username" >
+                <input type="text" class="form-control bg-transparent @error('username') is-invalid @enderror" id="username" name="username"  placeholder="Username" >
+                <small class=" text-danger font-italic">
+                            @error('username')
+                                {{ $message }}
+                            @enderror
+                    </small>
             </div>
             <div class="form-group">
     <label class="form-label" for="email">Email:</label>
-    <input type="email" class="form-control" id="email" name="email" placeholder="Email" >
+    <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror" id="email" name="email"  placeholder="Email" >
+    <small class=" text-danger font-italic">
+                            @error('email')
+                                {{ $message }}
+                            @enderror
+                    </small>
 </div>
 
 
 <div class="form-group">
     <label class="form-label" for="password">Password:</label>
-    <input type="password" class="form-control" id="password" name="password" placeholder="Password" >
+    <input type="password" class="form-control bg-transparent @error('password') is-invalid @enderror" id="password" name="password"  placeholder="Password" >
+    <small class=" text-danger font-italic">
+                            @error('password')
+                                {{ $message }}
+                            @enderror
+                    </small>
 </div>
         </div>
     </div>
@@ -88,75 +104,106 @@
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label class="form-label" for="fname">First Name:</label>
-                        <input type="text" name="firstname" class="form-control bg-transparent @error('firstname') is-invalid @enderror" required id="fname" placeholder="First Name">
-                    </div>
-                    <div class="invalid-feedback">
-                        @error('firstname')
-                            {{ $message }}
-                        @enderror
+                        <input type="text" name="firstname" class="form-control bg-transparent @error('firstname') is-invalid @enderror"  id="fname" placeholder="First Name">
+                        <small class=" text-danger font-italic">
+                            @error('firstname')
+                                {{ $message }}
+                            @enderror
+                        </small>
                     </div>
                     <div class="form-group col-md-6">
                         <label class="form-label" for="lname">Last Name:</label>
-                        <input type="text" name="lastname" class="form-control bg-transparent @error('lastname') is-invalid @enderror" required id="lname" placeholder="Last Name">
-                    </div>
-                    <div class="invalid-feedback">
-                        @error('lastname')
-                            {{ $message }}
-                        @enderror
+                        <input type="text" name="lastname" class="form-control bg-transparent @error('lastname') is-invalid @enderror"  id="lname" placeholder="Last Name">
+                        <small class=" text-danger font-italic">
+                            @error('lastname')
+                                {{ $message }}
+                            @enderror
+                        </small>
                     </div>
                     <div class="form-group col-md-12">
                         <label class="form-label" for="cname">Phone:</label>
-                        <input type="tel" name="phone" class="form-control bg-transparent @error('phone') is-invalid @enderror" required id="cname" placeholder="Phone">
-                    </div>
-                    <div class="invalid-feedback">
-                        @error('phone')
-                            {{ $message }}
-                        @enderror
+                        <input type="tel" name="phone" class="form-control bg-transparent @error('phone') is-invalid @enderror"  id="cname" placeholder="Phone">
+                        <small class=" text-danger font-italic">
+                            @error('phone')
+                                {{ $message }}
+                            @enderror
+                        </small>
                     </div>
                     <div class="form-group col-sm-12">
                         <label class="form-label">Gender:</label>
-                        <select name="gender" class="selectpicker form-control" data-style="py-0" placeholder="Gender" required>
-                        <option selected disabled>Gender</option>    
-                        <option value="Laki-Laki" >Laki-laki</option>
-                            <option Value="Perempuan" >Perempuan</option>
+                        <select name="gender" class="selectpicker form-control"  data-style="py-0" >
+                            <option selected disabled hidden value="">Gender</option>    
+                            <option value="Laki-Laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
                         </select>
-                        <div class="invalid-feedback">
-                        @error('gender')
-                            {{ $message }}
-                        @enderror
-                    </div>
+                        <small class=" text-danger font-italic">
+                            @error('gender')
+                                {{ $message }}
+                            @enderror
+                    </small>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-12">
-                        <label class="form-label" for="uname">User Name:</label>
-                        <input type="text" class="form-control" id="uname" placeholder="User Name">
+                    <div class="form-group col-sm-12">
+                        <label class="form-label">Role:</label>
+                        <select name="role" class="selectpicker form-control"  data-style="py-0" id="role" >
+                            <option selected disabled hidden value="">Role</option>
+                            @foreach($roles as $role)
+                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                        <small class=" text-danger font-italic">
+                            @error('role')
+                                {{ $message }}
+                            @enderror
+                    </small>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label class="form-label" for="pass">Password:</label>
-                        <input type="password" class="form-control" id="pass" placeholder="Password">
+                    <div class="form-group col-sm-6">
+                        <label class="form-label">Work Location:</label>
+                        <select name="workLocation" class="selectpicker form-control"  data-style="py-0" id="workLocation" disabled>
+                            <option selected disabled style="display:none !important" value="">Work Location</option>    
+                            @foreach($warehouses as $warehouse)
+                            <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                            @endforeach
+                        </select>
+                        <small class=" text-danger font-italic">
+                            @error('workLocation')
+                            {{ $message }}
+                            @enderror
+                        </small>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label class="form-label" for="rpass">Repeat Password:</label>
-                        <input type="password" class="form-control" id="rpass" placeholder="Repeat Password ">
-                    </div>
+                    <div class="form-group col-sm-6" id="outletAccess1">
+                        <label class="form-label">Outlet Access:</label>
+            <select class="selectpicker form-control" data-style="py-0" disabled >
+                <option value="">Outlet Access</option>
+            </select>
+        </div>
+                    <div class="form-group col-sm-6" style="display: none;" id="outletAccess2">
+                        <label class="form-label">Outlet Access:</label>
+            <select name="outletAccess" class="selectpicker form-control" data-style="py-0" id="outletAccess" multiple multiselect-select-all="true" multiselect-search="true" >
+                <option>Option 1</option>
+                <option>Option 2</option>
+                <option>Option 3</option>
+                <option>Option 4</option>
+                <option>Option 5</option>
+            </select>
+        </div>
                 </div>
-                <div class="checkbox">
-                    <label class="form-label"><input class="form-check-input me-2" type="checkbox" value="" id="flexCheckChecked">Enable Two-Factor-Authentication</label>
-                </div>
+                <br>
                 <button type="submit" class="btn btn-primary">Add New User</button>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Modal for image preview and cropping -->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="modalLabel">Crop Image</h5>
-        </div>
-        <div class="modal-body">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Crop Image</h5>
+            </div>
+            <div class="modal-body">
             <div class="img-container">
                 <div class="row" style="height: 300px;">
                     <div class="col-md-8">  
@@ -176,20 +223,73 @@
     </div>
 </div>
 </div>
+</form>
 @endsection
 @push('script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script type="text/javascript" src="{{asset('hopeui/html/assets/js/multiselect-dropdown.js')}}"></script>
+
+<script>
+$(document).ready(function () {
+    $('#role').on('change', function () {
+        var roleId = $(this).val(); // Get the selected role ID using jQuery
+        var workLocation = $('#workLocation');
+        var outletAccess1 = $('#outletAccess1');
+        var outletAccess2 = $('#outletAccess2');
+        var options = workLocation.find('option');
+        var warehouseOption = [1]; // Assuming warehouse options have value 1
+
+        workLocation.removeAttr("disabled"); // Use removeAttr to remove the disabled attribute
+        options.prop('disabled', false); // Enable all options first
+
+
+        if (roleId === "1") {
+            workLocation.val(options.eq(0).val());
+            workLocation.attr("disabled", "disabled");
+            outletAccess2.attr("style", "display:none");
+            outletAccess1.removeAttr("style");
+        } else if (roleId === "2") {
+            workLocation.val(options.eq(0).val());
+            options.each(function() {
+var option = $(this);
+                if (!warehouseOption.includes(parseInt(option.val()))) {
+                    option.prop('hidden', true);
+                }
+                if (warehouseOption.includes(parseInt(option.val()))) {
+                    option.prop('hidden', false);
+                }
+            });
+            outletAccess1.attr("style", "display:none");
+            outletAccess2.removeAttr("style");
+        } else if (roleId === "3") {
+            workLocation.val(options.eq(0).val());
+            options.each(function() {
+                var option = $(this);
+                if (warehouseOption.includes(parseInt(option.val()))) {
+                    option.prop('hidden', true);
+                }
+                if (!warehouseOption.includes(parseInt(option.val()))) {
+                    option.prop('hidden', false);
+                }
+            });
+            outletAccess2.attr("style", "display:none");
+            outletAccess1.removeAttr("style");
+        }
+    });
+});
+
+</script>
 <script>
     var bs_modal = $('#modal');
     var image = document.getElementById('image');
     var cropper, reader, file;
-
+    
     $("body").on("change", ".image", function(e) {
-    var files = e.target.files;
-    var maxFileSizeInBytes = 10 * 1024 * 1024;
-    var allowedExtensions = ['jpg', 'jpeg', 'png'];
-
-    if (files && files.length > 0) {
+        var files = e.target.files;
+        var maxFileSizeInBytes = 10 * 1024 * 1024;
+        var allowedExtensions = ['jpg', 'jpeg', 'png'];
+        
+        if (files && files.length > 0) {
         file = files[0];
 
     var fileExtension = file.name.split('.').pop().toLowerCase();

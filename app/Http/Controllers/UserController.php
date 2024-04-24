@@ -81,12 +81,12 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'firstname' => 'required|max:10',
-            'lastname' => 'required|max:10',
             'username' => 'required|min:3|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'phone' => 'required|numeric|min:10|max:20',
+            'firstname' => 'required|max:12',
+            'lastname' => 'required|max:12',
+            'phone' => 'required|numeric|min_digits:12|max_digits:12',
             'gender' => 'required',
             'role' => 'required',
             'workLocation' => 'required',
@@ -96,7 +96,9 @@ class UserController extends Controller
             'required' => 'Tidak boleh kosong!',
             'email' => 'Alamat email tidak valid!',
             'min' => 'Minimal :min karakter',
+            'min_digits' => 'Nomor terdiri dari :min angka',
             'max' => 'Maksimal :max karakter',
+            'max_digits' => 'Nomor terdiri dari :max angka',
             'unique' => ':attribute sudah terdaftar',
             'gender.required' => 'Pilih salah satu!',
             'role.required' => 'Pilih salah satu!',
@@ -104,29 +106,22 @@ class UserController extends Controller
         ];
         $validateData = $request->validate($rules, $message);
 
+        dd($validateData);
         if ($request->input('avatar') !== null) {
 
             $avatarBase64 = $request->input('avatar'); 
 
             $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
-            $filename = uniqid().'.png';
+            $filename = request('firstname').'_'.request('lastname').'_'.uniqid().'.png';
 
-            $tempFilePath = public_path('/hopeui/html/assets/images/avatars/temp'.$filename);
+            $tempFilePath = public_path('/hopeui/html/assets/images/avatars/temp/'.$filename);
             file_put_contents($tempFilePath, $avatarBinaryData);
 
             $image_resize = Image::make($tempFilePath);
             $image_resize->resize(128, 128);
-            $image_resize->save(public_path('/hopeui/html/assets/images/avatars'.$filename));
+            $image_resize->save(public_path('/hopeui/html/assets/images/avatars/'.$filename));
             unlink($tempFilePath);
         }
-        // if ($request->hasFile('avatar')) {
-
-        //     $image = $request->file('avatar');
-        //     $filename = rand(11111111, 99999999).$image->getClientOriginalName();
-
-        //     $image_resize = Image::make($image->getRealPath());
-        //     $image_resize->resize(128, 128);
-        //     $image_resize->save(public_path('/hopeui/html/assets/images/avatars'.$filename));
 
         else {
             $filename = 'no_avatar.png';
@@ -145,16 +140,17 @@ class UserController extends Controller
         $user->save();
 
         $role = Role::find($request['role']);
-        $user->assignRole($request['role']);
+        $user->assignRole($role->name);
         if ($role->name === 'inventaris') {
-            $user->warehouses()->sync(1);
+            $user->warehouses()->attach(1);
+            // Add additional warehouses if provided
+            if (isset($request['outletAccess'])) {
+                $user->warehouses()->attach($request['outletAccess']);
+            }
         } else {
             $user->warehouses()->sync($request['workLocation']);
         }
 
-        if ($user->can('access outlets')) {
-            $user->warehouses()->sync($request['outletAccess']);
-        }
 
         return redirect()->route('people.users.index', ['orderBy' => 'newest'])->with('success', 'User berhasil ditambahkan');
     }
