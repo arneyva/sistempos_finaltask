@@ -5,28 +5,12 @@
             <!--Logo start-->
             <div class="logo-main">
                 <div class="logo-normal">
-                    <svg class=" icon-30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2"
-                            transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
-                        <rect x="7.72803" y="27.728" width="28" height="4" rx="2"
-                            transform="rotate(-45 7.72803 27.728)" fill="currentColor" />
-                        <rect x="10.5366" y="16.3945" width="16" height="4" rx="2"
-                            transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
-                        <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2"
-                            transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                    </svg>
+                    <img src="{{ asset('hopeui/html/assets/images/logota3.png') }}" class="text-primary icon-30"
+                        alt="">
                 </div>
                 <div class="logo-mini">
-                    <svg class=" icon-30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2"
-                            transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
-                        <rect x="7.72803" y="27.728" width="28" height="4" rx="2"
-                            transform="rotate(-45 7.72803 27.728)" fill="currentColor" />
-                        <rect x="10.5366" y="16.3945" width="16" height="4" rx="2"
-                            transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
-                        <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2"
-                            transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                    </svg>
+                    <img src="{{ asset('hopeui/html/assets/images/logota3.png') }}" class="text-primary icon-30"
+                        alt="">
                 </div>
             </div>
             <!--logo End-->
@@ -34,7 +18,7 @@
 
 
 
-            <h4 class="logo-title">Hope UI</h4>
+            <h4 class="logo-title">Project TA</h4>
         </a>
         <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
             <i class="icon">
@@ -79,8 +63,8 @@
                         aria-expanded="false" aria-controls="horizontal-menu">
                         <i class="icon">
 
-                            <svg width="20" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg" class="icon-20">
+                            <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                class="icon-20">
                                 <path opacity="0.4"
                                     d="M10.0833 15.958H3.50777C2.67555 15.958 2 16.6217 2 17.4393C2 18.2559 2.67555 18.9207 3.50777 18.9207H10.0833C10.9155 18.9207 11.5911 18.2559 11.5911 17.4393C11.5911 16.6217 10.9155 15.958 10.0833 15.958Z"
                                     fill="currentColor"></path>
@@ -756,80 +740,80 @@
                     <hr class="hr-horizontal">
                 </li>
                 @role('superadmin')
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-people" role="button"
-                        aria-expanded="false" aria-controls="sidebar-people">
-                        <i class="icon">
-                            <svg class="icon-20" xmlns="http://www.w3.org/2000/svg" width="20"
-                                viewBox="0 0 24 24" fill="none">
-                                <path
-                                    d="M2 5C2 4.44772 2.44772 4 3 4H8.66667H21C21.5523 4 22 4.44772 22 5V8H15.3333H8.66667H2V5Z"
-                                    fill="currentColor" stroke="currentColor" />
-                                <path
-                                    d="M6 8H2V11M6 8V20M6 8H14M6 20H3C2.44772 20 2 19.5523 2 19V11M6 20H14M14 8H22V11M14 8V20M14 20H21C21.5523 20 22 19.5523 22 19V11M2 11H22M2 14H22M2 17H22M10 8V20M18 8V20"
-                                    stroke="currentColor" />
-                            </svg>
-                        </i>
-                        <span class="item-name">People</span>
-                        <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
-                            </svg>
-                        </i>
-                    </a>
-                    <ul class="sub-nav collapse" id="sidebar-people" data-bs-parent="#sidebar-menu">
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('people.users.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">User</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/table-data.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Customer</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/table-data.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Supplier</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <hr class="hr-horizontal">
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-people" role="button"
+                            aria-expanded="false" aria-controls="sidebar-people">
+                            <i class="icon">
+                                <svg class="icon-20" xmlns="http://www.w3.org/2000/svg" width="20"
+                                    viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M2 5C2 4.44772 2.44772 4 3 4H8.66667H21C21.5523 4 22 4.44772 22 5V8H15.3333H8.66667H2V5Z"
+                                        fill="currentColor" stroke="currentColor" />
+                                    <path
+                                        d="M6 8H2V11M6 8V20M6 8H14M6 20H3C2.44772 20 2 19.5523 2 19V11M6 20H14M14 8H22V11M14 8V20M14 20H21C21.5523 20 22 19.5523 22 19V11M2 11H22M2 14H22M2 17H22M10 8V20M18 8V20"
+                                        stroke="currentColor" />
+                                </svg>
+                            </i>
+                            <span class="item-name">People</span>
+                            <i class="right-icon">
+                                <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </i>
+                        </a>
+                        <ul class="sub-nav collapse" id="sidebar-people" data-bs-parent="#sidebar-menu">
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('people.users.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> B </i>
+                                    <span class="item-name">User</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/table/table-data.html">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">Customer</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/table/table-data.html">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">Supplier</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <hr class="hr-horizontal">
+                    </li>
                 @endrole
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-settings" role="button"
