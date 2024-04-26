@@ -5,7 +5,7 @@
             <!--Logo start-->
             <div class="logo-main">
                 <div class="logo-normal">
-                    <svg class="text-primary icon-30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    {{-- <svg class="text-primary icon-30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2"
                             transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
                         <rect x="7.72803" y="27.728" width="28" height="4" rx="2"
@@ -14,10 +14,12 @@
                             transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
                         <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2"
                             transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                    </svg>
+                    </svg> --}}
+                    <img src="{{ asset('hopeui/html/assets/images/logota2.png') }}" class="text-primary icon-30"
+                        style="height: 4.875rem;width: 4.875rem" alt="">
                 </div>
                 <div class="logo-mini">
-                    <svg class="text-primary icon-30" viewBox="0 0 30 30" fill="none"
+                    {{-- <svg class="text-primary icon-30" viewBox="0 0 30 30" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2"
                             transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
@@ -27,7 +29,9 @@
                             transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
                         <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2"
                             transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                    </svg>
+                    </svg> --}}
+                    <img src="{{ asset('hopeui/html/assets/images/logota2.png') }}" class="text-primary icon-30"
+                        style="height: 4.875rem;width: 4.875rem" alt="">
                 </div>
             </div>
             <!--logo End-->
@@ -35,7 +39,7 @@
 
 
 
-            <h4 class="logo-title">Hope UI</h4>
+            <h4 class="logo-title">Project TA</h4>
         </a>
         <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
             <i class="icon">
