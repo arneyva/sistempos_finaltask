@@ -14,6 +14,13 @@
         margin: 10px;
         border: 1px solid red;
     }
+
+    .pretiew {
+        overflow: hidden;
+        width: 510px;
+        height: 300px;
+        margin: 10px;
+    }
 </style>
 
 @section('content')
@@ -61,7 +68,7 @@
             </div>
             <div class="form-group">
                 <label class="form-label" for="username">Username:</label>
-                <input type="text" class="form-control bg-transparent @error('username') is-invalid @enderror" id="username" name="username"  placeholder="Username" >
+                <input type="text" class="form-control bg-transparent @error('username') is-invalid @enderror" id="username" name="username"  placeholder="Username" required>
                 <small class=" text-danger font-italic">
                             @error('username')
                                 {{ $message }}
@@ -70,7 +77,7 @@
             </div>
             <div class="form-group">
     <label class="form-label" for="email">Email:</label>
-    <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror" id="email" name="email"  placeholder="Email" >
+    <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror" id="email" name="email"  placeholder="Email" required>
     <small class=" text-danger font-italic">
                             @error('email')
                                 {{ $message }}
@@ -81,7 +88,7 @@
 
 <div class="form-group">
     <label class="form-label" for="password">Password:</label>
-    <input type="password" class="form-control bg-transparent @error('password') is-invalid @enderror" id="password" name="password"  placeholder="Password" >
+    <input type="password" class="form-control bg-transparent @error('password') is-invalid @enderror" id="password" name="password"  placeholder="Password" required>
     <small class=" text-danger font-italic">
                             @error('password')
                                 {{ $message }}
@@ -104,7 +111,7 @@
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label class="form-label" for="fname">First Name:</label>
-                        <input type="text" name="firstname" class="form-control bg-transparent @error('firstname') is-invalid @enderror"  id="fname" placeholder="First Name">
+                        <input type="text" name="firstname" class="form-control bg-transparent @error('firstname') is-invalid @enderror"  id="fname" placeholder="First Name" required>
                         <small class=" text-danger font-italic">
                             @error('firstname')
                                 {{ $message }}
@@ -113,7 +120,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label class="form-label" for="lname">Last Name:</label>
-                        <input type="text" name="lastname" class="form-control bg-transparent @error('lastname') is-invalid @enderror"  id="lname" placeholder="Last Name">
+                        <input type="text" name="lastname" class="form-control bg-transparent @error('lastname') is-invalid @enderror"  id="lname" placeholder="Last Name" required>
                         <small class=" text-danger font-italic">
                             @error('lastname')
                                 {{ $message }}
@@ -122,7 +129,7 @@
                     </div>
                     <div class="form-group col-md-12">
                         <label class="form-label" for="cname">Phone:</label>
-                        <input type="tel" name="phone" class="form-control bg-transparent @error('phone') is-invalid @enderror"  id="cname" placeholder="Phone">
+                        <input type="tel" name="phone" class="form-control bg-transparent @error('phone') is-invalid @enderror"  id="cname" placeholder="Phone" required>
                         <small class=" text-danger font-italic">
                             @error('phone')
                                 {{ $message }}
@@ -180,12 +187,11 @@
         </div>
                     <div class="form-group col-sm-6" style="display: none;" id="outletAccess2">
                         <label class="form-label">Outlet Access:</label>
-            <select name="outletAccess" class="selectpicker form-control" data-style="py-0" id="outletAccess" multiple multiselect-select-all="true" multiselect-search="true" >
-                <option>Option 1</option>
-                <option>Option 2</option>
-                <option>Option 3</option>
-                <option>Option 4</option>
-                <option>Option 5</option>
+            <select name="outletAccess" class="selectpicker form-control" data-style="py-0" id="outletAccess" multiple multiselect-select-all="true" multiselect-search="true" multiselect-max-items=3>
+            @foreach($warehouses as $warehouse)
+            @continue($warehouse->id == 1)
+                            <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                            @endforeach
             </select>
         </div>
                 </div>
@@ -208,7 +214,9 @@
                 <div class="row" style="height: 300px;">
                     <div class="col-md-8">  
                         <!-- Default image where we will set the src via jQuery -->
-                        <img id="image">
+                        <div class="pretiew">
+                            <img id="image">
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <div class="preview"></div>
@@ -236,6 +244,7 @@ $(document).ready(function () {
         var workLocation = $('#workLocation');
         var outletAccess1 = $('#outletAccess1');
         var outletAccess2 = $('#outletAccess2');
+        var outletAccess = $('#outletAccess');
         var options = workLocation.find('option');
         var warehouseOption = [1]; // Assuming warehouse options have value 1
 
@@ -245,11 +254,13 @@ $(document).ready(function () {
 
         if (roleId === "1") {
             workLocation.val(options.eq(0).val());
+            outletAccess.val(options.eq(0).val());
             workLocation.attr("disabled", "disabled");
             outletAccess2.attr("style", "display:none");
             outletAccess1.removeAttr("style");
         } else if (roleId === "2") {
             workLocation.val(options.eq(0).val());
+            outletAccess.val(options.eq(0).val());
             options.each(function() {
 var option = $(this);
                 if (!warehouseOption.includes(parseInt(option.val()))) {
@@ -263,6 +274,7 @@ var option = $(this);
             outletAccess2.removeAttr("style");
         } else if (roleId === "3") {
             workLocation.val(options.eq(0).val());
+            outletAccess.val(options.eq(0).val());
             options.each(function() {
                 var option = $(this);
                 if (warehouseOption.includes(parseInt(option.val()))) {

@@ -12,9 +12,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $user1 = User::firstOrCreate([
+        User::firstOrCreate([
             'firstname' => 'user',
-            'lastname' => 'user',
+            'lastname' => 'biasa',
             'username' => 'user',
             'email' => 'user@gmail.com',
             'password' => bcrypt('password'),
@@ -22,9 +22,20 @@ class UserSeeder extends Seeder
             'gender' => 'Laki-laki',
             'status' => 1,
             'avatar' => 'no_avatar.png',
-        ]);
-        $user2 = User::firstOrCreate([
-            'firstname' => 'admin',
+        ])->assignRole('staff');;
+        User::firstOrCreate([
+            'firstname' => 'user',
+            'lastname' => 'utama',
+            'username' => 'userutama',
+            'email' => 'user2@gmail.com',
+            'password' => bcrypt('password'),
+            'phone' => '089655443322',
+            'gender' => 'Laki-laki',
+            'status' => 1,
+            'avatar' => 'no_avatar.png',
+        ])->assignRole('inventaris');;
+        User::firstOrCreate([
+            'firstname' => 'Super',
             'lastname' => 'admin',
             'username' => 'admin',
             'email' => 'admin@gmail.com',
@@ -33,7 +44,6 @@ class UserSeeder extends Seeder
             'gender' => 'Perempuan',
             'status' => 1,
             'avatar' => 'no_avatar.png',
-        ]);
-        $user2->assignRole('superadmin');
+        ])->assignRole('superadmin');
     }
 }

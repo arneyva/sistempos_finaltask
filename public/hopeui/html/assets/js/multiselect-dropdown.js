@@ -92,7 +92,7 @@ function MultiselectDropdown(options){
   var config={
     search:true,
     height:'15rem',
-    placeholder:'select',
+    placeholder:'none',
     txtSelected:'selected',
     txtAll:'All',
     txtRemove: 'Remove',
