@@ -147,6 +147,9 @@ Route::prefix('people')->middleware(['auth', 'verified'])->name('people.')->grou
         Route::get('list', [UserController::class, 'index'])->name('index');
         Route::get('create', [UserController::class, 'create'])->name('create');
         Route::post('store', [UserController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [UserController::class, 'show'])->name('show');
+        Route::patch('update/{id}', [UserController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
     });
 });
 Route::middleware('auth')->group(function () {
