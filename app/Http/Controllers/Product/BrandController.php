@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class BrandController extends Controller
@@ -81,31 +82,25 @@ class BrandController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                Rule::unique(Brand::class, 'name')->whereNull('deleted_at'),
-            ],
-            'image' => 'nullable|image|mimes:jpeg,png,jpg',
-            'description' => 'nullable',
-        ]);
-        $newvalue = [
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-        ];
-        // if ($request->hasFile('image')) {
-        //     $request->validate([
-        //         'image' => 'required ',
-        //     ]);
-        //     $image = $request->file('image');
-        //     $extension = $image->extension();
-        //     $filename = date('ymdhis') . '.' . $extension;
-        //     Storage::disk('s3')->put($filename, file_get_contents($logo));
-        //     $newvalue['logo'] = $filename;
-        // }
-        Brand::where('id', $id)->update($newvalue);
+        if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+            $validated = $request->validate([
+                'name' => [
+                    'required',
+                    Rule::unique(Brand::class, 'name')->whereNull('deleted_at'),
+                ],
+                'image' => 'nullable|image|mimes:jpeg,png,jpg',
+                'description' => 'nullable',
+            ]);
+            $newvalue = [
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+            ];
+            Brand::where('id', $id)->update($newvalue);
 
-        return redirect()->route('product.brand.index')->with('success', 'Brand updated successfully');
+            return redirect()->route('product.brand.index')->with('success', 'Brand updated successfully');
+        } else {
+            return redirect()->back()->with('errorzz', 'You are not authorized to update Brand product');
+        }
     }
 
     /**
@@ -113,9 +108,13 @@ class BrandController extends Controller
      */
     public function destroy(string $id)
     {
-        $brands = Brand::where('id', $id)->first();
-        $brands->delete();
+        if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+            $brands = Brand::where('id', $id)->first();
+            $brands->delete();
 
-        return redirect()->route('product.brand.index')->with('success', 'Brand deleted successfully');
+            return redirect()->route('product.brand.index')->with('success', 'Brand deleted successfully');
+        } else {
+            return redirect()->back()->with('errorzz', 'You are not authorized to delete Brand product');
+        }
     }
 }
