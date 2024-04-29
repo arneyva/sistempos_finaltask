@@ -13,9 +13,11 @@
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
-                    <button type="button" class="btn btn-soft-gray">Import Product</button>
-                    <a href="{{ route('product.create') }}"><button type="button" class="btn btn-soft-primary">Create
-                            +</button></a>
+                    @role('superadmin|inventaris')
+                        <button type="button" class="btn btn-soft-gray">Import Product</button>
+                        <a href="{{ route('product.create') }}"><button type="button" class="btn btn-soft-primary">Create
+                                +</button></a>
+                    @endrole
                 </div>
             </div>
 

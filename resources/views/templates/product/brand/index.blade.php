@@ -27,8 +27,8 @@
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
-                    <button type="button" class="btn btn-soft-gray">Import Product</button>
                     @role('superadmin|inventaris')
+                        <button type="button" class="btn btn-soft-gray">Import Product</button>
                         <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                             data-bs-target="#createModal">
                             Create+
