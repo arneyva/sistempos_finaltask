@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UnitController extends Controller
@@ -34,6 +35,7 @@ class UnitController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'name' => [
                 'required',
@@ -83,32 +85,36 @@ class UnitController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                Rule::unique('units')->whereNull('deleted_at')->ignore($id),
-            ],
-            'ShortName' => [
-                'required',
-                Rule::unique('units')->whereNull('deleted_at')->ignore($id),
-            ],
-        ]);
-        if (! $request->base_unit) {
-            $operator = '*';
-            $operator_value = 1;
-        } else {
-            $operator = $request->operator;
-            $operator_value = $request->operator_value;
-        }
-        Unit::Where('id', $id)->update([
-            'name' => $request['name'],
-            'ShortName' => $request['ShortName'],
-            'base_unit' => $request['base_unit'],
-            'operator' => $operator,
-            'operator_value' => $operator_value,
-        ]);
+        if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+            $validated = $request->validate([
+                'name' => [
+                    'required',
+                    Rule::unique('units')->whereNull('deleted_at')->ignore($id),
+                ],
+                'ShortName' => [
+                    'required',
+                    Rule::unique('units')->whereNull('deleted_at')->ignore($id),
+                ],
+            ]);
+            if (! $request->base_unit) {
+                $operator = '*';
+                $operator_value = 1;
+            } else {
+                $operator = $request->operator;
+                $operator_value = $request->operator_value;
+            }
+            Unit::Where('id', $id)->update([
+                'name' => $request['name'],
+                'ShortName' => $request['ShortName'],
+                'base_unit' => $request['base_unit'],
+                'operator' => $operator,
+                'operator_value' => $operator_value,
+            ]);
 
-        return redirect()->route('product.unit.index')->with('success', 'Unit updated successfully');
+            return redirect()->route('product.unit.index')->with('success', 'Unit updated successfully');
+        } else {
+            return redirect()->back()->with('errorzz', 'You are not authorized to update product');
+        }
     }
 
     /**
@@ -116,9 +122,13 @@ class UnitController extends Controller
      */
     public function destroy(string $id)
     {
-        $unit = Unit::Where('id', $id)->first();
-        $unit->delete();
+        if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+            $unit = Unit::Where('id', $id)->first();
+            $unit->delete();
 
-        return redirect()->route('product.unit.index')->with('success', 'Unit deleted successfully');
+            return redirect()->route('product.unit.index')->with('success', 'Unit deleted successfully');
+        } else {
+            return redirect()->back()->with('errorzz', 'You are not authorized to this actions');
+        }
     }
 }

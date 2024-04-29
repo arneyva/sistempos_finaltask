@@ -7,17 +7,15 @@ use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManagerStatic as Image;
 use Spatie\Permission\Models\Role;
-use Illuminate\Validation\Rule;
-
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-
     public function __construct()
     {
         $this->middleware('role:superadmin');
@@ -94,7 +92,7 @@ class UserController extends Controller
                 'gender' => 'required',
                 'role' => 'required',
             ];
-    
+
             $message = [
                 'required' => 'Tidak boleh kosong!',
                 'email' => 'Alamat email tidak valid!',
@@ -118,7 +116,7 @@ class UserController extends Controller
                 'role' => 'required',
                 'workLocation' => 'required',
             ];
-    
+
             $message = [
                 'required' => 'Tidak boleh kosong!',
                 'email' => 'Alamat email tidak valid!',
@@ -137,7 +135,7 @@ class UserController extends Controller
 
         if ($request->input('avatar') !== null) {
 
-            $avatarBase64 = $request->input('avatar'); 
+            $avatarBase64 = $request->input('avatar');
 
             $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
             $filename = request('firstname').'_'.request('lastname').'_'.uniqid().'.png';
@@ -149,20 +147,19 @@ class UserController extends Controller
             $image_resize->resize(128, 128);
             $image_resize->save(public_path('/hopeui/html/assets/images/avatars/'.$filename));
             unlink($tempFilePath);
-        }
-        else {
+        } else {
             $filename = 'no_avatar.png';
         }
 
         $user = new User;
         $user->firstname = $request['firstname'];
         $user->lastname = $request['lastname'];
-        $user->username = $request['username']; 
-        $user->email = $request['email']; 
-        $user->phone = $request['phone']; 
+        $user->username = $request['username'];
+        $user->email = $request['email'];
+        $user->phone = $request['phone'];
         $user->gender = $request['gender'];
-        $user->password = Hash::make($request['password']); 
-        $user->avatar = $filename; 
+        $user->password = Hash::make($request['password']);
+        $user->avatar = $filename;
         $user->status = 1;
         $user->save();
 
@@ -173,14 +170,11 @@ class UserController extends Controller
             if (isset($request['outletAccess'])) {
                 $user->warehouses()->attach($request['outletAccess']);
             }
-        } 
-        elseif ($role->name === 'superadmin') {
+        } elseif ($role->name === 'superadmin') {
             $user->warehouses()->sync(Warehouse::pluck('id')->toArray());
-        }
-        else {
+        } else {
             $user->warehouses()->sync($request['workLocation']);
         }
-
 
         return redirect()->route('people.users.index', ['orderBy' => 'newest'])->with('success', 'User berhasil ditambahkan');
     }
@@ -204,7 +198,7 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
-        if(!$user) {
+        if (! $user) {
             return back()->with('warning', 'User tidak ditemukan!');
         }
 
@@ -221,7 +215,7 @@ class UserController extends Controller
                 'gender' => 'required',
                 'role' => 'required',
             ];
-    
+
             $message = [
                 'required' => 'Tidak boleh kosong!',
                 'email' => 'Alamat email tidak valid!',
@@ -246,7 +240,7 @@ class UserController extends Controller
                 'role' => 'required',
                 'workLocation' => 'required',
             ];
-    
+
             $message = [
                 'required' => 'Tidak boleh kosong!',
                 'email' => 'Alamat email tidak valid!',
@@ -264,21 +258,21 @@ class UserController extends Controller
         $validateData = $request->validate($rules, $message);
 
         $current = $user->password;
-            if ($request->NewPassword != 'null') {
-                if ($request->NewPassword != $current) {
-                    $pass = Hash::make($request->NewPassword);
-                } else {
-                    $pass = $user->password;
-                }
-
+        if ($request->NewPassword != 'null') {
+            if ($request->NewPassword != $current) {
+                $pass = Hash::make($request->NewPassword);
             } else {
-                $pass = $current;
+                $pass = $user->password;
             }
+
+        } else {
+            $pass = $current;
+        }
 
         $currentAvatar = $user->avatar;
         if ($request->avatar != null) {
 
-            $avatarBase64 = $request->input('avatar'); 
+            $avatarBase64 = $request->input('avatar');
 
             $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
             $filename = request('firstname').'_'.request('lastname').'_'.uniqid().'.png';
@@ -292,14 +286,13 @@ class UserController extends Controller
             unlink($tempFilePath);
 
             $path = public_path('/hopeui/html/assets/images/avatars/');
-            $currentPhotoPath = $path . $currentAvatar;
+            $currentPhotoPath = $path.$currentAvatar;
             if (file_exists($currentPhotoPath)) {
                 if ($currentAvatar != 'no_avatar.png') {
                     @unlink($currentPhotoPath);
                 }
             }
-        }
-        else {
+        } else {
             $filename = $currentAvatar;
         }
 
@@ -322,11 +315,9 @@ class UserController extends Controller
                 $user->warehouses()->sync($request['outletAccess']);
             }
             $user->warehouses()->attach(1);
-        } 
-        elseif ($role->name === 'superadmin') {
+        } elseif ($role->name === 'superadmin') {
             $user->warehouses()->sync(Warehouse::pluck('id')->toArray());
-        }
-        else {
+        } else {
             $user->warehouses()->sync($request['workLocation']);
         }
 
@@ -339,7 +330,7 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
-        if(!$user) {
+        if (! $user) {
             return back()->with('warning', 'User tidak ditemukan!');
         }
 
@@ -348,7 +339,7 @@ class UserController extends Controller
          */
         $currentAvatar = $user->avatar;
         $path = public_path('/hopeui/html/assets/images/avatars/');
-        $currentPhotoPath = $path . $currentAvatar;
+        $currentPhotoPath = $path.$currentAvatar;
         if (file_exists($currentPhotoPath)) {
             if ($currentAvatar != 'no_avatar.png') {
                 @unlink($currentPhotoPath);

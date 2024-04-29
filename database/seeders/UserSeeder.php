@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
             'gender' => 'Laki-laki',
             'status' => 1,
             'avatar' => 'no_avatar.png',
-        ])->assignRole('staff');;
+        ])->assignRole('staff');
         User::firstOrCreate([
             'firstname' => 'user',
             'lastname' => 'utama',
@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
             'gender' => 'Laki-laki',
             'status' => 1,
             'avatar' => 'no_avatar.png',
-        ])->assignRole('inventaris');;
+        ])->assignRole('inventaris');
         User::firstOrCreate([
             'firstname' => 'Super',
             'lastname' => 'admin',

@@ -28,83 +28,85 @@
                     <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
-                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#createModal">
-                        Create+
-                    </button>
-                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Create</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="{{ route('product.unit.store') }}" method="POST">
-                                        @csrf
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="createname">Name *</label>
-                                            <input type="text" class="form-control" id="createname" required
-                                                placeholder="input unit name" name="name">
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="createshortname">Short Name*</label>
-                                            <input type="text" class="form-control" id="createshortname" required
-                                                placeholder="input short name" name="ShortName">
-                                        </div>
-                                        <div class="accordion" id="accordioncreate">
-                                            <div class="accordion-item">
-                                                <h4 class="accordion-header" id="headingOne">
-                                                    <button class="accordion-button" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseOnecreate"
-                                                        aria-expanded="true" aria-controls="collapseOne">
-                                                        Base Unit
-                                                    </button>
-                                                </h4>
-                                                <div id="collapseOnecreate" class="accordion-collapse collapse show"
-                                                    aria-labelledby="headingOne" data-bs-parent="#accordioncreate">
-                                                    <div class="accordion-body">
-                                                        <label for="productunitcreate" class="form-label">Product
-                                                            Unit</label>
-                                                        <select class="form-select" id="productunitcreate" name="base_unit">
-                                                            <option value="" selected disabled>Choose...</option>
-                                                            @foreach ($unit as $item)
-                                                                <option value="{{ $item->id }}">
-                                                                    {{ $item->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="accordion-body">
-                                                        <label for="operatorcreate" class="form-label">Operator</label>
-                                                        <select class="form-select" id="operatorcreate" name="operator">
-                                                            <option selected disabled value="">Choose...</option>
-                                                            <option value="{{ '*' }}">Multiply (*)</option>
-                                                            <option value="{{ '/' }}">Devide (/)</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="accordion-body">
-                                                        <label class="form-label" for="operatorvaluecreate">Operation
-                                                            value
-                                                            *</label>
-                                                        <input type="text" class="form-control"
-                                                            id="operatorvaluecreate" placeholder="1"
-                                                            name="operator_value">
+                    @role('superadmin|inventaris')
+                        <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                            data-bs-target="#createModal">
+                            Create+
+                        </button>
+                        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="createModalLabel">Create</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ route('product.unit.store') }}" method="POST">
+                                            @csrf
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="createname">Name *</label>
+                                                <input type="text" class="form-control" id="createname" required
+                                                    placeholder="input unit name" name="name">
+                                            </div>
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="createshortname">Short Name*</label>
+                                                <input type="text" class="form-control" id="createshortname" required
+                                                    placeholder="input short name" name="ShortName">
+                                            </div>
+                                            <div class="accordion" id="accordioncreate">
+                                                <div class="accordion-item">
+                                                    <h4 class="accordion-header" id="headingOne">
+                                                        <button class="accordion-button" type="button"
+                                                            data-bs-toggle="collapse" data-bs-target="#collapseOnecreate"
+                                                            aria-expanded="true" aria-controls="collapseOne">
+                                                            Base Unit
+                                                        </button>
+                                                    </h4>
+                                                    <div id="collapseOnecreate" class="accordion-collapse collapse show"
+                                                        aria-labelledby="headingOne" data-bs-parent="#accordioncreate">
+                                                        <div class="accordion-body">
+                                                            <label for="productunitcreate" class="form-label">Product
+                                                                Unit</label>
+                                                            <select class="form-select" id="productunitcreate" name="base_unit">
+                                                                <option value="" selected disabled>Choose...</option>
+                                                                @foreach ($unit as $item)
+                                                                    <option value="{{ $item->id }}">
+                                                                        {{ $item->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="accordion-body">
+                                                            <label for="operatorcreate" class="form-label">Operator</label>
+                                                            <select class="form-select" id="operatorcreate" name="operator">
+                                                                <option selected disabled value="">Choose...</option>
+                                                                <option value="{{ '*' }}">Multiply (*)</option>
+                                                                <option value="{{ '/' }}">Devide (/)</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="accordion-body">
+                                                            <label class="form-label" for="operatorvaluecreate">Operation
+                                                                value
+                                                                *</label>
+                                                            <input type="text" class="form-control"
+                                                                id="operatorvaluecreate" placeholder="1"
+                                                                name="operator_value">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                    </form>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
+                    @endrole
                 </div>
             </div>
             <div class="card-body p-0">

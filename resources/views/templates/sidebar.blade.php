@@ -89,21 +89,23 @@
                         </i>
                     </a>
                     <ul class="sub-nav collapse" id="horizontal-menu" data-bs-parent="#sidebar-menu">
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('product.create') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> H </i>
-                                <span class="item-name"> Create Product </span>
-                            </a>
-                        </li>
+                        @role('superadmin|inventaris')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('product.create') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> H </i>
+                                    <span class="item-name"> Create Product </span>
+                                </a>
+                            </li>
+                        @endrole
                         <li class="nav-item">
                             <a class="nav-link " href="{{ route('product.index') }}">
                                 <i class="icon">
@@ -119,36 +121,38 @@
                                 <span class="item-name">All Product</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/index-dual-compact.html">
-                                <i class="icon svg-icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Print Label</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/index-boxed.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Count Stock</span>
-                            </a>
-                        </li>
+                        @role('superadmin')
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/index-dual-compact.html">
+                                    <i class="icon svg-icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">Print Label</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/index-boxed.html">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> B </i>
+                                    <span class="item-name">Count Stock</span>
+                                </a>
+                            </li>
+                        @endrole
                         <li class="nav-item">
                             <a class="nav-link " href="{{ route('product.category.index') }}">
                                 <i class="icon">
