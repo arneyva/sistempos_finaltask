@@ -167,6 +167,8 @@ function MultiselectDropdown(options){
         });
         ic.addEventListener('click',(ev)=>{
           ic.checked=!ic.checked;
+          op.optEl.selected = ic.checked;
+          el.dispatchEvent(new Event('change'));
         });
         o.listitemEl=op;
         list.appendChild(op);
@@ -193,6 +195,7 @@ function MultiselectDropdown(options){
       div.refresh();
     }
     el.loadOptions();
+
     
     search.addEventListener('input',()=>{
       list.querySelectorAll(":scope div:not(.multiselect-dropdown-all-selector)").forEach(d=>{

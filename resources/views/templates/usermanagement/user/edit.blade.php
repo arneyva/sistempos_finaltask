@@ -280,13 +280,13 @@ $(document).ready(function () {
         
         if (roleId === "1") {
             workLocation.val(options.eq(0).val());
-            outletAccess.val(options.eq(0).val());
+            outletAccess.val(null);
             workLocation.attr("disabled", "disabled");
             outletAccess2.attr("style", "display:none");
             outletAccess1.removeAttr("style");
         } else if (roleId === "2") {
             workLocation.val(options.eq(0).val());
-            outletAccess.val(options.eq(0).val());
+            outletAccess.val(null);
             options.each(function() {
 var option = $(this);
                 if (!warehouseOption.includes(parseInt(option.val()))) {
@@ -300,7 +300,7 @@ var option = $(this);
             outletAccess2.removeAttr("style");
         } else if (roleId === "3") {
             workLocation.val(options.eq(0).val());
-            outletAccess.val(options.eq(0).val());
+            outletAccess.val(null);
             options.each(function() {
                 var option = $(this);
                 if (warehouseOption.includes(parseInt(option.val()))) {
