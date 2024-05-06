@@ -8,6 +8,7 @@ use App\Models\AdjustmentDetail;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
+use App\Models\UserWarehouse;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,9 +20,7 @@ class AdjustmentController extends Controller
      */
     public function index()
     {
-        // , 'details', 'user'
         $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->latest()->paginate(10);
-        // foreach logik
         $data = [];
         foreach ($adjustment as $adjustmentdata) {
             $item['id'] = $adjustmentdata->id;
@@ -29,7 +28,6 @@ class AdjustmentController extends Controller
             $item['Ref'] = $adjustmentdata->Ref;
             $item['warehouse'] = $adjustmentdata['warehouse']->name ?? 'deleted';
             $item['items'] = $adjustmentdata['items'];
-            // logik adjustment detail
             $Adjustment_data = AdjustmentDetail::where('adjustment_id', $adjustmentdata->id)
                 ->where('deleted_at', '=', null)->get();
             // dd($Adjustment_data);
@@ -68,9 +66,11 @@ class AdjustmentController extends Controller
      */
     public function create()
     {
-        $warehouse = Warehouse::query()->get();
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+        $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
 
-        return view('templates.adjustment.create', ['warehouse' => $warehouse]);
+        return view('templates.adjustment.create', ['warehouse' => $warehouses]);
     }
 
     public function getNumberOrder()

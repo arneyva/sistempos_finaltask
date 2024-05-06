@@ -11,6 +11,7 @@ use App\Models\ProductWarehouse;
 use App\Models\Unit;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
@@ -78,15 +79,20 @@ class ProductController extends Controller
      */
     public function create()
     {
+        // dd(Auth::user()->getRoleNames());
+
         $category = Category::query()->get();
         $brand = Brand::query()->get();
         $unit = Unit::query()->where('base_unit', null)->get();
-
-        return view('templates.product.create', [
-            'category' => $category,
-            'brand' => $brand,
-            'unit' => $unit,
-        ]);
+        if (Auth::user()->can('create product')) {
+            return view('templates.product.create', [
+                'category' => $category,
+                'brand' => $brand,
+                'unit' => $unit,
+            ]);   // code...
+        } else {
+            return redirect()->back()->with('errorzz', 'You are not authorized to create product');
+        }
     }
 
     public function getUnits(Request $request, $id)
