@@ -321,7 +321,7 @@ class UserController extends Controller
             $user->warehouses()->sync($request['workLocation']);
         }
 
-        return redirect()->route('people.users.index')->with('success', 'User berhasil diedit');
+        return back()->with('success', 'User berhasil diedit');
     }
 
     /**
