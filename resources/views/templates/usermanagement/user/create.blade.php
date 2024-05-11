@@ -1,5 +1,5 @@
 @extends('templates.main')
-
+@section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
 <style type="text/css">
     img {
@@ -7,23 +7,32 @@
         max-width: 100%;
     }
 
-    .preview {
+    .image-container {
         overflow: hidden;
-        width: 160px;
-        height: 160px;
-        margin: 10px;
+        max-width: 510px !important;
+        max-height: 370px !important;
+    }
+
+    .preview {
+        display: none;
+    }
+
+    /* Custom CSS to adjust the Bootstrap media query breakpoints */
+    @media (min-width: 768px) {
+        /* Adjust the large (lg) screen breakpoint */
+        .modal-lg {
+            --bs-modal-width: 700px; /* Set your desired minimum width for large screens (lg) */
+        }
+
+        .preview {
+        display: block;
+        overflow: hidden;
+        width: 210px;
+        height: 210px;
         border: 1px solid red;
     }
-
-    .pretiew {
-        overflow: hidden;
-        width: 510px;
-        height: 300px;
-        margin: 10px;
     }
 </style>
-
-@section('content')
     <form action="{{ route('people.users.store') }}" method="POST" class="row" enctype="multipart/form-data">
         @csrf
         <!-- <div class="mt-3" style="justify-content-center">
@@ -63,10 +72,6 @@
                                 <span>Max. File size</span>
                                 <a href="#">10 MB</a>
                             </div>
-                        </div>
-                        <div id="mainPage" style="display: none;">
-                            <img id="croppedImage" src="" alt="Cropped Image"
-                                class="theme-color-default-img profile-pic rounded avatar-100">
                         </div>
                     </div>
                     <div class="form-group">
@@ -220,7 +225,7 @@
         </div>
 
         <!-- Modal for image preview and cropping -->
-        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+        <div class="modal fade" id="modal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
@@ -228,19 +233,23 @@
                         <h5 class="modal-title" id="modalLabel">Crop Image</h5>
                     </div>
                     <div class="modal-body">
-                        <div class="img-container">
-                            <div class="row" style="height: 300px;">
-                                <div class="col-md-8">
-                                    <!-- Default image where we will set the src via jQuery -->
-                                    <div class="pretiew">
-                                        <img id="image">
+                        <!-- <div class="img-container"> -->
+                            <!-- <div class="row" style="height: 300px;"> -->
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <!-- Default image where we will set the src via jQuery -->
+                                        <div class="docs-demo">
+                                            <div class="image-container">
+                                                <img id="image">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 px-0">
+                                        <div class="preview"></div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="preview"></div>
-                                </div>
-                            </div>
-                        </div>
+                            <!-- </div> -->
+                        <!-- </div> -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -374,13 +383,8 @@ var option = $(this);
         });
 
         $("#crop").click(function() {
-            canvas = cropper.getCroppedCanvas({
-                width: 160,
-                height: 160,
-            });
+            canvas = cropper.getCroppedCanvas();
             var croppedImage = canvas.toDataURL(); // Get the cropped image as base64 data URL
-            $("#croppedImage").attr("src",
-                croppedImage); // Set the src attribute of the image element on the main page
             $("#firstImage").attr("src",
                 croppedImage); // Set the src attribute of the image element on the main page
             $("#croppedImageData").val(
