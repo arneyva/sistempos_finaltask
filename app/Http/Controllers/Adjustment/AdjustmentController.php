@@ -232,6 +232,7 @@ class AdjustmentController extends Controller
             $item['qty'] = $stock->qty;
             $item['code'] = $Product_data['code'];
             $item['name'] = $Product_data['name'];
+            $item['product_variant_id'] = null;
 
             //product is_variant
         } elseif ($Product_data['type'] == 'is_variant') {
@@ -245,6 +246,7 @@ class AdjustmentController extends Controller
             $item['code'] = $product_variant_data['code'];
             $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
             $item['qty'] = $stock->qty;
+            $item['product_variant_id'] = $variant_id;
 
             //product is_service
         } else {
@@ -401,6 +403,7 @@ class AdjustmentController extends Controller
                     }
                 }
             }
+            // dd($data);
             AdjustmentDetail::insert($orderDetails);
             DB::commit();
 
@@ -425,7 +428,78 @@ class AdjustmentController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $Adjustment_data = Adjustment::with('details.product')
+            ->where('deleted_at', '=', null)
+            ->findOrFail($id);
+        // dd($Adjustment_data->warehouse_id);
+        $details = [];
+        if ($Adjustment_data->warehouse_id) {
+            if (Warehouse::where('id', $Adjustment_data->warehouse_id)->where('deleted_at', '=', null)->first()) {
+                $adjustment['warehouse_id'] = $Adjustment_data->warehouse_id;
+            } else {
+                $adjustment['warehouse_id'] = '';
+            }
+            // dd($adjustment['warehouse_id']);
+        } else {
+            $adjustment['warehouse_id'] = '';
+        }
+        $adjustment['notes'] = $Adjustment_data->notes;
+        $adjustment['date'] = $Adjustment_data->updated_at;
+        $detail_id = 0;
+        foreach ($Adjustment_data['details'] as $detail) {
+
+            if ($detail->product_variant_id) {
+                $item_product = ProductWarehouse::where('product_id', $detail->product_id)
+                    ->where('deleted_at', '=', null)
+                    ->where('product_variant_id', $detail->product_variant_id)
+                    ->where('warehouse_id', $Adjustment_data->warehouse_id)
+                    ->first();
+
+                $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+                    ->where('id', $detail->product_variant_id)->first();
+
+                $data['id'] = $detail->id;
+                $data['detail_id'] = $detail_id += 1;
+                $data['quantity'] = $detail->quantity;
+                $data['product_id'] = $detail->product_id;
+                $data['product_variant_id'] = $detail->product_variant_id;
+                $data['code'] = $productsVariants->code;
+                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                $data['current'] = $item_product ? $item_product->qty : 0;
+                $data['type'] = $detail->type;
+                $data['unit'] = $detail['product']['unit']->ShortName;
+                $item_product ? $data['del'] = 0 : $data['del'] = 1;
+            } else {
+                $item_product = ProductWarehouse::where('product_id', $detail->product_id)
+                    ->where('deleted_at', '=', null)
+                    ->where('warehouse_id', $Adjustment_data->warehouse_id)
+                    ->where('product_variant_id', '=', null)
+                    ->first();
+
+                $data['id'] = $detail->id;
+                $data['detail_id'] = $detail_id += 1;
+                $data['quantity'] = $detail->quantity;
+                $data['product_id'] = $detail->product_id;
+                $data['product_variant_id'] = null;
+                $data['code'] = $detail['product']['code'];
+                $data['name'] = $detail['product']['name'];
+                $data['current'] = $item_product ? $item_product->qty : 0;
+                $data['type'] = $detail->type;
+                $data['unit'] = $detail['product']['unit']->ShortName;
+                $item_product ? $data['del'] = 0 : $data['del'] = 1;
+            }
+
+            $details[] = $data;
+        }
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+        $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+
+        // dd($details);
+        // dd($adjustment);
+        //dd($warehouses);
+        // dd($adjustment['date']);
+        return view('templates.adjustment.edit', ['adjustment' => $adjustment, 'details' => $details, 'warehouse' => $warehouses]);
     }
 
     /**
@@ -433,7 +507,156 @@ class AdjustmentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $current_adjustment = Adjustment::findOrFail($id);
+        request()->validate([
+            'warehouse_id' => 'required',
+        ]);
+
+        \DB::transaction(function () use ($request, $id, $current_adjustment) {
+
+            $old_adjustment_details = AdjustmentDetail::where('adjustment_id', $id)->get();
+            $new_adjustment_details = $request['details'];
+            $length = count($new_adjustment_details);
+
+            // Get Ids for new Details
+            $new_products_id = [];
+            foreach ($new_adjustment_details as $new_detail) {
+                $new_products_id[] = $new_detail['id'];
+            }
+
+            $old_products_id = [];
+            // Init Data with old Parametre
+            foreach ($old_adjustment_details as $key => $value) {
+                $old_products_id[] = $value->id;
+                if ($value['type'] == 'add') {
+
+                    if ($value['product_variant_id'] !== null) {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                            ->where('warehouse_id', $current_adjustment->warehouse_id)
+                            ->where('product_id', $value['product_id'])
+                            ->where('product_variant_id', $value['product_variant_id'])
+                            ->first();
+
+                        if ($product_warehouse) {
+                            $product_warehouse->qty -= $value['quantity'];
+                            $product_warehouse->save();
+                        }
+                    } else {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                            ->where('warehouse_id', $current_adjustment->warehouse_id)
+                            ->where('product_id', $value['product_id'])
+                            ->first();
+
+                        if ($product_warehouse) {
+                            $product_warehouse->qty -= $value['quantity'];
+                            $product_warehouse->save();
+                        }
+                    }
+                } else {
+                    if ($value['product_variant_id'] !== null) {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                            ->where('warehouse_id', $current_adjustment->warehouse_id)
+                            ->where('product_id', $value['product_id'])
+                            ->where('product_variant_id', $value['product_variant_id'])
+                            ->first();
+
+                        if ($product_warehouse) {
+                            $product_warehouse->qty += $value['quantity'];
+                            $product_warehouse->save();
+                        }
+                    } else {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                            ->where('warehouse_id', $current_adjustment->warehouse_id)
+                            ->where('product_id', $value['product_id'])
+                            ->first();
+
+                        if ($product_warehouse) {
+                            $product_warehouse->qty += $value['quantity'];
+                            $product_warehouse->save();
+                        }
+                    }
+                }
+
+                // Delete Detail
+                if (! in_array($old_products_id[$key], $new_products_id)) {
+                    $AdjustmentDetail = AdjustmentDetail::findOrFail($value->id);
+                    $AdjustmentDetail->delete();
+                }
+            }
+
+            // Update Data with New request
+            foreach ($new_adjustment_details as $key => $product_detail) {
+                if ($product_detail['type'] == 'add') {
+
+                    if ($product_detail['product_variant_id'] !== null) {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                            ->where('warehouse_id', $request->warehouse_id)
+                            ->where('product_id', $product_detail['product_id'])
+                            ->where('product_variant_id', $product_detail['product_variant_id'])
+                            ->first();
+
+                        if ($product_warehouse) {
+                            $product_warehouse->qty += $product_detail['quantity'];
+                            $product_warehouse->save();
+                        }
+                    } else {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                            ->where('warehouse_id', $request->warehouse_id)
+                            ->where('product_id', $product_detail['product_id'])
+                            ->first();
+
+                        if ($product_warehouse) {
+                            $product_warehouse->qty += $product_detail['quantity'];
+                            $product_warehouse->save();
+                        }
+                    }
+                } else {
+                    if ($value['product_variant_id'] !== null) {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                            ->where('warehouse_id', $request->warehouse_id)
+                            ->where('product_id', $product_detail['product_id'])
+                            ->where('product_variant_id', $product_detail['product_variant_id'])
+                            ->first();
+
+                        if ($product_warehouse) {
+                            $product_warehouse->qty -= $product_detail['quantity'];
+                            $product_warehouse->save();
+                        }
+                    } else {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                            ->where('warehouse_id', $request->warehouse_id)
+                            ->where('product_id', $product_detail['product_id'])
+                            ->first();
+
+                        if ($product_warehouse) {
+                            $product_warehouse->qty -= $product_detail['quantity'];
+                            $product_warehouse->save();
+                        }
+                    }
+                }
+
+                $orderDetails['adjustment_id'] = $id;
+                $orderDetails['quantity'] = $product_detail['quantity'];
+                $orderDetails['product_id'] = $product_detail['product_id'];
+                $orderDetails['product_variant_id'] = $product_detail['product_variant_id'];
+                $orderDetails['type'] = $product_detail['type'];
+
+                if (! in_array($product_detail['id'], $old_products_id)) {
+                    AdjustmentDetail::Create($orderDetails);
+                } else {
+                    AdjustmentDetail::where('id', $product_detail['id'])->update($orderDetails);
+                }
+            }
+
+            $current_adjustment->update([
+                'warehouse_id' => $request['warehouse_id'],
+                'notes' => $request['notes'],
+                'date' => $request['date'],
+                'items' => $length,
+            ]);
+        }, 10);
+
+        return response()->json(['success' => true]);
     }
 
     /**
