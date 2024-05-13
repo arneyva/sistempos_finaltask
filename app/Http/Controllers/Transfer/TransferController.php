@@ -7,7 +7,9 @@ use App\Models\ProductWarehouse;
 use App\Models\Transfer;
 use App\Models\TransferDetail;
 use App\Models\Unit;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TransferController extends Controller
@@ -25,7 +27,9 @@ class TransferController extends Controller
      */
     public function create()
     {
-        return view('templates.transfer.create');
+        $warehouses = Warehouse::where('deleted_at', '=', null)->get();
+
+        return view('templates.transfer.create', ['warehouse' => $warehouses]);
     }
 
     public function getNumbertransferValue()
@@ -62,7 +66,7 @@ class TransferController extends Controller
             $transferValue->Ref = $this->getNumbertransferValue();
             $transferValue->from_warehouse_id = $request->transfer['from_warehouse_id'];
             $transferValue->to_warehouse_id = $request->transfer['to_warehouse_id'];
-            $transferValue->items = count($request->transfer['details']);
+            $transferValue->items = count($request['details']);
             $transferValue->tax_rate = $request->transfer['tax_rate'] ? $request->transfer['tax_rate'] : 0;
             $transferValue->TaxNet = $request->transfer['TaxNet'] ? $request->transfer['TaxNet'] : 0;
             $transferValue->discount = $request->transfer['discount'] ? $request->transfer['discount'] : 0;
@@ -70,6 +74,7 @@ class TransferController extends Controller
             $transferValue->statut = $request->transfer['statut'];
             $transferValue->notes = $request->transfer['notes'];
             $transferValue->GrandTotal = $request['GrandTotal'];
+            $transferValue->GrandTotal = Auth::user()->id;
             $transferValue->save();
 
             $data = $request['details'];
@@ -77,6 +82,7 @@ class TransferController extends Controller
                 $unit = Unit::where('id', $value['purchase_unit_id'])->first();
                 if ($request->transfer['statut'] === 'completed') {
                     if ($value['product_variant_id'] !== null) {
+                        //--------- eliminate the quantity ''from_warehouse''--------------\\
                         $productWarehouseFrom = ProductWarehouse::where('deleted_at', '=', null)->where('warehouse_id', $request->transfer['from_warehouse_id'])->where('product_id', $value['product_id'])->where('product_variant_id', $value['product_variant_id'])->first();
                         if ($unit && $productWarehouseFrom) {
                             if ($unit->operater == '/') {
@@ -86,6 +92,7 @@ class TransferController extends Controller
                             }
                             $productWarehouseFrom->save();
                         }
+                        //--------- ADD the quantity ''TO_warehouse''------------------\\
                         $productWarehouseTo = ProductWarehouse::where('deleted_at', '=', null)->where('warehouse_id', $request->transfer['to_warehouse_id'])->where('product_id', $value['product_id'])->where('product_variant_id', $value['product_variant_id'])->first();
                         if ($unit && $productWarehouseTo) {
                             if ($unit->operator == '/') {
@@ -96,6 +103,7 @@ class TransferController extends Controller
                             $productWarehouseTo->save();
                         }
                     } else {
+                        //--------- eliminate the quantity ''from_warehouse''--------------\\
                         $productWarehouseFrom = ProductWarehouse::where('deleted_at', '=', null)->where('warehouse_id', $request->transfer['from_warehouse_id'])->where('product_id', $value['product_id'])->first();
                         if ($unit && $productWarehouseFrom) {
                             if ($unit->operater == '/') {
@@ -105,6 +113,7 @@ class TransferController extends Controller
                             }
                             $productWarehouseFrom->save();
                         }
+                        //--------- ADD the quantity ''TO_warehouse''------------------\\
                         $productWarehouseTo = ProductWarehouse::where('deleted_at', '=', null)->where('warehouse_id', $request->transfer['to_warehouse_id'])->where('product_id', $value['product_id'])->first();
                         if ($unit && $productWarehouseTo) {
                             if ($unit->operator == '/') {
@@ -127,6 +136,7 @@ class TransferController extends Controller
                             $productWarehouseFrom->save();
                         }
                     } else {
+                        //--------- eliminate the quantity ''from_warehouse''--------------\\
                         $productWarehouseFrom = ProductWarehouse::where('deleted_at', '=', null)->where('warehouse_id', $request->transfer['from_warehouse_id'])->where('product_id', $value['product_id'])->first();
                         if ($unit && $productWarehouseFrom) {
                             if ($unit->operater == '/') {
@@ -146,11 +156,12 @@ class TransferController extends Controller
                 $transferDetails['product_variant_id'] = $value['product_variant_id'];
                 $transferDetails['cost'] = $value['cost'];
                 $transferDetails['TaxNet'] = $value['TaxNet'];
-                $transferDetails['tax_methode'] = $value['tax_methode'];
+                $transferDetails['tax_method'] = $value['tax_method'];
                 $orderDetails['discount'] = $value['discount'];
-                $orderDetails['discount_method'] = $value['discount_Method'];
+                $orderDetails['discount_method'] = $value['discount_method'];
                 $orderDetails['total'] = $value['subtotal'];
                 TransferDetail::insert($transferDetails);
+                dd($transferValue);
                 DB::commit();
 
                 return redirect()->route('transfer.index')->with('success', 'Transfer created successfully');

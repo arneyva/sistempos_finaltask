@@ -21,20 +21,20 @@
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="selectWarehouse">From Warehouse/Outlet *</label>
-                                    <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
+                                    <select class="form-select" id="selectWarehouse" name="from_warehouse_id" required>
                                         <option selected disabled value="">Choose...</option>
-                                        {{-- @foreach ($warehouse as $wh)
+                                        @foreach ($warehouse as $wh)
                                             <option value="{{ $wh->id }}">{{ $wh->name }}</option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="selectWarehouse">To Warehouse/Outlet *</label>
-                                    <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
+                                    <label class="form-label" for="selectToWarehouse">To Warehouse/Outlet *</label>
+                                    <select class="form-select" id="selectToWarehouse" name="to_warehouse_id" required>
                                         <option selected disabled value="">Choose...</option>
-                                        {{-- @foreach ($warehouse as $wh)
+                                        @foreach ($warehouse as $wh)
                                             <option value="{{ $wh->id }}">{{ $wh->name }}</option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-4 mb-3">
@@ -193,6 +193,26 @@
 
 @push('script')
     <script>
+        document.getElementById('selectWarehouse').addEventListener('change', function() {
+            var fromWarehouse = this.value;
+            var toWarehouse = document.getElementById('selectToWarehouse').value;
+            if (fromWarehouse === toWarehouse) {
+                alert('From Warehouse and To Warehouse cannot be the same.');
+                this.value = '';
+            }
+        });
+
+        document.getElementById('selectToWarehouse').addEventListener('change', function() {
+            var toWarehouse = this.value;
+            var fromWarehouse = document.getElementById('selectWarehouse').value;
+            if (fromWarehouse === toWarehouse) {
+                alert('From Warehouse and To Warehouse cannot be the same.');
+                this.value = '';
+            }
+        });
+    </script>
+
+    <script>
         // Fungsi untuk menambahkan event listener untuk tombol delete di dalam tbody
         $(document).ready(function() {
             $('#product-table-body').on('click', '.delete-row', function() {
@@ -246,8 +266,8 @@
                             // Buat objek untuk baris tabel
                             var row = '<tr>';
                             row += '<td>#</td>';
-                            row += '<td>' + data.code + '</td>';
-                            row += '<td>' + data.name + '</td>';
+                            row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
+                            row += '<td>' + data.fix_cost + '</td>';
                             row += '<td>' + data.qty + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control" name="details[' +

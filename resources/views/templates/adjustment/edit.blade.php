@@ -16,22 +16,22 @@
                     </div>
                     {{--  --}}
                     <div class="card-body">
-                        <form action="{{ route('adjustment.store') }}" method="POST">
+                        <form action="#" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="selectWarehouse">Warehouse/Outlet *</label>
-                                    <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
-                                        <option selected disabled value="">Choose...</option>
-                                        @foreach ($warehouse as $wh)
-                                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
+                                    {{-- <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
+                                        @foreach ($warehouse as $warehouse)
+                                            <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                         @endforeach
-                                    </select>
+                                    </select> --}}
+                                    <input type="text" class="form-control" id="selectWarehouse" name="warehouse_id" value="{{ $warehouse['id'] }}">{{ $warehouse['name'] }}
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="exampleInputdate">Date *</label>
                                     <input type="date" class="form-control" id="exampleInputdate" name="date"
-                                        value="{{ date('Y-m-d') }}">
+                                        value="{{ $adjustment['date']->format('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="selectProduct">Product *</label>
@@ -57,6 +57,42 @@
                                             </thead>
                                             <tbody id="product-table-body">
                                                 <!-- Isi dari tbody akan diisi secara dinamis menggunakan JavaScript -->
+                                                @foreach ($details as $detail)
+                                                    <tr>
+                                                        <td>{{ $detail['detail_id'] }}</td>
+                                                        <td>{{ $detail['code'] }}</td>
+                                                        <td>{{ $detail['name'] }}</td>
+                                                        <td>{{ $detail['current'] }}</td>
+                                                        <td>
+                                                            <input type="number" class="form-control"
+                                                                name="details[{{ $detail['id'] }}][quantity]"
+                                                                value="{{ $detail['quantity'] }}" min="0">
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select"
+                                                                name="details[{{ $detail['id'] }}][type]">
+                                                                <option value="add"
+                                                                    @if ($detail['type'] === 'add') selected @endif>Add
+                                                                </option>
+                                                                <option value="sub"
+                                                                    @if ($detail['type'] === 'sub') selected @endif>
+                                                                    Subtract</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="hidden"
+                                                                name="details[{{ $detail['id'] }}][product_id]"
+                                                                value="{{ $detail['product_id'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $detail['id'] }}][product_variant_id]"
+                                                                value="{{ $detail['product_variant_id'] }}">
+                                                        </td>
+                                                        <td>
+                                                            <button type="button"
+                                                                class="btn btn-danger btn-sm delete-row">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -64,7 +100,7 @@
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="validationDefault05">Description</label>
                                     <input type="text" class="form-control" id="validationDefault05" name="notes"
-                                        required placeholder="a few words...">
+                                        required value="{{ $adjustment['notes'] }}">
                                 </div>
                             </div>
                             <div class="form-group mt-2">
@@ -138,16 +174,14 @@
                             row += '<td>' + data.qty + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control" name="details[' +
-                                data.id + '_' + variantId +
-                                '][quantity]" value="0" min="0"></td>';
+                                data
+                                .id + '][quantity]" value="0" min="0"></td>';
                             row += '<td><select class="form-select" name="details[' + data.id +
-                                '_' + variantId +
                                 '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_variant_id]" value="' + (variantId ||
-                                '') +
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][product_id]" value="' + data.id + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][product_variant_id]" value="' + (variantId || '') +
                                 '"></td>';
                             row +=
                                 '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>'; // Tombol delete ditambahkan di sini
