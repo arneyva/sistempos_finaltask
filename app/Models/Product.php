@@ -70,4 +70,14 @@ class Product extends Model
     {
         return $this->hasMany(ProductWarehouse::class, 'product_id', 'id');
     }
+
+    public function unitPurchase()
+    {
+        return $this->belongsTo('App\Models\Unit', 'unit_purchase_id');
+    }
+
+    public function unitSale()
+    {
+        return $this->belongsTo('App\Models\Unit', 'unit_sale_id');
+    }
 }

@@ -243,9 +243,9 @@ class AdjustmentController extends Controller
 
             $product_price = $product_variant_data['price'];
             $product_cost = $product_variant_data['cost'];
+            $item['qty'] = $stock->qty;
             $item['code'] = $product_variant_data['code'];
             $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
-            $item['qty'] = $stock->qty;
             $item['product_variant_id'] = $variant_id;
 
             //product is_service
@@ -283,14 +283,14 @@ class AdjustmentController extends Controller
             $cost = 0;
         }
 
-        $item['Unit_cost'] = $cost;
+        $item['Unit_cost'] = $cost; //harga sek diinput di form produk
         $item['fix_cost'] = $product_cost;
         $item['Unit_price'] = $price;
         $item['fix_price'] = $product_price;
 
         if ($Product_data->TaxNet !== 0.0) {
             //Exclusive
-            if ($Product_data['tax_method'] == '1') {
+            if ($Product_data['tax_method'] == 'Exclusive') {
                 $tax_price = $price * $Product_data['TaxNet'] / 100;
                 $tax_cost = $cost * $Product_data['TaxNet'] / 100;
 

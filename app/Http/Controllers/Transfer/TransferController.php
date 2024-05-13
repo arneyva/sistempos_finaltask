@@ -74,10 +74,11 @@ class TransferController extends Controller
             $transferValue->statut = $request->transfer['statut'];
             $transferValue->notes = $request->transfer['notes'];
             $transferValue->GrandTotal = $request['GrandTotal'];
-            $transferValue->GrandTotal = Auth::user()->id;
+            $transferValue->user_id = Auth::user()->id;
             $transferValue->save();
 
             $data = $request['details'];
+            dd($data);
             foreach ($data as $key => $value) {
                 $unit = Unit::where('id', $value['purchase_unit_id'])->first();
                 if ($request->transfer['statut'] === 'completed') {
@@ -161,7 +162,7 @@ class TransferController extends Controller
                 $orderDetails['discount_method'] = $value['discount_method'];
                 $orderDetails['total'] = $value['subtotal'];
                 TransferDetail::insert($transferDetails);
-                dd($transferValue);
+                // dd($transferValue);
                 DB::commit();
 
                 return redirect()->route('transfer.index')->with('success', 'Transfer created successfully');

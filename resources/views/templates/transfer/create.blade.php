@@ -16,12 +16,13 @@
                     </div>
                     {{--  --}}
                     <div class="card-body">
-                        <form action="{{ route('adjustment.store') }}" method="POST">
+                        <form action="{{ route('transfer.store') }}" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="selectWarehouse">From Warehouse/Outlet *</label>
-                                    <select class="form-select" id="selectWarehouse" name="from_warehouse_id" required>
+                                    <select class="form-select" id="selectWarehouse" name="transfer[from_warehouse_id]"
+                                        required>
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($warehouse as $wh)
                                             <option value="{{ $wh->id }}">{{ $wh->name }}</option>
@@ -30,7 +31,8 @@
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="selectToWarehouse">To Warehouse/Outlet *</label>
-                                    <select class="form-select" id="selectToWarehouse" name="to_warehouse_id" required>
+                                    <select class="form-select" id="selectToWarehouse" name="transfer[to_warehouse_id]"
+                                        required>
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($warehouse as $wh)
                                             <option value="{{ $wh->id }}">{{ $wh->name }}</option>
@@ -39,7 +41,7 @@
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="exampleInputdate">Date *</label>
-                                    <input type="date" class="form-control" id="exampleInputdate" name="date"
+                                    <input type="date" class="form-control" id="exampleInputdate" name="transfer[date]"
                                         value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
@@ -78,33 +80,54 @@
                                         <tbody>
                                             <tr>
                                                 <td>Order Tax</td>
-                                                <th>1 %</th>
+                                                <th></th>
                                             </tr>
                                             <tr>
                                                 <td>Discount</td>
-                                                <th>Rp 10000</th>
+                                                <th></th>
                                             </tr>
                                             <tr>
                                                 <td>Shipping</td>
-                                                <th>Rp 10000</th>
+                                                <th></th>
                                             </tr>
                                             <tr>
                                                 <td>Grand Total</td>
-                                                <th>Rp 10000</th>
+                                                <th><input type="number" id="grandTotal" name="GrandTotal" readonly></th>
                                             </tr>
                                     </table>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="codebaseproduct">Order Tax *</label>
+                                            <label class="form-label" for="tax_rate">Order Tax *</label>
                                             <div class="form-group input-group">
-                                                <input type="text" class="form-control" id="codebaseproduct" required
-                                                    placeholder="input tax" name="code"
-                                                    value="{{ Session::get('code') }}">
+                                                <input type="number" class="form-control" id="tax_rate" required
+                                                    placeholder="input tax" name="transfer[tax_rate]"
+                                                    value="{{ Session::get('tax_rate') }}">
                                                 <span class="input-group-text" id="basic-addon1">%</span>
                                             </div>
-                                            @error('code')
+                                            @error('tax_rate')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <input type="number" class="form-control" id="tax_rate" required
+                                            placeholder="input tax" name="transfer[TaxNet]"
+                                            value="{{ Session::get('tax_rate') }}">
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label" for="discount">Discount *</label>
+                                            <div class="form-group input-group">
+                                                <input type="number" class="form-control" id="discount" required
+                                                    placeholder="input discount" name="transfer[discount]"
+                                                    value="{{ Session::get('discount') }}">
+                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                            </div>
+                                            @error('discount')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                                     role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
                                                     <span style="margin-left: 3px"> {{ $message }}</span>
@@ -115,32 +138,14 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="codebaseproduct">Discount *</label>
+                                            <label class="form-label" for="shipping">Shipping *</label>
                                             <div class="form-group input-group">
-                                                <input type="text" class="form-control" id="codebaseproduct" required
-                                                    placeholder="input discount" name="code"
-                                                    value="{{ Session::get('code') }}">
+                                                <input type="number" class="form-control" id="shipping" required
+                                                    placeholder="input shipping" name="transfer[shipping]"
+                                                    value="{{ Session::get('shipping') }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
-                                            @error('code')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="codebaseproduct">Shipping *</label>
-                                            <div class="form-group input-group">
-                                                <input type="text" class="form-control" id="codebaseproduct" required
-                                                    placeholder="input shipping" name="code"
-                                                    value="{{ Session::get('code') }}">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
-                                            </div>
-                                            @error('code')
+                                            @error('shipping')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                                     role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
                                                     <span style="margin-left: 3px"> {{ $message }}</span>
@@ -154,17 +159,13 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="brand">Status</label>
-                                    <select class="form-select select2" id="brand" required name="brand_id"
+                                    <select class="form-select select2" id="brand" required name="transfer[statut]"
                                         data-placeholder="Select a Brand ">
                                         <option selected disabled value="">Choose...</option>
-                                        {{-- @foreach ($brand as $item)
-                                            <option value="{{ $item->id }}"
-                                                {{ old('brand_id') == $item->id ? 'selected' : '' }}>
-                                                {{ $item->name }}
-                                            </option>
-                                        @endforeach --}}
+                                        <option value="sent">Sent</option>
+                                        <option value="completed">Completed</option>
                                     </select>
-                                    @error('brand_id')
+                                    @error('statut')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
                                             <span style="margin-left: 3px"> {{ $message }}</span>
@@ -176,8 +177,8 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="validationDefault05">Description</label>
-                                    <input type="text" class="form-control" id="validationDefault05" name="notes"
-                                        required placeholder="a few words...">
+                                    <input type="text" class="form-control" id="validationDefault05"
+                                        name="transfer[notes]" required placeholder="a few words...">
                                 </div>
                             </div>
                             <div class="form-group mt-2">
@@ -218,6 +219,7 @@
             $('#product-table-body').on('click', '.delete-row', function() {
                 $(this).closest('tr')
                     .remove(); // Menghapus baris tabel yang berisi tombol delete yang diklik
+                updateGrandTotal();
             });
             // Event listener untuk perubahan pada pilihan gudang
             $('#selectWarehouse').on('change', function() {
@@ -271,14 +273,18 @@
                             row += '<td>' + data.qty + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control" name="details[' +
-                                data
-                                .id + '][quantity]" value="0" min="0"></td>';
-                            row += '<td><select class="form-select" name="details[' + data.id +
-                                '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_variant_id]" value="' + (variantId || '') +
+                                data.id + '_' + variantId +
+                                '][quantity]" value="0" min="0"></td>';
+                            // row += '<td>' + '$ 0' + '</td>';
+                            row += '<td class="item-price">0</td>';
+                            row += '<td>' + '$' + data.tax_cost + '</td>';
+                            // row += '<td>' + '$' + data.Total_cost + '</td>';
+                            row += '<td class="item-total">' + data.Total_cost + '</td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][product_id]" value="' + data.id + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][product_variant_id]" value="' + (variantId ||
+                                    '') +
                                 '"></td>';
                             row +=
                                 '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>'; // Tombol delete ditambahkan di sini
@@ -286,10 +292,31 @@
 
                             // Masukkan baris ke dalam tbody
                             $('#product-table-body').append(row);
+                            updateGrandTotal();
                         }
                     });
                 }
             });
+
+            $('#product-table-body').on('change', '.item-quantity', function() {
+                var row = $(this).closest('tr');
+                var quantity = parseFloat($(this).val());
+                var price = parseFloat(row.find('.item-total').text());
+                var totalCost = quantity * price;
+                row.find('.item-price').text(totalCost.toFixed(2));
+                updateGrandTotal();
+            });
         });
+
+        function updateGrandTotal() {
+            var grandTotal = 0;
+            $('#product-table-body tr').each(function() {
+                var price = parseFloat($(this).find('.item-price').text());
+                if (!isNaN(price)) {
+                    grandTotal += price;
+                }
+            });
+            $('#grandTotal').val(grandTotal.toFixed(2));
+        }
     </script>
 @endpush
