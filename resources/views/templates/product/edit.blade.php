@@ -53,8 +53,9 @@
                         </div>
                     </div>
                     {{--  --}}
-                    <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data"
-                        onsubmit="saveVariantData()">
+                    <form method="POST" action="{{ route('product.update', $product['id']) }}"
+                        enctype="multipart/form-data" onsubmit="saveVariantData()">
+                        @method('PATCH')
                         @csrf
                         <div class="card-body">
                             <input type="hidden" id="variantData" name="variants">
@@ -178,7 +179,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="productcost">Product Cost *</label>
                                 <input type="text" class="form-control" id="productcost" required
-                                    placeholder="input product cost" name="cost" value="{{ Session::get('cost') }}">
+                                    placeholder="input product cost" name="cost" value="{{ $product['cost'] }}">
                                 @error('cost')
                                     <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                         role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -192,8 +193,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="productprice">Product Price *</label>
                                 <input type="text" class="form-control" id="productprice" required
-                                    placeholder="input product price" name="price"
-                                    value="{{ Session::get('price') }}">
+                                    placeholder="input product price" name="price" value=" {{ $product['price'] }}">
                                 @error('price')
                                     <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                         role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -210,7 +210,11 @@
                                     data-placeholder="Select a Product Unit">
                                     <option selected disabled value="">Choose...</option>
                                     @foreach ($unit as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}
+                                        {{-- <option value="{{ $item->id }}">{{ $item->name }}
+                                        </option> --}}
+                                        <option value="{{ $item->id }}"
+                                            {{ (old('unit_id') ?? $product['unit_id']) == $item->id ? 'selected' : '' }}>
+                                            {{ $item->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -219,16 +223,22 @@
                                 <label for="saleunit" class="form-label">Sale Unit</label>
                                 <select class="form-select select2" id="saleunit" required name="unit_sale_id"
                                     data-placeholder="Select a Sale Unit">
-                                    <option selected disabled value="">Choose...</option>
-                                    <option>...</option>
+                                    {{-- <option selected disabled value="">Choose...</option> --}}
+                                    <option value="{{ $item->id }}"
+                                        {{ (old('unit_sale_id') ?? $product['unit_sale_id']) == $item->id ? 'selected' : '' }}>
+                                        {{ $item->name }}
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="purchaseunit" class="form-label">Purchase Unit</label>
                                 <select class="form-select select2" id="purchaseunit" required name="unit_purchase_id"
                                     data-placeholder="Select a Purchase Unit">
-                                    <option selected disabled value="">Choose...</option>
-                                    <option>...</option>
+                                    {{-- <option selected disabled value="">Choose...</option> --}}
+                                    <option value="{{ $item->id }}"
+                                        {{ (old('unit_purchase_id') ?? $product['unit_purchase_id']) == $item->id ? 'selected' : '' }}>
+                                        {{ $item->name }}
+                                    </option>
                                 </select>
                             </div>
                             {{-- handel produk variant --}}

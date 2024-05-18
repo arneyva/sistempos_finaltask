@@ -10,11 +10,14 @@ use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
 use App\Models\Unit;
 use App\Models\Warehouse;
+use Carbon\Carbon;
+use Gumlet\ImageResize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
@@ -485,10 +488,11 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->authorizeForUser($request->user('api'), 'update', Product::class);
+        // $this->authorizeForUser($request->user('api'), 'update', Product::class);
         try {
+            // DB::beginTransaction();
             // define validation rules for product
-            $productRules = [
+            $productRules = $request->validate([
                 'code' => [
                     'required',
                     Rule::unique('products')->ignore($id)->where(function ($query) {
@@ -500,146 +504,146 @@ class ProductController extends Controller
                 ],
                 'name' => 'required',
                 'category_id' => 'required',
-                'tax_method' => 'required',
+                // 'tax_method' => 'Exclusive',
                 'type' => 'required',
                 'unit_id' => Rule::requiredIf($request->type != 'is_service'),
                 'cost' => Rule::requiredIf($request->type == 'is_single'),
                 'price' => Rule::requiredIf($request->type != 'is_variant'),
-            ];
+            ]);
             // if type is not is_variant, add validation for variants array
             if ($request->type == 'is_variant') {
                 $productRules['variants'] = [
                     'required',
-                    function ($attribute, $value, $fail) use ($request, $id) {
-                        // check if array is not empty
-                        if (empty($value)) {
-                            $fail('The variants array is required.');
+                    // function ($attribute, $value, $fail) use ($request, $id) {
+                    //     // check if array is not empty
+                    //     if (empty($value)) {
+                    //         $fail('The variants array is required.');
 
-                            return;
-                        }
-                        // check for duplicate codes in variants array
-                        $variants = $request->variants;
-                        if ($variants) {
-                            foreach ($variants as $variant) {
-                                if (! array_key_exists('text', $variant) || empty($variant['text'])) {
-                                    $fail('Variant Name cannot be empty.');
+                    //         return;
+                    //     }
+                    //     // check for duplicate codes in variants array
+                    //     $variants = $request->variants;
+                    //     if ($variants) {
+                    //         foreach ($variants as $variant) {
+                    //             if (!array_key_exists('text', $variant) || empty($variant['text'])) {
+                    //                 $fail('Variant Name cannot be empty.');
 
-                                    return;
-                                } elseif (! array_key_exists('code', $variant) || empty($variant['code'])) {
-                                    $fail('Variant code cannot be empty.');
+                    //                 return;
+                    //             } elseif (!array_key_exists('code', $variant) || empty($variant['code'])) {
+                    //                 $fail('Variant code cannot be empty.');
 
-                                    return;
-                                } elseif (! array_key_exists('cost', $variant) || empty($variant['cost'])) {
-                                    $fail('Variant cost cannot be empty.');
+                    //                 return;
+                    //             } elseif (!array_key_exists('cost', $variant) || empty($variant['cost'])) {
+                    //                 $fail('Variant cost cannot be empty.');
 
-                                    return;
-                                } elseif (! array_key_exists('price', $variant) || empty($variant['price'])) {
-                                    $fail('Variant price cannot be empty.');
+                    //                 return;
+                    //             } elseif (!array_key_exists('price', $variant) || empty($variant['price'])) {
+                    //                 $fail('Variant price cannot be empty.');
 
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('The variants data is invalid.');
+                    //                 return;
+                    //             }
+                    //         }
+                    //     } else {
+                    //         $fail('The variants data is invalid.');
 
-                            return;
-                        }
-                        //check if variant name empty
-                        $names = array_column($variants, 'text');
-                        if ($names) {
-                            foreach ($names as $name) {
-                                if (empty($name)) {
-                                    $fail('Variant Name cannot be empty.');
+                    //         return;
+                    //     }
+                    //     //check if variant name empty
+                    //     $names = array_column($variants, 'text');
+                    //     if ($names) {
+                    //         foreach ($names as $name) {
+                    //             if (empty($name)) {
+                    //                 $fail('Variant Name cannot be empty.');
 
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('Variant Name cannot be empty.');
+                    //                 return;
+                    //             }
+                    //         }
+                    //     } else {
+                    //         $fail('Variant Name cannot be empty.');
 
-                            return;
-                        }
-                        //check if variant cost empty
-                        $all_cost = array_column($variants, 'cost');
-                        if ($all_cost) {
-                            foreach ($all_cost as $cost) {
-                                if (empty($cost)) {
-                                    $fail('Variant Cost cannot be empty.');
+                    //         return;
+                    //     }
+                    //     //check if variant cost empty
+                    //     $all_cost = array_column($variants, 'cost');
+                    //     if ($all_cost) {
+                    //         foreach ($all_cost as $cost) {
+                    //             if (empty($cost)) {
+                    //                 $fail('Variant Cost cannot be empty.');
 
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('Variant Cost cannot be empty.');
+                    //                 return;
+                    //             }
+                    //         }
+                    //     } else {
+                    //         $fail('Variant Cost cannot be empty.');
 
-                            return;
-                        }
-                        //check if variant price empty
-                        $all_price = array_column($variants, 'price');
-                        if ($all_price) {
-                            foreach ($all_price as $price) {
-                                if (empty($price)) {
-                                    $fail('Variant Price cannot be empty.');
+                    //         return;
+                    //     }
+                    //     //check if variant price empty
+                    //     $all_price = array_column($variants, 'price');
+                    //     if ($all_price) {
+                    //         foreach ($all_price as $price) {
+                    //             if (empty($price)) {
+                    //                 $fail('Variant Price cannot be empty.');
 
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('Variant Price cannot be empty.');
+                    //                 return;
+                    //             }
+                    //         }
+                    //     } else {
+                    //         $fail('Variant Price cannot be empty.');
 
-                            return;
-                        }
-                        //check if code empty
-                        $codes = array_column($variants, 'code');
-                        if ($codes) {
-                            foreach ($codes as $code) {
-                                if (empty($code)) {
-                                    $fail('Variant code cannot be empty.');
+                    //         return;
+                    //     }
+                    //     //check if code empty
+                    //     $codes = array_column($variants, 'code');
+                    //     if ($codes) {
+                    //         foreach ($codes as $code) {
+                    //             if (empty($code)) {
+                    //                 $fail('Variant code cannot be empty.');
 
-                                    return;
-                                }
-                            }
-                        } else {
-                            $fail('Variant code cannot be empty.');
+                    //                 return;
+                    //             }
+                    //         }
+                    //     } else {
+                    //         $fail('Variant code cannot be empty.');
 
-                            return;
-                        }
-                        //check if code Duplicate
-                        if (count(array_unique($codes)) !== count($codes)) {
-                            $fail('Duplicate codes found in variants array.');
+                    //         return;
+                    //     }
+                    //     //check if code Duplicate
+                    //     if (count(array_unique($codes)) !== count($codes)) {
+                    //         $fail('Duplicate codes found in variants array.');
 
-                            return;
-                        }
-                        // check for duplicate codes in product_variants table
-                        $duplicateCodes = DB::table('product_variants')
-                            ->where(function ($query) use ($id) {
-                                $query->where('product_id', '<>', $id);
-                            })
-                            ->whereIn('code', $codes)
-                            ->whereNull('deleted_at')
-                            ->pluck('code')
-                            ->toArray();
-                        if (! empty($duplicateCodes)) {
-                            $fail('This code : '.implode(', ', $duplicateCodes).' already used');
-                        }
-                        // check for duplicate codes in products table
-                        $duplicateCodes_products = DB::table('products')
-                            ->where('id', '!=', $id)
-                            ->whereIn('code', $codes)
-                            ->whereNull('deleted_at')
-                            ->pluck('code')
-                            ->toArray();
-                        if (! empty($duplicateCodes_products)) {
-                            $fail('This code : '.implode(', ', $duplicateCodes_products).' already used');
-                        }
-                    },
+                    //         return;
+                    //     }
+                    //     // check for duplicate codes in product_variants table
+                    //     $duplicateCodes = DB::table('product_variants')
+                    //         ->where(function ($query) use ($id) {
+                    //             $query->where('product_id', '<>', $id);
+                    //         })
+                    //         ->whereIn('code', $codes)
+                    //         ->whereNull('deleted_at')
+                    //         ->pluck('code')
+                    //         ->toArray();
+                    //     if (!empty($duplicateCodes)) {
+                    //         $fail('This code : ' . implode(', ', $duplicateCodes) . ' already used');
+                    //     }
+                    //     // check for duplicate codes in products table
+                    //     $duplicateCodes_products = DB::table('products')
+                    //         ->where('id', '!=', $id)
+                    //         ->whereIn('code', $codes)
+                    //         ->whereNull('deleted_at')
+                    //         ->pluck('code')
+                    //         ->toArray();
+                    //     if (!empty($duplicateCodes_products)) {
+                    //         $fail('This code : ' . implode(', ', $duplicateCodes_products) . ' already used');
+                    //     }
+                    // },
                 ];
             }
             // validate the request data
-            $validatedData = $request->validate($productRules, [
-                'code.unique' => 'Product code already used.',
-                'code.required' => 'This field is required',
-            ]);
+            // $validatedData = $request->validate($productRules, [
+            //     'code.unique' => 'Product code already used.',
+            //     'code.required' => 'This field is required',
+            // ]);
             \DB::transaction(function () use ($request, $id) {
                 $Product = Product::where('id', $id)
                     ->where('deleted_at', '=', null)
@@ -648,11 +652,13 @@ class ProductController extends Controller
                 $Product->type = $request['type'];
                 $Product->name = $request['name'];
                 $Product->code = $request['code'];
-                $Product->Type_barcode = $request['Type_barcode'];
+                // $Product->Type_barcode = $request['Type_barcode'];
+                $Product->Type_barcode = 'CODE128';
                 $Product->category_id = $request['category_id'];
                 $Product->brand_id = $request['brand_id'] == 'null' ? null : $request['brand_id'];
                 $Product->TaxNet = $request['TaxNet'];
-                $Product->tax_method = $request['tax_method'];
+                // $Product->tax_method = $request['tax_method'];
+                $Product->tax_method = 'Exclusive';
                 $Product->note = $request['note'];
                 //-- check if type is_single
                 if ($request['type'] == 'is_single') {
@@ -661,7 +667,7 @@ class ProductController extends Controller
                     $Product->unit_id = $request['unit_id'];
                     $Product->unit_sale_id = $request['unit_sale_id'] ? $request['unit_sale_id'] : $request['unit_id'];
                     $Product->unit_purchase_id = $request['unit_purchase_id'] ? $request['unit_purchase_id'] : $request['unit_id'];
-                    $Product->stock_alert = $request['stock_alert'] ? $request['stock_alert'] : 0;
+                    // $Product->stock_alert = $request['stock_alert'] ? $request['stock_alert'] : 0;
                     $Product->is_variant = 0;
                     $manage_stock = 1;
                     //-- check if type is_variant
@@ -671,7 +677,7 @@ class ProductController extends Controller
                     $Product->unit_id = $request['unit_id'];
                     $Product->unit_sale_id = $request['unit_sale_id'] ? $request['unit_sale_id'] : $request['unit_id'];
                     $Product->unit_purchase_id = $request['unit_purchase_id'] ? $request['unit_purchase_id'] : $request['unit_id'];
-                    $Product->stock_alert = $request['stock_alert'] ? $request['stock_alert'] : 0;
+                    // $Product->stock_alert = $request['stock_alert'] ? $request['stock_alert'] : 0;
                     $Product->is_variant = 1;
                     $manage_stock = 1;
                     //-- check if type is_service
@@ -681,7 +687,7 @@ class ProductController extends Controller
                     $Product->unit_id = null;
                     $Product->unit_sale_id = null;
                     $Product->unit_purchase_id = null;
-                    $Product->stock_alert = 0;
+                    // $Product->stock_alert = 0;
                     $Product->is_variant = 0;
                     $manage_stock = 0;
                 }
@@ -712,7 +718,7 @@ class ProductController extends Controller
                                 $ProductVariant = ProductVariant::findOrFail($value->id);
                                 $ProductVariant->deleted_at = Carbon::now();
                                 $ProductVariant->save();
-                                $ProductWarehouse = product_warehouse::where('product_variant_id', $value->id)
+                                $ProductWarehouse = ProductWarehouse::where('product_variant_id', $value->id)
                                     ->update(['deleted_at' => Carbon::now()]);
                             }
                         }
@@ -721,14 +727,14 @@ class ProductController extends Controller
                                 $ProductVariantDT = new ProductVariant;
                                 //-- Field Required
                                 $ProductVariantDT->product_id = $variant['product_id'];
-                                $ProductVariantDT->name = $variant['text'];
+                                $ProductVariantDT->name = $variant['name'];
                                 $ProductVariantDT->price = $variant['price'];
                                 $ProductVariantDT->cost = $variant['cost'];
                                 $ProductVariantDT->code = $variant['code'];
 
                                 $ProductVariantUP['product_id'] = $variant['product_id'];
                                 $ProductVariantUP['code'] = $variant['code'];
-                                $ProductVariantUP['name'] = $variant['text'];
+                                $ProductVariantUP['name'] = $variant['name'];
                                 $ProductVariantUP['price'] = $variant['price'];
                                 $ProductVariantUP['cost'] = $variant['cost'];
                             } else {
@@ -736,12 +742,12 @@ class ProductController extends Controller
                                 //-- Field Required
                                 $ProductVariantDT->product_id = $id;
                                 $ProductVariantDT->code = $variant['code'];
-                                $ProductVariantDT->name = $variant['text'];
+                                $ProductVariantDT->name = $variant['name'];
                                 $ProductVariantDT->price = $variant['price'];
                                 $ProductVariantDT->cost = $variant['cost'];
                                 $ProductVariantUP['product_id'] = $id;
                                 $ProductVariantUP['code'] = $variant['code'];
-                                $ProductVariantUP['name'] = $variant['text'];
+                                $ProductVariantUP['name'] = $variant['name'];
                                 $ProductVariantUP['price'] = $variant['price'];
                                 $ProductVariantUP['cost'] = $variant['cost'];
                                 $ProductVariantUP['qty'] = 0.00;
@@ -759,14 +765,14 @@ class ProductController extends Controller
                                             'manage_stock' => $manage_stock,
                                         ];
                                     }
-                                    product_warehouse::insert($product_warehouse);
+                                    ProductWarehouse::insert($product_warehouse);
                                 }
                             } else {
                                 ProductVariant::where('id', $variant['id'])->update($ProductVariantUP);
                             }
                         }
                     } else {
-                        $ProducttWarehouse = product_warehouse::where('product_id', $id)
+                        $ProducttWarehouse = ProductWarehouse::where('product_id', $id)
                             ->update([
                                 'deleted_at' => Carbon::now(),
                             ]);
@@ -790,7 +796,7 @@ class ProductController extends Controller
                                         'manage_stock' => $manage_stock,
                                     ];
                                 }
-                                product_warehouse::insert($product_warehouse_DT);
+                                ProductWarehouse::insert($product_warehouse_DT);
                             }
                         }
                     }
@@ -802,7 +808,7 @@ class ProductController extends Controller
                                 ->first();
                             $var_old->deleted_at = Carbon::now();
                             $var_old->save();
-                            $ProducttWarehouse = product_warehouse::where('product_variant_id', $old_var['id'])
+                            $ProducttWarehouse = ProductWarehouse::where('product_variant_id', $old_var['id'])
                                 ->update([
                                     'deleted_at' => Carbon::now(),
                                 ]);
@@ -816,7 +822,7 @@ class ProductController extends Controller
                                     'manage_stock' => $manage_stock,
                                 ];
                             }
-                            product_warehouse::insert($product_warehouse);
+                            ProductWarehouse::insert($product_warehouse);
                         }
                     }
                 }
@@ -832,33 +838,36 @@ class ProductController extends Controller
                         }
                     }
                     $filename = 'no-image.png';
-                } else {
-                    if ($Product->image !== null) {
-                        foreach (explode(',', $Product->image) as $img) {
-                            $pathIMG = public_path().'/images/products/'.$img;
-                            if (file_exists($pathIMG)) {
-                                if ($img != 'no-image.png') {
-                                    @unlink($pathIMG);
-                                }
-                            }
-                        }
-                    }
-                    $files = $request['images'];
-                    foreach ($files as $file) {
-                        $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
-                        $fileData->resize(200, 200);
-                        $name = rand(11111111, 99999999).$file['name'];
-                        $path = public_path().'/images/products/';
-                        $success = file_put_contents($path.$name, $fileData);
-                        $images[] = $name;
-                    }
-                    $filename = implode(',', $images);
                 }
+                // else {
+                //     if ($Product->image !== null) {
+                //         foreach (explode(',', $Product->image) as $img) {
+                //             $pathIMG = public_path() . '/images/products/' . $img;
+                //             if (file_exists($pathIMG)) {
+                //                 if ($img != 'no-image.png') {
+                //                     @unlink($pathIMG);
+                //                 }
+                //             }
+                //         }
+                //     }
+                //     $files = $request['images'];
+                //     foreach ($files as $file) {
+                //         $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
+                //         $fileData->resize(200, 200);
+                //         $name = rand(11111111, 99999999) . $file['name'];
+                //         $path = public_path() . '/images/products/';
+                //         $success = file_put_contents($path . $name, $fileData);
+                //         $images[] = $name;
+                //     }
+                //     $filename = implode(',', $images);
+                // }
+
                 $Product->image = $filename;
                 $Product->save();
             }, 10);
 
-            return response()->json(['success' => true]);
+            return redirect()->route('product.index')->with('success', 'Product updated successfully');
+            // return response()->json(['success' => true]);
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => 422,
