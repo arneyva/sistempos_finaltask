@@ -27,7 +27,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('clients')) {
             Schema::table('clients', function (Blueprint $table) {
-                if (Schema::hasColumn($table->getTable(), 'code')) {
+                if (! Schema::hasColumn($table->getTable(), 'code')) {
                     $table->integer('code')->default(1);
                 }
             });

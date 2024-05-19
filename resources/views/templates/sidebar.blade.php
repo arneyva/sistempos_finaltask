@@ -743,9 +743,8 @@
                 <li>
                     <hr class="hr-horizontal">
                 </li>
-                @role('superadmin')
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-people" role="button"
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-people" role="button"
                             aria-expanded="false" aria-controls="sidebar-people">
                             <i class="icon">
                                 <svg class="icon-20" xmlns="http://www.w3.org/2000/svg" width="20"
@@ -768,6 +767,7 @@
                             </i>
                         </a>
                         <ul class="sub-nav collapse" id="sidebar-people" data-bs-parent="#sidebar-menu">
+                            @role('superadmin')
                             <li class="nav-item">
                                 <a class="nav-link " href="{{ route('people.users.index') }}">
                                     <i class="icon">
@@ -783,8 +783,9 @@
                                     <span class="item-name">User</span>
                                 </a>
                             </li>
+                            @endrole
                             <li class="nav-item">
-                                <a class="nav-link " href="../dashboard/table/table-data.html">
+                                <a class="nav-link " href="{{ route('people.clients.index') }}">
                                     <i class="icon">
                                         <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                             viewBox="0 0 24 24" fill="currentColor">
@@ -798,6 +799,7 @@
                                     <span class="item-name">Customer</span>
                                 </a>
                             </li>
+                            @role('superadmin','inventaris')
                             <li class="nav-item">
                                 <a class="nav-link " href="../dashboard/table/table-data.html">
                                     <i class="icon">
@@ -813,12 +815,12 @@
                                     <span class="item-name">Supplier</span>
                                 </a>
                             </li>
+                            @endrole
                         </ul>
                     </li>
                     <li>
                         <hr class="hr-horizontal">
                     </li>
-                @endrole
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-settings" role="button"
                         aria-expanded="false" aria-controls="sidebar-settings">
