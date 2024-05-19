@@ -799,7 +799,7 @@
                                     <span class="item-name">Customer</span>
                                 </a>
                             </li>
-                            @role('superadmin','inventaris')
+                            @hasanyrole('superadmin|inventaris')
                             <li class="nav-item">
                                 <a class="nav-link " href="../dashboard/table/table-data.html">
                                     <i class="icon">
@@ -815,7 +815,7 @@
                                     <span class="item-name">Supplier</span>
                                 </a>
                             </li>
-                            @endrole
+                            @endhasanyrole
                         </ul>
                     </li>
                     <li>

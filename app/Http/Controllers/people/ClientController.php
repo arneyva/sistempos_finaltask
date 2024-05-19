@@ -69,6 +69,9 @@ class ClientController extends Controller
         $client->name = $request['name'];
         $client->email = $request['email'];
         $client->phone = $request['phone'];
+        $client-> save();
+        
+        return redirect()->route('people.users.index')->with('success', 'Customer berhasil ditambahkan');
     }
 
     /**

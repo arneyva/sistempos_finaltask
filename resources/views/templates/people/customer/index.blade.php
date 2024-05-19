@@ -31,8 +31,8 @@
                 <button type="button" class="btn btn-soft-success">Excel</button>
                 <button type="button" class="btn btn-soft-danger">PDF</button>
                 <button type="button" class="btn btn-soft-gray">Import Client</button>
-                <a href="">
-                    <button type="button" class="btn btn-soft-primary">Create +</button>
+                <a href="#">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn btn-soft-primary">Create +</button>
                 </a>
             </div>
         </div>
@@ -139,6 +139,29 @@
     </div>
 </div>
 
+<div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="background">
+        <div class="modal-dialog modal-dialog-centered modal-lg overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Delete User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Anda akan menghapus akun ini!</p>
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ route('people.users.destroy', $data['id']) }}" method="post">
+                        @csrf
+                        @method('delete')
+                        <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-soft-danger">Understood</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')
