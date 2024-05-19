@@ -58,7 +58,7 @@
                         @method('PATCH')
                         @csrf
                         <div class="card-body">
-                            <input type="hidden" id="variantData" name="variants">
+                            {{-- <input type="hidden" id="variantData" name="variants"> --}}
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="name">Name Product *</label>
@@ -252,51 +252,47 @@
                                         <button class="btn btn-soft-primary" id="createVariantBtn" type="button">Add
                                             +</button>
                                     </div>
-                                    <div class="card-body p-3">
-                                        <div class="table-responsive">
-                                            <table id="variantTable" class="table table-striped mb-0" role="grid">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Variant Name</th>
-                                                        <th>Variant code</th>
-                                                        <th>Variant cost</th>
-                                                        <th>Variant price</th>
-                                                        <th></th>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="table-responsive">
+                                        <table id="variantTable" class="table table-striped mb-0" role="grid">
+                                            <thead>
+                                                <tr>
+                                                    <th>Variant Name</th>
+                                                    <th>Variant Code</th>
+                                                    <th>Variant Cost</th>
+                                                    <th>Variant Price</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="variantTableBody">
+                                                @foreach ($product['ProductVariant'] as $variant)
+                                                    <tr data-id="{{ $variant['var_id'] }}">
+                                                        <td><input required class="form-control" type="text"
+                                                                value="{{ $variant['name'] }}"
+                                                                name="variants[{{ $variant['id'] }}][name]"></td>
+                                                        <td><input required class="form-control" type="text"
+                                                                value="{{ $variant['code'] }}"
+                                                                name="variants[{{ $variant['id'] }}][code]"></td>
+                                                        <td><input required class="form-control" type="text"
+                                                                value="{{ $variant['cost'] }}"
+                                                                name="variants[{{ $variant['id'] }}][cost]"></td>
+                                                        <td><input required class="form-control" type="text"
+                                                                value="{{ $variant['price'] }}"
+                                                                name="variants[{{ $variant['id'] }}][price]"></td>
+                                                        <td>
+                                                            <button type="button"
+                                                                class="btn btn-soft-warning delete-variant">Delete</button>
+                                                        </td>
                                                     </tr>
-                                                </thead>
-                                                <tbody id="variantTableBody">
-                                                    @foreach ($product['ProductVariant'] as $variant)
-                                                        <tr>
-                                                            <td><input required class="form-control" type="text"
-                                                                    style="border-color: #DF4141;"
-                                                                    value="{{ $variant['name'] }}"
-                                                                    name="variants[{{ $variant['id'] }}][name]"></td>
-                                                            <td><input required class="form-control" type="text"
-                                                                    style="border-color: #DF4141;"
-                                                                    value="{{ $variant['code'] }}"
-                                                                    name="variants[{{ $variant['id'] }}][code]"></td>
-                                                            <td><input required class="form-control" type="text"
-                                                                    style="border-color: #DF4141;"
-                                                                    value="{{ $variant['cost'] }}"
-                                                                    name="variants[{{ $variant['id'] }}][cost]"></td>
-                                                            <td><input required class="form-control" type="text"
-                                                                    style="border-color: #DF4141;"
-                                                                    value="{{ $variant['price'] }}"
-                                                                    name="variants[{{ $variant['id'] }}][price]"></td>
-                                                            <td>
-                                                                <button type="button"
-                                                                    class="btn btn-soft-warning delete-variant">Delete</button>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                    {{-- Table rows will be dynamically added here --}}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                             <!-- Input hidden untuk menyimpan data varian sebelum form disubmit -->
+                            {{-- <input type="hidden" id="variantData" name="new_variants"> --}}
                             <input type="hidden" id="variantData" name="variantData">
                             {{--  --}}
                             <div class="col-md-6 mb-3">
@@ -420,30 +416,6 @@
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var typeSelect = document.getElementById("type");
-            var productCostField = document.getElementById("productcost");
-            var productPriceField = document.getElementById("productprice");
-            var productVariantField = document.getElementById("createvariant");
-
-            typeSelect.addEventListener("change", function() {
-                var selectedType = this.value;
-                if (selectedType === "is_variant") {
-                    productCostField.value = ""; // Kosongkan nilai input biaya produk
-                    productPriceField.value = ""; // Kosongkan nilai input harga produk
-                    productCostField.disabled = true;
-                    productPriceField.disabled = true;
-                    productVariantField.style.display = "block";
-                } else {
-                    productCostField.disabled = false;
-                    productPriceField.disabled = false;
-                    productVariantField.style.display = "none";
-                }
-            });
-            // Sembunyikan area pembuatan varian produk secara default
-            productVariantField.style.display = typeSelect.value === "is_variant" ? "block" : "none";
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
             var createVariantBtn = document.getElementById("createVariantBtn");
             var variantNameInput = document.getElementById("variantNameInput");
             var variantTableBody = document.getElementById("variantTableBody");
@@ -477,15 +449,19 @@
 
             function addVariantRow(variantName) {
                 var newRow = document.createElement("tr");
+                var lastIndex = variantTableBody.querySelectorAll("tr").length;
+                var newIndex = lastIndex + 1; // Hitung indeks baru
+                console.log("Nilai newIndex:", newIndex);
+                newRow.setAttribute('data-id', newIndex); // Gunakan newIndex sebagai data-id
                 newRow.innerHTML = `
-    <td><input required class="form-control" type="text" style="border-color: #DF4141;" value="${variantName}" name="variants[name][]"></td>
-    <td contenteditable="true" class="variant-code"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[code][]"></td>
-    <td contenteditable="true" class="variant-cost"><input required class="form-control" type="text" style="border-color: #DF4141;"  name="variants[cost][]"></td>
-    <td contenteditable="true" class="variant-price"><input required class="form-control" type="text" style="border-color: #DF4141;" name="variants[price][]"></td>
-    <td>
-        <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
-    </td>
-`;
+        <td><input required class="form-control" type="text" value="${variantName}" name="new_variants[${newIndex}][name]"></td>
+        <td><input required class="form-control" type="text" name="new_variants[${newIndex}][code]"></td>
+        <td><input required class="form-control" type="text" name="new_variants[${newIndex}][cost]"></td>
+        <td><input required class="form-control" type="text" name="new_variants[${newIndex}][price]"></td>
+        <td>
+            <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
+        </td>
+    `;
                 variantTableBody.appendChild(newRow);
 
                 // Add event listener for delete button
@@ -493,6 +469,10 @@
                     newRow.remove(); // Remove the row when delete button is clicked
                 });
             }
+
+
+
+
             // Add delete functionality to existing rows
             var deleteButtons = document.querySelectorAll(".delete-variant");
             deleteButtons.forEach(function(button) {
@@ -500,76 +480,92 @@
                     button.closest("tr").remove();
                 });
             });
-        });
 
-        // Menangani penyimpanan data produk varian sebelum formulir disubmit
-        function saveVariantData() {
-            var variantsData = [];
-            var rows = document.getElementById("variantTableBody").querySelectorAll("tr");
+            var form = document.querySelector('form');
+            form.addEventListener("submit", function(event) {
+                var variantsData = [];
+                var rows = variantTableBody.querySelectorAll("tr");
+                console.log(rows);
+                // Menyimpan semua kode dalam array untuk memeriksanya
+                var codes = [];
+                rows.forEach(function(row) {
+                    // var variantId = row.getAttribute('data-id');
+                    // var variantName = row.cells[0].querySelector('input').value;
+                    // var variantCode = row.cells[1].querySelector('input').value;
+                    // var variantCost = row.cells[2].querySelector('input').value;
+                    // var variantPrice = row.cells[3].querySelector('input').value;
+                    var variantId = row.getAttribute(
+                        'data-id'
+                    ); // Jika baru, mungkin variabel ini tidak diperlukan, tergantung pada logika Anda
+                    var variantName = row.cells[0].querySelector('input').value;
+                    var variantCode = row.cells[1].querySelector('input').value;
+                    var variantCost = row.cells[2].querySelector('input').value;
+                    var variantPrice = row.cells[3].querySelector('input').value;
 
-            // Menyimpan semua kode dalam array untuk memeriksanya
-            var codes = [];
-            rows.forEach(function(row) {
-                var variantName = row.cells[0].querySelector('input').value;
-                var variantCode = row.cells[1].querySelector('input').value;
-                var variantCost = row.cells[2].querySelector('input').value;
-                var variantPrice = row.cells[3].querySelector('input').value;
+                    // Menambahkan kode ke dalam array
+                    codes.push(variantCode);
 
-                // Menambahkan kode ke dalam array
-                codes.push(variantCode)
+                    // Memeriksa apakah input cost dan price numerik
+                    if (isNaN(variantCost) || isNaN(variantPrice)) {
+                        alert("Cost and price must be numeric.");
+                        event.preventDefault();
+                        return;
+                    }
+                    // Memeriksa apakah cost dan price tidak kosong
+                    if (variantCost === '' || variantPrice === '') {
+                        alert("Cost and price cannot be empty.");
+                        event.preventDefault();
+                        return;
+                    }
+                    if (variantCode === '') {
+                        alert("Code cannot be empty.");
+                        event.preventDefault();
+                        return;
+                    }
 
-                // Memeriksa apakah input cost dan price numerik
-                if (isNaN(variantCost) || isNaN(variantPrice)) {
-                    alert("Cost and price must be numeric.");
-                    event.preventDefault();
-                    return;
-                }
-                // memriksa apakah cost dan price tidak kosong
-                if (variantCost == '' || variantPrice == '') {
-                    alert("Cost and price cannot be empty.");
-                    event.preventDefault();
-                    return;
-                }
-                if (variantCode == '') {
-                    alert("Code cannot be empty.");
-                    event.preventDefault();
-                    return;
-                }
-
-
-                variantsData.push({
-                    name: variantName,
-                    code: variantCode,
-                    cost: variantCost,
-                    price: variantPrice
+                    // variantsData.push({
+                    //     id: variantId,
+                    //     name: variantName,
+                    //     code: variantCode,
+                    //     cost: variantCost,
+                    //     price: variantPrice
+                    // });
+                    variantsData.push({
+                        id: variantId, // Jika baru, id mungkin tidak diperlukan, tergantung pada logika Anda
+                        name: variantName,
+                        code: variantCode,
+                        cost: variantCost,
+                        price: variantPrice
+                    });
                 });
+                console.log(variantsData);
+
+                // Jika jenis produk adalah varian, maka lakukan validasi
+                if (document.getElementById("type").value === "is_variant") {
+                    if (variantsData.length === 0) {
+                        alert("Please add at least one variant.");
+                        event.preventDefault();
+                        return;
+                    }
+
+                    // Memeriksa duplikat kode
+                    if (checkDuplicateCodes(codes)) {
+                        alert("Duplicate code found.");
+                        event.preventDefault();
+                        return;
+                    }
+                }
+
+                // Simpan data produk varian ke dalam input tersembunyi sebelum formulir disubmit
+                document.getElementById("variantData").value = JSON.stringify(variantsData);
             });
 
-            // Jika jenis produk adalah varian, maka lakukan validasi
-            if (document.getElementById("type").value === "is_variant") {
-                if (variantsData.length === 0) {
-                    alert("Please add at least one variant.");
-                    event.preventDefault();
-                    return;
-                }
-
-                // Memeriksa duplikat kode
-                if (checkDuplicateCodes(codes)) {
-                    alert("Duplicate code found.");
-                    event.preventDefault();
-                    return;
-                }
+            function checkDuplicateCodes(codes) {
+                var uniqueCodes = new Set(codes); // Membuat set untuk mendapatkan nilai unik
+                return uniqueCodes.size !== codes
+                    .length; // Jika panjang set kurang dari panjang array, berarti ada duplikat
             }
-
-            // Simpan data produk varian ke dalam input tersembunyi sebelum formulir disubmit
-            document.getElementById("variantData").value = JSON.stringify(variantsData);
-        }
-
-        // Fungsi untuk memeriksa duplikat kode
-        function checkDuplicateCodes(codes) {
-            var uniqueCodes = new Set(codes); // Membuat set untuk mendapatkan nilai unik
-            return uniqueCodes.size !== codes.length; // Jika panjang set kurang dari panjang array, berarti ada duplikat
-        }
+        });
     </script>
 
     {{-- <script>
