@@ -13,6 +13,7 @@ use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\people\ClientController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -150,6 +151,12 @@ Route::prefix('people')->middleware(['auth', 'verified'])->name('people.')->grou
         Route::get('detail/{id}', [UserController::class, 'show'])->name('show');
         Route::patch('update/{id}', [UserController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('clients')->name('clients.')->group(function () {
+        Route::get('list', [ClientController::class, 'index'])->name('index');
+        Route::post('store', [ClientController::class, 'store'])->name('store');
+        Route::patch('update/{id}', [ClientController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [ClientController::class, 'destroy'])->name('destroy');
     });
 });
 Route::middleware('auth')->group(function () {

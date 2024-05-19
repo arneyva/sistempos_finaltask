@@ -53,7 +53,7 @@ class UserController extends Controller
         $with = ['warehouses', 'office_shifts'];
         $users = User::filter(request(['gender', 'status', 'office_shifts', 'warehouses', 'search']))->with($with)->orderBy($orderBy, $order)->paginate($show)->withQueryString();
 
-        return view('templates.usermanagement.user.index', [
+        return view('templates.people.user.index', [
             'users' => $users,
             'allUsers' => User::all(),
             'office_shifts' => OfficeShift::all(),
@@ -67,7 +67,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('templates.usermanagement.user.create', [
+        return view('templates.people.user.create', [
             'users' => User::all(),
             'office_shifts' => OfficeShift::all(),
             'warehouses' => Warehouse::all(),
@@ -184,7 +184,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        return view('templates.usermanagement.user.edit', [
+        return view('templates.people.user.edit', [
             'user' => User::findOrFail($id),
             'office_shifts' => OfficeShift::all(),
             'warehouses' => Warehouse::all(),
@@ -308,13 +308,15 @@ class UserController extends Controller
         ]);
 
         $role = Role::find($request['role']);
-        $user->assignRole($role->name);
+        $user->syncRoles($role->name);
         if ($role->name === 'inventaris') {
             // Add additional warehouses if provided
             if (isset($request['outletAccess'])) {
                 $user->warehouses()->sync($request['outletAccess']);
+                $user->warehouses()->attach(1);
+            } else {
+                $user->warehouses()->sync(1);
             }
-            $user->warehouses()->attach(1);
         } elseif ($role->name === 'superadmin') {
             $user->warehouses()->sync(Warehouse::pluck('id')->toArray());
         } else {

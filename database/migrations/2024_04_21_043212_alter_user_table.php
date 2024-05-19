@@ -27,7 +27,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
-                if (Schema::hasColumn($table->getTable(), 'gender')) {
+                if (! Schema::hasColumn($table->getTable(), 'gender')) {
                     $table->boolean('is_all_warehouses')->after('status')->default(1);
                 }
             });
