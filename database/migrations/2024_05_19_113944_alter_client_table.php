@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('clients')) {
             Schema::table('clients', function (Blueprint $table) {
-                if ( Schema::hasColumn($table->getTable(), 'is_poin_activated')) {
+                if (Schema::hasColumn($table->getTable(), 'is_poin_activated')) {
                     $table->dropColumn('is_poin_activated');
                 }
             });
@@ -23,7 +23,7 @@ return new class extends Migration
                 }
             });
             Schema::table('clients', function (Blueprint $table) {
-                if ( Schema::hasColumn($table->getTable(), 'score')) {
+                if (Schema::hasColumn($table->getTable(), 'score')) {
                     $table->float('score', 10, 0)->nullable(false)->default(0)->change();
                 }
             });
@@ -37,12 +37,12 @@ return new class extends Migration
     {
         if (Schema::hasTable('clients')) {
             Schema::table('clients', function (Blueprint $table) {
-                if (!Schema::hasColumn($table->getTable(), 'is_poin_activated')) {
+                if (! Schema::hasColumn($table->getTable(), 'is_poin_activated')) {
                     $table->boolean('is_poin_activated')->default(0);
                 }
             });
             Schema::table('clients', function (Blueprint $table) {
-                if ( Schema::hasColumn($table->getTable(), 'score')) {
+                if (Schema::hasColumn($table->getTable(), 'score')) {
                     $table->float('score', 10, 0)->nullable()->default(null)->change();
                 }
             });

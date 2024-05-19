@@ -578,11 +578,18 @@ class ProductController extends Controller
                         $productVariant->price = $variantData['price'];
                         $productVariant->save();
                     }
+                    $existingVariantIds = collect($request->variants)->keys();
+                    ProductVariant::where('product_id', $Product->id)
+                        ->whereNotIn('id', $existingVariantIds)
+                        ->delete();
                 }
 
                 // Tambah varian baru
                 if ($request->new_variants) {
-                    foreach ($request->new_variants as $variantData) {
+                    // dd('hai');
+                    $newVariants = json_decode($request->new_variants, true);
+                    // dd($newVariants);
+                    foreach ($newVariants as $variantData) {
                         ProductVariant::create([
                             'product_id' => $Product->id,
                             'name' => $variantData['name'],
@@ -591,32 +598,10 @@ class ProductController extends Controller
                             'price' => $variantData['price'],
                         ]);
                     }
+                } else {
+                    dd('anjay');
                 }
 
-                // Tambah varian baru
-                // $newVariants = json_decode($request->variantData, true);
-                // // dd($newVariants);
-                // if ($newVariants) {
-                //     foreach ($newVariants as $variantData) {
-                //         if (!isset($variantData['id'])) {
-                //             ProductVariant::create([
-                //                 'product_id' => $Product->id,
-                //                 'name' => $variantData['name'],
-                //                 'code' => $variantData['code'],
-                //                 'cost' => $variantData['cost'],
-                //                 'price' => $variantData['price'],
-                //             ]);
-                //         }
-                //     }
-                // }
-
-                // dd($request->new_variants);
-                // dd($request->all());
-                // Hapus varian yang tidak ada di request
-                $existingVariantIds = collect($request->variants)->keys();
-                ProductVariant::where('product_id', $Product->id)
-                    ->whereNotIn('id', $existingVariantIds)
-                    ->delete();
                 if ($request['images'] === null) {
                     if ($Product->image !== null) {
                         foreach (explode(',', $Product->image) as $img) {
