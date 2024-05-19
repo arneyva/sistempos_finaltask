@@ -210,8 +210,6 @@
                                     data-placeholder="Select a Product Unit">
                                     <option selected disabled value="">Choose...</option>
                                     @foreach ($unit as $item)
-                                        {{-- <option value="{{ $item->id }}">{{ $item->name }}
-                                        </option> --}}
                                         <option value="{{ $item->id }}"
                                             {{ (old('unit_id') ?? $product['unit_id']) == $item->id ? 'selected' : '' }}>
                                             {{ $item->name }}
@@ -223,22 +221,24 @@
                                 <label for="saleunit" class="form-label">Sale Unit</label>
                                 <select class="form-select select2" id="saleunit" required name="unit_sale_id"
                                     data-placeholder="Select a Sale Unit">
-                                    {{-- <option selected disabled value="">Choose...</option> --}}
-                                    <option value="{{ $item->id }}"
-                                        {{ (old('unit_sale_id') ?? $product['unit_sale_id']) == $item->id ? 'selected' : '' }}>
-                                        {{ $item->name }}
-                                    </option>
+                                    @foreach ($units_sub as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ (old('unit_sale_id') ?? $product['unit_sale_id']) == $item->id ? 'selected' : '' }}>
+                                            {{ $item->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="purchaseunit" class="form-label">Purchase Unit</label>
                                 <select class="form-select select2" id="purchaseunit" required name="unit_purchase_id"
                                     data-placeholder="Select a Purchase Unit">
-                                    {{-- <option selected disabled value="">Choose...</option> --}}
-                                    <option value="{{ $item->id }}"
-                                        {{ (old('unit_purchase_id') ?? $product['unit_purchase_id']) == $item->id ? 'selected' : '' }}>
-                                        {{ $item->name }}
-                                    </option>
+                                    @foreach ($units_sub as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ (old('unit_purchase_id') ?? $product['unit_purchase_id']) == $item->id ? 'selected' : '' }}>
+                                            {{ $item->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                             {{-- handel produk variant --}}
@@ -415,6 +415,63 @@
         });
     </script>
     <script>
+        $(document).ready(function() {
+            // Initialize Select2
+            $('.select2').select2();
+
+            // Event listener for product unit change
+            $('#productunit').change(function() {
+                var productId = $(this).val();
+
+                // Fetch related units via AJAX
+                $.ajax({
+                    url: '/product/get-units/' + productId,
+                    type: 'GET',
+                    success: function(response) {
+                        // Clear previous options
+                        $('#saleunit').empty();
+                        $('#purchaseunit').empty();
+
+                        // Append new options
+                        $.each(response.related_units, function(key, value) {
+                            $('#saleunit').append('<option value="' + value.id + '">' +
+                                value.name + '</option>');
+                            $('#purchaseunit').append('<option value="' + value.id +
+                                '">' + value.name + '</option>');
+                        });
+
+                        // Refresh Select2
+                        $('#saleunit').select2();
+                        $('#purchaseunit').select2();
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var typeSelect = document.getElementById("type");
+            var productCostField = document.getElementById("productcost");
+            var productPriceField = document.getElementById("productprice");
+            var productVariantField = document.getElementById("createvariant");
+
+            typeSelect.addEventListener("change", function() {
+                var selectedType = this.value;
+                if (selectedType === "is_variant") {
+                    productCostField.value = ""; // Kosongkan nilai input biaya produk
+                    productPriceField.value = ""; // Kosongkan nilai input harga produk
+                    productCostField.disabled = true;
+                    productPriceField.disabled = true;
+                    productVariantField.style.display = "block";
+                } else {
+                    productCostField.disabled = false;
+                    productPriceField.disabled = false;
+                    productVariantField.style.display = "none";
+                }
+            });
+            // Sembunyikan area pembuatan varian produk secara default
+            productVariantField.style.display = typeSelect.value === "is_variant" ? "block" : "none";
+        });
         document.addEventListener("DOMContentLoaded", function() {
             var createVariantBtn = document.getElementById("createVariantBtn");
             var variantNameInput = document.getElementById("variantNameInput");
@@ -565,84 +622,6 @@
                 return uniqueCodes.size !== codes
                     .length; // Jika panjang set kurang dari panjang array, berarti ada duplikat
             }
-        });
-    </script>
-
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var productUnitSelect = document.getElementById("productunit");
-            var saleUnitSelect = document.getElementById("saleunit");
-            var purchaseUnitSelect = document.getElementById("purchaseunit");
-
-            productUnitSelect.addEventListener("change", function() {
-                var selectedProductId = this.value;
-                // Hapus opsi yang ada pada kedua select
-                clearSelectOptions(saleUnitSelect);
-                clearSelectOptions(purchaseUnitSelect);
-
-                // Ambil data unit terkait berdasarkan product unit yang dipilih
-                fetch(`/product/get-units/${selectedProductId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Isi opsi untuk sale unit
-                        data.related_units.forEach(unit => {
-                            var option = document.createElement("option");
-                            option.value = unit.id;
-                            option.textContent = unit.name;
-                            saleUnitSelect.appendChild(option);
-                        });
-
-                        // Isi opsi untuk purchase unit
-                        data.related_units.forEach(unit => {
-                            var option = document.createElement("option");
-                            option.value = unit.id;
-                            option.textContent = unit.name;
-                            purchaseUnitSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error('Error:', error));
-            });
-
-            function clearSelectOptions(selectElement) {
-                while (selectElement.options.length > 1) {
-                    selectElement.remove(1);
-                }
-                selectElement.selectedIndex = 0;
-            }
-        });
-    </script> --}}
-    <script>
-        $(document).ready(function() {
-            // Initialize Select2
-            $('.select2').select2();
-
-            // Event listener for product unit change
-            $('#productunit').change(function() {
-                var productId = $(this).val();
-
-                // Fetch related units via AJAX
-                $.ajax({
-                    url: '/product/get-units/' + productId,
-                    type: 'GET',
-                    success: function(response) {
-                        // Clear previous options
-                        $('#saleunit').empty();
-                        $('#purchaseunit').empty();
-
-                        // Append new options
-                        $.each(response.related_units, function(key, value) {
-                            $('#saleunit').append('<option value="' + value.id + '">' +
-                                value.name + '</option>');
-                            $('#purchaseunit').append('<option value="' + value.id +
-                                '">' + value.name + '</option>');
-                        });
-
-                        // Refresh Select2
-                        $('#saleunit').select2();
-                        $('#purchaseunit').select2();
-                    }
-                });
-            });
         });
     </script>
 @endpush
