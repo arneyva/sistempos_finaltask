@@ -13,12 +13,12 @@ return new class extends Migration
     {
         if (Schema::hasTable('membership')) {
             Schema::table('membership', function (Blueprint $table) {
-                if ( Schema::hasColumn($table->getTable(), 'one_score_equal')) {
+                if (Schema::hasColumn($table->getTable(), 'one_score_equal')) {
                     $table->float('one_score_equal', 10, 0)->default(100)->change();
                 }
             });
             Schema::table('membership', function (Blueprint $table) {
-                if ( Schema::hasColumn($table->getTable(), 'spend_every')) {
+                if (Schema::hasColumn($table->getTable(), 'spend_every')) {
                     $table->float('spend_every', 10, 0)->default(1000)->change();
                 }
             });
@@ -32,12 +32,12 @@ return new class extends Migration
     {
         if (Schema::hasTable('membership')) {
             Schema::table('membership', function (Blueprint $table) {
-                if ( Schema::hasColumn($table->getTable(), 'one_score_equal')) {
+                if (Schema::hasColumn($table->getTable(), 'one_score_equal')) {
                     $table->float('one_score_equal', 10, 0)->default(100)->change();
                 }
             });
             Schema::table('membership', function (Blueprint $table) {
-                if ( Schema::hasColumn($table->getTable(), 'spend_every')) {
+                if (Schema::hasColumn($table->getTable(), 'spend_every')) {
                     $table->float('spend_every', 10, 0)->default(1000)->change();
                 }
             });

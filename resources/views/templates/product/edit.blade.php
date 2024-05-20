@@ -256,11 +256,19 @@
                             </div>
                             {{-- handel produk variant lama --}}
                             @if ($product['type'] == 'is_variant')
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-12 mb-3" id="createvariant">
                                     <div class="row">
+                                        <div class="col-md-9 mb-3">
+                                            <input type="text" class="form-control" id="variantNameInput"
+                                                placeholder="Enter New Variant Name">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <button class="btn btn-soft-primary" id="createVariantBtn" type="button">Add
+                                                +</button>
+                                        </div>
                                         <div class="card-body p-3">
                                             <div class="table-responsive">
-                                                <table class="table table-striped mb-0" role="grid">
+                                                <table id="variantTable" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
                                                             <th>Variant Name</th>
@@ -292,45 +300,17 @@
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
+                                                    <tbody id="variantTableBody">
+                                                        {{-- Table rows will be dynamically added here --}}
+                                                    </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                {{-- handel produk variant lama --}}
                             @else
                             @endif
-                            {{-- handel variant baru --}}
-                            <div class="col-md-12 mb-3" id="createvariant">
-                                <div class="row">
-                                    <div class="col-md-9 mb-3">
-                                        <input type="text" class="form-control" id="variantNameInput"
-                                            placeholder="Enter New Variant Name">
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <button class="btn btn-soft-primary" id="createVariantBtn" type="button">Add
-                                            +</button>
-                                    </div>
-                                    <div class="card-body p-3">
-                                        <div class="table-responsive">
-                                            <table id="variantTable" class="table table-striped mb-0" role="grid">
-                                                <thead>
-                                                    <tr>
-                                                        <th>New Var-Name</th>
-                                                        <th>New Var-code</th>
-                                                        <th>New Var-cost</th>
-                                                        <th>New Var-price</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="variantTableBody">
-                                                    {{-- Table rows will be dynamically added here --}}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
                             <div class="col-md-6 mb-3">
                                 <div class="form-check mb-3">
                                     <input type="checkbox" class="form-check-input" id="is_imei" name="is_imei">
