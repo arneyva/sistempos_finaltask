@@ -565,9 +565,9 @@ class ProductController extends Controller
                 }
                 $Product->is_imei = $request['is_imei'] == 'true' ? 1 : 0;
                 $Product->not_selling = $request['not_selling'] == 'true' ? 1 : 0;
+                $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
                 // dari sini masalahnya
                 // Store Variants Product
-
                 // Update varian yang ada
                 if ($request->variants) {
                     foreach ($request->variants as $variantId => $variantData) {
@@ -579,9 +579,19 @@ class ProductController extends Controller
                         $productVariant->save();
                     }
                     $existingVariantIds = collect($request->variants)->keys();
-                    ProductVariant::where('product_id', $Product->id)
+                    // ProductVariant::where('product_id', $Product->id)
+                    //     ->whereNotIn('id', $existingVariantIds)
+                    //     ->delete();
+                    // Hapus varian lama dan entri terkait di product_warehouse
+                    $oldVariants = ProductVariant::where('product_id', $Product->id)
                         ->whereNotIn('id', $existingVariantIds)
-                        ->delete();
+                        ->get();
+                    foreach ($oldVariants as $oldVariant) {
+                        // Hapus entri terkait di product_warehouse
+                        ProductWarehouse::where('product_variant_id', $oldVariant->id)->delete();
+                        // Hapus varian lama
+                        $oldVariant->delete();
+                    }
                 }
                 // Array to hold error messages
                 $errors = [];
@@ -604,13 +614,23 @@ class ProductController extends Controller
                         }
 
                         // Save the new variant if no duplicate is found
-                        ProductVariant::create([
+                        $newVariant = ProductVariant::create([
                             'product_id' => $Product->id,
                             'name' => $variantData['name'],
                             'code' => $variantData['code'],
                             'cost' => $variantData['cost'],
                             'price' => $variantData['price'],
                         ]);
+                        $product_warehouse = [];
+                        foreach ($warehouses as $warehouse) {
+                            $product_warehouse[] = [
+                                'product_id' => $Product->id,
+                                'warehouse_id' => $warehouse,
+                                'product_variant_id' => $newVariant->id,
+                                'manage_stock' => 1,
+                            ];
+                        }
+                        ProductWarehouse::insert($product_warehouse);
                     }
                     if (! empty($errors)) {
                         return redirect()->back()->withErrors($errors)->withInput();
