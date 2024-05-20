@@ -12,6 +12,7 @@ use App\Http\Controllers\Reports\ReportsController;
 use App\Http\Controllers\Sale\SaleController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\WarehousesController;
+use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -141,6 +142,10 @@ Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->
         Route::get('edit/{id}', [CurrencyController::class, 'edit'])->name('edit');
         Route::patch('update/{id}', [CurrencyController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [CurrencyController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('membership')->name('membership.')->group(function () {
+        Route::get('list', [MembershipController::class, 'index'])->name('index');
+        Route::patch('update/{id}', [MembershipController::class, 'update'])->name('update');
     });
 });
 Route::prefix('people')->middleware(['auth', 'verified'])->name('people.')->group(function () {

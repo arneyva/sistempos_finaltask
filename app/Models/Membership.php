@@ -17,18 +17,23 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $score_to_email
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property float $one_score_equal
+ *
+ * @package App\Models
  */
 class Membership extends Model
 {
     protected $table = 'membership';
 
-    protected $casts = [
-        'spend_every' => 'float',
-        'score_to_email' => 'float',
-    ];
+	protected $casts = [
+		'spend_every' => 'float',
+		'score_to_email' => 'float',
+		'one_score_equal' => 'float'
+	];
 
-    protected $fillable = [
-        'spend_every',
-        'score_to_email',
-    ];
+	protected $fillable = [
+		'spend_every',
+		'score_to_email',
+		'one_score_equal'
+	];
 }
