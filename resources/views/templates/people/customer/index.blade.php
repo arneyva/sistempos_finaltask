@@ -31,8 +31,8 @@
                 <button type="button" class="btn btn-soft-success">Excel</button>
                 <button type="button" class="btn btn-soft-danger">PDF</button>
                 <button type="button" class="btn btn-soft-gray">Import Client</button>
-                <a href="#">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn btn-soft-primary">Create +</button>
+                <a href="#" style="margin-left: 30px;">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#createClient" class="btn btn-soft-primary">Create +</button>
                 </a>
             </div>
         </div>
@@ -57,29 +57,30 @@
                     <tbody>
                         @foreach ($clients as $data)
                             <tr>
-                                <td></td>
+                                <td>{{ $data->name }}</td>
                                 <td>{{ $data->email }}</td>
-                                <td>{{ ucfirst(substr($data->getRoleNames(), 2, -2)) }}</td>
-                                <td>{{ $data->gender }}</td>
-                                <td>{{ $data->gender }}</td>
+                                <td>{{ $data->phone }}</td>
+                                <td>{{ $data->score }}</td>
+                                <td>{{ $data->created_at }}</td>
                                 <td>
                                     <div class="inline">
-                                        <a href="">
-                                            <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                </path>
-                                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                                    d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
-                                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                    stroke-linejoin="round"></path>
-                                                <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
-                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                </path>
-                                            </svg>
-                                        </a>
-                                        <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  style="background-color: transparent; border: none; display: inline-block;">
+                                        <button type="button" data-bs-toggle="modal" data-bs-target="#editClient"  style="background-color: transparent; border: none; display: inline-block;">
+                                            <a href="#">
+                                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
+                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    </path>
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
+                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round"></path>
+                                                    <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
+                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    </path>
+                                                </svg>
+                                            </a>
+                                        <button type="button" data-bs-toggle="modal" data-bs-target="#deleteClient"  style="background-color: transparent; border: none; display: inline-block;">
                                             <a href="#">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -104,8 +105,62 @@
                                     </div>
                                 </td>
                             </tr>
+                            <!-- modal edit -->
+                            <div class="modal fade " id="editClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="background">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg overlay">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">Edit Client</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{{ route('people.clients.update', $data['id']) }}" method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                @method('patch')
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="name">Name:</label>
+                                                        <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
+                                                            id="name" name="name" placeholder="name" value="{{ old('name', $data->name) }}" required>
+                                                        <small class=" text-danger font-italic">
+                                                            @error('name')
+                                                                {{ $message }}
+                                                            @enderror
+                                                        </small>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="email">Email:</label>
+                                                        <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror"
+                                                            id="email" name="email" placeholder="Email" value="{{ old('email', $data->email) }}" required>
+                                                        <small class=" text-danger font-italic">
+                                                            @error('email')
+                                                                {{ $message }}
+                                                            @enderror
+                                                        </small>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="cname">Phone:</label>
+                                                        <input type="tel" name="phone"
+                                                            class="form-control bg-transparent @error('phone') is-invalid @enderror"
+                                                            id="cname" placeholder="Phone" value="{{ old('phone', $data->phone) }}" required>
+                                                        <small class=" text-danger font-italic">
+                                                            @error('phone')
+                                                                {{ $message }}
+                                                            @enderror
+                                                        </small>
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                    <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-soft-success">Save</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- modal hapus -->
-                            <div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal fade " id="deleteClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                 <div class="background">
                                     <div class="modal-dialog modal-dialog-centered modal-lg overlay">
                                         <div class="modal-content">
@@ -117,9 +172,9 @@
                                                 <p>Anda akan menghapus akun ini!</p>
                                             </div>
                                             <div class="modal-footer">
-                                                <form action="{{ route('people.clients.destroy', $data['id']) }}" method="post">
-                                                    @csrf
-                                                    @method('delete')
+                                                <form action="{{ route('people.clients.destroy', $data['id']) }}" method="POST">
+                                                @csrf
+                                                @method('delete')
                                                     <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
                                                     <button type="submit" class="btn btn-soft-danger">Understood</button>
                                                 </form>
@@ -139,23 +194,52 @@
     </div>
 </div>
 
-<div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade " id="createClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="background">
         <div class="modal-dialog modal-dialog-centered modal-lg overlay">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Delete User</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">Create Customer Membership</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Anda akan menghapus akun ini!</p>
+                    <form action="{{ route('people.clients.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label class="form-label" for="name">Name:</label>
+                            <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
+                                id="name" name="name" placeholder="name" required>
+                            <small class=" text-danger font-italic">
+                                @error('name')
+                                    {{ $message }}
+                                @enderror
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email:</label>
+                            <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror"
+                                id="email" name="email" placeholder="Email" required>
+                            <small class=" text-danger font-italic">
+                                @error('email')
+                                    {{ $message }}
+                                @enderror
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cname">Phone:</label>
+                            <input type="tel" name="phone"
+                                class="form-control bg-transparent @error('phone') is-invalid @enderror"
+                                id="cname" placeholder="Phone" required>
+                            <small class=" text-danger font-italic">
+                                @error('phone')
+                                    {{ $message }}
+                                @enderror
+                            </small>
+                        </div>
                 </div>
                 <div class="modal-footer">
-                    <form action="{{ route('people.users.destroy', $data['id']) }}" method="post">
-                        @csrf
-                        @method('delete')
                         <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-soft-danger">Understood</button>
+                        <button type="submit" class="btn btn-soft-success">Save</button>
                     </form>
                 </div>
             </div>
@@ -170,6 +254,16 @@
         e.preventDefault(); 
     });
 </script>
+
+@if($errors->any())
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var errorModal = new bootstrap.Modal(document.getElementById('editClient'));
+            errorModal.show();
+        });
+    </script>
+@endif
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var filterCollapse = document.getElementById('filter');
