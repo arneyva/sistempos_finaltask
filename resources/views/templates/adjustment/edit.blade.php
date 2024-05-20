@@ -80,9 +80,13 @@
                                                         <td>
                                                             <input type="hidden" name="details[{{ $loop->index }}][id]"
                                                                 value="{{ $detail['id'] }}">
+                                                        </td>
+                                                        <td>
                                                             <input type="hidden"
                                                                 name="details[{{ $loop->index }}][product_id]"
                                                                 value="{{ $detail['product_id'] }}">
+                                                        </td>
+                                                        <td>
                                                             <input type="hidden"
                                                                 name="details[{{ $loop->index }}][product_variant_id]"
                                                                 value="{{ $detail['product_variant_id'] }}">
@@ -115,82 +119,6 @@
 @endsection
 
 @push('script')
-    {{-- <script>
-        $(document).ready(function() {
-            $('#product-table-body').on('click', '.delete-row', function() {
-                $(this).closest('tr').remove();
-            });
-
-            $('#selectWarehouse').on('change', function() {
-                loadProductsByWarehouse($(this).val());
-            });
-
-            $('#selectProduct').on('change', function() {
-                var productId = $(this).val();
-                var warehouseId = $('#selectWarehouse').val();
-                var variantId = $(this).find(':selected').data('variant-id') || null;
-
-                if (productId && warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
-                            warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            var row = '<tr>';
-                            row += '<td>#</td>';
-                            row += '<td>' + data.code + '</td>';
-                            row += '<td>' + data.name + '</td>';
-                            row += '<td>' + data.qty + '</td>';
-                            row +=
-                                '<td><input type="number" class="form-control" name="details[' +
-                                data.id + '][quantity]" value="0" min="0"></td>';
-                            row += '<td><select class="form-select" name="details[' + data.id +
-                                '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_variant_id]" value="' + (variantId || '') +
-                                '"></td>';
-                            row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-                            row += '</tr>';
-
-                            $('#product-table-body').append(row);
-                        }
-                    });
-                }
-            });
-
-            function loadProductsByWarehouse(warehouseId) {
-                if (warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            $('#selectProduct').empty().append(
-                                '<option selected disabled value="">Choose...</option>');
-                            $.each(data, function(key, value) {
-                                $('#selectProduct').append('<option value="' + value.id +
-                                    '" data-variant-id="' + value.product_variant_id +
-                                    '">' + value.name + '</option>');
-                            });
-                            $('#selectProduct').prop('disabled', false);
-                        }
-                    });
-                } else {
-                    $('#selectProduct').empty().prop('disabled', true);
-                }
-            }
-
-            var initialWarehouseId = $('#selectWarehouse').val();
-            if (initialWarehouseId) {
-                loadProductsByWarehouse(initialWarehouseId);
-            }
-        });
-    </script> --}}
-    {{-- sudah jadi --}}
     <script>
         $(document).ready(function() {
             $('#product-table-body').on('click', '.delete-row', function() {
@@ -276,116 +204,4 @@
             }
         });
     </script>
-    {{-- sudah jadi --}}
-    {{-- <script>
-        $(document).ready(function() {
-            $('#product-table-body').on('click', '.delete-row', function() {
-                $(this).closest('tr').remove();
-            });
-
-            $('#selectWarehouse').on('change', function() {
-                var warehouseId = $(this).val();
-                if (warehouseId) {
-                    $('input[name="warehouse_id"]').val(warehouseId);
-                    loadProductsByWarehouse(warehouseId);
-                } else {
-                    $('#selectProduct').empty().prop('disabled', true);
-                }
-            });
-
-            $('#selectProduct').on('change', function() {
-                var productId = $(this).val();
-                var warehouseId = $('#selectWarehouse').val();
-                var variantId = $(this).find(':selected').data('variant-id') || null;
-
-                if (productId && warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
-                            warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            var row = '<tr>';
-                            row += '<td>#</td>';
-                            row += '<td>' + data.code + '</td>';
-                            row += '<td>' + data.name + '</td>';
-                            row += '<td>' + data.qty + '</td>';
-                            row +=
-                                '<td><input type="number" class="form-control" name="details[' +
-                                data.id + '][quantity]" value="0" min="0"></td>';
-                            row += '<td><select class="form-select" name="details[' + data.id +
-                                '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_variant_id]" value="' + (variantId || '') +
-                                '"></td>';
-                            row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-                            row += '</tr>';
-
-                            $('#product-table-body').append(row);
-                        }
-                    });
-                }
-            });
-
-            function loadProductsByWarehouse(warehouseId) {
-                if (warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            $('#selectProduct').empty().append(
-                                '<option selected disabled value="">Choose...</option>');
-                            $.each(data, function(key, value) {
-                                $('#selectProduct').append('<option value="' + value.id +
-                                    '" data-variant-id="' + value.product_variant_id +
-                                    '">' + value.name + '</option>');
-                            });
-                            $('#selectProduct').prop('disabled', false);
-                        }
-                    });
-                } else {
-                    $('#selectProduct').empty().prop('disabled', true);
-                }
-            }
-
-            var initialWarehouseId = $('#selectWarehouse').val();
-            if (initialWarehouseId) {
-                loadProductsByWarehouse(initialWarehouseId);
-            }
-
-            // Mengisi tabel dengan data detail adjustment yang sudah ada
-            var existingDetails = @json($details);
-            $('#product-table-body').html(''); // Menghapus semua baris yang ada di tabel
-            $.each(existingDetails, function(index, detail) {
-                var row = '<tr>';
-                row += '<td>#</td>';
-                row += '<td>' + detail.code + '</td>';
-                row += '<td>' + detail.name + '</td>';
-                row += '<td>' + detail.current + '</td>';
-                row += '<td><input type="number" class="form-control" name="details[' + index +
-                    '][quantity]" value="' + detail.quantity + '" min="0"></td>';
-                row += '<td><select class="form-select" name="details[' + index +
-                    '][type]"><option value="add" ' + (detail.type === 'add' ? 'selected' : '') +
-                    '>Add</option><option value="sub" ' + (detail.type === 'sub' ? 'selected' : '') +
-                    '>Subtract</option></select></td>';
-                row += '<td><input type="hidden" name="details[' + index + '][id]" value="' + detail.id +
-                    '"></td>';
-                row += '<td><input type="hidden" name="details[' + index + '][product_id]" value="' + detail
-                    .product_id + '"></td>';
-                row += '<td><input type="hidden" name="details[' + index +
-                    '][product_variant_id]" value="' + detail.product_variant_id + '"></td>';
-                row +=
-                    '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-                row += '</tr>';
-
-                $('#product-table-body').append(row);
-            });
-        });
-    </script> --}}
 @endpush
