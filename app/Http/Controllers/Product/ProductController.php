@@ -583,13 +583,27 @@ class ProductController extends Controller
                         ->whereNotIn('id', $existingVariantIds)
                         ->delete();
                 }
-
+                // Array to hold error messages
+                $errors = [];
                 // Tambah varian baru
                 if ($request->new_variants) {
-                    // dd('hai');
                     $newVariants = json_decode($request->new_variants, true);
-                    // dd($newVariants);
+                    $existingVariants = ProductVariant::where('product_id', $Product->id)->get();
+
                     foreach ($newVariants as $variantData) {
+                        // Check for duplicate names or codes
+                        $duplicate = $existingVariants->first(function ($variant) use ($variantData) {
+                            return $variant->name == $variantData['name'] || $variant->code == $variantData['code'];
+                        });
+
+                        if ($duplicate) {
+                            $errors[] = "Duplicate variant found: Name '{$variantData['name']}' or Code '{$variantData['code']}' already exists.";
+
+                            // Handle the duplicate case (e.g., log a message or skip)
+                            continue; // Skip saving this variant
+                        }
+
+                        // Save the new variant if no duplicate is found
                         ProductVariant::create([
                             'product_id' => $Product->id,
                             'name' => $variantData['name'],
@@ -598,8 +612,11 @@ class ProductController extends Controller
                             'price' => $variantData['price'],
                         ]);
                     }
+                    if (! empty($errors)) {
+                        return redirect()->back()->withErrors($errors)->withInput();
+                    }
                 } else {
-                    dd('anjay');
+                    return redirect()->route('product.edit', $id)->with('error', 'No new variants provided');
                 }
 
                 if ($request['images'] === null) {

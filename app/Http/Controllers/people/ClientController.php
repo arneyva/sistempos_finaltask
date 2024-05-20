@@ -67,8 +67,8 @@ class ClientController extends Controller
         $client->name = $request['name'];
         $client->email = $request['email'];
         $client->phone = $request['phone'];
-        $client-> save();
-        
+        $client->save();
+
         return redirect()->route('people.clients.index')->with('success', 'Customer berhasil ditambahkan');
     }
 
@@ -117,7 +117,7 @@ class ClientController extends Controller
         $validateData = $request->validate($rules, $message);
 
         Client::whereId($id)->update([
-            'name'=>$request['name'],
+            'name' => $request['name'],
             'email' => $request['email'],
             'phone' => $request['phone'],
         ]);
