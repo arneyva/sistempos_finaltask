@@ -16,17 +16,14 @@
                     </div>
                     {{--  --}}
                     <div class="card-body">
-                        <form action="#" method="POST">
+                        <form action="{{ route('adjustment.update', ['id' => $adjustment['id']]) }}" method="POST">
                             @csrf
+                            @method('PATCH')
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="selectWarehouse">Warehouse/Outlet *</label>
-                                    {{-- <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
-                                        @foreach ($warehouse as $warehouse)
-                                            <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                        @endforeach
-                                    </select> --}}
-                                    <input type="text" class="form-control" id="selectWarehouse" name="warehouse_id" value="{{ $warehouse['id'] }}">{{ $warehouse['name'] }}
+                                    <input type="text" class="form-control" id="selectWarehouse" name="warehouse_id"
+                                        value="{{ $adjustment['warehouse_id'] }}" readonly>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="exampleInputdate">Date *</label>
@@ -35,7 +32,8 @@
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="selectProduct">Product *</label>
-                                    <select class="form-select" id="selectProduct" disabled required>
+                                    {{-- <select class="form-select" id="selectProduct" disabled required> --}}
+                                    <select class="form-select" id="selectProduct">
                                         <option selected disabled value="">Choose warehouse first...</option>
                                     </select>
                                 </div>
@@ -59,18 +57,18 @@
                                                 <!-- Isi dari tbody akan diisi secara dinamis menggunakan JavaScript -->
                                                 @foreach ($details as $detail)
                                                     <tr>
-                                                        <td>{{ $detail['detail_id'] }}</td>
+                                                        <td>#</td>
                                                         <td>{{ $detail['code'] }}</td>
                                                         <td>{{ $detail['name'] }}</td>
                                                         <td>{{ $detail['current'] }}</td>
                                                         <td>
                                                             <input type="number" class="form-control"
-                                                                name="details[{{ $detail['id'] }}][quantity]"
+                                                                name="details[{{ $loop->index }}][quantity]"
                                                                 value="{{ $detail['quantity'] }}" min="0">
                                                         </td>
                                                         <td>
                                                             <select class="form-select"
-                                                                name="details[{{ $detail['id'] }}][type]">
+                                                                name="details[{{ $loop->index }}][type]">
                                                                 <option value="add"
                                                                     @if ($detail['type'] === 'add') selected @endif>Add
                                                                 </option>
@@ -80,11 +78,13 @@
                                                             </select>
                                                         </td>
                                                         <td>
+                                                            <input type="hidden" name="details[{{ $loop->index }}][id]"
+                                                                value="{{ $detail['id'] }}">
                                                             <input type="hidden"
-                                                                name="details[{{ $detail['id'] }}][product_id]"
+                                                                name="details[{{ $loop->index }}][product_id]"
                                                                 value="{{ $detail['product_id'] }}">
                                                             <input type="hidden"
-                                                                name="details[{{ $detail['id'] }}][product_variant_id]"
+                                                                name="details[{{ $loop->index }}][product_variant_id]"
                                                                 value="{{ $detail['product_variant_id'] }}">
                                                         </td>
                                                         <td>
@@ -104,7 +104,7 @@
                                 </div>
                             </div>
                             <div class="form-group mt-2">
-                                <button class="btn btn-primary" type="submit">Submit form</button>
+                                <button class="btn btn-primary" type="submit">Update Adjustment</button>
                             </div>
                         </form>
                     </div>
@@ -115,16 +115,54 @@
 @endsection
 
 @push('script')
-    <script>
-        // Fungsi untuk menambahkan event listener untuk tombol delete di dalam tbody
+    {{-- <script>
         $(document).ready(function() {
             $('#product-table-body').on('click', '.delete-row', function() {
-                $(this).closest('tr')
-                    .remove(); // Menghapus baris tabel yang berisi tombol delete yang diklik
+                $(this).closest('tr').remove();
             });
-            // Event listener untuk perubahan pada pilihan gudang
+
             $('#selectWarehouse').on('change', function() {
-                var warehouseId = $(this).val();
+                loadProductsByWarehouse($(this).val());
+            });
+
+            $('#selectProduct').on('change', function() {
+                var productId = $(this).val();
+                var warehouseId = $('#selectWarehouse').val();
+                var variantId = $(this).find(':selected').data('variant-id') || null;
+
+                if (productId && warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
+                            warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            var row = '<tr>';
+                            row += '<td>#</td>';
+                            row += '<td>' + data.code + '</td>';
+                            row += '<td>' + data.name + '</td>';
+                            row += '<td>' + data.qty + '</td>';
+                            row +=
+                                '<td><input type="number" class="form-control" name="details[' +
+                                data.id + '][quantity]" value="0" min="0"></td>';
+                            row += '<td><select class="form-select" name="details[' + data.id +
+                                '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][product_id]" value="' + data.id + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][product_variant_id]" value="' + (variantId || '') +
+                                '"></td>';
+                            row +=
+                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
+                            row += '</tr>';
+
+                            $('#product-table-body').append(row);
+                        }
+                    });
+                }
+            });
+
+            function loadProductsByWarehouse(warehouseId) {
                 if (warehouseId) {
                     $.ajax({
                         url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
@@ -134,11 +172,9 @@
                             $('#selectProduct').empty().append(
                                 '<option selected disabled value="">Choose...</option>');
                             $.each(data, function(key, value) {
-                                $('#selectProduct').append('<option value="' + value
-                                    .id +
-                                    '" data-variant-id="' + value
-                                    .product_variant_id + '">' +
-                                    value.name + '</option>');
+                                $('#selectProduct').append('<option value="' + value.id +
+                                    '" data-variant-id="' + value.product_variant_id +
+                                    '">' + value.name + '</option>');
                             });
                             $('#selectProduct').prop('disabled', false);
                         }
@@ -146,18 +182,37 @@
                 } else {
                     $('#selectProduct').empty().prop('disabled', true);
                 }
+            }
+
+            var initialWarehouseId = $('#selectWarehouse').val();
+            if (initialWarehouseId) {
+                loadProductsByWarehouse(initialWarehouseId);
+            }
+        });
+    </script> --}}
+    {{-- sudah jadi --}}
+    <script>
+        $(document).ready(function() {
+            $('#product-table-body').on('click', '.delete-row', function() {
+                $(this).closest('tr').remove();
             });
 
-            // Event listener untuk perubahan pada pilihan produk
+            $('#selectWarehouse').on('change', function() {
+                var warehouseId = $(this).val();
+                if (warehouseId) {
+                    // Mengirimkan nilai warehouse_id ke server
+                    $('input[name="warehouse_id"]').val(warehouseId);
+                    loadProductsByWarehouse(warehouseId);
+                } else {
+                    $('#selectProduct').empty().prop('disabled', true);
+                }
+            });
+
+
             $('#selectProduct').on('change', function() {
                 var productId = $(this).val();
                 var warehouseId = $('#selectWarehouse').val();
-                var variantId = $(this).find(':selected').data('variant-id');
-
-                // Periksa jika variantId adalah null, maka atur nilai variantId menjadi null
-                if (!variantId) {
-                    variantId = null;
-                }
+                var variantId = $(this).find(':selected').data('variant-id') || null;
 
                 if (productId && warehouseId) {
                     $.ajax({
@@ -166,7 +221,6 @@
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
-                            // Buat objek untuk baris tabel
                             var row = '<tr>';
                             row += '<td>#</td>';
                             row += '<td>' + data.code + '</td>';
@@ -174,25 +228,164 @@
                             row += '<td>' + data.qty + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control" name="details[' +
-                                data
-                                .id + '][quantity]" value="0" min="0"></td>';
+                                data.id + '][quantity]" value="0" min="0"></td>';
                             row += '<td><select class="form-select" name="details[' + data.id +
                                 '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][id]" value="' + data.id + '"></td>';
                             row += '<td><input type="hidden" name="details[' + data.id +
                                 '][product_id]" value="' + data.id + '"></td>';
                             row += '<td><input type="hidden" name="details[' + data.id +
                                 '][product_variant_id]" value="' + (variantId || '') +
                                 '"></td>';
                             row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>'; // Tombol delete ditambahkan di sini
+                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
                             row += '</tr>';
 
-                            // Masukkan baris ke dalam tbody
                             $('#product-table-body').append(row);
                         }
                     });
                 }
             });
+
+            function loadProductsByWarehouse(warehouseId) {
+                if (warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#selectProduct').empty().append(
+                                '<option selected disabled value="">Choose...</option>');
+                            $.each(data, function(key, value) {
+                                $('#selectProduct').append('<option value="' + value.id +
+                                    '" data-variant-id="' + value.product_variant_id +
+                                    '">' + value.name + '</option>');
+                            });
+                            $('#selectProduct').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#selectProduct').empty().prop('disabled', true);
+                }
+            }
+
+            var initialWarehouseId = $('#selectWarehouse').val();
+            if (initialWarehouseId) {
+                loadProductsByWarehouse(initialWarehouseId);
+            }
         });
     </script>
+    {{-- sudah jadi --}}
+    {{-- <script>
+        $(document).ready(function() {
+            $('#product-table-body').on('click', '.delete-row', function() {
+                $(this).closest('tr').remove();
+            });
+
+            $('#selectWarehouse').on('change', function() {
+                var warehouseId = $(this).val();
+                if (warehouseId) {
+                    $('input[name="warehouse_id"]').val(warehouseId);
+                    loadProductsByWarehouse(warehouseId);
+                } else {
+                    $('#selectProduct').empty().prop('disabled', true);
+                }
+            });
+
+            $('#selectProduct').on('change', function() {
+                var productId = $(this).val();
+                var warehouseId = $('#selectWarehouse').val();
+                var variantId = $(this).find(':selected').data('variant-id') || null;
+
+                if (productId && warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
+                            warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            var row = '<tr>';
+                            row += '<td>#</td>';
+                            row += '<td>' + data.code + '</td>';
+                            row += '<td>' + data.name + '</td>';
+                            row += '<td>' + data.qty + '</td>';
+                            row +=
+                                '<td><input type="number" class="form-control" name="details[' +
+                                data.id + '][quantity]" value="0" min="0"></td>';
+                            row += '<td><select class="form-select" name="details[' + data.id +
+                                '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][id]" value="' + data.id + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][product_id]" value="' + data.id + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id +
+                                '][product_variant_id]" value="' + (variantId || '') +
+                                '"></td>';
+                            row +=
+                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
+                            row += '</tr>';
+
+                            $('#product-table-body').append(row);
+                        }
+                    });
+                }
+            });
+
+            function loadProductsByWarehouse(warehouseId) {
+                if (warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#selectProduct').empty().append(
+                                '<option selected disabled value="">Choose...</option>');
+                            $.each(data, function(key, value) {
+                                $('#selectProduct').append('<option value="' + value.id +
+                                    '" data-variant-id="' + value.product_variant_id +
+                                    '">' + value.name + '</option>');
+                            });
+                            $('#selectProduct').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#selectProduct').empty().prop('disabled', true);
+                }
+            }
+
+            var initialWarehouseId = $('#selectWarehouse').val();
+            if (initialWarehouseId) {
+                loadProductsByWarehouse(initialWarehouseId);
+            }
+
+            // Mengisi tabel dengan data detail adjustment yang sudah ada
+            var existingDetails = @json($details);
+            $('#product-table-body').html(''); // Menghapus semua baris yang ada di tabel
+            $.each(existingDetails, function(index, detail) {
+                var row = '<tr>';
+                row += '<td>#</td>';
+                row += '<td>' + detail.code + '</td>';
+                row += '<td>' + detail.name + '</td>';
+                row += '<td>' + detail.current + '</td>';
+                row += '<td><input type="number" class="form-control" name="details[' + index +
+                    '][quantity]" value="' + detail.quantity + '" min="0"></td>';
+                row += '<td><select class="form-select" name="details[' + index +
+                    '][type]"><option value="add" ' + (detail.type === 'add' ? 'selected' : '') +
+                    '>Add</option><option value="sub" ' + (detail.type === 'sub' ? 'selected' : '') +
+                    '>Subtract</option></select></td>';
+                row += '<td><input type="hidden" name="details[' + index + '][id]" value="' + detail.id +
+                    '"></td>';
+                row += '<td><input type="hidden" name="details[' + index + '][product_id]" value="' + detail
+                    .product_id + '"></td>';
+                row += '<td><input type="hidden" name="details[' + index +
+                    '][product_variant_id]" value="' + detail.product_variant_id + '"></td>';
+                row +=
+                    '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
+                row += '</tr>';
+
+                $('#product-table-body').append(row);
+            });
+        });
+    </script> --}}
 @endpush

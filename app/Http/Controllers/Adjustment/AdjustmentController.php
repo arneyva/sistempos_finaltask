@@ -443,6 +443,7 @@ class AdjustmentController extends Controller
         } else {
             $adjustment['warehouse_id'] = '';
         }
+        $adjustment['id'] = $Adjustment_data->id;
         $adjustment['notes'] = $Adjustment_data->notes;
         $adjustment['date'] = $Adjustment_data->updated_at;
         $detail_id = 0;
@@ -508,9 +509,9 @@ class AdjustmentController extends Controller
     public function update(Request $request, string $id)
     {
         $current_adjustment = Adjustment::findOrFail($id);
-        request()->validate([
-            'warehouse_id' => 'required',
-        ]);
+        // request()->validate([
+        //     'warehouse_id' => 'required',
+        // ]);
 
         \DB::transaction(function () use ($request, $id, $current_adjustment) {
 
@@ -520,11 +521,13 @@ class AdjustmentController extends Controller
 
             // Get Ids for new Details
             $new_products_id = [];
+            // dd($new_adjustment_details); ada datanya
             foreach ($new_adjustment_details as $new_detail) {
                 $new_products_id[] = $new_detail['id'];
             }
-
+            // dd($new_products_id);
             $old_products_id = [];
+            // dd($old_products_id);
             // Init Data with old Parametre
             foreach ($old_adjustment_details as $key => $value) {
                 $old_products_id[] = $value->id;
@@ -656,7 +659,8 @@ class AdjustmentController extends Controller
             ]);
         }, 10);
 
-        return response()->json(['success' => true]);
+        // return response()->json(['success' => true]);
+        return redirect()->route('adjustment.index');
     }
 
     /**
