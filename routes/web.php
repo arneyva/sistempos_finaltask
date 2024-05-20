@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Adjustment\AdjustmentController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\people\ClientController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ProductController;
@@ -14,7 +15,6 @@ use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\people\ClientController;
 use Illuminate\Support\Facades\Route;
 
 /*

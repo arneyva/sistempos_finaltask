@@ -3,13 +3,19 @@
 namespace App\Http\Controllers\people;
 
 use App\Http\Controllers\Controller;
-use App\Models\Membership;
 use App\Models\Client;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class ClientController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
+    public function __construct()
+    {
+        $this->middleware('role:superadmin|staff|inventaris');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -71,7 +77,7 @@ class ClientController extends Controller
      */
     public function show(string $id)
     {
-        
+
     }
 
     /**
@@ -79,7 +85,7 @@ class ClientController extends Controller
      */
     public function edit(string $id)
     {
-        
+
     }
 
     /**

@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
             'gender' => 'Laki-laki',
             'status' => 1,
             'avatar' => 'no_avatar.png',
-        ])  ->assignRole('inventaris')
+        ])->assignRole('inventaris')
             ->warehouses()->attach(1);
         User::firstOrCreate([
             'firstname' => 'Super',
@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
             'gender' => 'Perempuan',
             'status' => 1,
             'avatar' => 'no_avatar.png',
-        ])  ->assignRole('superadmin')
+        ])->assignRole('superadmin')
             ->warehouses()->sync(Warehouse::pluck('id')->toArray());
     }
 }

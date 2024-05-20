@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Membership
- * 
+ *
  * @property int $id
  * @property float $spend_every
  * @property float $score_to_email
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Membership extends Model
 {
-	protected $table = 'membership';
+    protected $table = 'membership';
 
 	protected $casts = [
 		'spend_every' => 'float',
