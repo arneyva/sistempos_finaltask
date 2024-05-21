@@ -7,6 +7,7 @@ use App\Models\ProductWarehouse;
 use App\Models\Transfer;
 use App\Models\TransferDetail;
 use App\Models\Unit;
+use App\Models\UserWarehouse;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,8 +20,100 @@ class TransferController extends Controller
      */
     public function index()
     {
-        return view('templates.transfer.index');
+        $transfer = Transfer::with('from_warehouse', 'to_warehouse')->where('deleted_at', '=', null)->get();
+
+        // dd($transfer);
+        return view('templates.transfer.index', ['transfer' => $transfer]);
     }
+    // public function index(request $request)
+    // {
+    //     // $this->authorizeForUser($request->user('api'), 'view', Transfer::class);
+    //     // $role = Auth::user()->roles()->first();
+    //     // $view_records = Role::findOrFail($role->id)->inRole('record_view');
+
+    //     // // How many items do you want to display.
+    //     // $perPage = $request->limit;
+    //     // $pageStart = \Request::get('page', 1);
+    //     // // Start displaying items from this number;
+    //     // $offSet = ($pageStart * $perPage) - $perPage;
+    //     // $order = $request->SortField;
+    //     // $dir = $request->SortType;
+    //     // $helpers = new helpers();
+    //     // // Filter fields With Params to retrieve
+    //     // $columns = array(0 => 'Ref', 1 => 'from_warehouse_id', 2 => 'to_warehouse_id', 3 => 'statut');
+    //     // $param = array(0 => 'like', 1 => '=', 2 => '=', 3 => 'like');
+    //     $data = array();
+
+    //     // Check If User Has Permission View  All Records
+    //     $transfers = Transfer::with('from_warehouse', 'to_warehouse')
+    //         ->where('deleted_at', '=', null);
+    //     // ->where(function ($query) use ($view_records) {
+    //     //     if (!$view_records) {
+    //     //         return $query->where('user_id', '=', Auth::user()->id);
+    //     //     }
+    //     // });
+
+    //     //Multiple Filter
+    //     // $Filtred = $helpers->filter($transfers, $columns, $param, $request)
+    //     //     // Search With Multiple Param
+    //     //     ->where(function ($query) use ($request) {
+    //     //         return $query->when($request->filled('search'), function ($query) use ($request) {
+    //     //             return $query->where('Ref', 'LIKE', "%{$request->search}%")
+    //     //                 ->orWhere('statut', 'LIKE', "%{$request->search}%")
+    //     //                 ->orWhere(function ($query) use ($request) {
+    //     //                     return $query->whereHas('from_warehouse', function ($q) use ($request) {
+    //     //                         $q->where('name', 'LIKE', "%{$request->search}%");
+    //     //                     });
+    //     //                 })
+    //     //                 ->orWhere(function ($query) use ($request) {
+    //     //                     return $query->whereHas('to_warehouse', function ($q) use ($request) {
+    //     //                         $q->where('name', 'LIKE', "%{$request->search}%");
+    //     //                     });
+    //     //                 });
+    //     //         });
+    //     //     });
+
+    //     // $totalRows = $Filtred->count();
+    //     // if ($perPage == "-1") {
+    //     //     $perPage = $totalRows;
+    //     // }
+    //     // $transfers = $Filtred->offset($offSet)
+    //     //     ->limit($perPage)
+    //     //     ->orderBy($order, $dir)
+    //     //     ->get();
+
+    //     foreach ($transfers as $transfer) {
+    //         $item['id'] = $transfer->id;
+    //         $item['date'] = $transfer->date;
+    //         $item['Ref'] = $transfer->Ref;
+    //         $item['from_warehouse'] = $transfer['from_warehouse']->name;
+    //         $item['to_warehouse'] = $transfer['to_warehouse']->name;
+    //         $item['GrandTotal'] = $transfer->GrandTotal;
+    //         $item['items'] = $transfer->items;
+    //         $item['statut'] = $transfer->statut;
+    //         $data[] = $item;
+    //     }
+
+    //     //get warehouses assigned to user
+    //     $user_auth = auth()->user();
+    //     // if ($user_auth->is_all_warehouses) {
+    //     //     $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+    //     // }
+    //     // else {
+    //     $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+    //     $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+    //     // }
+
+    //     return response()->json([
+    //         // 'totalRows' => $totalRows,
+    //         'warehouses' => $warehouses,
+    //         'transfers' => $data,
+    //     ]);
+    //     // return view('templates.transfer.index', [
+    //     //     'warehouses' => $warehouses,
+    //     //     'transfers' => $data,
+    //     // ]);
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -203,7 +296,8 @@ class TransferController extends Controller
             }
         }, 10);
 
-        return response()->json(['success' => true]);
+        return redirect()->route('transfer.index')->with('success', 'Transfer created successfully');
+        // return response()->json(['success' => true]);
     }
 
     /**
