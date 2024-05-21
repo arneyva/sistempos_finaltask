@@ -90,8 +90,7 @@
                                             </tr>
                                             <tr>
                                                 <td>Grand Total</td>
-                                                <th><input class="form-control" type="number" id="grandTotal"
-                                                        name="GrandTotal" readonly></th>
+                                                <th></th>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -116,21 +115,10 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="tax_net">Tax Net *</label>
-                                            <input type="number" class="form-control" id="tax_net"
-                                                placeholder="input tax net" name="transfer[TaxNet]"
-                                                value="{{ old('transfer.TaxNet') }}">
-                                            @error('transfer.TaxNet')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
+                                        <input type="hidden" class="form-control" id="tax_net"
+                                            placeholder="input tax net" name="transfer[TaxNet]"
+                                            value="{{ old('transfer.TaxNet') }}">
+                                        <input class="" type="hidden" id="grandTotal" name="GrandTotal">
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label" for="discount">Discount *</label>
                                             <div class="form-group input-group">
@@ -170,7 +158,7 @@
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label" for="status">Status *</label>
                                             <select class="form-select select2" id="status" name="transfer[statut]"
-                                                data-placeholder="Select a Status">
+                                                required data-placeholder="Select a Status">
                                                 <option selected disabled value="">Choose...</option>
                                                 <option value="sent">Sent</option>
                                                 <option value="completed">Completed</option>
@@ -223,224 +211,11 @@
             }
         });
     </script>
-
-    {{-- <script>
-        $(document).ready(function() {
-            // Fungsi untuk menambahkan event listener untuk tombol delete di dalam tbody
-            $('#product-table-body').on('click', '.delete-row', function() {
-                $(this).closest('tr')
-                    .remove(); // Menghapus baris tabel yang berisi tombol delete yang diklik
-                updateGrandTotal();
-            });
-
-            // Event listener untuk perubahan pada pilihan gudang
-            $('#selectWarehouse').on('change', function() {
-                var warehouseId = $(this).val();
-                if (warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            $('#selectProduct').empty().append(
-                                '<option selected disabled value="">Choose...</option>');
-                            $.each(data, function(key, value) {
-                                $('#selectProduct').append('<option value="' + value
-                                    .id + '" data-variant-id="' + value
-                                    .product_variant_id + '">' + value.name +
-                                    '</option>');
-                            });
-                            $('#selectProduct').prop('disabled', false);
-                        }
-                    });
-                } else {
-                    $('#selectProduct').empty().prop('disabled', true);
-                }
-            });
-
-            // Event listener untuk perubahan pada pilihan produk
-            $('#selectProduct').on('change', function() {
-                var productId = $(this).val();
-                var warehouseId = $('#selectWarehouse').val();
-                var variantId = $(this).find(':selected').data('variant-id');
-
-                // Periksa jika variantId adalah null, maka atur nilai variantId menjadi null
-                if (!variantId) {
-                    variantId = null;
-                }
-
-                if (productId && warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
-                            warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            // Buat objek untuk baris tabel
-                            var row = '<tr>';
-                            row += '<td>#</td>';
-                            row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-                            row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
-                            row += '<td >' + data.qty + ' ' + data.unitPurchase + '</td>';
-                            row +=
-                                '<td><input type="number" class="form-control item-quantity" name="details[' +
-                                data.id + '_' + variantId +
-                                '][quantity]" value="0" min="0"></td>';
-                            row += '<td class="item-price">0</td>'; //discount
-                            row += '<td>' + 'Rp ' + data.tax_cost + '</td>'; //tax
-                            row += '<td class="item-total">' + 'Rp ' + data.Total_cost +
-                                '</td>'; //subtotal
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_variant_id]" value="' + (variantId ||
-                                    '') + '"></td>';
-                            row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>'; // Tombol delete ditambahkan di sini
-                            row += '</tr>';
-
-                            // Masukkan baris ke dalam tbody
-                            $('#product-table-body').append(row);
-                            updateGrandTotal();
-                        }
-                    });
-                }
-            });
-
-            // Event listener untuk perubahan pada quantity
-            $('#product-table-body').on('input', '.item-quantity', function() {
-                var row = $(this).closest('tr');
-                var quantity = parseFloat($(this).val());
-                var unitCost = parseFloat(row.find('.item-total').text());
-                var totalCost = quantity * unitCost;
-                row.find('.item-price').text(totalCost.toFixed(2));
-                updateGrandTotal();
-            });
-        });
-
-        function updateGrandTotal() {
-            var grandTotal = 0;
-            $('#product-table-body tr').each(function() {
-                var price = parseFloat($(this).find('.item-price').text());
-                if (!isNaN(price)) {
-                    grandTotal += price;
-                }
-            });
-            $('#grandTotal').val(grandTotal.toFixed(2));
-        }
-    </script> --}}
-    {{-- kurang dikit --}}
-    {{-- <script>
-        $(document).ready(function() {
-            $('#product-table-body').on('click', '.delete-row', function() {
-                $(this).closest('tr').remove();
-                updateGrandTotal();
-            });
-
-            $('#selectWarehouse').on('change', function() {
-                var warehouseId = $(this).val();
-                if (warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            $('#selectProduct').empty().append(
-                                '<option selected disabled value="">Choose...</option>');
-                            $.each(data, function(key, value) {
-                                $('#selectProduct').append('<option value="' + value
-                                    .id + '" data-variant-id="' + value
-                                    .product_variant_id + '">' + value.name +
-                                    '</option>');
-                            });
-                            $('#selectProduct').prop('disabled', false);
-                        }
-                    });
-                } else {
-                    $('#selectProduct').empty().prop('disabled', true);
-                }
-            });
-
-            $('#selectProduct').on('change', function() {
-                var productId = $(this).val();
-                var warehouseId = $('#selectWarehouse').val();
-                var variantId = $(this).find(':selected').data('variant-id') || null;
-
-                if (productId && warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
-                            warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            var row = '<tr>';
-                            row += '<td>#</td>';
-                            row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-                            row += '<td >' + 'Rp ' + data.Unit_cost + '</td>';
-                            row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
-                            row +=
-                                '<td><input type="number" class="form-control item-quantity" name="details[' +
-                                data.id + '_' + variantId +
-                                '][quantity]" value="0" min="0"></td>';
-                            row += '<td class="item-discount">0</td>';
-                            row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
-                            row += '<td class="item-total">Rp 0</td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_id]" value="' + data.id +
-                                '"></td>'; //product_id
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_variant_id]" value="' + (variantId ||
-                                    '') + '"></td>'; //product_variant_id
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][purchase_unit_id]" value="' + data
-                                .purchase_unit_id + '"></td>'; //purchase_id
-                            // 
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][Unit_cost]" value="' + data.Unit_cost +
-                                '"></td>'; //unit cost
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][tax_percent]" value="' + data.tax_percent +
-                                '"></td>'; //tax persen
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][tax_method]" value="' + data.tax_method +
-                                '"></td>'; //tax method
-                            row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-                            row += '</tr>';
-
-                            $('#product-table-body').append(row);
-                            updateGrandTotal();
-                        }
-                    });
-                }
-            });
-
-            $('#product-table-body').on('input', '.item-quantity', function() {
-                var row = $(this).closest('tr');
-                var quantity = parseFloat($(this).val());
-                var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', ''));
-                var taxCost = parseFloat(row.find('td:eq(6)').text().replace('Rp ', ''));
-                var totalCost = (unitCost + taxCost) * quantity;
-
-                row.find('.item-total').text('Rp ' + totalCost.toFixed(2));
-                updateGrandTotal();
-            });
-        });
-
-        function updateGrandTotal() {
-            var grandTotal = 0;
-            $('#product-table-body tr').each(function() {
-                var total = parseFloat($(this).find('.item-total').text().replace('Rp ', ''));
-                if (!isNaN(total)) {
-                    grandTotal += total;
-                }
-            });
-            $('#grandTotal').val(grandTotal.toFixed(2));
-        }
-    </script> --}}
-    {{-- kurang dikit --}}
     <script>
         $(document).ready(function() {
+            // Initial update on page load
+            updateGrandTotal();
+
             $('#product-table-body').on('click', '.delete-row', function() {
                 $(this).closest('tr').remove();
                 updateGrandTotal();
@@ -494,6 +269,8 @@
                             row += '<td class="item-discount">0</td>';
                             row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
+                            row +=
+                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
                             row += '<td><input type="hidden" name="details[' + data.id + '_' +
                                 variantId + '][product_id]" value="' + data.id + '"></td>';
                             row += '<td><input type="hidden" name="details[' + data.id + '_' +
@@ -513,10 +290,7 @@
                                 '"></td>';
                             row +=
                                 '<td><input type="hidden" class="item-subtotal" name="details[' +
-                                data.id + '_' + variantId +
-                                '][subtotal]" value="0"></td>'; // Add this line
-                            row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
+                                data.id + '_' + variantId + '][subtotal]" value="0"></td>';
                             row += '</tr>';
 
                             $('#product-table-body').append(row);
@@ -528,26 +302,44 @@
 
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
-                var quantity = parseFloat($(this).val());
-                var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', ''));
-                var taxCost = parseFloat(row.find('td:eq(6)').text().replace('Rp ', ''));
+                var quantity = parseFloat($(this).val()) || 0;
+                var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
+                var taxCost = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
                 var totalCost = (unitCost + taxCost) * quantity;
 
                 row.find('.item-total').text('Rp ' + totalCost.toFixed(2));
-                row.find('.item-subtotal').val(totalCost.toFixed(2)); // Update the hidden subtotal input
+                row.find('.item-subtotal').val(totalCost.toFixed(2));
                 updateGrandTotal();
             });
-        });
 
-        function updateGrandTotal() {
-            var grandTotal = 0;
-            $('#product-table-body tr').each(function() {
-                var total = parseFloat($(this).find('.item-total').text().replace('Rp ', ''));
-                if (!isNaN(total)) {
-                    grandTotal += total;
-                }
+            $('#tax_rate, #discount, #shipping').on('input', function() {
+                updateGrandTotal();
             });
-            $('#grandTotal').val(grandTotal.toFixed(2));
-        }
+
+            function updateGrandTotal() {
+                var grandTotal = 0;
+                $('#product-table-body tr').each(function() {
+                    var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) || 0;
+                    if (!isNaN(total)) {
+                        grandTotal += total;
+                    }
+                });
+
+                var discount = parseFloat($('#discount').val()) || 0;
+                var shipping = parseFloat($('#shipping').val()) || 0;
+                var taxRate = parseFloat($('#tax_rate').val()) || 0;
+                var taxNet = (taxRate / 100) * grandTotal;
+
+                grandTotal = grandTotal - discount + shipping + taxNet;
+
+                $('#grandTotal').val(grandTotal.toFixed(2));
+
+                // Update the displayed values in the table
+                $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNet.toFixed(2)); // Order Tax
+                $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
+                $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
+                $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
+            }
+        });
     </script>
 @endpush
