@@ -192,9 +192,11 @@ class TransferController extends Controller
                 $orderDetails['product_variant_id'] = $value['product_variant_id'];
                 $orderDetails['cost'] = $value['Unit_cost'];
                 $orderDetails['TaxNet'] = $value['tax_percent'];
-                $orderDetails['tax_method'] = $value['tax_method'];
-                $orderDetails['discount'] = $value['discount'];
-                $orderDetails['discount_method'] = $value['discount_Method'];
+                // $orderDetails['tax_method'] = $value['tax_method'];
+                // $orderDetails['discount'] = $value['discount'];
+                // $orderDetails['tax_method'] = $value['tax_method'];
+                $orderDetails['discount'] = 0;
+                $orderDetails['discount_method'] = 'nodiscount';
                 $orderDetails['total'] = $value['subtotal'];
 
                 TransferDetail::insert($orderDetails);

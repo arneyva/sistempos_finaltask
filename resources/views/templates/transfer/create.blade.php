@@ -16,174 +16,6 @@
                     </div>
                     {{--  --}}
                     <div class="card-body">
-                        {{-- <form action="{{ route('transfer.store') }}" method="POST">
-                            @csrf
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="selectWarehouse">From Warehouse/Outlet *</label>
-                                    <select class="form-select" id="selectWarehouse" name="transfer.from_warehouse"
-                                        required>
-                                        <option selected disabled value="">Choose...</option>
-                                        @foreach ($warehouse as $wh)
-                                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="selectToWarehouse">To Warehouse/Outlet *</label>
-                                    <select class="form-select" id="selectToWarehouse" name="transfer[to_warehouse_id]"
-                                        required>
-                                        <option selected disabled value="">Choose...</option>
-                                        @foreach ($warehouse as $wh)
-                                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Date *</label>
-                                    <input type="date" class="form-control" id="exampleInputdate" name="transfer[date]"
-                                        value="{{ date('Y-m-d') }}">
-                                </div>
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="selectProduct">Product *</label>
-                                    <select class="form-select" id="selectProduct" disabled>
-                                        <option selected disabled value="">Choose warehouse first...</option>
-                                    </select>
-                                </div>
-                                <!-- Tambahkan bagian untuk menampilkan tabel produk -->
-                                <!-- Dalam contoh ini, tabel produk akan ditampilkan di bawah dropdown produk -->
-                                <div class="col-md-12 mb-3">
-                                    <div class="table-responsive">
-                                        <table id="product-table" class="table table-striped mb-0" role="grid">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Product</th>
-                                                    <th>Net Unit Cost</th>
-                                                    <th>Stock</th>
-                                                    <th>Quantity</th>
-                                                    <th>Discount</th>
-                                                    <th>Tax</th>
-                                                    <th>SubTotal</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="product-table-body">
-                                                <!-- Isi dari tbody akan diisi secara dinamis menggunakan JavaScript -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <table id="basic-table" class="table table-hover table-bordered table-sm"
-                                        role="grid">
-                                        <tbody>
-                                            <tr>
-                                                <td>Order Tax</td>
-                                                <th></th>
-                                            </tr>
-                                            <tr>
-                                                <td>Discount</td>
-                                                <th></th>
-                                            </tr>
-                                            <tr>
-                                                <td>Shipping</td>
-                                                <th></th>
-                                            </tr>
-                                            <tr>
-                                                <td>Grand Total</td>
-                                                <th><input type="number" id="grandTotal" name="GrandTotal" readonly></th>
-                                            </tr>
-                                    </table>
-                                </div>
-                                <div class="col-md-12 mb-3">
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="tax_rate">Order Tax *</label>
-                                            <div class="form-group input-group">
-                                                <input type="number" class="form-control" id="tax_rate"
-                                                    placeholder="input tax" name="transfer[tax_rate]"
-                                                    value="{{ Session::get('tax_rate') }}">
-                                                <span class="input-group-text" id="basic-addon1">%</span>
-                                            </div>
-                                            @error('tax_rate')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <input type="number" class="form-control" id="tax_rate" placeholder="input tax"
-                                            name="transfer[TaxNet]" value="{{ Session::get('tax_rate') }}">
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="discount">Discount *</label>
-                                            <div class="form-group input-group">
-                                                <input type="number" class="form-control" id="discount"
-                                                    placeholder="input discount" name="transfer[discount]"
-                                                    value="{{ Session::get('discount') }}">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
-                                            </div>
-                                            @error('discount')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="shipping">Shipping *</label>
-                                            <div class="form-group input-group">
-                                                <input type="number" class="form-control" id="shipping"
-                                                    placeholder="input shipping" name="transfer[shipping]"
-                                                    value="{{ Session::get('shipping') }}">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
-                                            </div>
-                                            @error('shipping')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="brand">Status</label>
-                                    <select class="form-select select2" id="brand" name="transfer[statut]"
-                                        data-placeholder="Select a Brand ">
-                                        <option selected disabled value="">Choose...</option>
-                                        <option value="sent">Sent</option>
-                                        <option value="completed">Completed</option>
-                                    </select>
-                                    @error('statut')
-                                        <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                            role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                            <span style="margin-left: 3px"> {{ $message }}</span>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
-                                                aria-label="Close"
-                                                style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                        </div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="validationDefault05">Description</label>
-                                    <input type="text" class="form-control" id="validationDefault05"
-                                        name="transfer[notes]" placeholder="a few words...">
-                                </div>
-                            </div>
-                            <div class="form-group mt-2">
-                                <button class="btn btn-primary" type="submit">Submit form</button>
-                            </div>
-                        </form> --}}
                         <form action="{{ route('transfer.store') }}" method="POST">
                             @csrf
                             <div class="row">
@@ -258,7 +90,8 @@
                                             </tr>
                                             <tr>
                                                 <td>Grand Total</td>
-                                                <th><input type="number" id="grandTotal" name="GrandTotal" readonly></th>
+                                                <th><input class="form-control" type="number" id="grandTotal"
+                                                        name="GrandTotal" readonly></th>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -391,7 +224,7 @@
         });
     </script>
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             // Fungsi untuk menambahkan event listener untuk tombol delete di dalam tbody
             $('#product-table-body').on('click', '.delete-row', function() {
@@ -447,16 +280,16 @@
                             var row = '<tr>';
                             row += '<td>#</td>';
                             row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-                            row += '<td>' + data.fix_cost + '</td>';
-                            row += '<td>' + data.qty + '</td>';
+                            row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
+                            row += '<td >' + data.qty + ' ' + data.unitPurchase + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control item-quantity" name="details[' +
                                 data.id + '_' + variantId +
                                 '][quantity]" value="0" min="0"></td>';
                             row += '<td class="item-price">0</td>'; //discount
-                            row += '<td>$' + data.tax_cost + '</td>'; //tax
-                            row += '<td class="item-total">' + data.Total_cost +
-                            '</td>'; //subtotal
+                            row += '<td>' + 'Rp ' + data.tax_cost + '</td>'; //tax
+                            row += '<td class="item-total">' + 'Rp ' + data.Total_cost +
+                                '</td>'; //subtotal
                             row += '<td><input type="hidden" name="details[' + data.id + '_' +
                                 variantId + '][product_id]" value="' + data.id + '"></td>';
                             row += '<td><input type="hidden" name="details[' + data.id + '_' +
@@ -491,6 +324,227 @@
                 var price = parseFloat($(this).find('.item-price').text());
                 if (!isNaN(price)) {
                     grandTotal += price;
+                }
+            });
+            $('#grandTotal').val(grandTotal.toFixed(2));
+        }
+    </script> --}}
+    {{-- kurang dikit --}}
+    {{-- <script>
+        $(document).ready(function() {
+            $('#product-table-body').on('click', '.delete-row', function() {
+                $(this).closest('tr').remove();
+                updateGrandTotal();
+            });
+
+            $('#selectWarehouse').on('change', function() {
+                var warehouseId = $(this).val();
+                if (warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#selectProduct').empty().append(
+                                '<option selected disabled value="">Choose...</option>');
+                            $.each(data, function(key, value) {
+                                $('#selectProduct').append('<option value="' + value
+                                    .id + '" data-variant-id="' + value
+                                    .product_variant_id + '">' + value.name +
+                                    '</option>');
+                            });
+                            $('#selectProduct').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#selectProduct').empty().prop('disabled', true);
+                }
+            });
+
+            $('#selectProduct').on('change', function() {
+                var productId = $(this).val();
+                var warehouseId = $('#selectWarehouse').val();
+                var variantId = $(this).find(':selected').data('variant-id') || null;
+
+                if (productId && warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
+                            warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            var row = '<tr>';
+                            row += '<td>#</td>';
+                            row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
+                            row += '<td >' + 'Rp ' + data.Unit_cost + '</td>';
+                            row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
+                            row +=
+                                '<td><input type="number" class="form-control item-quantity" name="details[' +
+                                data.id + '_' + variantId +
+                                '][quantity]" value="0" min="0"></td>';
+                            row += '<td class="item-discount">0</td>';
+                            row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
+                            row += '<td class="item-total">Rp 0</td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][product_id]" value="' + data.id +
+                                '"></td>'; //product_id
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][product_variant_id]" value="' + (variantId ||
+                                    '') + '"></td>'; //product_variant_id
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][purchase_unit_id]" value="' + data
+                                .purchase_unit_id + '"></td>'; //purchase_id
+                            // 
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][Unit_cost]" value="' + data.Unit_cost +
+                                '"></td>'; //unit cost
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][tax_percent]" value="' + data.tax_percent +
+                                '"></td>'; //tax persen
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][tax_method]" value="' + data.tax_method +
+                                '"></td>'; //tax method
+                            row +=
+                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
+                            row += '</tr>';
+
+                            $('#product-table-body').append(row);
+                            updateGrandTotal();
+                        }
+                    });
+                }
+            });
+
+            $('#product-table-body').on('input', '.item-quantity', function() {
+                var row = $(this).closest('tr');
+                var quantity = parseFloat($(this).val());
+                var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', ''));
+                var taxCost = parseFloat(row.find('td:eq(6)').text().replace('Rp ', ''));
+                var totalCost = (unitCost + taxCost) * quantity;
+
+                row.find('.item-total').text('Rp ' + totalCost.toFixed(2));
+                updateGrandTotal();
+            });
+        });
+
+        function updateGrandTotal() {
+            var grandTotal = 0;
+            $('#product-table-body tr').each(function() {
+                var total = parseFloat($(this).find('.item-total').text().replace('Rp ', ''));
+                if (!isNaN(total)) {
+                    grandTotal += total;
+                }
+            });
+            $('#grandTotal').val(grandTotal.toFixed(2));
+        }
+    </script> --}}
+    {{-- kurang dikit --}}
+    <script>
+        $(document).ready(function() {
+            $('#product-table-body').on('click', '.delete-row', function() {
+                $(this).closest('tr').remove();
+                updateGrandTotal();
+            });
+
+            $('#selectWarehouse').on('change', function() {
+                var warehouseId = $(this).val();
+                if (warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#selectProduct').empty().append(
+                                '<option selected disabled value="">Choose...</option>');
+                            $.each(data, function(key, value) {
+                                $('#selectProduct').append('<option value="' + value
+                                    .id + '" data-variant-id="' + value
+                                    .product_variant_id + '">' + value.name +
+                                    '</option>');
+                            });
+                            $('#selectProduct').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#selectProduct').empty().prop('disabled', true);
+                }
+            });
+
+            $('#selectProduct').on('change', function() {
+                var productId = $(this).val();
+                var warehouseId = $('#selectWarehouse').val();
+                var variantId = $(this).find(':selected').data('variant-id') || null;
+
+                if (productId && warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
+                            warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            var row = '<tr>';
+                            row += '<td>#</td>';
+                            row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
+                            row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
+                            row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
+                            row +=
+                                '<td><input type="number" class="form-control item-quantity" name="details[' +
+                                data.id + '_' + variantId +
+                                '][quantity]" value="0" min="0"></td>';
+                            row += '<td class="item-discount">0</td>';
+                            row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
+                            row += '<td class="item-total">Rp 0</td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][product_id]" value="' + data.id + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][product_variant_id]" value="' + (variantId ||
+                                    '') + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][purchase_unit_id]" value="' + data
+                                .purchase_unit_id + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][Unit_cost]" value="' + data.Unit_cost +
+                                '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][tax_percent]" value="' + data.tax_percent +
+                                '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][tax_method]" value="' + data.tax_method +
+                                '"></td>';
+                            row +=
+                                '<td><input type="hidden" class="item-subtotal" name="details[' +
+                                data.id + '_' + variantId +
+                                '][subtotal]" value="0"></td>'; // Add this line
+                            row +=
+                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
+                            row += '</tr>';
+
+                            $('#product-table-body').append(row);
+                            updateGrandTotal();
+                        }
+                    });
+                }
+            });
+
+            $('#product-table-body').on('input', '.item-quantity', function() {
+                var row = $(this).closest('tr');
+                var quantity = parseFloat($(this).val());
+                var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', ''));
+                var taxCost = parseFloat(row.find('td:eq(6)').text().replace('Rp ', ''));
+                var totalCost = (unitCost + taxCost) * quantity;
+
+                row.find('.item-total').text('Rp ' + totalCost.toFixed(2));
+                row.find('.item-subtotal').val(totalCost.toFixed(2)); // Update the hidden subtotal input
+                updateGrandTotal();
+            });
+        });
+
+        function updateGrandTotal() {
+            var grandTotal = 0;
+            $('#product-table-body tr').each(function() {
+                var total = parseFloat($(this).find('.item-total').text().replace('Rp ', ''));
+                if (!isNaN(total)) {
+                    grandTotal += total;
                 }
             });
             $('#grandTotal').val(grandTotal.toFixed(2));
