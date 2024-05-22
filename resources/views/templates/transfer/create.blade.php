@@ -330,6 +330,7 @@
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
                 var taxNet = (taxRate / 100) * grandTotal;
 
+                $('#tax_net').val(taxNet.toFixed(2));
                 grandTotal = grandTotal - discount + shipping + taxNet;
 
                 $('#grandTotal').val(grandTotal.toFixed(2));
