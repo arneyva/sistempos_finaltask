@@ -635,6 +635,21 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-form" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
+                            <a class="nav-link " href="{{ route('transfer.create') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> E </i>
+                                <span class="item-name">Create Transfer</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link " href="{{ route('transfer.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
@@ -647,36 +662,6 @@
                                 </i>
                                 <i class="sidenav-mini-icon"> E </i>
                                 <span class="item-name">All Transfer</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/form/form-wizard.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> W </i>
-                                <span class="item-name">Wizard</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/form/form-validation.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> V </i>
-                                <span class="item-name">Validation</span>
                             </a>
                         </li>
                     </ul>
@@ -745,29 +730,29 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-people" role="button"
-                            aria-expanded="false" aria-controls="sidebar-people">
-                            <i class="icon">
-                                <svg class="icon-20" xmlns="http://www.w3.org/2000/svg" width="20"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M2 5C2 4.44772 2.44772 4 3 4H8.66667H21C21.5523 4 22 4.44772 22 5V8H15.3333H8.66667H2V5Z"
-                                        fill="currentColor" stroke="currentColor" />
-                                    <path
-                                        d="M6 8H2V11M6 8V20M6 8H14M6 20H3C2.44772 20 2 19.5523 2 19V11M6 20H14M14 8H22V11M14 8V20M14 20H21C21.5523 20 22 19.5523 22 19V11M2 11H22M2 14H22M2 17H22M10 8V20M18 8V20"
-                                        stroke="currentColor" />
-                                </svg>
-                            </i>
-                            <span class="item-name">People</span>
-                            <i class="right-icon">
-                                <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5l7 7-7 7" />
-                                </svg>
-                            </i>
-                        </a>
-                        <ul class="sub-nav collapse" id="sidebar-people" data-bs-parent="#sidebar-menu">
-                            @role('superadmin')
+                        aria-expanded="false" aria-controls="sidebar-people">
+                        <i class="icon">
+                            <svg class="icon-20" xmlns="http://www.w3.org/2000/svg" width="20"
+                                viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M2 5C2 4.44772 2.44772 4 3 4H8.66667H21C21.5523 4 22 4.44772 22 5V8H15.3333H8.66667H2V5Z"
+                                    fill="currentColor" stroke="currentColor" />
+                                <path
+                                    d="M6 8H2V11M6 8V20M6 8H14M6 20H3C2.44772 20 2 19.5523 2 19V11M6 20H14M14 8H22V11M14 8V20M14 20H21C21.5523 20 22 19.5523 22 19V11M2 11H22M2 14H22M2 17H22M10 8V20M18 8V20"
+                                    stroke="currentColor" />
+                            </svg>
+                        </i>
+                        <span class="item-name">People</span>
+                        <i class="right-icon">
+                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                        </i>
+                    </a>
+                    <ul class="sub-nav collapse" id="sidebar-people" data-bs-parent="#sidebar-menu">
+                        @role('superadmin')
                             <li class="nav-item">
                                 <a class="nav-link " href="{{ route('people.users.index') }}">
                                     <i class="icon">
@@ -783,23 +768,23 @@
                                     <span class="item-name">User</span>
                                 </a>
                             </li>
-                            @endrole
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('people.clients.index') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> D </i>
-                                    <span class="item-name">Customer</span>
-                                </a>
-                            </li>
-                            @hasanyrole('superadmin|inventaris')
+                        @endrole
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ route('people.clients.index') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> D </i>
+                                <span class="item-name">Customer</span>
+                            </a>
+                        </li>
+                        @hasanyrole('superadmin|inventaris')
                             <li class="nav-item">
                                 <a class="nav-link " href="../dashboard/table/table-data.html">
                                     <i class="icon">
@@ -815,12 +800,12 @@
                                     <span class="item-name">Supplier</span>
                                 </a>
                             </li>
-                            @endhasanyrole
-                        </ul>
-                    </li>
-                    <li>
-                        <hr class="hr-horizontal">
-                    </li>
+                        @endhasanyrole
+                    </ul>
+                </li>
+                <li>
+                    <hr class="hr-horizontal">
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-settings" role="button"
                         aria-expanded="false" aria-controls="sidebar-settings">
@@ -876,21 +861,21 @@
                             </a>
                         </li>
                         @role('superadmin')
-                        <li class="nav-item">
-                            <a class="nav-link "href="{{ route('settings.membership.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> C </i>
-                                <span class="item-name">Membership</span>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link "href="{{ route('settings.membership.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> C </i>
+                                    <span class="item-name">Membership</span>
+                                </a>
+                            </li>
                         @endrole
                     </ul>
                 </li>
