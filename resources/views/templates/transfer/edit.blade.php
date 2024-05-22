@@ -71,6 +71,16 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="product-table-body">
+                                                @foreach ($details as $detail)
+                                                    <td>#</td>
+                                                    <td>{{ $detail['name'] }}</td>
+                                                    <td>{{ $detail['Net_cost'] }}</td>
+                                                    <td>{{ $detail['quantity'] }}</td>
+                                                    <td>{{ $detail['quantity'] }}</td>
+                                                    <td>{{ $detail['DiscountNet'] }}</td>
+                                                    <td>{{ $detail['taxe'] }}</td>
+                                                    <td>{{ $detail['subtotal'] }}</td>
+                                                @endforeach
                                                 <!-- Isi dari tbody akan diisi secara dinamis menggunakan JavaScript -->
                                             </tbody>
                                         </table>
@@ -106,7 +116,7 @@
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="tax_rate"
                                                     placeholder="input tax" name="transfer[tax_rate]"
-                                                    value="{{ old('transfer.tax_rate') }}">
+                                                    value="{{ $transfer['tax_rate'] }}">
                                                 <span class="input-group-text" id="basic-addon1">%</span>
                                             </div>
                                             @error('transfer.tax_rate')
@@ -128,7 +138,7 @@
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="discount"
                                                     placeholder="input discount" name="transfer[discount]"
-                                                    value="{{ old('transfer.discount') }}">
+                                                    value="{{ $transfer['discount'] }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
                                             @error('transfer.discount')
@@ -146,7 +156,7 @@
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="shipping"
                                                     placeholder="input shipping" name="transfer[shipping]"
-                                                    value="{{ old('transfer.shipping') }}">
+                                                    value="{{ $transfer['shipping'] }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
                                             @error('transfer.shipping')
@@ -163,7 +173,8 @@
                                             <label class="form-label" for="status">Status *</label>
                                             <select class="form-select select2" id="status" name="transfer[statut]"
                                                 required data-placeholder="Select a Status">
-                                                <option selected disabled value="">Choose...</option>
+                                                <option value="{{ $transfer['statut'] }}">{{ $transfer['statut'] }}
+                                                </option>
                                                 <option value="sent">Sent</option>
                                                 <option value="completed">Completed</option>
                                             </select>
