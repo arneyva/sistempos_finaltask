@@ -521,7 +521,7 @@ class AdjustmentController extends Controller
             foreach ($new_adjustment_details as $new_detail) {
                 $new_products_id[] = $new_detail['id'];
             }
-            dd($new_products_id);
+            // dd($new_products_id);
             $old_products_id = [];
             // Init Data with old Parametre
             foreach ($old_adjustment_details as $key => $value) {
@@ -645,7 +645,7 @@ class AdjustmentController extends Controller
                     AdjustmentDetail::where('id', $product_detail['id'])->update($orderDetails);
                 }
             }
-
+            // dd($request->all());
             $current_adjustment->update([
                 'warehouse_id' => $request['warehouse_id'],
                 'notes' => $request['notes'],

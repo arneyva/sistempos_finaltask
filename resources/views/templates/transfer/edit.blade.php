@@ -286,8 +286,6 @@
                     $('#selectProduct').empty().prop('disabled', true);
                 }
             });
-
-
             $('#selectProduct').on('change', function() {
                 var productId = $(this).val();
                 var warehouseId = $('#selectWarehouse').val();
@@ -306,44 +304,51 @@
                             row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
                             row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
                             row +=
-                                '<td><input type="number" class="form-control item-quantity" name="details[' +
-                                data.id + '_' + variantId +
+                                '<td><input type="number" class="form-control item-quantity" name="details[new-' +
+                                newIndex +
                                 '][quantity]" value="0" min="0" data-unit-cost="' + data
                                 .Unit_cost + '" data-tax-percent="' + data.tax_percent +
-                                '" data-tax-method="' + data.tax_method + '"></td>';
+                                '" data-tax-method="' + data.tax_method + '"></td>'; //quantity
                             row += '<td class="item-discount">0</td>';
                             row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][id]" value="new"></td>'; //ini id coy
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][no_unit]" value="1"></td>'; //ini id coy
                             row +=
                                 '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_variant_id]" value="' + (variantId ||
-                                    '') + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][purchase_unit_id]" value="' + data
-                                .purchase_unit_id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][Unit_cost]" value="' + data.Unit_cost +
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][product_id]" value="' + data.id +
+                                '"></td>'; //produk id
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][product_variant_id]" value="' + (variantId ||
+                                    '') + '"></td>'; //variant id
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][purchase_unit_id]" value="' + data
+                                .purchase_unit_id + '"></td>'; //purchase unit id
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][Unit_cost]" value="' + data.Unit_cost +
+                                '"></td>'; //unit cost
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][tax_percent]" value="' + data.tax_percent +
                                 '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][tax_percent]" value="' + data.tax_percent +
-                                '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][tax_method]" value="' + data.tax_method +
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][tax_method]" value="' + data.tax_method +
                                 '"></td>';
                             row +=
-                                '<td><input type="hidden" class="item-subtotal" name="details[' +
-                                data.id + '_' + variantId + '][subtotal]" value="0"></td>';
+                                '<td><input type="hidden" class="item-subtotal" name="details[new-' +
+                                newIndex + '][subtotal]" value="0"></td>';
                             row += '</tr>';
 
                             $('#product-table-body').append(row);
+                            newIndex++;
                             updateGrandTotal();
                         }
                     });
                 }
             });
+
 
             function loadProductsByWarehouse(warehouseId) {
                 if (warehouseId) {
@@ -429,5 +434,63 @@
                 $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
             }
         });
+    </script>
+    <script>
+        // $('#selectProduct').on('change', function() {
+        //     var productId = $(this).val();
+        //     var warehouseId = $('#selectWarehouse').val();
+        //     var variantId = $(this).find(':selected').data('variant-id') || null;
+
+        //     if (productId && warehouseId) {
+        //         $.ajax({
+        //             url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
+        //                 warehouseId,
+        //             type: "GET",
+        //             dataType: "json",
+        //             success: function(data) {
+        //                 var row = '<tr>';
+        //                 row += '<td>#</td>';
+        //                 row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
+        //                 row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
+        //                 row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
+        //                 row +=
+        //                     '<td><input type="number" class="form-control item-quantity" name="details[' +
+        //                     data.id + '_' + variantId +
+        //                     '][quantity]" value="0" min="0" data-unit-cost="' + data
+        //                     .Unit_cost + '" data-tax-percent="' + data.tax_percent +
+        //                     '" data-tax-method="' + data.tax_method + '"></td>';
+        //                 row += '<td class="item-discount">0</td>';
+        //                 row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
+        //                 row += '<td class="item-total">Rp 0</td>';
+        //                 row +=
+        //                     '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
+        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
+        //                     variantId + '][product_id]" value="' + data.id + '"></td>';
+        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
+        //                     variantId + '][product_variant_id]" value="' + (variantId ||
+        //                         '') + '"></td>';
+        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
+        //                     variantId + '][purchase_unit_id]" value="' + data
+        //                     .purchase_unit_id + '"></td>';
+        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
+        //                     variantId + '][Unit_cost]" value="' + data.Unit_cost +
+        //                     '"></td>';
+        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
+        //                     variantId + '][tax_percent]" value="' + data.tax_percent +
+        //                     '"></td>';
+        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
+        //                     variantId + '][tax_method]" value="' + data.tax_method +
+        //                     '"></td>';
+        //                 row +=
+        //                     '<td><input type="hidden" class="item-subtotal" name="details[' +
+        //                     data.id + '_' + variantId + '][subtotal]" value="0"></td>';
+        //                 row += '</tr>';
+
+        //                 $('#product-table-body').append(row);
+        //                 updateGrandTotal();
+        //             }
+        //         });
+        //     }
+        // });
     </script>
 @endpush
