@@ -93,6 +93,25 @@
                                                                 name="details[{{ $loop->index }}][subtotal]"
                                                                 value="{{ $detail['subtotal'] }}">
                                                         </td>
+                                                        <input type="hidden" name="details[{{ $loop->index }}][id]"
+                                                            value="{{ $detail['id'] }}">
+                                                        <input type="hidden" name="details[{{ $loop->index }}][no_unit]"
+                                                            value="{{ $detail['no_unit'] }}">
+                                                        <input type="hidden"
+                                                            name="details[{{ $loop->index }}][purchase_unit_id]"
+                                                            value="{{ $detail['purchase_unit_id'] }}">
+                                                        <input type="hidden"
+                                                            name="details[{{ $loop->index }}][product_variant_id]"
+                                                            value="{{ $detail['product_variant_id'] }}">
+                                                        <input type="hidden"
+                                                            name="details[{{ $loop->index }}][product_id]"
+                                                            value="{{ $detail['product_id'] }}">
+                                                        <input type="hidden"
+                                                            name="details[{{ $loop->index }}][Unit_cost]"
+                                                            value="{{ $detail['Unit_cost'] }}">
+                                                        <input type="hidden"
+                                                            name="details[{{ $loop->index }}][tax_percent]"
+                                                            value="{{ $detail['tax_percent'] }}">
                                                         <td>
                                                             <button type="button"
                                                                 class="btn btn-danger btn-sm delete-row">Delete</button>
@@ -211,7 +230,9 @@
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="exampleFormControlTextarea1">Note</label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="transfer[notes]">{{ old('transfer.notes') }}</textarea>
+                                    {{-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="transfer[notes]">{{ old('transfer.notes') }}</textarea> --}}
+                                    <input type="text" class="form-control" id="exampleFormControlTextarea1"
+                                        rows="3" name="transfer[notes]" value="{{ $transfer['notes'] }}">
                                 </div>
                                 <div class="col-md-12">
                                     <button type="submit" class="btn btn-primary">Add Transfer</button>
@@ -247,6 +268,7 @@
     </script>
     <script>
         $(document).ready(function() {
+            let newIndex = 0;
             // Initial update on page load
             updateGrandTotal();
 

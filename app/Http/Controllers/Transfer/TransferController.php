@@ -22,7 +22,7 @@ class TransferController extends Controller
      */
     public function index()
     {
-        $transfer = Transfer::with('from_warehouse', 'to_warehouse')->where('deleted_at', '=', null)->get();
+        $transfer = Transfer::with('from_warehouse', 'to_warehouse')->where('deleted_at', '=', null)->latest()->get();
 
         // dd($transfer);
         return view('templates.transfer.index', ['transfer' => $transfer]);
@@ -381,7 +381,7 @@ class TransferController extends Controller
             'transfer.to_warehouse' => 'required',
             'transfer.from_warehouse' => 'required',
         ]);
-        dd($request->all());
+        // dd($request->all());
         \DB::transaction(function () use ($request, $id) {
 
             $current_Transfer = Transfer::findOrFail($id);
@@ -392,10 +392,11 @@ class TransferController extends Controller
 
             // Get Ids details
             $new_products_id = [];
+            // dd($new_products_id); adjustment juga kosong
             foreach ($data as $new_detail) {
                 $new_products_id[] = $new_detail['id'];
             }
-
+            // dd($data);
             // Init Data with old Parametre
             $old_products_id = [];
             foreach ($Old_Details as $key => $value) {
@@ -624,9 +625,9 @@ class TransferController extends Controller
                     $TransDetail['product_variant_id'] = $product_detail['product_variant_id'];
                     $TransDetail['cost'] = $product_detail['Unit_cost'];
                     $TransDetail['TaxNet'] = $product_detail['tax_percent'];
-                    $TransDetail['tax_method'] = $product_detail['tax_method'];
-                    $TransDetail['discount'] = $product_detail['discount'];
-                    $TransDetail['discount_method'] = $product_detail['discount_Method'];
+                    // $TransDetail['tax_method'] = $product_detail['tax_method'];
+                    // $TransDetail['discount'] = $product_detail['discount'];
+                    // $TransDetail['discount_method'] = $product_detail['discount_Method'];
                     $TransDetail['total'] = $product_detail['subtotal'];
 
                     if (! in_array($product_detail['id'], $old_products_id)) {
@@ -652,7 +653,8 @@ class TransferController extends Controller
             ]);
         }, 10);
 
-        return response()->json(['success' => true]);
+        // return response()->json(['success' => true]);
+        return redirect()->route('transfer.index')->with('success', 'Transfer updated successfully');
     }
 
     /**

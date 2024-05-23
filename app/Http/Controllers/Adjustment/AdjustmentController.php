@@ -521,6 +521,7 @@ class AdjustmentController extends Controller
             foreach ($new_adjustment_details as $new_detail) {
                 $new_products_id[] = $new_detail['id'];
             }
+            dd($new_products_id);
             $old_products_id = [];
             // Init Data with old Parametre
             foreach ($old_adjustment_details as $key => $value) {
@@ -654,7 +655,7 @@ class AdjustmentController extends Controller
         }, 10);
 
         // return response()->json(['success' => true]);
-        return redirect()->route('adjustment.index');
+        return redirect()->route('adjustment.index')->with('success', 'Adjustment updated successfully');
     }
 
     /**
