@@ -509,10 +509,7 @@ class AdjustmentController extends Controller
     public function update(Request $request, string $id)
     {
         $current_adjustment = Adjustment::findOrFail($id);
-        // request()->validate([
-        //     'warehouse_id' => 'required',
-        // ]);
-
+        // dd($request->all());
         \DB::transaction(function () use ($request, $id, $current_adjustment) {
 
             $old_adjustment_details = AdjustmentDetail::where('adjustment_id', $id)->get();
@@ -521,13 +518,10 @@ class AdjustmentController extends Controller
 
             // Get Ids for new Details
             $new_products_id = [];
-            // dd($new_adjustment_details); ada datanya
             foreach ($new_adjustment_details as $new_detail) {
                 $new_products_id[] = $new_detail['id'];
             }
-            // dd($new_products_id);
             $old_products_id = [];
-            // dd($old_products_id);
             // Init Data with old Parametre
             foreach ($old_adjustment_details as $key => $value) {
                 $old_products_id[] = $value->id;

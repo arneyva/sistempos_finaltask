@@ -72,14 +72,32 @@
                                             </thead>
                                             <tbody id="product-table-body">
                                                 @foreach ($details as $detail)
-                                                    <td>#</td>
-                                                    <td>{{ $detail['name'] }}</td>
-                                                    <td>{{ $detail['Net_cost'] }}</td>
-                                                    <td>{{ $detail['quantity'] }}</td>
-                                                    <td>{{ $detail['quantity'] }}</td>
-                                                    <td>{{ $detail['DiscountNet'] }}</td>
-                                                    <td>{{ $detail['taxe'] }}</td>
-                                                    <td>{{ $detail['subtotal'] }}</td>
+                                                    <tr>
+                                                        <td>#</td>
+                                                        <td>{{ $detail['name'] }}</td>
+                                                        <td>{{ $detail['Net_cost'] }}</td>
+                                                        <td>{{ $detail['stock'] }}</td>
+                                                        <td>
+                                                            <input type="number" class="form-control item-quantity"
+                                                                name="details[{{ $loop->index }}][quantity]"
+                                                                value="{{ $detail['quantity'] }}" min="0"
+                                                                data-unit-cost="{{ $detail['Net_cost'] }}"
+                                                                data-tax-percent="{{ $detail['tax_percent'] }}"
+                                                                data-tax-method="{{ $detail['tax_method'] }}">
+                                                        </td>
+                                                        <td>Rp. {{ $detail['DiscountNet'] }}</td>
+                                                        <td>Rp. {{ $detail['taxe'] }}</td>
+                                                        <td class="item-total">Rp. {{ $detail['subtotal'] }}</td>
+                                                        <td>
+                                                            <input type="hidden" class="item-subtotal"
+                                                                name="details[{{ $loop->index }}][subtotal]"
+                                                                value="{{ $detail['subtotal'] }}">
+                                                        </td>
+                                                        <td>
+                                                            <button type="button"
+                                                                class="btn btn-danger btn-sm delete-row">Delete</button>
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
                                                 <!-- Isi dari tbody akan diisi secara dinamis menggunakan JavaScript -->
                                             </tbody>
@@ -131,8 +149,9 @@
                                         </div>
                                         <input type="hidden" class="form-control" id="tax_net"
                                             placeholder="input tax net" name="transfer[TaxNet]"
-                                            value="{{ old('transfer.TaxNet') }}">
-                                        <input class="" type="hidden" id="grandTotal" name="GrandTotal">
+                                            value="{{ $transfer['TaxNet'] }}">
+                                        <input class="" type="hidden" id="grandTotal" name="GrandTotal"
+                                            value="{{ $transfer['GrandTotal'] }}">
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label" for="discount">Discount *</label>
                                             <div class="form-group input-group">
@@ -267,7 +286,9 @@
                             row +=
                                 '<td><input type="number" class="form-control item-quantity" name="details[' +
                                 data.id + '_' + variantId +
-                                '][quantity]" value="0" min="0"></td>';
+                                '][quantity]" value="0" min="0" data-unit-cost="' + data
+                                .Unit_cost + '" data-tax-percent="' + data.tax_percent +
+                                '" data-tax-method="' + data.tax_method + '"></td>';
                             row += '<td class="item-discount">0</td>';
                             row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
@@ -346,24 +367,41 @@
 
             function updateGrandTotal() {
                 var grandTotal = 0;
+                var taxNet = 0;
                 $('#product-table-body tr').each(function() {
-                    var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) || 0;
-                    if (!isNaN(total)) {
-                        grandTotal += total;
+                    var row = $(this);
+                    var quantity = parseFloat(row.find('.item-quantity').val()) || 0;
+                    var unitCost = parseFloat(row.find('.item-quantity').data('unit-cost')) || 0;
+                    var taxPercent = parseFloat(row.find('.item-quantity').data('tax-percent')) || 0;
+                    var taxMethod = row.find('.item-quantity').data('tax-method');
+                    var total = quantity * unitCost;
+                    var tax = 0;
+
+                    if (taxMethod === 'inclusive') {
+                        tax = (total * taxPercent) / (100 + taxPercent);
+                    } else {
+                        tax = (total * taxPercent) / 100;
                     }
+
+                    var subtotal = total + tax;
+                    row.find('.item-total').text('Rp ' + subtotal.toFixed(2));
+                    row.find('.item-subtotal').val(subtotal.toFixed(2));
+                    grandTotal += subtotal;
+                    taxNet += tax;
                 });
 
                 var discount = parseFloat($('#discount').val()) || 0;
                 var shipping = parseFloat($('#shipping').val()) || 0;
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
-                var taxNet = (taxRate / 100) * grandTotal;
+                var taxNetFromRate = (taxRate / 100) * grandTotal;
 
-                grandTotal = grandTotal - discount + shipping + taxNet;
+                grandTotal = grandTotal - discount + shipping + taxNetFromRate;
 
+                $('#tax_net').val(taxNet.toFixed(2));
                 $('#grandTotal').val(grandTotal.toFixed(2));
 
                 // Update the displayed values in the table
-                $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNet.toFixed(2)); // Order Tax
+                $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNetFromRate.toFixed(2)); // Order Tax
                 $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
                 $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
                 $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
