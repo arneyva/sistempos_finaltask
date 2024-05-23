@@ -119,7 +119,7 @@
 @endsection
 
 @push('script')
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             $('#product-table-body').on('click', '.delete-row', function() {
                 $(this).closest('tr').remove();
@@ -171,6 +171,94 @@
                             row += '</tr>';
 
                             $('#product-table-body').append(row);
+                        }
+                    });
+                }
+            });
+
+            function loadProductsByWarehouse(warehouseId) {
+                if (warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#selectProduct').empty().append(
+                                '<option selected disabled value="">Choose...</option>');
+                            $.each(data, function(key, value) {
+                                $('#selectProduct').append('<option value="' + value.id +
+                                    '" data-variant-id="' + value.product_variant_id +
+                                    '">' + value.name + '</option>');
+                            });
+                            $('#selectProduct').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#selectProduct').empty().prop('disabled', true);
+                }
+            }
+
+            var initialWarehouseId = $('#selectWarehouse').val();
+            if (initialWarehouseId) {
+                loadProductsByWarehouse(initialWarehouseId);
+            }
+        });
+    </script> --}}
+    <script>
+        $(document).ready(function() {
+            let newIndex = 0;
+
+            $('#product-table-body').on('click', '.delete-row', function() {
+                $(this).closest('tr').remove();
+            });
+
+            $('#selectWarehouse').on('change', function() {
+                var warehouseId = $(this).val();
+                if (warehouseId) {
+                    // Mengirimkan nilai warehouse_id ke server
+                    $('input[name="warehouse_id"]').val(warehouseId);
+                    loadProductsByWarehouse(warehouseId);
+                } else {
+                    $('#selectProduct').empty().prop('disabled', true);
+                }
+            });
+
+            $('#selectProduct').on('change', function() {
+                var productId = $(this).val();
+                var warehouseId = $('#selectWarehouse').val();
+                var variantId = $(this).find(':selected').data('variant-id') || null;
+
+                if (productId && warehouseId) {
+                    $.ajax({
+                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
+                            warehouseId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            var row = '<tr>';
+                            row += '<td>#</td>';
+                            row += '<td>' + data.code + '</td>';
+                            row += '<td>' + data.name + '</td>';
+                            row += '<td>' + data.qty + '</td>';
+                            row +=
+                                '<td><input type="number" class="form-control" name="details[new-' +
+                                newIndex + '][quantity]" value="0" min="0"></td>';
+                            row += '<td><select class="form-select" name="details[new-' +
+                                newIndex +
+                                '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][id]" value="new"></td>';
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][product_id]" value="' + data.id + '"></td>';
+                            row += '<td><input type="hidden" name="details[new-' + newIndex +
+                                '][product_variant_id]" value="' + (variantId || '') +
+                                '"></td>';
+                            row +=
+                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
+                            row += '</tr>';
+
+                            $('#product-table-body').append(row);
+                            newIndex++;
                         }
                     });
                 }

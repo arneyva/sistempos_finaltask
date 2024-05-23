@@ -254,6 +254,7 @@ class TransferController extends Controller
             $transfer['to_warehouse'] = '';
         }
         $transfer['id'] = $Transfer_data->id;
+        $transfer['GrandTotal'] = $Transfer_data->GrandTotal;
         $transfer['statut'] = $Transfer_data->statut;
         $transfer['notes'] = $Transfer_data->notes;
         $transfer['date'] = $Transfer_data->date;
@@ -376,24 +377,14 @@ class TransferController extends Controller
     public function update(Request $request, $id)
     {
 
-        // $this->authorizeForUser($request->user('api'), 'update', Transfer::class);
-
         request()->validate([
             'transfer.to_warehouse' => 'required',
             'transfer.from_warehouse' => 'required',
         ]);
         dd($request->all());
         \DB::transaction(function () use ($request, $id) {
-            // $role = Auth::user()->roles()->first();
-            // $view_records = Role::findOrFail($role->id)->inRole('record_view');
+
             $current_Transfer = Transfer::findOrFail($id);
-
-            // // Check If User Has Permission view All Records
-            // if (!$view_records) {
-            //     // Check If User->id === Transfer->id
-            //     $this->authorizeForUser($request->user('api'), 'check_record', $current_Transfer);
-            // }
-
             $Old_Details = TransferDetail::where('transfer_id', $id)->get();
             $data = $request['details'];
             $Trans = $request->transfer;
