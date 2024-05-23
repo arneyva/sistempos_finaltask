@@ -247,7 +247,7 @@
                                 newIndex +
                                 '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
                             row += '<td><input type="hidden" name="details[new-' + newIndex +
-                                '][id]" value="new"></td>';
+                                '][id]" value="new"></td>'; //ini id coy
                             row += '<td><input type="hidden" name="details[new-' + newIndex +
                                 '][product_id]" value="' + data.id + '"></td>';
                             row += '<td><input type="hidden" name="details[new-' + newIndex +
