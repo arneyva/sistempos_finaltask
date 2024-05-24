@@ -9,6 +9,9 @@
 </style>
 @section('content')
     <div class="col-sm-12">
+        <div class="mt-3" style="justify-content-center">
+            @include('templates.alert')
+        </div>
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
@@ -44,6 +47,22 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach ($sale as $item)
+                                <tr>
+                                    <th>{{ $item->created_at  }}</th>
+                                    <th>{{ $item->Ref }}</th>
+                                    <th>{{ $item->user->username }}</th>
+                                    <th>{{ $item->client->name }}</th>
+                                    <th>{{ $item->warehouse->name }}</th>
+                                    <th>{{ $item->statut }}</th>
+                                    <th>{{ $item->GrandTotal }}</th>
+                                    <th>{{ $item->paid_amount }}</th>
+                                    <th>{{ $item->paid_amount }}</th>
+                                    <th>{{ $item->payment_statut }}</th>
+                                    <th>Shipping Status</th>
+                                    <th></th>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
