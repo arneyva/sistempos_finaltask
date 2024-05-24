@@ -23,7 +23,11 @@ class SaleController extends Controller
      */
     public function index()
     {
-        return view('templates.sale.index');
+        $sale = Sale::with('user', 'warehouse', 'client')->latest()->get();
+
+        return view('templates.sale.index', [
+            'sale' => $sale,
+        ]);
     }
 
     public function shipments()
@@ -73,7 +77,7 @@ class SaleController extends Controller
             'client_id' => 'required',
             'warehouse_id' => 'required',
         ]);
-        dd($request->all());
+        // dd($request->all());
         \DB::transaction(function () use ($request) {
             // $helpers = new helpers();
             $order = new Sale();
@@ -107,12 +111,12 @@ class SaleController extends Controller
                     'price' => $value['Unit_price'],
                     'TaxNet' => $value['tax_percent'],
                     'tax_method' => $value['tax_method'],
-                    'discount' => $value['discount'],
-                    'discount_method' => $value['discount_Method'],
+                    'discount' => 0,
+                    'discount_method' => 'nodiscount',
                     'product_id' => $value['product_id'],
                     'product_variant_id' => $value['product_variant_id'] ? $value['product_variant_id'] : null,
                     'total' => $value['subtotal'],
-                    'imei_number' => $value['imei_number'],
+                    'imei_number' => $value['imei_number'] ?? null,
                 ];
 
                 if ($order->statut == 'completed') {
@@ -125,9 +129,9 @@ class SaleController extends Controller
 
                         if ($unit && $product_warehouse) {
                             if ($unit->operator == '/') {
-                                $product_warehouse->qte -= $value['quantity'] / $unit->operator_value;
+                                $product_warehouse->qty -= $value['quantity'] / $unit->operator_value;
                             } else {
-                                $product_warehouse->qte -= $value['quantity'] * $unit->operator_value;
+                                $product_warehouse->qty -= $value['quantity'] * $unit->operator_value;
                             }
                             $product_warehouse->save();
                         }
@@ -139,9 +143,9 @@ class SaleController extends Controller
 
                         if ($unit && $product_warehouse) {
                             if ($unit->operator == '/') {
-                                $product_warehouse->qte -= $value['quantity'] / $unit->operator_value;
+                                $product_warehouse->qty -= $value['quantity'] / $unit->operator_value;
                             } else {
-                                $product_warehouse->qte -= $value['quantity'] * $unit->operator_value;
+                                $product_warehouse->qty -= $value['quantity'] * $unit->operator_value;
                             }
                             $product_warehouse->save();
                         }
@@ -174,116 +178,117 @@ class SaleController extends Controller
                         $payment_statut = 'unpaid';
                     }
 
-                    if ($request['amount'] > 0) {
-                        if ($request->payment['Reglement'] == 'credit card') {
-                            $Client = Client::whereId($request->client_id)->first();
-                            Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET'));
+                    // if ($request['amount'] > 0) {
+                    //     if ($request->payment['Reglement'] == 'credit card') {
+                    //         $Client = Client::whereId($request->client_id)->first();
+                    //         Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET'));
 
-                            // Check if the payment record exists
-                            $PaymentWithCreditCard = PaymentWithCreditCard::where('customer_id', $request->client_id)->first();
-                            if (! $PaymentWithCreditCard) {
+                    //         // Check if the payment record exists
+                    //         $PaymentWithCreditCard = PaymentWithCreditCard::where('customer_id', $request->client_id)->first();
+                    //         if (! $PaymentWithCreditCard) {
 
-                                // Create a new customer and charge the customer with a new credit card
-                                $customer = \Stripe\Customer::create([
-                                    'source' => $request->token,
-                                    'email' => $Client->email,
-                                    'name' => $Client->name,
-                                ]);
+                    //             // Create a new customer and charge the customer with a new credit card
+                    //             $customer = \Stripe\Customer::create([
+                    //                 'source' => $request->token,
+                    //                 'email' => $Client->email,
+                    //                 'name' => $Client->name,
+                    //             ]);
 
-                                // Charge the Customer instead of the card:
-                                $charge = \Stripe\Charge::create([
-                                    'amount' => $request['amount'] * 100,
-                                    'currency' => 'usd',
-                                    'customer' => $customer->id,
-                                ]);
-                                $PaymentCard['customer_stripe_id'] = $customer->id;
+                    //             // Charge the Customer instead of the card:
+                    //             $charge = \Stripe\Charge::create([
+                    //                 'amount' => $request['amount'] * 100,
+                    //                 'currency' => 'usd',
+                    //                 'customer' => $customer->id,
+                    //             ]);
+                    //             $PaymentCard['customer_stripe_id'] = $customer->id;
 
-                                // Check if the payment record not exists
-                            } else {
+                    //             // Check if the payment record not exists
+                    //         } else {
 
-                                // Retrieve the customer ID and card ID
-                                $customer_id = $PaymentWithCreditCard->customer_stripe_id;
-                                $card_id = $request->card_id;
+                    //             // Retrieve the customer ID and card ID
+                    //             $customer_id = $PaymentWithCreditCard->customer_stripe_id;
+                    //             $card_id = $request->card_id;
 
-                                // Charge the customer with the new credit card or the selected card
-                                if ($request->is_new_credit_card || $request->is_new_credit_card == 'true' || $request->is_new_credit_card === 1) {
-                                    // Retrieve the customer
-                                    $customer = \Stripe\Customer::retrieve($customer_id);
+                    //             // Charge the customer with the new credit card or the selected card
+                    //             if ($request->is_new_credit_card || $request->is_new_credit_card == 'true' || $request->is_new_credit_card === 1) {
+                    //                 // Retrieve the customer
+                    //                 $customer = \Stripe\Customer::retrieve($customer_id);
 
-                                    // Create New Source
-                                    $card = \Stripe\Customer::createSource(
-                                        $customer_id,
-                                        [
-                                            'source' => $request->token,
-                                        ]
-                                    );
+                    //                 // Create New Source
+                    //                 $card = \Stripe\Customer::createSource(
+                    //                     $customer_id,
+                    //                     [
+                    //                         'source' => $request->token,
+                    //                     ]
+                    //                 );
 
-                                    $charge = \Stripe\Charge::create([
-                                        'amount' => $request['amount'] * 100,
-                                        'currency' => 'usd',
-                                        'customer' => $customer_id,
-                                        'source' => $card->id,
-                                    ]);
-                                    $PaymentCard['customer_stripe_id'] = $customer_id;
-                                } else {
-                                    $charge = \Stripe\Charge::create([
-                                        'amount' => $request['amount'] * 100,
-                                        'currency' => 'usd',
-                                        'customer' => $customer_id,
-                                        'source' => $card_id,
-                                    ]);
-                                    $PaymentCard['customer_stripe_id'] = $customer_id;
-                                }
-                            }
+                    //                 $charge = \Stripe\Charge::create([
+                    //                     'amount' => $request['amount'] * 100,
+                    //                     'currency' => 'usd',
+                    //                     'customer' => $customer_id,
+                    //                     'source' => $card->id,
+                    //                 ]);
+                    //                 $PaymentCard['customer_stripe_id'] = $customer_id;
+                    //             } else {
+                    //                 $charge = \Stripe\Charge::create([
+                    //                     'amount' => $request['amount'] * 100,
+                    //                     'currency' => 'usd',
+                    //                     'customer' => $customer_id,
+                    //                     'source' => $card_id,
+                    //                 ]);
+                    //                 $PaymentCard['customer_stripe_id'] = $customer_id;
+                    //             }
+                    //         }
 
-                            $PaymentSale = new PaymentSale();
-                            $PaymentSale->sale_id = $order->id;
-                            $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
-                            $PaymentSale->date = Carbon::now();
-                            $PaymentSale->Reglement = $request->payment['Reglement'];
-                            $PaymentSale->montant = $request['amount'];
-                            $PaymentSale->change = $request['change'];
-                            $PaymentSale->notes = null;
-                            $PaymentSale->user_id = Auth::user()->id;
-                            $PaymentSale->save();
+                    //         $PaymentSale = new PaymentSale();
+                    //         $PaymentSale->sale_id = $order->id;
+                    //         $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
+                    //         $PaymentSale->date = Carbon::now();
+                    //         $PaymentSale->Reglement = $request->payment['Reglement'];
+                    //         $PaymentSale->montant = $request['amount'];
+                    //         $PaymentSale->change = $request['change'];
+                    //         $PaymentSale->notes = null;
+                    //         $PaymentSale->user_id = Auth::user()->id;
+                    //         $PaymentSale->save();
 
-                            $sale->update([
-                                'paid_amount' => $total_paid,
-                                'payment_statut' => $payment_statut,
-                            ]);
+                    //         $sale->update([
+                    //             'paid_amount' => $total_paid,
+                    //             'payment_statut' => $payment_statut,
+                    //         ]);
 
-                            $PaymentCard['customer_id'] = $request->client_id;
-                            $PaymentCard['payment_id'] = $PaymentSale->id;
-                            $PaymentCard['charge_id'] = $charge->id;
-                            PaymentWithCreditCard::create($PaymentCard);
+                    //         $PaymentCard['customer_id'] = $request->client_id;
+                    //         $PaymentCard['payment_id'] = $PaymentSale->id;
+                    //         $PaymentCard['charge_id'] = $charge->id;
+                    //         PaymentWithCreditCard::create($PaymentCard);
 
-                            // Paying Method Cash
-                        } else {
+                    //         // Paying Method Cash
+                    //     } else {
 
-                            PaymentSale::create([
-                                'sale_id' => $order->id,
-                                'Ref' => app('App\Http\Controllers\PaymentSalesController')->getNumberOrder(),
-                                'date' => Carbon::now(),
-                                'Reglement' => $request->payment['Reglement'],
-                                'montant' => $request['amount'],
-                                'change' => $request['change'],
-                                'notes' => null,
-                                'user_id' => Auth::user()->id,
-                            ]);
+                    //         PaymentSale::create([
+                    //             'sale_id' => $order->id,
+                    //             'Ref' => app('App\Http\Controllers\PaymentSalesController')->getNumberOrder(),
+                    //             'date' => Carbon::now(),
+                    //             'Reglement' => $request->payment['Reglement'],
+                    //             'montant' => $request['amount'],
+                    //             'change' => $request['change'],
+                    //             'notes' => null,
+                    //             'user_id' => Auth::user()->id,
+                    //         ]);
 
-                            $sale->update([
-                                'paid_amount' => $total_paid,
-                                'payment_statut' => $payment_statut,
-                            ]);
-                        }
-                    }
+                    //         $sale->update([
+                    //             'paid_amount' => $total_paid,
+                    //             'payment_statut' => $payment_statut,
+                    //         ]);
+                    //     }
+                    // }
                 } catch (Exception $e) {
                     return response()->json(['message' => $e->getMessage()], 500);
                 }
             }
         }, 10);
 
-        return response()->json(['success' => true]);
+        return redirect()->route('sale.index')->with('success', 'Sale created successfully');
+        // return response()->json(['success' => true]);
     }
 
     /**
