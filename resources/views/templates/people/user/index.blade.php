@@ -1,5 +1,10 @@
 @extends('templates.main')
 
+@section('pages_title')
+<h1>All User Employee</h1>
+<p>Do Something with all your employee</p>
+@endsection
+
 @section('content')
 <style type="text/css">
     .background {
@@ -17,7 +22,7 @@
 </style>
 <div class="col-sm-12">
     <div class="mt-3">
-        @include('templates.alert')
+        <!-- @include('templates.alert') -->
     </div>
     <div class="card">
         <div class="card-header d-flex justify-content-between">
@@ -83,7 +88,7 @@
                                                 </path>
                                             </svg>
                                         </a>
-                                        <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  style="background-color: transparent; border: none; display: inline-block;">
+                                        <button type="button" onclick="confirmDelete({{ $data['id'] }})" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  style="background-color: transparent; border: none; display: inline-block;">
                                             <a href="#">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -105,33 +110,13 @@
                                                 </svg>
                                             </a>
                                         </button>
+                                        <form id="delete-form-{{  $data['id'] }}" action="{{ route('people.users.destroy',  $data['id']) }}" method="POST" style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
-                            <!-- modal hapus -->
-                            <div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="background">
-                                    <div class="modal-dialog modal-dialog-centered modal-lg overlay">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="staticBackdropLabel">Delete User</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p>Anda akan menghapus akun ini!</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <form action="{{ route('people.users.destroy', $data['id']) }}" method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-soft-danger">Understood</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         @endforeach
                     </tbody>
                 </table>
@@ -151,8 +136,29 @@
         e.preventDefault(); 
     });
 </script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-form-${id}`).submit();
+            }
+        });
+    }
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
         var filterCollapse = document.getElementById('filter');
         
         // Check if filter state is stored in localStorage

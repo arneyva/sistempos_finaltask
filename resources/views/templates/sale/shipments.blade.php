@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>Shipments</h1>
+<p>Look All your shipments</p>
+@endsection
+
 <style>
     .warehousedeleted {
         padding: 7px;

@@ -429,14 +429,49 @@
         } else {
             console.error("Service workers are not supported.");
         }
-    </script>
+        </script>
     <script>
         $("document").ready(function() {
             setTimeout(function() {
                 $("div.alert1").remove();
             }, 1500); // secs
         });
+        </script>
+    {{-- sweetalert2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if(session('success'))
+            const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+            });
+            Toast.fire({
+            icon: "success",
+            title: "{{ session('success') }}"
+            });
+        @endif
+        @if($errors->any())
+            let errors = {!! json_encode($errors->all()) !!};
+            let errorList = '<ol>' + errors.map(function(error) {
+                return '<li style="text-align: start">' + error + '</li>';
+            }).join('') + '</ol>';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                html: errorList,
+                // Anda bisa mengganti '<br>' dengan tag HTML lain untuk menyesuaikan tampilan
+            });
+        @endif
     </script>
+
     @stack('script')
 </body>
 

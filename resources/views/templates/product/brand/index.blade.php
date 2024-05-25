@@ -1,8 +1,14 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>All Product Brand</h1>
+<p>Do Something with all your product brand</p>
+@endsection
+
 @section('content')
     <div class="col-sm-12">
         <div class="mt-3" style="justify-content-center">
-            @include('templates.alert')
+            <!-- @include('templates.alert') -->
         </div>
         <div class="card">
             <div class="card-header d-flex justify-content-between">
