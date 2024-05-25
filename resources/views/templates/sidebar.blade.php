@@ -5,28 +5,12 @@
             <!--Logo start-->
             <div class="logo-main">
                 <div class="logo-normal">
-                    <svg class=" icon-30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2"
-                            transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
-                        <rect x="7.72803" y="27.728" width="28" height="4" rx="2"
-                            transform="rotate(-45 7.72803 27.728)" fill="currentColor" />
-                        <rect x="10.5366" y="16.3945" width="16" height="4" rx="2"
-                            transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
-                        <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2"
-                            transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                    </svg>
+                    <img src="{{ asset('hopeui/html/assets/images/logota3.png') }}" class="text-primary icon-30"
+                        alt="">
                 </div>
                 <div class="logo-mini">
-                    <svg class=" icon-30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2"
-                            transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
-                        <rect x="7.72803" y="27.728" width="28" height="4" rx="2"
-                            transform="rotate(-45 7.72803 27.728)" fill="currentColor" />
-                        <rect x="10.5366" y="16.3945" width="16" height="4" rx="2"
-                            transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
-                        <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2"
-                            transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                    </svg>
+                    <img src="{{ asset('hopeui/html/assets/images/logota3.png') }}" class="text-primary icon-30"
+                        alt="">
                 </div>
             </div>
             <!--logo End-->
@@ -34,7 +18,7 @@
 
 
 
-            <h4 class="logo-title">Hope UI</h4>
+            <h4 class="logo-title">Project TA</h4>
         </a>
         <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
             <i class="icon">
@@ -79,8 +63,8 @@
                         aria-expanded="false" aria-controls="horizontal-menu">
                         <i class="icon">
 
-                            <svg width="20" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg" class="icon-20">
+                            <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                class="icon-20">
                                 <path opacity="0.4"
                                     d="M10.0833 15.958H3.50777C2.67555 15.958 2 16.6217 2 17.4393C2 18.2559 2.67555 18.9207 3.50777 18.9207H10.0833C10.9155 18.9207 11.5911 18.2559 11.5911 17.4393C11.5911 16.6217 10.9155 15.958 10.0833 15.958Z"
                                     fill="currentColor"></path>
@@ -105,21 +89,23 @@
                         </i>
                     </a>
                     <ul class="sub-nav collapse" id="horizontal-menu" data-bs-parent="#sidebar-menu">
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('product.create') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> H </i>
-                                <span class="item-name"> Create Product </span>
-                            </a>
-                        </li>
+                        @role('superadmin|inventaris')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('product.create') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> H </i>
+                                    <span class="item-name"> Create Product </span>
+                                </a>
+                            </li>
+                        @endrole
                         <li class="nav-item">
                             <a class="nav-link " href="{{ route('product.index') }}">
                                 <i class="icon">
@@ -135,36 +121,38 @@
                                 <span class="item-name">All Product</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/index-dual-compact.html">
-                                <i class="icon svg-icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Print Label</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/index-boxed.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Count Stock</span>
-                            </a>
-                        </li>
+                        @role('superadmin')
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/index-dual-compact.html">
+                                    <i class="icon svg-icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">Print Label</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/index-boxed.html">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> B </i>
+                                    <span class="item-name">Count Stock</span>
+                                </a>
+                            </li>
+                        @endrole
                         <li class="nav-item">
                             <a class="nav-link " href="{{ route('product.category.index') }}">
                                 <i class="icon">
@@ -647,6 +635,21 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-form" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
+                            <a class="nav-link " href="{{ route('transfer.create') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> E </i>
+                                <span class="item-name">Create Transfer</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link " href="{{ route('transfer.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
@@ -659,36 +662,6 @@
                                 </i>
                                 <i class="sidenav-mini-icon"> E </i>
                                 <span class="item-name">All Transfer</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/form/form-wizard.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> W </i>
-                                <span class="item-name">Wizard</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/form/form-validation.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> V </i>
-                                <span class="item-name">Validation</span>
                             </a>
                         </li>
                     </ul>
@@ -779,23 +752,25 @@
                         </i>
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-people" data-bs-parent="#sidebar-menu">
+                        @role('superadmin')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('people.users.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> B </i>
+                                    <span class="item-name">User</span>
+                                </a>
+                            </li>
+                        @endrole
                         <li class="nav-item">
-                            <a class="nav-link " href="{{ route('people.users.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">User</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/table-data.html">
+                            <a class="nav-link " href="{{ route('people.clients.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -809,21 +784,23 @@
                                 <span class="item-name">Customer</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/table-data.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Supplier</span>
-                            </a>
-                        </li>
+                        @hasanyrole('superadmin|inventaris')
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/table/table-data.html">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">Supplier</span>
+                                </a>
+                            </li>
+                        @endhasanyrole
                     </ul>
                 </li>
                 <li>
@@ -883,6 +860,23 @@
                                 <span class="item-name">Currency</span>
                             </a>
                         </li>
+                        @role('superadmin')
+                            <li class="nav-item">
+                                <a class="nav-link "href="{{ route('settings.membership.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> C </i>
+                                    <span class="item-name">Membership</span>
+                                </a>
+                            </li>
+                        @endrole
                     </ul>
                 </li>
                 <li>
@@ -1047,7 +1041,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/icons/dual-tone.html">
+                            <a class="nav-link " href="{{ route('reports.sale') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -1062,7 +1056,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/icons/dual-tone.html">
+                            <a class="nav-link " href="{{ route('reports.purchase') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">

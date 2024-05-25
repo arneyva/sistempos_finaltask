@@ -16,15 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property int $id
  * @property string|null $name
- * @property string $code
  * @property string|null $email
- * @property string $phone
+ * @property string|null $phone
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property float|null $score
- * @property int $client_tier_id
- * @property ClientTier $client_tier
+ * @property bool $is_poin_activated
  * @property Collection|Quotation[] $quotations
  * @property Collection|SaleReturn[] $sale_returns
  * @property Collection|Sale[] $sales
@@ -38,21 +36,23 @@ class Client extends Model
 
     protected $casts = [
         'score' => 'float',
-        'client_tier_id' => 'int',
+        'is_poin_activated' => 'bool',
     ];
 
     protected $fillable = [
         'name',
-        'code',
         'email',
         'phone',
         'score',
-        'client_tier_id',
+        'is_poin_activated',
     ];
 
-    public function client_tier()
+    public function scopeFilter($query, array $filters)
     {
-        return $this->belongsTo(ClientTier::class);
+
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            return $query;
+        });
     }
 
     public function quotations()

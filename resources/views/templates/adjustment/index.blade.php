@@ -9,97 +9,37 @@
 </style>
 @section('content')
     <div class="col-sm-12">
+        <div class="mt-3" style="justify-content-center">
+            @include('templates.alert')
+        </div>
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Adjustments
-                    </h4>
+                    <h4 class="card-title">All Adjustment</h4>
+                </div>
+            </div>
+            <div class="card-header d-flex justify-content-between">
+                <div class="input-group search-input" style="width: 30%">
+                    <span class="input-group-text d-inline" id="search-input">
+                        <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round"></circle>
+                            <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </span>
+                    <input type="search" class="form-control" placeholder="Search...">
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
-                    {{-- <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">
-                        Create+
-                    </button> --}}
-                    <a href="{{ route('adjustment.create') }}"><button type="button" class="btn btn-soft-primary">Create
-                            +</button></a>
-                    {{-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Creataae</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="">
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Name *</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
-                                                placeholder="input product cost">
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="validationDefault01">Short Name*</label>
-                                            <input type="text" class="form-control" id="validationDefault01" required
-                                                placeholder="input product cost">
-                                        </div>
-                                        <div class="accordion" id="accordionExample">
-                                            <div class="accordion-item">
-                                                <h4 class="accordion-header" id="headingOne">
-                                                    <button class="accordion-button" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                                                        aria-expanded="true" aria-controls="collapseOne">
-                                                        Base Unit
-                                                    </button>
-                                                </h4>
-                                                <div id="collapseOne" class="accordion-collapse collapse show"
-                                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <label for="validationCustomUsername" class="form-label">Product
-                                                            Unit</label>
-                                                        <select class="form-select" id="validationDefault04" required>
-                                                            <option selected disabled value="">Choose...</option>
-                                                            <option>Gram</option>
-                                                            <option>Liter</option>
-                                                            <option>Meter</option>
-                                                            <option>Gram</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="accordion-body">
-                                                        <label for="validationCustomUsername"
-                                                            class="form-label">Operator</label>
-                                                        <select class="form-select" id="validationDefault04" required>
-                                                            <option selected disabled value="">Choose...</option>
-                                                            <option>Multiply (*)</option>
-                                                            <option>Devide (/)</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="accordion-body">
-                                                        <label class="form-label" for="validationDefault01">Operation value
-                                                            *</label>
-                                                        <input type="text" class="form-control" id="validationDefault01"
-                                                            required placeholder="input product cost">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                    <a href="{{ route('adjustment.create') }}" class="btn btn-soft-primary">+create</a>
 
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
                 </div>
             </div>
-
             <div class="card-body p-0">
                 <div class="table-responsive mt-4">
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
@@ -246,18 +186,20 @@
                                             </div>
 
                                             {{--  --}}
-                                            <a href="edit.html">
+                                            <a href="{{ route('adjustment.edit', $item['id']) }}">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
                                                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
                                                     <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                 </svg>
                                             </a>

@@ -27,47 +27,49 @@
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
-                    <button type="button" class="btn btn-soft-gray">Import Product</button>
-                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#createModal">
-                        Create+
-                    </button>
-                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Create</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                    @role('superadmin|inventaris')
+                        <button type="button" class="btn btn-soft-gray">Import Product</button>
+                        <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                            data-bs-target="#createModal">
+                            Create+
+                        </button>
+                        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="createModalLabel">Create</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ route('product.brand.store') }}" method="POST"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="name">Brand Name *</label>
+                                                <input type="text" class="form-control" id="name" required
+                                                    placeholder="input brands" name="name">
+                                            </div>
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="description">Description *</label>
+                                                <input type="text" class="form-control" id="description" required
+                                                    placeholder="input description" name="description">
+                                            </div>
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="image">Image</label>
+                                                <input type="file" class="form-control" id="image" name="image">
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                    </form>
                                 </div>
-                                <div class="modal-body">
-                                    <form action="{{ route('product.brand.store') }}" method="POST"
-                                        enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="name">Brand Name *</label>
-                                            <input type="text" class="form-control" id="name" required
-                                                placeholder="input brands" name="name">
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="description">Description *</label>
-                                            <input type="text" class="form-control" id="description" required
-                                                placeholder="input description" name="description">
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="image">Image</label>
-                                            <input type="file" class="form-control" id="image" name="image">
-                                        </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
+                    @endrole
                 </div>
             </div>
 

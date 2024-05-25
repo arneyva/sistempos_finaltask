@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
@@ -74,23 +75,27 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                Rule::unique(Category::class, 'name')->whereNull('deleted_at')->ignore($id),
-            ],
-            'code' => [
-                'required',
-                Rule::unique(Category::class, 'code')->whereNull('deleted_at')->ignore($id),
-            ],
-        ]);
-        $newvalue = [
-            'name' => $validated['name'],
-            'code' => $validated['code'],
-        ];
-        Category::where('id', $id)->update($newvalue);
+        if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+            $validated = $request->validate([
+                'name' => [
+                    'required',
+                    Rule::unique(Category::class, 'name')->whereNull('deleted_at')->ignore($id),
+                ],
+                'code' => [
+                    'required',
+                    Rule::unique(Category::class, 'code')->whereNull('deleted_at')->ignore($id),
+                ],
+            ]);
+            $newvalue = [
+                'name' => $validated['name'],
+                'code' => $validated['code'],
+            ];
+            Category::where('id', $id)->update($newvalue);
 
-        return redirect()->route('product.category.index')->with('success', 'Category updated successfully');
+            return redirect()->route('product.category.index')->with('success', 'Category updated successfully');
+        } else {
+            return redirect()->back()->with('errorzz', 'You are not authorized to delete Category product');
+        }
     }
 
     /**
@@ -98,9 +103,13 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $category = Category::where('id', $id);
-        $category->delete();
+        if (auth()->user()->hasAnyRole(['superadmin', 'inventaris'])) {
+            $category = Category::where('id', $id);
+            $category->delete();
 
-        return redirect()->route('product.category.index')->with('success', 'Category deleted successfully');
+            return redirect()->route('product.category.index')->with('success', 'Category deleted successfully');
+        } else {
+            return redirect()->back()->with('errorzz', 'You are not authorized to delete Category product');
+        }
     }
 }

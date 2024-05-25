@@ -33,6 +33,8 @@ class RoleAndPermissionSeeder extends Seeder
         foreach ($ProductPermissions as $permissionName) {
             Permission::firstOrCreate(['name' => $permissionName]);
         }
+        // unit product
+        $unitProductPermissions = [];
 
         //------------------------------- adjustment --------------------------\\
         //------------------------------------------------------------------\\

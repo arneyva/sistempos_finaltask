@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Adjustment\AdjustmentController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\people\ClientController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ProductController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Reports\ReportsController;
 use App\Http\Controllers\Sale\SaleController;
 use App\Http\Controllers\Settings\CurrencyController;
+use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\UserController;
@@ -119,6 +121,8 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::get('supplier/{id}', [ReportsController::class, 'supplierDetail'])->name('supplier-detail');
     Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
     Route::get('warehouse', [ReportsController::class, 'warehouse'])->name('warehouse');
+    Route::get('sale', [ReportsController::class, 'sale'])->name('sale');
+    Route::get('purchase', [ReportsController::class, 'purchase'])->name('purchase');
 });
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {
@@ -139,12 +143,25 @@ Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->
         Route::patch('update/{id}', [CurrencyController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [CurrencyController::class, 'destroy'])->name('destroy');
     });
+    Route::prefix('membership')->name('membership.')->group(function () {
+        Route::get('list', [MembershipController::class, 'index'])->name('index');
+        Route::patch('update/{id}', [MembershipController::class, 'update'])->name('update');
+    });
 });
 Route::prefix('people')->middleware(['auth', 'verified'])->name('people.')->group(function () {
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('list', [UserController::class, 'index'])->name('index');
         Route::get('create', [UserController::class, 'create'])->name('create');
         Route::post('store', [UserController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [UserController::class, 'show'])->name('show');
+        Route::patch('update/{id}', [UserController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('clients')->name('clients.')->group(function () {
+        Route::get('list', [ClientController::class, 'index'])->name('index');
+        Route::post('store', [ClientController::class, 'store'])->name('store');
+        Route::patch('update/{id}', [ClientController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [ClientController::class, 'destroy'])->name('destroy');
     });
 });
 Route::middleware('auth')->group(function () {

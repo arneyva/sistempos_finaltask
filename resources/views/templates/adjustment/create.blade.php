@@ -138,14 +138,16 @@
                             row += '<td>' + data.qty + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control" name="details[' +
-                                data
-                                .id + '][quantity]" value="0" min="0"></td>';
+                                data.id + '_' + variantId +
+                                '][quantity]" value="0" min="0"></td>';
                             row += '<td><select class="form-select" name="details[' + data.id +
+                                '_' + variantId +
                                 '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_variant_id]" value="' + (variantId || '') +
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][product_id]" value="' + data.id + '"></td>';
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][product_variant_id]" value="' + (variantId ||
+                                '') +
                                 '"></td>';
                             row +=
                                 '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>'; // Tombol delete ditambahkan di sini

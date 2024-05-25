@@ -31,6 +31,8 @@
                     </span>
                     <input type="search" class="form-control" placeholder="Search...">
                 </div>
+                <input class="input-group-text d-inline" style="border-color:#b19785" type="text" name="daterange"
+                    value='{{ date('m/d/Y') }} - {{ date('m/d/Y') }}' />
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
@@ -52,7 +54,43 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
                         </tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="background-color: #dfd5ce">Total</td>
+                            <td style="background-color: #dfd5ce">Rp 10000</td>
+                        </tr>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
                         {{-- {{ $sales->links() }} --}}
@@ -79,6 +117,8 @@
                     </span>
                     <input type="search" class="form-control" placeholder="Search...">
                 </div>
+                <input class="input-group-text d-inline" style="border-color:#b19785" type="text" name="daterange"
+                    value='{{ date('m/d/Y') }} - {{ date('m/d/Y') }}' />
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
@@ -100,7 +140,43 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
                         </tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="background-color: #dfd5ce">Total</td>
+                            <td style="background-color: #dfd5ce">Rp 10000</td>
+                        </tr>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
                         {{-- {{ $sales->links() }} --}}
@@ -127,6 +203,8 @@
                     </span>
                     <input type="search" class="form-control" placeholder="Search...">
                 </div>
+                <input class="input-group-text d-inline" style="border-color:#b19785" type="text" name="daterange"
+                    value='{{ date('m/d/Y') }} - {{ date('m/d/Y') }}' />
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
@@ -148,7 +226,43 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
                         </tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="background-color: #dfd5ce">Total</td>
+                            <td style="background-color: #dfd5ce">Rp 10000</td>
+                        </tr>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
                         {{-- {{ $sales->links() }} --}}
@@ -175,6 +289,8 @@
                     </span>
                     <input type="search" class="form-control" placeholder="Search...">
                 </div>
+                <input class="input-group-text d-inline" style="border-color:#b19785" type="text" name="daterange"
+                    value='{{ date('m/d/Y') }} - {{ date('m/d/Y') }}' />
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
@@ -196,7 +312,43 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
+                            <tr>
+                                <td>12-01-2024</td>
+                                <td>70171027</td>
+                                <td>1</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Budi</td>
+                                <td>Rp. 50000</td>
+                            </tr>
                         </tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="background-color: #dfd5ce">Total</td>
+                            <td style="background-color: #dfd5ce">Rp 10000</td>
+                        </tr>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
                         {{-- {{ $sales->links() }} --}}
@@ -206,3 +358,15 @@
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        $(function() {
+            $('input[name="daterange"]').daterangepicker({
+                opens: 'left'
+            }, function(start, end, label) {
+                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end
+                    .format('YYYY-MM-DD'));
+            });
+        });
+    </script>
+@endpush
