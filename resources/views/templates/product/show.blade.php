@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>{{ $data[0]['brand'] }} {{$data[0]['name']}} Detail</h1>
+<p>Do Something with all your measurement</p>
+@endsection
+
 @section('content')
     {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">

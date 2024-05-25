@@ -1,7 +1,10 @@
 @extends('templates.main')
-<!-- @section('pages_title')
-<h1>Client</h1>
-@endsection -->
+
+@section('pages_title')
+<h1>All Client</h1>
+<p>Do Something with all your client</p>
+@endsection
+
 @section('content')
 <style type="text/css">
     .background {
@@ -19,7 +22,7 @@
 </style>
 <div class="col-sm-12">
     <div class="mt-3">
-        @include('templates.alert')
+        <!-- @include('templates.alert') -->
     </div>
     <div class="card">
         <div class="card-header d-flex justify-content-between">
@@ -115,7 +118,7 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <form action="{{ route('people.clients.update', $data['id']) }}" method="POST" enctype="multipart/form-data">
+                                                <form class="needs-validation" action="{{ route('people.clients.update', $data['id']) }}" method="POST" enctype="multipart/form-data">
                                                 @csrf
                                                 @method('patch')
                                                     <div class="form-group">
@@ -203,7 +206,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('people.clients.store') }}" method="POST" enctype="multipart/form-data">
+                    <form class="needs-validation" action="{{ route('people.clients.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label class="form-label" for="name">Name:</label>
@@ -249,20 +252,21 @@
 @endsection
 
 @push('script')
+<script type="text/javascript" src="{{ asset('hopeui/html/assets/js/form-validator.js') }}"></script>
 <script>
     $('a[href="#"]').click(function(e) {
         e.preventDefault(); 
     });
 </script>
 
-@if($errors->any())
+<!-- @if($errors->any())
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             var errorModal = new bootstrap.Modal(document.getElementById('editClient'));
             errorModal.show();
         });
     </script>
-@endif
+@endif -->
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

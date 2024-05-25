@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>All Sales</h1>
+<p>Look All your sales</p>
+@endsection
+
 <style>
     .warehousedeleted {
         padding: 7px;
@@ -10,7 +16,7 @@
 @section('content')
     <div class="col-sm-12">
         <div class="mt-3" style="justify-content-center">
-            @include('templates.alert')
+            <!-- @include('templates.alert') -->
         </div>
         <div class="card">
             <div class="card-header d-flex justify-content-between">

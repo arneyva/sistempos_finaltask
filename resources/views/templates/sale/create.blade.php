@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>Add Sales</h1>
+<p>Look All your sales</p>
+@endsection
+
 @section('content')
     {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">

@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>Add New Product</h1>
+<p>Add new product to your store </p>
+@endsection
+
 <style>
     .upload-logo {
         padding: 20px 8px;
@@ -38,7 +44,7 @@
     {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">
         <div class="mt-3" style="justify-content-center">
-            @include('templates.alert')
+            <!-- @include('templates.alert') -->
         </div>
     </div>
     {{-- part 2  sisi kiri --}}

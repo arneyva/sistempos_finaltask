@@ -1,7 +1,10 @@
 @extends('templates.main')
-<!-- @section('pages_title')
-<h1>Client</h1>
-@endsection -->
+
+@section('pages_title')
+<h1>Membership Settings</h1>
+<p>Look All your membership</p>
+@endsection
+
 @section('content')
 <style type="text/css">
     .background {
@@ -19,11 +22,11 @@
 </style>
 <div class="col-sm-12">
     <div class="mt-3">
-        @include('templates.alert')
+        <!-- @include('templates.alert') -->
     </div>
 </div>
-    <div class="col">
-        <div class="card">
+    <div class="col" style=" display:flex;">
+        <div class="card" style=" flex-grow: 1;">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
                 <h4 class="card-title"> One Score for </h4>
@@ -43,7 +46,8 @@
                         </small>
                     </div>
                     <p>Customer will get 1 score for every Rp {{ number_format(old('spend_every', $membership->spend_every)) }} they spend.</p>
-                    <br>
+            </div>
+            <div class="card-footer">
                     <div class="form-group" style="float: right;">
                         <button class="btn btn-primary" type="submit">Save</button>
                     </div>
@@ -51,8 +55,8 @@
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="card">
+    <div class="col" style=" display:flex;">
+        <div class="card" style=" flex-grow: 1;">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
                 <h4 class="card-title"> One Score Equal</h4>
@@ -72,7 +76,8 @@
                         </small>
                     </div>
                     <p>for 1 Score is equal to Rp {{ number_format(old('one_score_equal', $membership->one_score_equal)) }} discount</p>
-                    <br>
+            </div>
+            <div class="card-footer">
                     <div class="form-group" style="float: right;">
                         <button class="btn btn-primary" type="submit">Save</button>
                     </div>
@@ -80,8 +85,8 @@
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="card">
+    <div class="col" style=" display:flex;">
+        <div class="card" style=" flex-grow: 1;">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
                 <h4 class="card-title"> Send Email Every</h4>
@@ -101,7 +106,8 @@
                         </small>
                     </div>
                     <p>Whenever customer makes a sale, they will receive an email notification to redeem their score when they have reached {{ number_format(old('score_to_email', $membership->score_to_email)) }} points</p>
-                    <br>
+                </div>
+            <div class="card-footer">
                     <div class="form-group" style="float: right;">
                         <button class="btn btn-primary" type="submit">Save</button>
                     </div>
@@ -109,62 +115,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-<div class="modal fade " id="createClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="background">
-        <div class="modal-dialog modal-dialog-centered modal-lg overlay">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Create Customer Membership</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('people.clients.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group">
-                            <label class="form-label" for="name">Name:</label>
-                            <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
-                                id="name" name="name" placeholder="name" required>
-                            <small class=" text-danger font-italic">
-                                @error('name')
-                                    {{ $message }}
-                                @enderror
-                            </small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="email">Email:</label>
-                            <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror"
-                                id="email" name="email" placeholder="Email" required>
-                            <small class=" text-danger font-italic">
-                                @error('email')
-                                    {{ $message }}
-                                @enderror
-                            </small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="cname">Phone:</label>
-                            <input type="tel" name="phone"
-                                class="form-control bg-transparent @error('phone') is-invalid @enderror"
-                                id="cname" placeholder="Phone" required>
-                            <small class=" text-danger font-italic">
-                                @error('phone')
-                                    {{ $message }}
-                                @enderror
-                            </small>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                        <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-soft-success">Save</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @push('script')
