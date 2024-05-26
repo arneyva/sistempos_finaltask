@@ -39,7 +39,7 @@
                                     <select class="form-select" id="customer" name="client_id" required>
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($client as $cl)
-                                            <option value="{{ $cl->id }}">{{ $cl->name }}</option>
+                                            <option value="{{ $cl->id }}" data-status="{{ $cl->is_poin_activated }}">{{ $cl->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -470,5 +470,22 @@
                 $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
             }
         });
+    </script>
+    <script>
+    document.getElementById('customer').addEventListener('change', function() {
+        // Mengambil elemen option yang dipilih
+        var selectedOption = this.options[this.selectedIndex];
+        
+        // Mengambil data-status dari option yang dipilih
+        var status = selectedOption.getAttribute('data-status');
+
+        // Mengecek nilai dari status dan melakukan aksi berdasarkan nilai tersebut
+        if (status === '1') {
+            
+            
+        } else if (status === '0') {
+            
+        }
+    })
     </script>
 @endpush

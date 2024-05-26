@@ -10,6 +10,7 @@ use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Unit;
 use App\Models\Warehouse;
+use App\Models\Membership;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -157,8 +158,38 @@ class SaleController extends Controller
             // $role = Auth::user()->roles()->first();
             // $view_records = Role::findOrFail($role->id)->inRole('record_view');
 
+            $sale = Sale::findOrFail($order->id);
+
+            // Mengambil client_id dari sale
+            $clientId = $sale->client_id;   
+            // Cek apakah client_id sama dengan satu
+            if ($clientId != 1) {
+                // Mengambil client dan set
+                $client = Client::find($clientId);
+                if ($client) {
+                    //hitung harga bersih tanpa pajak dan shipping, namun diskon masih masuk
+                    $total_spend= $sale->GrandTotal - $sale->TaxNet - $sale->shipping;
+        
+                    //ambil settingan membershgip
+                    $membership_term=Membership::latest()->first();
+        
+                    $spend_every=$membership_term->spend_every;
+                    $score_to_email=$membership_term->score_to_email;
+                    $one_score_equal=$membership_term->one_score_equal;
+        
+                    //hitung score yang didapat berdasarkan settingan membership
+                    $total_score=intdiv($total_spend,spend_every);
+        
+                    // Menambahkan total_score ke client score
+                    $client->score += $total_score;
+        
+                    // Menyimpan perubahan pada client
+                    $client->save();
+                }
+            }
+            
+
             if ($request->payment['status'] != 'pending') {
-                $sale = Sale::findOrFail($order->id);
                 // Check If User Has Permission view All Records
                 // if (!$view_records) {
                 //     // Check If User->id === sale->id

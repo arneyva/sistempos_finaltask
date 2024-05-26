@@ -59,6 +59,7 @@
                     </thead>
                     <tbody>
                         @foreach ($clients as $data)
+                        @continue($data->id == 1)
                             <tr>
                                 <td>{{ $data->name }}</td>
                                 <td>{{ $data->email }}</td>
@@ -262,10 +263,34 @@
             const phone = document.getElementById('swal-input3').value;
 
             // Validasi inputan
-            if (!name || !email) {
+            if (!name && !email && !phone) {
             Swal.showValidationMessage(`Mohon isi kedua field`);
             return false;
             }
+
+            if (!name) {
+                Swal.showValidationMessage(`Mohon isi nama`);
+                return false;} else if (name.length > 12) {
+                Swal.showValidationMessage('Name must be less than or equal to 12 characters.');
+                return false;}
+
+            if (!email) {
+                Swal.showValidationMessage('Email is required.');
+                return false;} else if (!validateEmail(email)) {
+                Swal.showValidationMessage('Email must be a valid email address.');
+                return false;}
+
+            if (!phone) {
+                Swal.showValidationMessage('Phone is required.');
+                return false;} else if (!/^\d{12}$/.test(phone)) {
+                Swal.showValidationMessage('Phone must be exactly 12 digits.');
+                return false;}
+
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
 
             // Kirim data yang sudah diedit ke controller
             fetch(`/people/clients/update/${userId}`, {
