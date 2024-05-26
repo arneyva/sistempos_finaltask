@@ -86,6 +86,8 @@ Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.
     //
     Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
     Route::get('show_product_data/{id}/{variant_id}/{warehouse_id}', [AdjustmentController::class, 'show_product_data']);
+    //
+    Route::get('export', [AdjustmentController::class, 'export'])->name('export');
 });
 Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->group(function () {
     Route::get('list', [TransferController::class, 'index'])->name('index');
