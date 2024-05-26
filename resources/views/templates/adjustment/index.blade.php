@@ -35,7 +35,7 @@
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <a href="{{ route('adjustment.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
                     <a href="{{ route('adjustment.create') }}" class="btn btn-soft-primary">+create</a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
@@ -57,7 +57,7 @@
                                         <div class="col mb-3">
                                             <label class="form-label" for="Ref">Reference*</label>
                                             <input type="text" class="form-control" id="Ref" name="Ref"
-                                                value="{{ request()->input('Ref') }}">
+                                                value="{{ request()->input('Ref') }}" placeholder="Input Ref ...">
                                         </div>
                                         <div class="col mb-3">
                                             <label class="form-label" for="warehouse_id">From Warehouse/Outlet *</label>
