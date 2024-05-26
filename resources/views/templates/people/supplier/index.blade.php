@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>All User Employee</h1>
-<p>Do Something with all your employee</p>
+<h1>All Supplier</h1>
+<p>Do Something with all your supplier</p>
 @endsection
 
 @section('content')
@@ -34,7 +34,7 @@
                 <button type="button" class="btn btn-soft-danger">PDF</button>
                 <button type="button" class="btn btn-soft-gray">Import Client</button>
                 <a href="#" style="margin-left: 30px;">
-                    <a href="{{ route('people.users.create') }}">
+                    <a href="{{ route('people.suppliers.create') }}">
                         <button type="button" class="btn btn-soft-primary">Create +</button>
                     </a>
                 </a>
@@ -50,31 +50,34 @@
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                     <thead>
                         <tr>
-                            <th>Name</th>
+                            <th>Company Name</th>
+                            <th>Contact Person</th>
                             <th>Email</th>
-                            <th>Position</th>
-                            <th>Gender</th>
+                            <th>Company Phone</th>
+                            <th>CP Contact</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($users as $data)
+                        @foreach ($providers as $data)
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary"
-                                            src="/hopeui/html/assets/images/avatars/{{ $data->avatar }}" alt="profile">
                                         <div class="d-flex flex-column">
-                                            <h6>{{ ucfirst($data->firstname) }} {{ ucfirst($data->lastname) }}</h6>
+                                            <div style="margin-bottom: 5px;">
+                                                <h6>{{ ucfirst($data->name) }}</h6>
+                                            </div>
+                                            <div>{{ $data->code }}</div>
                                         </div>
                                     </div>
                                 </td>
+                                <td>{{ ucfirst($data->nama_kontak_person) }}</td>
                                 <td>{{ $data->email }}</td>
-                                <td>{{ ucfirst(substr($data->getRoleNames(), 2, -2)) }}</td>
-                                <td>{{ $data->gender }}</td>
+                                <td>{{ $data->phone }}</td>
+                                <td>{{ $data->nomor_kontak_person }}</td>
                                 <td>
                                     <div class="inline">
-                                        <a href="{{ route('people.users.show', $data['id']) }}">
+                                        <a href="{{ route('people.suppliers.show', $data['id']) }}">
                                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
@@ -111,7 +114,7 @@
                                                 </svg>
                                             </a>
                                         </button>
-                                        <form id="delete-form-{{  $data['id'] }}" action="{{ route('people.users.destroy',  $data['id']) }}" method="POST" style="display: none;">
+                                        <form id="delete-form-{{  $data['id'] }}" action="{{ route('people.suppliers.destroy',  $data['id']) }}" method="POST" style="display: none;">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -122,7 +125,7 @@
                     </tbody>
                 </table>
                 <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                    {{ $users->links() }}
+                    {{ $providers->links() }}
                 </div>
             </div>
         </div>

@@ -144,7 +144,13 @@
     document.addEventListener('DOMContentLoaded', function() {
         new AutoNumeric('#spend_every', 'commaDecimalCharDotSeparator');
         new AutoNumeric('#one_score_equal', 'commaDecimalCharDotSeparator');
-        new AutoNumeric('#score_to_email', 'commaDecimalCharDotSeparator');
+        new AutoNumeric('#score_to_email', {
+            decimalPlaces: 0, // Tidak menggunakan tempat desimal
+            digitGroupSeparator : '.', // Menggunakan titik sebagai pemisah ribuan
+            decimalCharacter : ',', // Karakter desimal, disetel ke koma jika perlu
+            allowDecimalPadding: false, // Tidak memperbolehkan padding desimal
+            minimumValue: '10' // Nilai minimum adalah 0, untuk memastikan bilangan positif
+        });
     });
 </script>
 
@@ -154,50 +160,4 @@
     });
 </script>
 
-@if($errors->any())
-    <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            var errorModal = new bootstrap.Modal(document.getElementById('editClient'));
-            errorModal.show();
-        });
-    </script>
-@endif
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var filterCollapse = document.getElementById('filter');
-        
-        // Check if filter state is stored in localStorage
-        var storedState = localStorage.getItem('filterState');
-        if (storedState === 'true') {
-            filterCollapse.classList.add('show');
-            // filterCollapse.classList.toggle('show');
-            // filterCollapse.classList.remove('hide');
-        } 
-        //  else {
-        // //     filterCollapse.classList.toggle('hide');
-        //  filterCollapse.classList.remove('show');
-        //  }
-
-    // Listen for click events on the filter button
-    document.getElementById('filterButton').addEventListener('click', function () {
-        // filterCollapse.addEventListener('show.bs.collapse', function () {
-        //     // Toggle the collapse state
-        //     // filterCollapse.classList.toggle('show');
-        //     // Store the current collapse state in localStorage
-        //     // localStorage.setItem('filterState', 'true');
-        //     localStorage.setItem('filterState', filterCollapse.classList.contains('show') ? 'true' : 'false');
-        // });
-        filterCollapse.addEventListener('shown.bs.collapse', function () {
-            // Store the current collapse state in localStorage when the collapse is shown
-            localStorage.setItem('filterState', 'true');
-        });
-        filterCollapse.addEventListener('hidden.bs.collapse', function () {
-            // Remove collapse state from localStorage when the collapse is hidden
-            // localStorage.setItem('filterState', 'false');
-            localStorage.removeItem('filterState');
-        });
-    });
-    });
-</script>
 @endpush

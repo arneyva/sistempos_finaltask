@@ -39,6 +39,14 @@ class Provider extends Model
         'code' => 'int',
     ];
 
+    public function scopeFilter($query, array $filters)
+    {
+
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            return $query;
+        });
+    }
+
     protected $fillable = [
         'name',
         'code',
@@ -48,6 +56,10 @@ class Provider extends Model
         'country',
         'city',
         'adresse',
+        'nama_kontak_person',
+        'alamat_website',
+        'lead_time',
+        'nomor_kontak_person',
     ];
 
     public function purchase_returns()
