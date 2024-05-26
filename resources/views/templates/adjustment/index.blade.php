@@ -40,7 +40,7 @@
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
+                    <a href="{{ route('adjustment.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
                     <a href="{{ route('adjustment.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
                     <a href="{{ route('adjustment.create') }}" class="btn btn-soft-primary">+create</a>

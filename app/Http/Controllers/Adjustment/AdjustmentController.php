@@ -142,7 +142,7 @@ class AdjustmentController extends Controller
         $adjustments = $adjustmentQuery->get();
 
         // Generate PDF
-        $pdf = Pdf::loadView('adjustments.export_pdf', compact('adjustments'));
+        $pdf = Pdf::loadView('export.adjustment', compact('adjustments'));
 
         $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
         return $pdf->download("adjustments_{$timestamp}.pdf");
