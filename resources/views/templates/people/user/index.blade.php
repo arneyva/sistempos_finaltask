@@ -156,7 +156,6 @@
     }
 </script>
 
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
         var filterCollapse = document.getElementById('filter');
