@@ -13,6 +13,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+
         User::firstOrCreate([
             'firstname' => 'user',
             'lastname' => 'biasa',
@@ -48,5 +49,31 @@ class UserSeeder extends Seeder
             'avatar' => 'no_avatar.png',
         ])->assignRole('superadmin')
             ->warehouses()->sync(Warehouse::pluck('id')->toArray());
+
+        $superadmins=User::factory(10)->create();
+        $superadmins->each(function ($superadmin) {
+            // Menetapkan peran superadmin
+            $superadmin->assignRole('superadmin');
+
+            // Menyinkronkan semua gudang
+            $superadmin->warehouses()->sync(Warehouse::pluck('id')->toArray());
+        });
+
+
+
+        $inventarises=User::factory(10)->create();
+        $inventarises->each(function ($inventaris) {
+            // Menetapkan peran superadmin
+            $inventaris->assignRole('inventaris');
+
+            // Menyinkronkan semua gudang
+            $inventaris->warehouses()->attach(1);
+        });
+
+        $staffs=User::factory(10)->create();
+        $staffs->each(function ($staff) {
+            // Menetapkan peran superadmin
+            $staff->assignRole('staff');
+        });
     }
 }

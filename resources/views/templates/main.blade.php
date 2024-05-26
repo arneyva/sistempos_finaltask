@@ -476,9 +476,13 @@
                 icon: 'error',
                 title: 'Oops...',
                 html: errorList,
-                // Anda bisa mengganti '<br>' dengan tag HTML lain untuk menyesuaikan tampilan
+                
             });
         @endif
+    </script>
+
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     </script>
 
     @stack('script')

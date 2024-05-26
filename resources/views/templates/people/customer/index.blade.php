@@ -67,7 +67,8 @@
                                 <td>{{ $data->created_at }}</td>
                                 <td>
                                     <div class="inline">
-                                        <button type="button" data-bs-toggle="modal" data-bs-target="#editClient"  style="background-color: transparent; border: none; display: inline-block;">
+                                        <button class="editBtn" data-id="{{$data['id']}}" data-name="{{$data->name}}" data-email="{{$data->email}}" data-phone="{{$data->phone}}" style="background-color: transparent; border: none; display: inline-block;">
+                                        <!-- <button type="button" data-bs-toggle="modal" data-bs-target="#editClient"  style="background-color: transparent; border: none; display: inline-block;"> -->
                                             <a href="#">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -122,9 +123,9 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <form action="{{ route('people.clients.update', $data['id']) }}" enctype="multipart/form-data" novalidate class="needs-validation">
+                                                <form action="{{ route('people.clients.update', $data['id']) }}" enctype="multipart/form-data" novalidate>
                                                 @csrf
-                                                @method('patch')
+                                                @method('PATCH')
                                                     <div class="form-group">
                                                         <label class="form-label" for="name">Name:</label>
                                                         <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
@@ -192,7 +193,7 @@
                         <div class="form-group">
                             <label class="form-label" for="name">Name:</label>
                             <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
-                                id="name" name="name_create" placeholder="name" required>
+                                id="name" name="name_create" placeholder="name" value="{{ old('name_create')}}" required>
                             <small class=" text-danger font-italic">
                                 @error('name_create')
                                     {{ $message }}
@@ -202,7 +203,7 @@
                         <div class="form-group">
                             <label class="form-label" for="email">Email:</label>
                             <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror"
-                                id="email" name="email_create" placeholder="Email" required>
+                                id="email" name="email_create" placeholder="Email" value="{{ old('email_create')}}" required>
                             <small class=" text-danger font-italic">
                                 @error('email_create')
                                     {{ $message }}
@@ -213,7 +214,7 @@
                             <label class="form-label" for="cname">Phone:</label>
                             <input type="tel" name="phone_create"
                                 class="form-control bg-transparent @error('phone') is-invalid @enderror"
-                                id="cname" placeholder="Phone" required>
+                                id="cname" placeholder="Phone"  value="{{ old('phone_create')}}" required>
                             <small class=" text-danger font-italic">
                                 @error('phone_create')
                                     {{ $message }}
@@ -240,6 +241,64 @@
 </script>
 
 <script>
+    document.querySelectorAll('.editBtn').forEach(button => {
+    button.addEventListener('click', function() {
+        let userId = this.getAttribute('data-id');
+        let userName = this.getAttribute('data-name');
+        let userEmail = this.getAttribute('data-email');
+        let userPhone = this.getAttribute('data-phone');
+
+        Swal.fire({
+        title: 'Edit Data',
+        html: `
+            <input type="text" id="swal-input1" class="swal2-input" value="${userName}">
+            <input type="email" id="swal-input2" class="swal2-input" value="${userEmail}">
+            <input type="email" id="swal-input3" class="swal2-input" value="${userPhone}">`,
+        focusConfirm: false,
+        showCancelButton: true,
+        preConfirm: () => {
+            const name = document.getElementById('swal-input1').value;
+            const email = document.getElementById('swal-input2').value;
+            const phone = document.getElementById('swal-input3').value;
+
+            // Validasi inputan
+            if (!name || !email) {
+            Swal.showValidationMessage(`Mohon isi kedua field`);
+            return false;
+            }
+
+            // Kirim data yang sudah diedit ke controller
+            fetch(`/people/clients/update/${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({name: name, email: email, phone: phone})
+            })
+            .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+            })
+            .then(data => {
+            console.log(data);
+            location.replace(location.href);
+            })
+            .catch(error => {
+            console.error('Error:', error);
+            });
+        }
+        });
+    });
+    });
+</script>
+
+<script>
+    @if(session('success'))
+    localStorage.removeItem('modalShown');
+    @endif
     $('#createClient').on('shown.bs.modal', function () {
     localStorage.setItem('modalShown', 'true');
     });
