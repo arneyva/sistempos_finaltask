@@ -454,7 +454,7 @@
             timer: 3000,
             timerProgressBar: true,
             customClass: {
-                popup: 'my-custom-swal' // Tambahkan class kustom ini
+                popup: 'my-custom-swal' 
             },
             didOpen: (toast) => {
                 toast.onmouseenter = Swal.stopTimer;
