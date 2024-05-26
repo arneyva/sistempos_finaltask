@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>All Adjustment</h1>
+<p>Do Something with all your adjustment</p>
+@endsection
+
 <style>
     .warehousedeleted {
         padding: 7px;
