@@ -11,55 +11,224 @@ use App\Models\ProductWarehouse;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AdjustmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // public function index(Request $request)
+    // {
+    //     // Inisialisasi query dengan menggunakan model Adjustment
+    //     $adjustmentQuery = Adjustment::with('warehouse')->where('deleted_at', '=', null);
+
+    //     // Terapkan filter berdasarkan parameter yang diterima dari request
+    //     if ($request->has('date')) {
+    //         $adjustmentQuery->whereDate('date', '=', $request->input('date'));
+    //     }
+
+    //     if ($request->has('Ref')) {
+    //         $adjustmentQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+    //     }
+
+    //     if ($request->has('warehouse_id')) {
+    //         $adjustmentQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+    //     }
+
+    //     // Ambil data penyesuaian dengan membatasi jumlah per halaman
+    //     $adjustment = $adjustmentQuery->latest()->paginate($request->input('limit', 10));
+
+    //     // Ambil data detail penyesuaian untuk setiap item
+    //     $data = [];
+    //     foreach ($adjustment as $adjustmentdata) {
+    //         $item['id'] = $adjustmentdata->id;
+    //         $item['date'] = $adjustmentdata->date;
+    //         $item['Ref'] = $adjustmentdata->Ref;
+    //         $item['warehouse'] = $adjustmentdata['warehouse']->name ?? 'deleted';
+    //         $item['items'] = $adjustmentdata['items'];
+
+    //         $Adjustment_data = AdjustmentDetail::where('adjustment_id', $adjustmentdata->id)
+    //             ->where('deleted_at', '=', null)->get();
+
+    //         // Memuat detail untuk setiap item penyesuaian
+    //         $detail_product = [];
+    //         $detail_product_variant = [];
+    //         $detail_code = [];
+    //         $detail_code_variant = [];
+    //         $detail_quantity = [];
+    //         $detail_type = [];
+
+    //         foreach ($Adjustment_data as $detail) {
+    //             $detail_product[] = $detail->product->name;
+    //             $detail_product_variant[] = $detail->productVariant->name ?? null;
+    //             $detail_code[] = $detail->product->code;
+    //             $detail_code_variant[] = $detail->productVariant->code ?? null;
+    //             $detail_quantity[] = $detail->quantity;
+    //             $detail_type[] = $detail->type;
+    //         }
+
+    //         // Menambahkan detail ke dalam array item
+    //         $item['details_product'] = $detail_product;
+    //         $item['details_product_variant'] = $detail_product_variant;
+    //         $item['details_code'] = $detail_code;
+    //         $item['details_code_variant'] = $detail_code_variant;
+    //         $item['details_quantity'] = $detail_quantity;
+    //         $item['details_type'] = $detail_type;
+
+    //         // Menambahkan item ke dalam array data
+    //         $data[] = $item;
+    //     }
+
+    //     // Ambil data gudang berdasarkan peran pengguna
+    //     $user_auth = auth()->user();
+    //     if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+    //         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+    //     } else {
+    //         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+    //         $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+    //     }
+
+    //     // Mengembalikan view dengan data yang telah difilter
+    //     return view('templates.adjustment.index', [
+    //         'data' => $data,
+    //         'adjustment' => $adjustment,
+    //         'warehouse' => $warehouses
+    //     ]);
+    // }
+    public function index(Request $request)
     {
-        $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->latest()->paginate(10);
+        // Inisialisasi query dengan menggunakan model Adjustment
+        $adjustmentQuery = Adjustment::with('warehouse')->where('deleted_at', '=', null);
+
+        // Terapkan filter berdasarkan parameter yang diterima dari request
+        if ($request->filled('date')) {
+            $adjustmentQuery->whereDate('date', '=', $request->input('date'));
+        }
+
+        if ($request->filled('Ref')) {
+            $adjustmentQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+        }
+
+        if ($request->filled('warehouse_id')) {
+            $adjustmentQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+
+        // Lakukan sorting sesuai request jika diperlukan
+        if ($request->has('SortField') && $request->has('SortType')) {
+            $sortField = $request->input('SortField');
+            $sortType = $request->input('SortType');
+            $adjustmentQuery->orderBy($sortField, $sortType);
+        }
+
+        // Lakukan pencarian jika diperlukan
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $adjustmentQuery->where('Ref', 'like', '%' . $search . '%');
+        }
+
+        // Ambil data dengan membatasi jumlah per halaman
+        $adjustment = $adjustmentQuery->paginate($request->input('limit', 10))->appends($request->except('page'));
+
+        // Siapkan data penyesuaian untuk ditampilkan di view
         $data = [];
         foreach ($adjustment as $adjustmentdata) {
-            $item['id'] = $adjustmentdata->id;
-            $item['date'] = $adjustmentdata->date;
-            $item['Ref'] = $adjustmentdata->Ref;
-            $item['warehouse'] = $adjustmentdata['warehouse']->name ?? 'deleted';
-            $item['items'] = $adjustmentdata['items'];
+            $item = [
+                'id' => $adjustmentdata->id,
+                'date' => $adjustmentdata->date,
+                'Ref' => $adjustmentdata->Ref,
+                'warehouse' => $adjustmentdata->warehouse->name ?? 'deleted',
+                'items' => $adjustmentdata->items,
+                'details_product' => [],
+                'details_product_variant' => [],
+                'details_code' => [],
+                'details_code_variant' => [],
+                'details_quantity' => [],
+                'details_type' => []
+            ];
+
             $Adjustment_data = AdjustmentDetail::where('adjustment_id', $adjustmentdata->id)
                 ->where('deleted_at', '=', null)->get();
-            // dd($Adjustment_data);
-            $detail_product = [];
-            $detail_product_variant = [];
-            $detail_code = [];
-            $detail_code_variant = [];
-            $detail_quantity = [];
-            $detail_type = [];
+
             foreach ($Adjustment_data as $detail) {
-                $detail_product[] = $detail->product->name;
-                $detail_product_variant[] = $detail->productVariant->name ?? null;
-                $detail_code[] = $detail->product->code;
-                $detail_code_variant[] = $detail->productVariant->code ?? null;
-                $detail_quantity[] = $detail->quantity;
-                $detail_type[] = $detail->type;
+                $item['details_product'][] = $detail->product->name;
+                $item['details_product_variant'][] = $detail->productVariant->name ?? null;
+                $item['details_code'][] = $detail->product->code;
+                $item['details_code_variant'][] = $detail->productVariant->code ?? null;
+                $item['details_quantity'][] = $detail->quantity;
+                $item['details_type'][] = $detail->type;
             }
-            $item['details_product'] = $detail_product;
-            $item['details_product_variant'] = $detail_product_variant;
-            $item['details_code'] = $detail_code;
-            $item['details_code_variant'] = $detail_code_variant;
-            $item['details_quantity'] = $detail_quantity;
-            $item['details_type'] = $detail_type;
+
             $data[] = $item;
         }
 
-        // dd($data);
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+
+        // Mengembalikan view dengan data yang telah difilter
         return view('templates.adjustment.index', [
             'data' => $data,
             'adjustment' => $adjustment,
+            'warehouse' => $warehouses
         ]);
     }
+
+
+
+    /**
+     * Display a listing of the resource.
+     */
+    // public function index()
+    // {
+    //     $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->latest()->paginate(10);
+    //     $data = [];
+    //     foreach ($adjustment as $adjustmentdata) {
+    //         $item['id'] = $adjustmentdata->id;
+    //         $item['date'] = $adjustmentdata->date;
+    //         $item['Ref'] = $adjustmentdata->Ref;
+    //         $item['warehouse'] = $adjustmentdata['warehouse']->name ?? 'deleted';
+    //         $item['items'] = $adjustmentdata['items'];
+    //         $Adjustment_data = AdjustmentDetail::where('adjustment_id', $adjustmentdata->id)
+    //             ->where('deleted_at', '=', null)->get();
+    //         // dd($Adjustment_data);
+    //         $detail_product = [];
+    //         $detail_product_variant = [];
+    //         $detail_code = [];
+    //         $detail_code_variant = [];
+    //         $detail_quantity = [];
+    //         $detail_type = [];
+    //         foreach ($Adjustment_data as $detail) {
+    //             $detail_product[] = $detail->product->name;
+    //             $detail_product_variant[] = $detail->productVariant->name ?? null;
+    //             $detail_code[] = $detail->product->code;
+    //             $detail_code_variant[] = $detail->productVariant->code ?? null;
+    //             $detail_quantity[] = $detail->quantity;
+    //             $detail_type[] = $detail->type;
+    //         }
+    //         $item['details_product'] = $detail_product;
+    //         $item['details_product_variant'] = $detail_product_variant;
+    //         $item['details_code'] = $detail_code;
+    //         $item['details_code_variant'] = $detail_code_variant;
+    //         $item['details_quantity'] = $detail_quantity;
+    //         $item['details_type'] = $detail_type;
+    //         $data[] = $item;
+    //     }
+    //     $user_auth = auth()->user();
+    //     if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+    //         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+    //     } else {
+    //         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+    //         $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+    //     }
+    //     return view('templates.adjustment.index', [
+    //         'data' => $data,
+    //         'adjustment' => $adjustment,
+    //         'warehouse' => $warehouses
+    //     ]);
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -86,7 +255,7 @@ class AdjustmentController extends Controller
             //array ke2 di tambah 1
             $inMsg = $nwMsg[1] + 1;
             // array item pertama ditambah dengan array item kedua
-            $code = $nwMsg[0].'_'.$inMsg;
+            $code = $nwMsg[0] . '_' . $inMsg;
         } else {
             $code = 'AD_1'; // AD=pertama 1=kedua
         }
@@ -124,8 +293,8 @@ class AdjustmentController extends Controller
             if ($product_warehouse->product_variant_id) { //jika memiliki data product_variant_id
                 $item['product_variant_id'] = $product_warehouse->product_variant_id;
                 $item['code'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
-                $item['Variant'] = '['.$product_warehouse['productVariant']->name.']'.$product_warehouse['product']->name; //code ngambil dari relasi productVariant
-                $item['name'] = '['.$product_warehouse['productVariant']->name.']'.$product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['Variant'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['name'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
                 $item['barcode'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
 
                 $product_price = $product_warehouse['productVariant']->price; //code ngambil dari relasi productVariant
@@ -245,7 +414,7 @@ class AdjustmentController extends Controller
             $product_cost = $product_variant_data['cost'];
             $item['qty'] = $stock->qty;
             $item['code'] = $product_variant_data['code'];
-            $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
+            $item['name'] = '[' . $product_variant_data['name'] . ']' . $Product_data['name'];
             $item['product_variant_id'] = $variant_id;
 
             //product is_service
@@ -465,7 +634,7 @@ class AdjustmentController extends Controller
                 $data['product_id'] = $detail->product_id;
                 $data['product_variant_id'] = $detail->product_variant_id;
                 $data['code'] = $productsVariants->code;
-                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
                 $data['current'] = $item_product ? $item_product->qty : 0;
                 $data['type'] = $detail->type;
                 $data['unit'] = $detail['product']['unit']->ShortName;
@@ -576,7 +745,7 @@ class AdjustmentController extends Controller
                 }
 
                 // Delete Detail
-                if (! in_array($old_products_id[$key], $new_products_id)) {
+                if (!in_array($old_products_id[$key], $new_products_id)) {
                     $AdjustmentDetail = AdjustmentDetail::findOrFail($value->id);
                     $AdjustmentDetail->delete();
                 }
@@ -639,7 +808,7 @@ class AdjustmentController extends Controller
                 $orderDetails['product_variant_id'] = $product_detail['product_variant_id'];
                 $orderDetails['type'] = $product_detail['type'];
 
-                if (! in_array($product_detail['id'], $old_products_id)) {
+                if (!in_array($product_detail['id'], $old_products_id)) {
                     AdjustmentDetail::Create($orderDetails);
                 } else {
                     AdjustmentDetail::where('id', $product_detail['id'])->update($orderDetails);
