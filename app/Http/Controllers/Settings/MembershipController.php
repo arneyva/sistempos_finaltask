@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Membership;
 use Illuminate\Http\Request;
 
@@ -71,9 +72,64 @@ class MembershipController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
+        $membership= Membership::findOrFail($id);
 
+        // Cek jenis form berdasarkan input 'action_type'
+        switch ($request->input('action_type')) {
+            case 'spend_every':
+                // Handle form 1
+                $jadikanFloat= floatval(str_replace(',', '.', str_replace('.', '', $request->input('spend_every'))));
+
+                $dataToValidate = ['spend_every' => $jadikanFloat];
+
+                // dd($dataToValidate);
+
+                $rules = ['spend_every' => ['required', 'numeric', 'gt:0'],];
+                $message = ['spend_every.gt' => 'Nilai harus lebih besar dari nol dan tidak boleh negatif.',];
+
+                $validated = Validator::make($dataToValidate,$rules,$message);
+                if ($validated->fails()) {
+                    return back()->withErrors($validated)->withInput();
+                }
+                break;
+            case 'one_score_equal':
+                // Handle form 2
+                $jadikanFloat= floatval(str_replace(',', '.', str_replace('.', '', $request->input('one_score_equal'))));
+
+                $dataToValidate = ['one_score_equal' => $jadikanFloat];
+
+                $rules = ['one_score_equal' => ['required', 'numeric', 'gt:0'],];
+                $message = ['one_score_equal.gt' => 'Nilai harus lebih besar dari nol dan tidak boleh negatif.',];
+
+                $validated = Validator::make($dataToValidate,$rules,$message);
+                if ($validated->fails()) {
+                    return back()->withErrors($validated)->withInput();
+                }
+                break;
+            case 'score_to_email':
+                // Handle form 3
+                $jadikanFloat= floatval(str_replace(',', '.', str_replace('.', '', $request->input('score_to_email'))));
+
+                $dataToValidate = ['score_to_email' => $jadikanFloat];
+
+                $rules = ['score_to_email' => ['required', 'numeric', 'gt:0'],];
+                $message = ['score_to_email.gt' => 'Nilai harus lebih besar dari nol dan tidak boleh negatif.',];
+
+                $validated = Validator::make($dataToValidate,$rules,$message);
+                if ($validated->fails()) {
+                    return back()->withErrors($validated)->withInput();
+                }
+                break;
+            default:
+                break;
+        }
+
+        $membership->update($dataToValidate);
+
+        // Redirect atau tampilkan view berdasarkan hasil handling
+        return back()->with('success', 'Data Berhasil Diubah');
     }
 
     /**

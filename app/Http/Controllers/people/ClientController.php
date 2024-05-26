@@ -5,6 +5,8 @@ namespace App\Http\Controllers\people;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
@@ -46,10 +48,16 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
+        // $fields = [
+        //     'name_create' =>  $request['name'],
+        //     'email_create' =>  $request['email'],
+        //     'phone_create' =>  $request['phone'],
+        // ];
+
         $rules = [
-            'name' => 'required|max:12',
-            'email' => 'required|email|unique:clients',
-            'phone' => 'required|numeric|min_digits:12|max_digits:12',
+            'name_create' => 'required',
+            'email_create' => 'required|email|unique:clients,email',
+            'phone_create' => 'required|numeric|min_digits:12|max_digits:12',
         ];
         $message = [
             'required' => 'Tidak boleh kosong!',
@@ -61,15 +69,20 @@ class ClientController extends Controller
             'unique' => ':attribute sudah terdaftar',
         ];
 
+        // $validateData = Validator::make($fields, $rules, $message);
+        // if ($validateData->fails()) {
+        //     return response()->json(['errors' => $validateData->errors()], 422);
+        // }
+
         $validateData = $request->validate($rules, $message);
 
         $client = new Client;
-        $client->name = $request['name'];
-        $client->email = $request['email'];
-        $client->phone = $request['phone'];
+        $client->name = $request['name_create'];
+        $client->email = $request['email_create'];
+        $client->phone = $request['phone_create'];
         $client->save();
 
-        return redirect()->route('people.clients.index')->with('success', 'Customer berhasil ditambahkan');
+        return redirect()->route('people.clients.index')->response()->json(['success' => 'Client berhasil ditambahkan']);
     }
 
     /**
@@ -98,6 +111,12 @@ class ClientController extends Controller
             return back()->with('warning', 'Client tidak ditemukan!');
         }
 
+        $fields = [
+            'name' =>  $request['name'],
+            'email' =>  $request['email'],
+            'phone' =>  $request['phone'],
+        ];
+
         $rules = [
             'name' => 'required|max:12',
             'email' => 'required|email|unique:clients',
@@ -114,7 +133,10 @@ class ClientController extends Controller
             'unique' => ':attribute sudah terdaftar',
         ];
 
-        $validateData = $request->validate($rules, $message);
+        $validateData = Validator::make($fields, $rules, $message);
+        if ($validateData->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         Client::whereId($id)->update([
             'name' => $request['name'],
