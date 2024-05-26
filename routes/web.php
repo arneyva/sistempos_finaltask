@@ -3,6 +3,7 @@
 use App\Http\Controllers\Adjustment\AdjustmentController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\people\ClientController;
+use App\Http\Controllers\people\ProviderController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ProductController;
@@ -159,6 +160,14 @@ Route::prefix('people')->middleware(['auth', 'verified'])->name('people.')->grou
         Route::get('detail/{id}', [UserController::class, 'show'])->name('show');
         Route::patch('update/{id}', [UserController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('suppliers')->name('suppliers.')->group(function () {
+        Route::get('list', [ProviderController::class, 'index'])->name('index');
+        Route::get('create', [ProviderController::class, 'create'])->name('create');
+        Route::post('store', [ProviderController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [ProviderController::class, 'show'])->name('show');
+        Route::patch('update/{id}', [ProviderController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [ProviderController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('clients')->name('clients.')->group(function () {
         Route::get('list', [ClientController::class, 'index'])->name('index');

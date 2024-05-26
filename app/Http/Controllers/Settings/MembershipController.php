@@ -37,20 +37,7 @@ class MembershipController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = [
-            'spend_every' => 'required|max:12',
-            'one_score_equal' => 'required|email|unique:clients',
-            'score_to_email' => 'required|numeric|min_digits:12|max_digits:12',
-        ];
-        $message = [
-            'required' => 'Tidak boleh kosong!',
-            'email' => 'Alamat email tidak valid!',
-            'min' => 'Minimal :min karakter',
-            'min_digits' => 'Nomor terdiri dari :min angka',
-            'max' => 'Maksimal :max karakter',
-            'max_digits' => 'Nomor terdiri dari :max angka',
-            'unique' => ':attribute sudah terdaftar',
-        ];
+
     }
 
     /**
@@ -83,8 +70,6 @@ class MembershipController extends Controller
                 $jadikanFloat= floatval(str_replace(',', '.', str_replace('.', '', $request->input('spend_every'))));
 
                 $dataToValidate = ['spend_every' => $jadikanFloat];
-
-                // dd($dataToValidate);
 
                 $rules = ['spend_every' => ['required', 'numeric', 'gt:0'],];
                 $message = ['spend_every.gt' => 'Nilai harus lebih besar dari nol dan tidak boleh negatif.',];

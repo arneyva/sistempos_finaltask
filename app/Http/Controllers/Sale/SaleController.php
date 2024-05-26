@@ -160,34 +160,46 @@ class SaleController extends Controller
 
             $sale = Sale::findOrFail($order->id);
 
-            // Mengambil client_id dari sale
-            $clientId = $sale->client_id;   
-            // Cek apakah client_id sama dengan satu
-            if ($clientId != 1) {
-                // Mengambil client dan set
-                $client = Client::find($clientId);
-                if ($client) {
-                    //hitung harga bersih tanpa pajak dan shipping, namun diskon masih masuk
-                    $total_spend= $sale->GrandTotal - $sale->TaxNet - $sale->shipping;
-        
-                    //ambil settingan membershgip
-                    $membership_term=Membership::latest()->first();
-        
-                    $spend_every=$membership_term->spend_every;
-                    $score_to_email=$membership_term->score_to_email;
-                    $one_score_equal=$membership_term->one_score_equal;
-        
-                    //hitung score yang didapat berdasarkan settingan membership
-                    $total_score=intdiv($total_spend,spend_every);
-        
-                    // Menambahkan total_score ke client score
-                    $client->score += $total_score;
-        
-                    // Menyimpan perubahan pada client
-                    $client->save();
-                }
-            }
+            $detail_sale = Sale::with('details')->find($order->id);
+
+    //{{==================================================================}}\\
+//{{=============================== ROPIQ ==============================}}\\
+    //{{==================================================================}}\\
+                // Mengambil client_id dari sale
+                $clientId = $sale->client_id;   
+                // Cek apakah client_id bukan default
+                if ($clientId != 1) {
+                    // Mengambil client dari sale
+                    $client_sale = Client::find($clientId);
+                    if ($client_sale) {
+                        //hitung harga bersih barang
+                        if ($detail_sale) {
+                            $total_spend = 0;
+                            foreach ($detail_sale->details as $detail) {
+                                $total_spend += $detail->total - $detail->TaxNet;
+                            }
+                        }
             
+                        //ambil settingan membershgip
+                        $membership_term=Membership::latest()->first();
+            
+                        $spend_every=$membership_term->spend_every;
+                        $score_to_email=$membership_term->score_to_email;
+                        $one_score_equal=$membership_term->one_score_equal;
+            
+                        //hitung score yang didapat berdasarkan settingan membership
+                        $total_score=intdiv($total_spend,$spend_every);
+            
+                        // Menambahkan total_score ke client score
+                        $client_sale->score += $total_score;
+            
+                        // Menyimpan perubahan pada client
+                        $client_sale->save();
+                    }
+            }
+//{{=========================================================================}}\\
+    //{{==================================================================}}\\
+        //{{==========================================================}}\\
 
             if ($request->payment['status'] != 'pending') {
                 // Check If User Has Permission view All Records
