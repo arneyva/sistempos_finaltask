@@ -48,11 +48,6 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        // $fields = [
-        //     'name_create' =>  $request['name'],
-        //     'email_create' =>  $request['email'],
-        //     'phone_create' =>  $request['phone'],
-        // ];
 
         $rules = [
             'name_create' => 'required',
@@ -69,10 +64,6 @@ class ClientController extends Controller
             'unique' => ':attribute sudah terdaftar',
         ];
 
-        // $validateData = Validator::make($fields, $rules, $message);
-        // if ($validateData->fails()) {
-        //     return response()->json(['errors' => $validateData->errors()], 422);
-        // }
 
         $validateData = $request->validate($rules, $message);
 
@@ -82,7 +73,7 @@ class ClientController extends Controller
         $client->phone = $request['phone_create'];
         $client->save();
 
-        return redirect()->route('people.clients.index')->response()->json(['success' => 'Client berhasil ditambahkan']);
+        return redirect()->route('people.clients.index')->with(['success' => 'Client berhasil ditambahkan']);
     }
 
     /**
@@ -111,12 +102,6 @@ class ClientController extends Controller
             return back()->with('warning', 'Client tidak ditemukan!');
         }
 
-        $fields = [
-            'name' =>  $request['name'],
-            'email' =>  $request['email'],
-            'phone' =>  $request['phone'],
-        ];
-
         $rules = [
             'name' => 'required|max:12',
             'email' => 'required|email|unique:clients',
@@ -133,10 +118,7 @@ class ClientController extends Controller
             'unique' => ':attribute sudah terdaftar',
         ];
 
-        $validateData = Validator::make($fields, $rules, $message);
-        if ($validateData->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+        $validateData = $request->validate($rules, $message);
 
         Client::whereId($id)->update([
             'name' => $request['name'],
