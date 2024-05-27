@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
@@ -63,7 +62,6 @@ class ClientController extends Controller
             'max_digits' => 'Nomor terdiri dari :max angka',
             'unique' => ':attribute sudah terdaftar',
         ];
-
 
         $validateData = $request->validate($rules, $message);
 

@@ -1,12 +1,11 @@
 <?php
+
 namespace App\Http\Controllers\people;
 
-use App\Models\Provider;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Provider;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProviderController extends Controller
 {
@@ -53,7 +52,7 @@ class ProviderController extends Controller
             'max_digits' => 'Nomor terdiri dari :max angka',
             'unique' => ':attribute sudah terdaftar',
         ];
-        
+
         $validateData = $request->validate($rules, $message);
 
         $last = Provider::latest()->first();
@@ -63,7 +62,7 @@ class ProviderController extends Controller
         } else {
             $code = 1111;
         }
-        
+
         $provider = new Provider;
         $provider->name = $request['name'];
         $provider->email = $request['email'];
@@ -75,15 +74,14 @@ class ProviderController extends Controller
         $provider->nama_kontak_person = $request['nama_kontak_person'];
         $provider->alamat_website = $request['alamat_website'];
         $provider->lead_time = $request['lead_time'];
-    $provider->nomor_kontak_person = $request['nomor_kontak_person'];
-    $provider->save();
-    
-    
-    return redirect()->route('people.suppliers.index', ['orderBy' => 'name'])->with('success', 'Supplier berhasil ditambahkan');
-}
+        $provider->nomor_kontak_person = $request['nomor_kontak_person'];
+        $provider->save();
 
-public function show(string $id)
-{
+        return redirect()->route('people.suppliers.index', ['orderBy' => 'name'])->with('success', 'Supplier berhasil ditambahkan');
+    }
+
+    public function show(string $id)
+    {
         return view('templates.people.supplier.edit', [
             'provider' => Provider::findOrFail($id),
         ]);
@@ -112,7 +110,7 @@ public function show(string $id)
             'max_digits' => 'Nomor terdiri dari :max angka',
             'unique' => ':attribute sudah terdaftar',
         ];
-    
+
         $validateData = $request->validate($rules, $message);
 
         Provider::whereId($id)->update([

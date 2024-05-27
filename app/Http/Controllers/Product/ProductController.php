@@ -22,11 +22,31 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // ambil data product utama
-        $products = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null)->latest()->paginate(10);
+        $productsQuery = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null);
         //ambil data
+        // Ambil data kategori
+        $categories = Category::where('deleted_at', '=', null)->get(['id', 'name']);
+        $brands = Brand::where('deleted_at', '=', null)->get(['id', 'name']);
+        // dd($categories);
+
+        if ($request->filled('code')) {
+            $productsQuery->where('code', 'like', '%'.$request->input('code').'%');
+        }
+
+        if ($request->filled('name')) {
+            $productsQuery->where('name', 'like', '%'.$request->input('name').'%');
+        }
+
+        if ($request->filled('category_id')) {
+            $productsQuery->where('category_id', '=', $request->input('category_id'));
+        }
+        if ($request->filled('brand_id')) {
+            $productsQuery->where('brand_id', '=', $request->input('brand_id'));
+        }
+        $products = $productsQuery->paginate($request->input('limit', 10))->appends($request->except('page'));
         $items = [];
         foreach ($products as $product) {
             $item['id'] = $product->id;
@@ -72,6 +92,8 @@ class ProductController extends Controller
         return view('templates.product.index', [
             'items' => $items,
             'products' => $products,
+            'categories' => $categories,
+            'brands' => $brands,
         ]);
     }
 

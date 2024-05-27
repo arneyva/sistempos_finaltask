@@ -25,7 +25,7 @@ return new class extends Migration
     {
         Schema::table('providers', function (Blueprint $table) {
             // Menghapus kolom yang baru ditambahkan
-            $table->dropColumn(['nama_kontak_person', 'alamat_website', 'lead_time', 'nomor_kontak_person','avatar']);
+            $table->dropColumn(['nama_kontak_person', 'alamat_website', 'lead_time', 'nomor_kontak_person', 'avatar']);
         });
     }
 };

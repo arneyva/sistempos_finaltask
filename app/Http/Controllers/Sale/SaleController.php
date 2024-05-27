@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Sale;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\Membership;
 use App\Models\PaymentSale;
 use App\Models\ProductWarehouse;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Unit;
 use App\Models\Warehouse;
-use App\Models\Membership;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -162,44 +162,44 @@ class SaleController extends Controller
 
             $detail_sale = Sale::with('details')->find($order->id);
 
-    //{{==================================================================}}\\
-//{{=============================== ROPIQ ==============================}}\\
-    //{{==================================================================}}\\
-                // Mengambil client_id dari sale
-                $clientId = $sale->client_id;   
-                // Cek apakah client_id bukan default
-                if ($clientId != 1) {
-                    // Mengambil client dari sale
-                    $client_sale = Client::find($clientId);
-                    if ($client_sale) {
-                        //hitung harga bersih barang
-                        if ($detail_sale) {
-                            $total_spend = 0;
-                            foreach ($detail_sale->details as $detail) {
-                                $total_spend += $detail->total - $detail->TaxNet;
-                            }
+            //{{==================================================================}}\\
+            //{{=============================== ROPIQ ==============================}}\\
+            //{{==================================================================}}\\
+            // Mengambil client_id dari sale
+            $clientId = $sale->client_id;
+            // Cek apakah client_id bukan default
+            if ($clientId != 1) {
+                // Mengambil client dari sale
+                $client_sale = Client::find($clientId);
+                if ($client_sale) {
+                    //hitung harga bersih barang
+                    if ($detail_sale) {
+                        $total_spend = 0;
+                        foreach ($detail_sale->details as $detail) {
+                            $total_spend += $detail->total - $detail->TaxNet;
                         }
-            
-                        //ambil settingan membershgip
-                        $membership_term=Membership::latest()->first();
-            
-                        $spend_every=$membership_term->spend_every;
-                        $score_to_email=$membership_term->score_to_email;
-                        $one_score_equal=$membership_term->one_score_equal;
-            
-                        //hitung score yang didapat berdasarkan settingan membership
-                        $total_score=intdiv($total_spend,$spend_every);
-            
-                        // Menambahkan total_score ke client score
-                        $client_sale->score += $total_score;
-            
-                        // Menyimpan perubahan pada client
-                        $client_sale->save();
                     }
+
+                    //ambil settingan membershgip
+                    $membership_term = Membership::latest()->first();
+
+                    $spend_every = $membership_term->spend_every;
+                    $score_to_email = $membership_term->score_to_email;
+                    $one_score_equal = $membership_term->one_score_equal;
+
+                    //hitung score yang didapat berdasarkan settingan membership
+                    $total_score = intdiv($total_spend, $spend_every);
+
+                    // Menambahkan total_score ke client score
+                    $client_sale->score += $total_score;
+
+                    // Menyimpan perubahan pada client
+                    $client_sale->save();
+                }
             }
-//{{=========================================================================}}\\
-    //{{==================================================================}}\\
-        //{{==========================================================}}\\
+            //{{=========================================================================}}\\
+            //{{==================================================================}}\\
+            //{{==========================================================}}\\
 
             if ($request->payment['status'] != 'pending') {
                 // Check If User Has Permission view All Records

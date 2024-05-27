@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\OfficeShift;
 use App\Models\User;
 use App\Models\Warehouse;
-use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -68,7 +67,6 @@ class UserController extends Controller
      */
     public function create()
     {
-
 
         return view('templates.people.user.create', [
             'users' => User::all(),
