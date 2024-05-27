@@ -25,16 +25,19 @@ class ProductsExport implements FromQuery, WithHeadings, WithMapping
         $productsQuery = Product::with(['unit', 'category', 'brand'])->where('deleted_at', '=', null);
 
         // Terapkan filter berdasarkan parameter yang diterima dari request
-        if ($this->request->has('date') && $this->request->filled('date')) {
-            $productsQuery->whereDate('date', '=', $this->request->input('date'));
-        }
 
-        if ($this->request->has('Ref') && $this->request->filled('Ref')) {
-            $productsQuery->where('Ref', 'like', '%'.$this->request->input('Ref').'%');
-        }
 
-        if ($this->request->has('warehouse_id') && $this->request->filled('warehouse_id')) {
-            $productsQuery->where('warehouse_id', '=', $this->request->input('warehouse_id'));
+        if ($this->request->has('code') && $this->request->filled('code')) {
+            $productsQuery->where('code', 'like', '%' . $this->request->input('code') . '%');
+        }
+        if ($this->request->has('name') && $this->request->filled('name')) {
+            $productsQuery->where('name', 'like', '%' . $this->request->input('name') . '%');
+        }
+        if ($this->request->has('category_id') && $this->request->filled('category_id')) {
+            $productsQuery->where('category_id', '=', $this->request->input('category_id'));
+        }
+        if ($this->request->has('brand_id') && $this->request->filled('brand_id')) {
+            $productsQuery->where('brand_id', '=', $this->request->input('brand_id'));
         }
 
         // Lakukan sorting sesuai request jika diperlukan
@@ -47,7 +50,7 @@ class ProductsExport implements FromQuery, WithHeadings, WithMapping
         // Lakukan pencarian jika diperlukan
         if ($this->request->has('search') && $this->request->filled('search')) {
             $search = $this->request->input('search');
-            $productsQuery->where('Ref', 'like', '%'.$search.'%');
+            $productsQuery->where('Ref', 'like', '%' . $search . '%');
         }
 
         return $productsQuery;
@@ -57,15 +60,17 @@ class ProductsExport implements FromQuery, WithHeadings, WithMapping
     {
         return [
             'ID',
-            'Added By',
-            'Date',
-            'Reference',
-            'Warehouse Name',
-            'Total Items',
-            'Notes',
-            'Created At',
-            'Updated At',
-            'Deleted At',
+            'Type Products',
+            'Code',
+            'Name',
+            'Cost',
+            'Price',
+            'Category',
+            'Brand',
+            'Unit',
+            'TaxNet',
+            'Note',
+            'IsActive',
         ];
     }
 
@@ -73,15 +78,17 @@ class ProductsExport implements FromQuery, WithHeadings, WithMapping
     {
         return [
             $products->id,
-            $products->user->firstname,
-            $products->date,
-            $products->Ref,
-            $products->warehouse->name ?? 'deleted',
-            $products->items,
-            $products->notes,
-            $products->created_at ?? 'null',
-            $products->updated_at ?? 'null',
-            $products->deleted_at ?? 'null',
+            $products->type,
+            $products->code,
+            $products->name,
+            $products->cost,
+            $products->price,
+            $products->category->name,
+            $products->brand->name,
+            $products->unit->name,
+            $products->TaxNet,
+            $products->note,
+            $products->is_active,
         ];
     }
 }

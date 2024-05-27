@@ -19,7 +19,7 @@
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <a href="{{ route('product.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">

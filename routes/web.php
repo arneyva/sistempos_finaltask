@@ -52,6 +52,7 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
     Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
     Route::patch('/update/{id}', [ProductController::class, 'update'])->name('update');
     Route::delete('/destroy/{id}', [ProductController::class, 'destroy'])->name('destroy');
+    Route::get('export', [ProductController::class, 'export'])->name('export');
     // catgeory
     Route::prefix('/category')->name('category.')->group(function () {
         Route::get('/list', [CategoryController::class, 'index'])->name('index');
