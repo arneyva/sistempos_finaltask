@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>All Products</h1>
-<p>Do Something with all your store's products</p>
+    <h1>All Products</h1>
+    <p>Do Something with all your store's products</p>
 @endsection
 
 @section('content')
@@ -16,9 +16,65 @@
                     <h4 class="card-title">All Products</h4>
                 </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary">Filter</button>
+                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                        data-bs-target="#createModal">Filter</button>
                     <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('product.index') }}" method="GET" id="filterForm">
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="code">Search By Code *</label>
+                                            <input type="text" class="form-control" id="code" name="code"
+                                                value="{{ request()->input('code') }}" placeholder="Input Code ...">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="name">Search By Name*</label>
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                value="{{ request()->input('name') }}" placeholder="Input Name ...">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="category_id">Choose Category *</label>
+                                            <select class="form-select" id="category_id" name="category_id">
+                                                <option selected disabled value="">Choose...</option>
+                                                @foreach ($categories as $wh)
+                                                    <option value="{{ $wh->id }}"
+                                                        {{ request()->input('category_id') == $wh->id ? 'selected' : '' }}>
+                                                        {{ $wh->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="brand_id">Choose Brand *</label>
+                                            <select class="form-select" id="brand_id" name="brand_id">
+                                                <option selected disabled value="">Choose...</option>
+                                                @foreach ($brands as $wh)
+                                                    <option value="{{ $wh->id }}"
+                                                        {{ request()->input('brand_id') == $wh->id ? 'selected' : '' }}>
+                                                        {{ $wh->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
+                                        data-bs-dismiss="modal">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     @role('superadmin|inventaris')
                         <button type="button" class="btn btn-soft-gray">Import Product</button>
                         <a href="{{ route('product.create') }}"><button type="button" class="btn btn-soft-primary">Create
@@ -106,7 +162,8 @@
                                                     <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
                                                     <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
                                                         width="6" height="6">
-                                                        <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
+                                                        <circle cx="12" cy="12" r="3" fill="#130F26">
+                                                        </circle>
                                                     </mask>
                                                     <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
                                                         fill="white">
@@ -117,14 +174,16 @@
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
                                                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
                                                     <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                 </svg>
                                             </a>
@@ -140,7 +199,8 @@
                                                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
                                                     <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                     <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
                                                         stroke-width="1.5" stroke-linecap="round"
@@ -162,3 +222,15 @@
         </div>
     </div>
 @endsection
+<script>
+    function resetFilters() {
+        // Reset nilai-nilai input dari formulir
+        document.getElementById('code').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('category_id').value = '';
+        document.getElementById('brand_id').value = '';
+
+        // Submit formulir secara otomatis untuk menghapus filter
+        document.getElementById('filterForm').submit();
+    }
+</script>

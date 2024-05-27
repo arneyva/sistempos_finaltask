@@ -30,7 +30,7 @@ class AdjustmentController extends Controller
         }
 
         if ($request->filled('Ref')) {
-            $adjustmentQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+            $adjustmentQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
         }
 
         if ($request->filled('warehouse_id')) {
@@ -47,7 +47,7 @@ class AdjustmentController extends Controller
         // Lakukan pencarian jika diperlukan
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $adjustmentQuery->where('Ref', 'like', '%' . $search . '%');
+            $adjustmentQuery->where('Ref', 'like', '%'.$search.'%');
         }
 
         // Ambil data dengan membatasi jumlah per halaman
@@ -108,6 +108,7 @@ class AdjustmentController extends Controller
 
         return Excel::download(new AdjustmentsExport($request), $filename);
     }
+
     public function exportToPDF(Request $request)
     {
         // Inisialisasi query dengan menggunakan model Adjustment
@@ -119,7 +120,7 @@ class AdjustmentController extends Controller
         }
 
         if ($request->has('Ref') && $request->filled('Ref')) {
-            $adjustmentQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+            $adjustmentQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
         }
 
         if ($request->has('warehouse_id') && $request->filled('warehouse_id')) {
@@ -136,7 +137,7 @@ class AdjustmentController extends Controller
         // Lakukan pencarian jika diperlukan
         if ($request->has('search') && $request->filled('search')) {
             $search = $request->input('search');
-            $adjustmentQuery->where('Ref', 'like', '%' . $search . '%');
+            $adjustmentQuery->where('Ref', 'like', '%'.$search.'%');
         }
 
         $adjustments = $adjustmentQuery->get();
@@ -145,8 +146,10 @@ class AdjustmentController extends Controller
         $pdf = Pdf::loadView('export.adjustment', compact('adjustments'));
 
         $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
+
         return $pdf->download("adjustments_{$timestamp}.pdf");
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -172,7 +175,7 @@ class AdjustmentController extends Controller
             //array ke2 di tambah 1
             $inMsg = $nwMsg[1] + 1;
             // array item pertama ditambah dengan array item kedua
-            $code = $nwMsg[0] . '_' . $inMsg;
+            $code = $nwMsg[0].'_'.$inMsg;
         } else {
             $code = 'AD_1'; // AD=pertama 1=kedua
         }
@@ -210,8 +213,8 @@ class AdjustmentController extends Controller
             if ($product_warehouse->product_variant_id) { //jika memiliki data product_variant_id
                 $item['product_variant_id'] = $product_warehouse->product_variant_id;
                 $item['code'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
-                $item['Variant'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
-                $item['name'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['Variant'] = '['.$product_warehouse['productVariant']->name.']'.$product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['name'] = '['.$product_warehouse['productVariant']->name.']'.$product_warehouse['product']->name; //code ngambil dari relasi productVariant
                 $item['barcode'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
 
                 $product_price = $product_warehouse['productVariant']->price; //code ngambil dari relasi productVariant
@@ -331,7 +334,7 @@ class AdjustmentController extends Controller
             $product_cost = $product_variant_data['cost'];
             $item['qty'] = $stock->qty;
             $item['code'] = $product_variant_data['code'];
-            $item['name'] = '[' . $product_variant_data['name'] . ']' . $Product_data['name'];
+            $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
             $item['product_variant_id'] = $variant_id;
 
             //product is_service
@@ -551,7 +554,7 @@ class AdjustmentController extends Controller
                 $data['product_id'] = $detail->product_id;
                 $data['product_variant_id'] = $detail->product_variant_id;
                 $data['code'] = $productsVariants->code;
-                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
                 $data['current'] = $item_product ? $item_product->qty : 0;
                 $data['type'] = $detail->type;
                 $data['unit'] = $detail['product']['unit']->ShortName;
@@ -662,7 +665,7 @@ class AdjustmentController extends Controller
                 }
 
                 // Delete Detail
-                if (!in_array($old_products_id[$key], $new_products_id)) {
+                if (! in_array($old_products_id[$key], $new_products_id)) {
                     $AdjustmentDetail = AdjustmentDetail::findOrFail($value->id);
                     $AdjustmentDetail->delete();
                 }
@@ -725,7 +728,7 @@ class AdjustmentController extends Controller
                 $orderDetails['product_variant_id'] = $product_detail['product_variant_id'];
                 $orderDetails['type'] = $product_detail['type'];
 
-                if (!in_array($product_detail['id'], $old_products_id)) {
+                if (! in_array($product_detail['id'], $old_products_id)) {
                     AdjustmentDetail::Create($orderDetails);
                 } else {
                     AdjustmentDetail::where('id', $product_detail['id'])->update($orderDetails);

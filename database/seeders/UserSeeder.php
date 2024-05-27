@@ -50,7 +50,7 @@ class UserSeeder extends Seeder
         ])->assignRole('superadmin')
             ->warehouses()->sync(Warehouse::pluck('id')->toArray());
 
-        $superadmins=User::factory(10)->create();
+        $superadmins = User::factory(10)->create();
         $superadmins->each(function ($superadmin) {
             // Menetapkan peran superadmin
             $superadmin->assignRole('superadmin');
@@ -59,9 +59,7 @@ class UserSeeder extends Seeder
             $superadmin->warehouses()->sync(Warehouse::pluck('id')->toArray());
         });
 
-
-
-        $inventarises=User::factory(10)->create();
+        $inventarises = User::factory(10)->create();
         $inventarises->each(function ($inventaris) {
             // Menetapkan peran superadmin
             $inventaris->assignRole('inventaris');
@@ -70,7 +68,7 @@ class UserSeeder extends Seeder
             $inventaris->warehouses()->attach(1);
         });
 
-        $staffs=User::factory(10)->create();
+        $staffs = User::factory(10)->create();
         $staffs->each(function ($staff) {
             // Menetapkan peran superadmin
             $staff->assignRole('staff');
