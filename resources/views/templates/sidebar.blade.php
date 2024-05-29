@@ -683,7 +683,7 @@
                                     stroke="currentColor" />
                             </svg>
                         </i>
-                        <span class="item-name">Accounting</span>
+                        <span class="item-name">Expense</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -694,7 +694,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-table" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/bootstrap-table.html">
+                            <a class="nav-link " href="{{route('expenses.index')}}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -705,11 +705,12 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Bootstrap Table</span>
+                                <span class="item-name">All Expense</span>
                             </a>
                         </li>
+                        @role('superadmin')
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/table/table-data.html">
+                            <a class="nav-link " href="{{route('expenses.categories.index')}}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -720,9 +721,10 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Datatable</span>
+                                <span class="item-name">Expense Category</span>
                             </a>
                         </li>
+                        @endrole
                     </ul>
                 </li>
                 <li>
