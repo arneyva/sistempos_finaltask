@@ -18,7 +18,7 @@
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
-                        <a href="{{ route('product.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                    <a href="{{ route('product.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
                     <a href="{{ route('product.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
@@ -76,7 +76,105 @@
                         </div>
                     </div>
                     @role('superadmin|inventaris')
-                        <button type="button" class="btn btn-soft-gray">Import Product</button>
+                        <button type="button" class="btn btn-soft-gray" data-bs-toggle="modal"
+                            data-bs-target="#ImportProduct">Import Product</button>
+                        <div class="modal fade" id="ImportProduct" tabindex="-1" aria-labelledby="ImportProduct"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="createModalLabel">Import Products</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-header">
+                                        <h6 class="modal-title" id="createModalLabel" style="color:#d06565">*Only Single Product
+                                            Type</h6>
+                                    </div>
+                                    <form action="{{ route('product.import') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="fileInput" class="form-label">Choose File</label>
+                                                <input class="form-control" type="file" name="products" id="fileInput"
+                                                    accept=".csv">
+                                                <p style="color: #d06565">File must be in CSV format</p>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="name">Name</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="codeProduct">Code Product</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                    <button style="margin-top: 5px" type="button"
+                                                        class="btn btn-outline-success btn-sm" disabled>Code
+                                                        must not exist already</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="category">Category</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="productCost">Product Cost</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="productUnit">Product Unit</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                    <button style="margin-top: 5px" type="button"
+                                                        class="btn btn-outline-success btn-sm" disabled>This
+                                                        Unit must already be created</button>
+                                                    <button style="margin-top: 5px" type="button"
+                                                        class="btn btn-outline-success btn-sm" disabled>This
+                                                        Please use short name of
+                                                        unit</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="brand">Brand</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button"
+                                                        class="btn btn-outline-primary btn-sm"disabled>Field
+                                                        optional</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="note">Note</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                                                        disabled>Field
+                                                        optional</button>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="/import/import_products.csv" class="btn btn-soft-success" download>Download Example</a>
+                                                <button type="submit" class="btn btn-soft-primary">Submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                         <a href="{{ route('product.create') }}"><button type="button" class="btn btn-soft-primary">Create
                                 +</button></a>
                     @endrole
@@ -107,7 +205,8 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary"
-                                                src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}" alt="profile">
+                                                src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}"
+                                                alt="profile">
                                             <div class="d-flex flex-column">
                                                 <!-- Mengatur flex-direction menjadi column untuk list -->
                                                 @if ($item['type'] === 'Variant Product')
@@ -158,7 +257,8 @@
                                                     <path
                                                         d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
                                                         stroke="#130F26"></path>
-                                                    <circle cx="12" cy="12" r="5" stroke="#130F26"></circle>
+                                                    <circle cx="12" cy="12" r="5" stroke="#130F26">
+                                                    </circle>
                                                     <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
                                                     <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
                                                         width="6" height="6">

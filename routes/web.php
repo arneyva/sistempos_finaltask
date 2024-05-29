@@ -56,6 +56,7 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
     Route::delete('/destroy/{id}', [ProductController::class, 'destroy'])->name('destroy');
     Route::get('export', [ProductController::class, 'export'])->name('export');
     Route::get('pdf', [ProductController::class, 'exportToPDF'])->name('pdf');
+    Route::post('import/csv', [ProductController::class, 'import_products'])->name('import');
     // catgeory
     Route::prefix('/category')->name('category.')->group(function () {
         Route::get('/list', [CategoryController::class, 'index'])->name('index');
@@ -187,13 +188,13 @@ Route::prefix('expenses')->middleware(['auth', 'verified'])->name('expenses.')->
         Route::patch('update/{id}', [ExpenseCategoryController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [ExpenseCategoryController::class, 'destroy'])->name('destroy');
     });
-        Route::get('list', [ExpenseController::class, 'index'])->name('index');
-        Route::get('detail/{id}', [ExpenseController::class, 'show'])->name('show');
-        Route::get('create', [ExpenseController::class, 'create'])->name('create');
-        Route::post('store', [ExpenseController::class, 'store'])->name('store');
-        Route::get('edit/{id}', [ExpenseController::class, 'edit'])->name('edit');
-        Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
-        Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
+    Route::get('list', [ExpenseController::class, 'index'])->name('index');
+    Route::get('detail/{id}', [ExpenseController::class, 'show'])->name('show');
+    Route::get('create', [ExpenseController::class, 'create'])->name('create');
+    Route::post('store', [ExpenseController::class, 'store'])->name('store');
+    Route::get('edit/{id}', [ExpenseController::class, 'edit'])->name('edit');
+    Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
+    Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
