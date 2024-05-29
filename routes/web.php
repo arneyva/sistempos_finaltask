@@ -15,6 +15,8 @@ use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
+use App\Http\Controllers\expense\ExpenseController;
+use App\Http\Controllers\expense\ExpenseCategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -177,6 +179,21 @@ Route::prefix('people')->middleware(['auth', 'verified'])->name('people.')->grou
         Route::patch('update/{id}', [ClientController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [ClientController::class, 'destroy'])->name('destroy');
     });
+});
+Route::prefix('expenses')->middleware(['auth', 'verified'])->name('expenses.')->group(function () {
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('list', [ExpenseCategoryController::class, 'index'])->name('index');
+        Route::post('store', [ExpenseCategoryController::class, 'store'])->name('store');
+        Route::patch('update/{id}', [ExpenseCategoryController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [ExpenseCategoryController::class, 'destroy'])->name('destroy');
+    });
+        Route::get('list', [ExpenseController::class, 'index'])->name('index');
+        Route::get('detail/{id}', [ExpenseController::class, 'show'])->name('show');
+        Route::get('create', [ExpenseController::class, 'create'])->name('create');
+        Route::post('store', [ExpenseController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [ExpenseController::class, 'edit'])->name('edit');
+        Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
