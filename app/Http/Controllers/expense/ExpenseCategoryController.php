@@ -31,8 +31,8 @@ class ExpenseCategoryController extends Controller
         $expense_category = ExpenseCategory::filter((['search']))->orderBy($orderBy, $order)->paginate($show)->withQueryString();
 
         return view('templates.expense.category.index', [
-            'clients' => $clients,
-            'allClients' => Client::all(),
+            'expense_category' => $expense_category,
+            'all' => ExpenseCategory::all(),
         ]);
     }
 
@@ -51,7 +51,6 @@ class ExpenseCategoryController extends Controller
     {
         $rules = [
             'name_create' => 'required',
-            'description_create' => 'required',
         ];
         $message = [
             'required' => 'Tidak boleh kosong!',
@@ -98,12 +97,11 @@ class ExpenseCategoryController extends Controller
     {
         $expensecat = ExpenseCategory::findOrFail($id);
         if (! $expensecat) {
-            return back()->with('warning', 'Client tidak ditemukan!');
+            return back()->with('warning', 'Kategori tidak ditemukan!');
         }
 
         $rules = [
             'name' => 'required',
-            'description' => 'required',
         ];
         $message = [
             'required' => 'Tidak boleh kosong!',
@@ -132,7 +130,7 @@ class ExpenseCategoryController extends Controller
     {
         $expensecat = ExpenseCategory::findOrFail($id);
         if (! $expensecat) {
-            return back()->with('warning', 'Client tidak ditemukan!');
+            return back()->with('warning', 'Kategori tidak ditemukan!');
         }
 
         $expensecat->delete();

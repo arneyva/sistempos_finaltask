@@ -187,13 +187,14 @@ Route::prefix('expenses')->middleware(['auth', 'verified'])->name('expenses.')->
         Route::patch('update/{id}', [ExpenseCategoryController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [ExpenseCategoryController::class, 'destroy'])->name('destroy');
     });
-        Route::get('list', [ExpenseController::class, 'index'])->name('index');
-        Route::get('detail/{id}', [ExpenseController::class, 'show'])->name('show');
-        Route::get('create', [ExpenseController::class, 'create'])->name('create');
-        Route::post('store', [ExpenseController::class, 'store'])->name('store');
-        Route::get('edit/{id}', [ExpenseController::class, 'edit'])->name('edit');
-        Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
-        Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
+    Route::get('list', [ExpenseController::class, 'index'])->name('index');
+    Route::get('detail/{id}', [ExpenseController::class, 'show'])->name('show');
+    Route::get('create', [ExpenseController::class, 'create'])->name('create');
+    Route::post('store', [ExpenseController::class, 'store'])->name('store');
+    Route::get('edit/{id}', [ExpenseController::class, 'edit'])->name('edit');
+    Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
+    Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
+    Route::get('file/download/{id}', [ExpenseController::class, 'download'])->name('file');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

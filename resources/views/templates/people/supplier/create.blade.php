@@ -147,7 +147,7 @@
                             </div>
                             <div class="form-group col-md-12">
                                 <label class="form-label" for="cname">Website:</label>
-                                <input value="{{ old('alamat_website')}}" type="text" name="alamat_website"
+                                <input value="{{ old('alamat_website')}}" type="url" name="alamat_website"
                                     class="form-control bg-transparent @error('phone') is-invalid @enderror"
                                     id="cname" placeholder="Website Address" required>
                                 <small class=" text-danger font-italic">

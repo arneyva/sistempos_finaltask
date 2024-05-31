@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Create Supplier</h1>
-<p>Create new user supplier</p>
+<h1>Edit Expense {{ $expense->Ref}}</h1>
+<p>Do Something with {{ $expense->Ref}} data</p>
 @endsection
 
 @section('content')
@@ -52,7 +52,7 @@
     }
     }
 </style>
-    <form action="{{ route('people.suppliers.update', $provider['id']) }}" method="POST" class="row" enctype="multipart/form-data">
+    <form action="{{ route('expenses.update', $expense['id']) }}" method="POST" class="row" enctype="multipart/form-data">
         @csrf
         @method('patch')
         <!-- <div class="mt-3" style="justify-content-center">
@@ -65,26 +65,30 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="header-title">
-                    <h4 class="card-title">New Supplier Information</h4>
+                    <h4 class="card-title">Edit Expense</h4>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label class="form-label" for="name">Company Name:</label>
-                        <input value="{{ old('name', $provider->name) }}" type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
-                            id="name" name="name" placeholder="Company Name" required>
+                        <label class="form-label" for="name">Date:</label>
+                        <input type="date" value="{{ $dateValue }}" class="form-control bg-transparent @error('date') is-invalid @enderror"
+                            id="name" name="date" required>
                         <small class=" text-danger font-italic">
-                            @error('name')
+                            @error('date')
                                 {{ $message }}
                             @enderror
                         </small>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="email">Email:</label>
-                        <input value="{{ old('email', $provider->email) }}" type="email" class="form-control bg-transparent @error('email') is-invalid @enderror"
-                            id="email" name="email" placeholder="Email" required>
+                        <label class="form-label" for="email">Category:</label>
+                        <select name="category_id" class="form-select" data-style="py-0" id="workLocation">
+                            <option selected disabled style="display:none !important" value="">Expense Category</option>
+                            @foreach ($expense_category as $expencat)
+                                <option value="{{ $expencat->id }}" {{  $expense->expense_category_id == $expencat->id ? 'selected' : '' }}>{{ $expencat->name }}</option>
+                            @endforeach
+                        </select>
                         <small class=" text-danger font-italic">
-                            @error('email')
+                            @error('category_id')
                                 {{ $message }}
                             @enderror
                         </small>
@@ -92,88 +96,72 @@
                     <div class="new-user-info">
                         <div class="row">
                             <div class="form-group col-md-12">
-                                <label class="form-label" for="cname">Phone:</label>
-                                <input value="{{ old('phone', $provider->phone) }}" type="tel" name="phone"
-                                    class="form-control bg-transparent @error('phone') is-invalid @enderror"
-                                    id="cname" placeholder="Phone" required>
+                                <label class="form-label" for="cname">Warehouse:</label>
+                                <select name="warehouse_id" class="form-select" data-style="py-0" id="workLocation">
+                                    <option selected disabled style="display:none !important" value="">Expense Category</option>
+                                    @foreach ($warehouses as $warehouse)
+                                        <option value="{{ $warehouse->id }}" {{ $expense->warehouse_id == $warehouse->id ? 'selected' : '' }}>{{ $warehouse->name }}</option>
+                                    @endforeach
+                                </select>
                                 <small class=" text-danger font-italic">
-                                    @error('phone')
-                                        {{ $message }}
-                                    @enderror
-                                </small>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="form-label" for="fname">Contact Person:</label>
-                                <input value="{{ old('nama_kontak_person', $provider->nama_kontak_person) }}" type="text" name="nama_kontak_person"
-                                    class="form-control bg-transparent @error('firstname') is-invalid @enderror"
-                                    id="fname" placeholder="Contact Person" required>
-                                <small class=" text-danger font-italic">
-                                    @error('firstname')
-                                        {{ $message }}
-                                    @enderror
-                                </small>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="form-label" for="lname">CP Phone:</label>
-                                <input value="{{ old('nomor_kontak_person', $provider->nomor_kontak_person) }}" type="text" name="nomor_kontak_person"
-                                    class="form-control bg-transparent @error('lastname') is-invalid @enderror"
-                                    id="lname" placeholder="CP Phone" required>
-                                <small class=" text-danger font-italic">
-                                    @error('lastname')
-                                        {{ $message }}
-                                    @enderror
-                                </small>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="form-label" for="fname">City :</label>
-                                <input value="{{ old('city', $provider->city) }}" type="text" name="city"
-                                    class="form-control bg-transparent @error('firstname') is-invalid @enderror"
-                                    id="fname" placeholder="City" required>
-                                <small class=" text-danger font-italic">
-                                    @error('firstname')
-                                        {{ $message }}
-                                    @enderror
-                                </small>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="form-label" for="lname">Country :</label>
-                                <input value="{{ old('country', $provider->country) }}" type="text" name="country"
-                                    class="form-control bg-transparent @error('lastname') is-invalid @enderror"
-                                    id="lname" placeholder="Country" required>
-                                <small class=" text-danger font-italic">
-                                    @error('lastname')
+                                    @error('warehouse_id')
                                         {{ $message }}
                                     @enderror
                                 </small>
                             </div>
                             <div class="form-group col-md-12">
-                                <label class="form-label" for="cname">Website:</label>
-                                <input value="{{ old('alamat_website', $provider->alamat_website) }}" type="text" name="alamat_website"
-                                    class="form-control bg-transparent @error('phone') is-invalid @enderror"
-                                    id="cname" placeholder="Website Address" required>
+                                <label for="customFile1" class="form-label custom-file-input">Choose file</label>
+                                <input class="form-control mb-3" type="file" onchange="checkFileSize(this)" name="file_pendukung">
                                 <small class=" text-danger font-italic">
-                                    @error('phone')
+                                    @error('file_pendukung')
+                                        {{ $message }}
+                                    @enderror
+                                </small>
+                                <p><strong>Download Old File: </strong><a href="{{ route('expenses.file', $expense['id']) }}">Download</a></p>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label class="form-label" for="fname">Expense Detail:</label>
+                                <textarea class="form-control" name="details" placeholder="Expense Detail" required>{{ $expense->details}}</textarea>
+                                <small class=" text-danger font-italic">
+                                    @error('details')
                                         {{ $message }}
                                     @enderror
                                 </small>
                             </div>
-                            <div class="col-md-12">
-                                <label class="form-label" for="cname">Lead Time:</label>
-                                <div class="form-group input-group">
-                                    <input value="{{ old('lead_time', $provider->lead_time) }}" type="tel"  id="score_to_email" aria-label="Username" name="lead_time" class="form-control bg-transparent @error('score_to_email') is-invalid @enderror" aria-describedby="basic-addon1" required>
-                                    <span class="input-group-text" id="basic-addon1">Days</span>
+                            <div class="form-group col-md-12">
+                                <label class="form-label" for="fname">Amount :</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">Rp</span>
+                                    <input type="tel" id="amount" aria-label="Username" name="amount" class="form-control bg-transparent @error('amount') is-invalid @enderror"  value="{{ $expense->amount }}" aria-describedby="basic-addon1" required>
                                     <small class=" text-danger font-italic">
-                                        @error('score_to_email')
+                                        @error('amount')
                                             {{ $message }}
                                         @enderror
                                     </small>
                                 </div>
                             </div>
-                            <div class="form-group col-md-12">
-                                <label class="form-label" for="cname">Address:</label>
-                                <textarea class="form-control" name="adresse" placeholder="Address" required>{{ $provider->adresse}}</textarea>
+                            <div class="form-group col-md-6 mt-4">
+                                <label class="form-label" for="lname">Status :</label>
+                                <select name="status" class="form-select"  data-style="py-0" >
+                                    <option selected disabled hidden value="">Status</option>
+                                    @role('superadmin')  
+                                    <option value="0" {{ $expense->status == 0 ? 'selected' : '' }}>Pending</option>
+                                    <option value="1" {{ $expense->status == 1 ? 'selected' : '' }}>Agreed</option>
+                                    <option value="2" {{ $expense->status == 2 ? 'selected' : '' }}>Canceled</option>
+                                    @endrole
+                                    @hasanyrole('staff|inventaris')
+                                    @if($expense->status == 0)
+                                    <option value="0" {{ $expense->status == 0 ? 'selected' : '' }}>Pending</option>
+                                    <option value="2" {{ $expense->status == 2 ? 'selected' : '' }}>Canceled</option>
+                                    @elseif($expense->status == 2)
+                                    <option value="2" {{ $expense->status == 2 ? 'selected' : '' }}>Canceled</option>
+                                    @elseif($expense->status == 1)
+                                    <option value="1" {{ $expense->status == 1 ? 'selected' : '' }}>Agreed</option>
+                                    @endif
+                                    @endhasanyrole
+                                </select>
                                 <small class=" text-danger font-italic">
-                                    @error('phone')
+                                    @error('status')
                                         {{ $message }}
                                     @enderror
                                 </small>
@@ -194,6 +182,13 @@
 @push('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('hopeui/html/assets/js/multiselect-dropdown.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/autonumeric@latest"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        new AutoNumeric('#amount', 'commaDecimalCharDotSeparator');
+    });
+    </script>
 
     <script>
         $(document).ready(function() {
@@ -247,59 +242,22 @@ var option = $(this);
             });
         });
     </script>
+
+<script>
+    function checkFileSize(input) {
+        const maxFileSize = 10 * 1024 * 1024; // 2MB
+        if (input.files[0].size > maxFileSize) {
+            alert("Max File Size is 10 MB");
+            input.value = ""; // 입력을 초기화합니다.
+        }
+    }
+</script>
+
     <script>
         var bs_modal = $('#modal');
         var image = document.getElementById('image');
         var cropper, reader, file;
 
-        $("body").on("change", ".image", function(e) {
-            var files = e.target.files;
-            var maxFileSizeInBytes = 10 * 1024 * 1024;
-            var allowedExtensions = ['jpg', 'jpeg', 'png'];
-
-            if (files && files.length > 0) {
-                file = files[0];
-
-                var fileExtension = file.name.split('.').pop().toLowerCase();
-
-                if (!allowedExtensions.includes(fileExtension)) {
-                    // Display an error message
-                    alert("Only .jpg, .jpeg, and .png files are allowed.");
-
-                    // Optionally, clear the file input
-                    $(this).val('');
-                    return; // Exit the function early
-                }
-
-                if (file.size > maxFileSizeInBytes) {
-                    // Display an error message
-                    alert("File size exceeds the maximum allowed size.");
-
-                    // Optionally, clear the file input
-                    $(this).val('');
-                    return; // Exit the function early
-                }
-
-
-                var done = function(url) {
-                    image.src = url;
-                    bs_modal.modal('show');
-                };
-
-
-                if (URL) {
-                    done(URL.createObjectURL(file));
-                } else if (FileReader) {
-                    reader = new FileReader();
-                    reader.onload = function(e) {
-                        done(reader.result);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
-            // Reset the value of the file input to trigger change event even if the same file is selected again
-            $(this).val('');
-        });
 
         bs_modal.on('shown.bs.modal', function() {
             cropper = new Cropper(image, {
