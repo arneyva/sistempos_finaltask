@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Create Supplier</h1>
-<p>Create new user supplier</p>
+<h1>Edit Supplier {{ $provider->name}}</h1>
+<p>Do Something with {{ $provider->name}} data</p>
 @endsection
 
 @section('content')

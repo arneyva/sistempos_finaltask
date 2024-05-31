@@ -195,6 +195,8 @@ Route::prefix('expenses')->middleware(['auth', 'verified'])->name('expenses.')->
     Route::get('edit/{id}', [ExpenseController::class, 'edit'])->name('edit');
     Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
+    Route::get('file/download/{id}', [ExpenseController::class, 'download'])->name('file');
+
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
