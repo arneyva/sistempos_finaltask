@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PaymentSale extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'payment_sales';
 
     protected $fillable = [
-        'sale_id', 'date', 'montant', 'Ref', 'change', 'Reglement', 'user_id', 'notes',
+        'sale_id', 'date', 'montant', 'Ref', 'change', 'Reglement', 'user_id', 'notes', 'status'
     ];
 
     protected $casts = [
@@ -30,6 +30,6 @@ class PaymentSale extends Model
 
     public function sale()
     {
-        return $this->belongsTo('App\Models\Sale');
+        return $this->belongsTo('App\Models\Sale', 'sale_id');
     }
 }

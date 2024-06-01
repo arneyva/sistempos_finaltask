@@ -105,6 +105,7 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
     Route::patch('update/{id}', [TransferController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
 });
+Route::get('/sale/payment/success/{transaction}', [SaleController::class, 'success'])->name('sale.payment.success');
 Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(function () {
     Route::get('list', [SaleController::class, 'index'])->name('index');
     Route::get('shipments', [SaleController::class, 'shipments'])->name('shipments');
@@ -196,7 +197,6 @@ Route::prefix('expenses')->middleware(['auth', 'verified'])->name('expenses.')->
     Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
     Route::get('file/download/{id}', [ExpenseController::class, 'download'])->name('file');
-
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

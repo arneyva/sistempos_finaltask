@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Add Sales</h1>
-<p>Look All your sales</p>
+    <h1>Add Sales</h1>
+    <p>Look All your sales</p>
 @endsection
 
 @section('content')
@@ -39,7 +39,8 @@
                                     <select class="form-select" id="customer" name="client_id" required>
                                         <option selected disabled value="">Choose...</option>
                                         @foreach ($client as $cl)
-                                            <option value="{{ $cl->id }}" data-status="{{ $cl->is_poin_activated }}">{{ $cl->name }}</option>
+                                            <option value="{{ $cl->id }}" data-status="{{ $cl->is_poin_activated }}">
+                                                {{ $cl->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -179,33 +180,14 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        <div class="col-md-4 mb-3" id="paymentStatusContainer">
-                                            <label class="form-label" for="brand">Payment Status</label>
-                                            <select class="form-select select2" required id="typePaymentStatus"
-                                                name="payment[status]" data-placeholder="Select a Brand">
-                                                <option value="pending" selected>Pending</option>
-                                                <option value="paid">Paid</option>
-                                                <option value="partial">Partial</option>
+                                        <div class="col-md-4 mb-3" id="paymentMethod">
+                                            <label class="form-label" for="payment_method">Payment Method</label>
+                                            <select class="form-select select2" name="payment_method" id="payment_method"
+                                                data-placeholder="Select a payment_method">
+                                                <option value="cash">Cash</option>
+                                                <option value="midtrans">Other</option>
                                             </select>
-                                            @error('brand_id')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 mb-3" id="paymentChoice">
-                                            <label class="form-label" for="brand">Payment Choice</label>
-                                            <select class="form-select select2" name="Reglement"
-                                                data-placeholder="Select a Brand">
-                                                <option value="">Cash</option>
-                                                <option value="">Credit Card</option>
-                                                <option value="">Other</option>
-                                            </select>
-                                            @error('brand_id')
+                                            @error('payment_method')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                                     role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
                                                     <span style="margin-left: 3px"> {{ $message }}</span>
@@ -216,13 +198,14 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="receivedAmount">
-                                            <label class="form-label" for="codebaseproduct">Received Amount *</label>
+                                            <label class="form-label" for="received_amount">Received Amount *</label>
                                             <div class="form-group input-group">
-                                                <input type="text" class="form-control" placeholder="input tax"
-                                                    name="code" value="{{ Session::get('code') }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="text" class="form-control"
+                                                    placeholder="input received amount" id="received_amount"
+                                                    name="received_amount" value="{{ Session::get('received_amount') }}">
                                             </div>
-                                            @error('code')
+                                            @error('received_amount')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                                     role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
                                                     <span style="margin-left: 3px"> {{ $message }}</span>
@@ -233,13 +216,14 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="payingAmount">
-                                            <label class="form-label" for="codebaseproduct">Paying Amount *</label>
+                                            <label class="form-label" for="paying_amount">Paying Amount *</label>
                                             <div class="form-group input-group">
-                                                <input type="text" class="form-control" placeholder="input discount"
-                                                    name="code" value="{{ Session::get('code') }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="text" class="form-control"
+                                                    placeholder="input paying amount" id="paying_amount"
+                                                    name="paying_amount" value="{{ Session::get('paying_amount') }}">
                                             </div>
-                                            @error('code')
+                                            @error('paying_amount')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                                     role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
                                                     <span style="margin-left: 3px"> {{ $message }}</span>
@@ -250,13 +234,15 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="changeReturn">
-                                            <label class="form-label" for="codebaseproduct">Change Return *</label>
+                                            <label class="form-label" for="change_return">Change Return *</label>
                                             <div class="form-group input-group">
-                                                <input type="text" class="form-control" placeholder="input shipping"
-                                                    name="change" value="{{ Session::get('code') }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="text" class="form-control"
+                                                    placeholder="input change return" id="change_return"
+                                                    name="change_return" value="{{ Session::get('change_return') }}"
+                                                    readonly>
                                             </div>
-                                            @error('code')
+                                            @error('change_return')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                                     role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
                                                     <span style="margin-left: 3px"> {{ $message }}</span>
@@ -266,13 +252,12 @@
                                                 </div>
                                             @enderror
                                         </div>
-
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="validationDefault05">Description</label>
                                     <input type="text" class="form-control" id="validationDefault05" name="notes"
-                                        required placeholder="a few words...">
+                                        placeholder="a few words...">
                                 </div>
                             </div>
                             <div class="form-group mt-2">
@@ -289,52 +274,36 @@
 @push('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // status
-            var typeStatus = document.getElementById('typeStatus');
-            // payment status container
-            var paymentStatusContainer = document.getElementById('paymentStatusContainer');
-            var typePaymentStatus = document.getElementById('typePaymentStatus');
-            var paymentChoice = document.getElementById('paymentChoice');
-            var receivedAmount = document.getElementById('receivedAmount');
-            var payingAmount = document.getElementById('payingAmount');
-            var changeReturn = document.getElementById('changeReturn');
+            var paymentMethod = document.getElementById('payment_method');
+            var receivedAmount = document.getElementById('received_amount');
+            var payingAmount = document.getElementById('paying_amount');
+            var changeReturn = document.getElementById('change_return');
 
             function updateVisibility() {
-                var selectedTypeStatus = typeStatus.value;
-                var selectedTypePaymentStatus = typePaymentStatus.value;
-
-                if (selectedTypeStatus !== 'completed') {
-                    paymentStatusContainer.style.display = 'none';
-                    paymentChoice.style.display = 'none';
-                    receivedAmount.style.display = 'none';
-                    payingAmount.style.display = 'none';
-                    changeReturn.style.display = 'none';
+                var selectedPaymentMethod = paymentMethod.value;
+                if (selectedPaymentMethod == 'cash') {
+                    document.getElementById('receivedAmount').style.display = 'block';
+                    document.getElementById('payingAmount').style.display = 'block';
+                    document.getElementById('changeReturn').style.display = 'block';
                 } else {
-                    paymentStatusContainer.style.display = 'block';
-                    if (selectedTypePaymentStatus === 'paid') {
-                        paymentChoice.style.display = 'block';
-                        receivedAmount.style.display = 'block';
-                        payingAmount.style.display = 'block';
-                        changeReturn.style.display = 'block';
-                    } else if (selectedTypePaymentStatus === 'partial') {
-                        paymentChoice.style.display = 'block';
-                        receivedAmount.style.display = 'block';
-                        payingAmount.style.display = 'block';
-                        changeReturn.style.display = 'block';
-                    } else if (selectedTypePaymentStatus === 'pending') {
-                        paymentChoice.style.display = 'none';
-                        receivedAmount.style.display = 'none';
-                        payingAmount.style.display = 'none';
-                        changeReturn.style.display = 'none';
-                    }
+                    document.getElementById('receivedAmount').style.display = 'none';
+                    document.getElementById('payingAmount').style.display = 'none';
+                    document.getElementById('changeReturn').style.display = 'none';
                 }
             }
 
-            typeStatus.addEventListener('change', updateVisibility);
-            typePaymentStatus.addEventListener('change', updateVisibility);
+            function calculateChange() {
+                var received = parseFloat(receivedAmount.value) || 0;
+                var paying = parseFloat(payingAmount.value) || 0;
+                var change = received - paying;
+                changeReturn.value = change >= 0 ? change : 0;
+            }
 
-            // Initial call to set visibility on page load
-            updateVisibility();
+            paymentMethod.addEventListener('change', updateVisibility);
+            receivedAmount.addEventListener('input', calculateChange);
+            payingAmount.addEventListener('input', calculateChange);
+
+            updateVisibility(); // Initial call to set the correct visibility on page load
         });
     </script>
     <script>
@@ -386,14 +355,14 @@
                             var row = '<tr>';
                             row += '<td>#</td>';
                             row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-                            row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
-                            row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
+                            row += '<td>' + 'Rp ' + data.Unit_price + '</td>';
+                            row += '<td>' + data.qty + ' ' + data.unitSale + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control item-quantity" name="details[' +
                                 data.id + '_' + variantId +
                                 '][quantity]" value="0" min="0"></td>'; // quantity
                             row += '<td class="item-discount">0</td>';
-                            row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
+                            row += '<td>' + 'Rp ' + data.tax_price + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
                             row +=
                                 '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
@@ -431,12 +400,12 @@
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
                 var quantity = parseFloat($(this).val()) || 0;
-                var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
-                var taxCost = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-                var totalCost = (unitCost + taxCost) * quantity;
+                var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
+                var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
+                var totalPrice = (unitPrice + taxPrice) * quantity;
 
-                row.find('.item-total').text('Rp ' + totalCost.toFixed(2));
-                row.find('.item-subtotal').val(totalCost.toFixed(2));
+                row.find('.item-total').text('Rp ' + totalPrice.toFixed(2));
+                row.find('.item-subtotal').val(totalPrice.toFixed(2));
                 updateGrandTotal();
             });
 
@@ -462,6 +431,7 @@
                 grandTotal = grandTotal - discount + shipping + taxNet;
 
                 $('#grandTotal').val(grandTotal.toFixed(2));
+                $('#paying_amount').val(grandTotal.toFixed(2));
 
                 // Update the displayed values in the table
                 $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNet.toFixed(2)); // Order Tax
@@ -472,20 +442,20 @@
         });
     </script>
     <script>
-    document.getElementById('customer').addEventListener('change', function() {
-        // Mengambil elemen option yang dipilih
-        var selectedOption = this.options[this.selectedIndex];
-        
-        // Mengambil data-status dari option yang dipilih
-        var status = selectedOption.getAttribute('data-status');
+        document.getElementById('customer').addEventListener('change', function() {
+            // Mengambil elemen option yang dipilih
+            var selectedOption = this.options[this.selectedIndex];
 
-        // Mengecek nilai dari status dan melakukan aksi berdasarkan nilai tersebut
-        if (status === '1') {
-            
-            
-        } else if (status === '0') {
-            
-        }
-    })
+            // Mengambil data-status dari option yang dipilih
+            var status = selectedOption.getAttribute('data-status');
+
+            // Mengecek nilai dari status dan melakukan aksi berdasarkan nilai tersebut
+            if (status === '1') {
+
+
+            } else if (status === '0') {
+
+            }
+        })
     </script>
 @endpush

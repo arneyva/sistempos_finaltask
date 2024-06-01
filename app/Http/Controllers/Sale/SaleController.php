@@ -24,7 +24,7 @@ class SaleController extends Controller
      */
     public function index()
     {
-        $sale = Sale::with('user', 'warehouse', 'client')->latest()->get();
+        $sale = Sale::with('user', 'warehouse', 'client','paymentSales')->latest()->get();
 
         return view('templates.sale.index', [
             'sale' => $sale,
@@ -57,7 +57,7 @@ class SaleController extends Controller
             $item = $last->Ref;
             $nwMsg = explode('_', $item);
             $inMsg = $nwMsg[1] + 1;
-            $code = $nwMsg[0].'_'.$inMsg;
+            $code = $nwMsg[0] . '_' . $inMsg;
         } else {
             // $code = 'SL_1111';
             $code = 'SL_1';
@@ -71,18 +71,12 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-
-        // $this->authorizeForUser($request->user('api'), 'create', Sale::class);
-
         request()->validate([
             'client_id' => 'required',
             'warehouse_id' => 'required',
         ]);
-        // dd($request->all());
         \DB::transaction(function () use ($request) {
-            // $helpers = new helpers();
             $order = new Sale();
-
             $order->is_pos = 0;
             $order->date = $request->date;
             $order->Ref = $this->getNumberOrder();
@@ -94,12 +88,18 @@ class SaleController extends Controller
             $order->discount = $request->discount;
             $order->shipping = $request->shipping;
             $order->statut = $request->statut;
-            $order->payment_statut = 'unpaid';
+            $payment_method = $request->payment_method;
+            if ($payment_method == 'cash') {
+                $order->payment_statut = 'paid';
+                $order->paid_amount = $request->GrandTotal;
+            } else if ($payment_method == 'midtrans') {
+                $order->payment_statut = 'unpaid';
+            } else {
+                $order->payment_statut = 'unpaid';
+            }
             $order->notes = $request->notes;
             $order->user_id = Auth::user()->id;
-
             $order->save();
-
             $data = $request['details'];
             foreach ($data as $key => $value) {
                 $unit = Unit::where('id', $value['sale_unit_id'])
@@ -154,10 +154,48 @@ class SaleController extends Controller
                 }
             }
             SaleDetail::insert($orderDetails);
-
-            // $role = Auth::user()->roles()->first();
-            // $view_records = Role::findOrFail($role->id)->inRole('record_view');
-
+            if ($payment_method == 'midtrans') {
+                $transaction = PaymentSale::create([
+                    'user_id' => $order->user_id,
+                    'date' => $order->date,
+                    'Ref' => 'INV-' . $order->Ref,
+                    'sale_id' => $order->id,
+                    'montant' => $order->GrandTotal,
+                    'change' => 0,
+                    'Reglement' => 'midtrans',
+                    'status' => 'pending',
+                ]);
+                // Set your Merchant Server Key
+                \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+                // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+                \Midtrans\Config::$isProduction = false;
+                // Set sanitization on (default)
+                \Midtrans\Config::$isSanitized = true;
+                // Set 3DS transaction for credit card to true
+                \Midtrans\Config::$is3ds = true;
+                $params = array(
+                    'transaction_details' => array(
+                        'order_id' => rand(),
+                        'gross_amount' => $order->GrandTotal,
+                    )
+                );
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+                // dd($snapToken);
+                $transaction->Reglement = $snapToken;
+                $transaction->save();
+            } else {
+                $transaction = PaymentSale::create([
+                    'user_id' => $order->user_id,
+                    'date' => $order->date,
+                    'Ref' => 'INV-' . $order->Ref,
+                    'sale_id' => $order->id,
+                    'montant' => $order->GrandTotal,
+                    'change' => $request->change_return,
+                    'Reglement' => 'cash',
+                    'status' => 'success',
+                ]);
+            }
+            //{{============= Integrasi Midtrans ===================}}\\
             $sale = Sale::findOrFail($order->id);
 
             $detail_sale = Sale::with('details')->find($order->id);
@@ -200,138 +238,31 @@ class SaleController extends Controller
             //{{=========================================================================}}\\
             //{{==================================================================}}\\
             //{{==========================================================}}\\
-
-            if ($request->payment['status'] != 'pending') {
-                // Check If User Has Permission view All Records
-                // if (!$view_records) {
-                //     // Check If User->id === sale->id
-                //     $this->authorizeForUser($request->user('api'), 'check_record', $sale);
-                // }
-
-                try {
-
-                    $total_paid = $sale->paid_amount + $request['amount'];
-                    $due = $sale->GrandTotal - $total_paid;
-
-                    if ($due === 0.0 || $due < 0.0) {
-                        $payment_statut = 'paid';
-                    } elseif ($due != $sale->GrandTotal) {
-                        $payment_statut = 'partial';
-                    } elseif ($due == $sale->GrandTotal) {
-                        $payment_statut = 'unpaid';
-                    }
-
-                    // if ($request['amount'] > 0) {
-                    //     if ($request->payment['Reglement'] == 'credit card') {
-                    //         $Client = Client::whereId($request->client_id)->first();
-                    //         Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET'));
-
-                    //         // Check if the payment record exists
-                    //         $PaymentWithCreditCard = PaymentWithCreditCard::where('customer_id', $request->client_id)->first();
-                    //         if (! $PaymentWithCreditCard) {
-
-                    //             // Create a new customer and charge the customer with a new credit card
-                    //             $customer = \Stripe\Customer::create([
-                    //                 'source' => $request->token,
-                    //                 'email' => $Client->email,
-                    //                 'name' => $Client->name,
-                    //             ]);
-
-                    //             // Charge the Customer instead of the card:
-                    //             $charge = \Stripe\Charge::create([
-                    //                 'amount' => $request['amount'] * 100,
-                    //                 'currency' => 'usd',
-                    //                 'customer' => $customer->id,
-                    //             ]);
-                    //             $PaymentCard['customer_stripe_id'] = $customer->id;
-
-                    //             // Check if the payment record not exists
-                    //         } else {
-
-                    //             // Retrieve the customer ID and card ID
-                    //             $customer_id = $PaymentWithCreditCard->customer_stripe_id;
-                    //             $card_id = $request->card_id;
-
-                    //             // Charge the customer with the new credit card or the selected card
-                    //             if ($request->is_new_credit_card || $request->is_new_credit_card == 'true' || $request->is_new_credit_card === 1) {
-                    //                 // Retrieve the customer
-                    //                 $customer = \Stripe\Customer::retrieve($customer_id);
-
-                    //                 // Create New Source
-                    //                 $card = \Stripe\Customer::createSource(
-                    //                     $customer_id,
-                    //                     [
-                    //                         'source' => $request->token,
-                    //                     ]
-                    //                 );
-
-                    //                 $charge = \Stripe\Charge::create([
-                    //                     'amount' => $request['amount'] * 100,
-                    //                     'currency' => 'usd',
-                    //                     'customer' => $customer_id,
-                    //                     'source' => $card->id,
-                    //                 ]);
-                    //                 $PaymentCard['customer_stripe_id'] = $customer_id;
-                    //             } else {
-                    //                 $charge = \Stripe\Charge::create([
-                    //                     'amount' => $request['amount'] * 100,
-                    //                     'currency' => 'usd',
-                    //                     'customer' => $customer_id,
-                    //                     'source' => $card_id,
-                    //                 ]);
-                    //                 $PaymentCard['customer_stripe_id'] = $customer_id;
-                    //             }
-                    //         }
-
-                    //         $PaymentSale = new PaymentSale();
-                    //         $PaymentSale->sale_id = $order->id;
-                    //         $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
-                    //         $PaymentSale->date = Carbon::now();
-                    //         $PaymentSale->Reglement = $request->payment['Reglement'];
-                    //         $PaymentSale->montant = $request['amount'];
-                    //         $PaymentSale->change = $request['change'];
-                    //         $PaymentSale->notes = null;
-                    //         $PaymentSale->user_id = Auth::user()->id;
-                    //         $PaymentSale->save();
-
-                    //         $sale->update([
-                    //             'paid_amount' => $total_paid,
-                    //             'payment_statut' => $payment_statut,
-                    //         ]);
-
-                    //         $PaymentCard['customer_id'] = $request->client_id;
-                    //         $PaymentCard['payment_id'] = $PaymentSale->id;
-                    //         $PaymentCard['charge_id'] = $charge->id;
-                    //         PaymentWithCreditCard::create($PaymentCard);
-
-                    //         // Paying Method Cash
-                    //     } else {
-
-                    //         PaymentSale::create([
-                    //             'sale_id' => $order->id,
-                    //             'Ref' => app('App\Http\Controllers\PaymentSalesController')->getNumberOrder(),
-                    //             'date' => Carbon::now(),
-                    //             'Reglement' => $request->payment['Reglement'],
-                    //             'montant' => $request['amount'],
-                    //             'change' => $request['change'],
-                    //             'notes' => null,
-                    //             'user_id' => Auth::user()->id,
-                    //         ]);
-
-                    //         $sale->update([
-                    //             'paid_amount' => $total_paid,
-                    //             'payment_statut' => $payment_statut,
-                    //         ]);
-                    //     }
-                    // }
-                } catch (Exception $e) {
-                    return response()->json(['message' => $e->getMessage()], 500);
-                }
-            }
         }, 10);
 
         return redirect()->route('sale.index')->with('success', 'Sale created successfully');
         // return response()->json(['success' => true]);
+    }
+    public function success($transactionId)
+    {
+        // Find the transaction by ID
+        $transaction = PaymentSale::find($transactionId);
+        if ($transaction) {
+            // Update the transaction status to success
+            $transaction->status = 'success';
+            $transaction->save();
+
+            // Update the associated sale's payment status
+            $sale = Sale::find($transaction->sale_id);
+            if ($sale) {
+                $sale->payment_statut = 'paid';
+                $sale->save();
+            }
+
+            return redirect()->route('sale.index')->with('success', 'Payment Sales successfully');
+        } else {
+            return redirect()->route('sale.index')->with('error', 'Transaction not found');
+        }
     }
 
     /**
