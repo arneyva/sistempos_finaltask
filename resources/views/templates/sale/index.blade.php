@@ -35,7 +35,7 @@
 
             <div class="card-body p-0">
                 <div class="table-responsive mt-4">
-                    <table id="basic-table" class="table table-striped mb-0" role="grid">
+                    <table id="basic-table" class="table table-striped table-hover mb-0" role="grid">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -91,7 +91,8 @@
                                                 clip-rule="evenodd" />
                                         </svg>
                                         <div class="p-0 sub-drop dropdown-menu dropdown-menu-end"
-                                            aria-labelledby="dropdownMenuButton{{ $item->id }}">
+                                            aria-labelledby="dropdownMenuButton{{ $item->id }}"
+                                            style="  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
                                             <div class="m-0 border-0 shadow-none card">
                                                 <div class="p-0 ">
                                                     <ul class="p-0 list-group list-group-flush">
@@ -151,6 +152,40 @@
                                                                     <path fill="currentColor"
                                                                         d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zm-2 0l-8 5l-8-5zm0 12H4V8l8 5l8-5z" />
                                                                 </svg> Email Notifications </a>
+                                                        </li>
+                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                href="{{ route('sale.show', $item->id) }}">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                    height="1.5em" viewBox="0 0 24 24">
+                                                                    <path fill="currentColor"
+                                                                        d="M7 7h10v2H7zm0 4h7v2H7z" />
+                                                                    <path fill="currentColor"
+                                                                        d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
+                                                                </svg> Sale Detail </a>
+                                                        </li>
+                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                href="#">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                    height="1.5em" viewBox="0 0 24 24">
+                                                                    <path fill="currentColor"
+                                                                        d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                </svg> Edit Sale </a>
+                                                        </li>
+                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                href="#">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                    height="1.5em" viewBox="0 0 256 256">
+                                                                    <path fill="currentColor"
+                                                                        d="M128 88a40 40 0 1 0 40 40a40 40 0 0 0-40-40m0 64a24 24 0 1 1 24-24a24 24 0 0 1-24 24m112-96H16a8 8 0 0 0-8 8v128a8 8 0 0 0 8 8h224a8 8 0 0 0 8-8V64a8 8 0 0 0-8-8m-46.35 128H62.35A56.78 56.78 0 0 0 24 145.65v-35.3A56.78 56.78 0 0 0 62.35 72h131.3A56.78 56.78 0 0 0 232 110.35v35.3A56.78 56.78 0 0 0 193.65 184M232 93.37A40.8 40.8 0 0 1 210.63 72H232ZM45.37 72A40.8 40.8 0 0 1 24 93.37V72ZM24 162.63A40.8 40.8 0 0 1 45.37 184H24ZM210.63 184A40.8 40.8 0 0 1 232 162.63V184Z" />
+                                                                </svg> Show Payment </a>
+                                                        </li>
+                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                href="#">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                    height="1.5em" viewBox="0 0 32 32">
+                                                                    <path fill="currentColor"
+                                                                        d="M0 6v2h19v15h-6.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H4v-5H2v7h3.156c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3h8.312c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3H32v-8.156l-.063-.157l-2-6L29.72 10H21V6zm1 4v2h9v-2zm20 2h7.281L30 17.125V23h-1.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H21zM2 14v2h6v-2zm7 8c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2m16 0c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2" />
+                                                                </svg> Shipping </a>
                                                         </li>
                                                     </ul>
                                                 </div>
