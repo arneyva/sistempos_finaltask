@@ -40,6 +40,14 @@ class ExpenseCategory extends Model
         'description',
     ];
 
+    public function scopeFilter($query, array $filters)
+    {
+
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            return $query;
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

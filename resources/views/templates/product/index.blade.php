@@ -1,8 +1,14 @@
 @extends('templates.main')
+
+@section('pages_title')
+    <h1>All Products</h1>
+    <p>Do Something with all your store's products</p>
+@endsection
+
 @section('content')
     <div class="col-sm-12">
         <div class="mt-3" style="justify-content-center">
-            @include('templates.alert')
+            <!-- @include('templates.alert') -->
         </div>
         <div class="card">
             <div class="card-header d-flex justify-content-between">
@@ -10,11 +16,165 @@
                     <h4 class="card-title">All Products</h4>
                 </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                        data-bs-target="#createModal">Filter</button>
+                    <a href="{{ route('product.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                    <a href="{{ route('product.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('product.index') }}" method="GET" id="filterForm">
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="code">Search By Code *</label>
+                                            <input type="text" class="form-control" id="code" name="code"
+                                                value="{{ request()->input('code') }}" placeholder="Input Code ...">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="name">Search By Name*</label>
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                value="{{ request()->input('name') }}" placeholder="Input Name ...">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="category_id">Choose Category *</label>
+                                            <select class="form-select" id="category_id" name="category_id">
+                                                <option selected disabled value="">Choose...</option>
+                                                @foreach ($categories as $wh)
+                                                    <option value="{{ $wh->id }}"
+                                                        {{ request()->input('category_id') == $wh->id ? 'selected' : '' }}>
+                                                        {{ $wh->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="brand_id">Choose Brand *</label>
+                                            <select class="form-select" id="brand_id" name="brand_id">
+                                                <option selected disabled value="">Choose...</option>
+                                                @foreach ($brands as $wh)
+                                                    <option value="{{ $wh->id }}"
+                                                        {{ request()->input('brand_id') == $wh->id ? 'selected' : '' }}>
+                                                        {{ $wh->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
+                                        data-bs-dismiss="modal">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     @role('superadmin|inventaris')
-                        <button type="button" class="btn btn-soft-gray">Import Product</button>
+                        <button type="button" class="btn btn-soft-gray" data-bs-toggle="modal"
+                            data-bs-target="#ImportProduct">Import Product</button>
+                        <div class="modal fade" id="ImportProduct" tabindex="-1" aria-labelledby="ImportProduct"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="createModalLabel">Import Products</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-header">
+                                        <h6 class="modal-title" id="createModalLabel" style="color:#d06565">*Only Single Product
+                                            Type</h6>
+                                    </div>
+                                    <form action="{{ route('product.import') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="fileInput" class="form-label">Choose File</label>
+                                                <input class="form-control" type="file" name="products" id="fileInput"
+                                                    accept=".csv">
+                                                <p style="color: #d06565">File must be in CSV format</p>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="name">Name</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="codeProduct">Code Product</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                    <button style="margin-top: 5px" type="button"
+                                                        class="btn btn-outline-success btn-sm" disabled>Code
+                                                        must not exist already</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="category">Category</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="productCost">Product Cost</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="productUnit">Product Unit</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-success btn-sm"
+                                                        disabled>This
+                                                        Field is required</button>
+                                                    <button style="margin-top: 5px" type="button"
+                                                        class="btn btn-outline-success btn-sm" disabled>This
+                                                        Unit must already be created</button>
+                                                    <button style="margin-top: 5px" type="button"
+                                                        class="btn btn-outline-success btn-sm" disabled>This
+                                                        Please use short name of
+                                                        unit</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="brand">Brand</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button"
+                                                        class="btn btn-outline-primary btn-sm"disabled>Field
+                                                        optional</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-4 col-form-label" for="note">Note</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                                                        disabled>Field
+                                                        optional</button>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="/import/import_products.csv" class="btn btn-soft-success" download>Download Example</a>
+                                                <button type="submit" class="btn btn-soft-primary">Submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                         <a href="{{ route('product.create') }}"><button type="button" class="btn btn-soft-primary">Create
                                 +</button></a>
                     @endrole
@@ -45,7 +205,8 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary"
-                                                src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}" alt="profile">
+                                                src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}"
+                                                alt="profile">
                                             <div class="d-flex flex-column">
                                                 <!-- Mengatur flex-direction menjadi column untuk list -->
                                                 @if ($item['type'] === 'Variant Product')
@@ -96,11 +257,13 @@
                                                     <path
                                                         d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
                                                         stroke="#130F26"></path>
-                                                    <circle cx="12" cy="12" r="5" stroke="#130F26"></circle>
+                                                    <circle cx="12" cy="12" r="5" stroke="#130F26">
+                                                    </circle>
                                                     <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
                                                     <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
                                                         width="6" height="6">
-                                                        <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
+                                                        <circle cx="12" cy="12" r="3" fill="#130F26">
+                                                        </circle>
                                                     </mask>
                                                     <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
                                                         fill="white">
@@ -111,14 +274,16 @@
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
                                                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
                                                     <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                 </svg>
                                             </a>
@@ -134,7 +299,8 @@
                                                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
                                                     <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                     <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
                                                         stroke-width="1.5" stroke-linecap="round"
@@ -156,3 +322,15 @@
         </div>
     </div>
 @endsection
+<script>
+    function resetFilters() {
+        // Reset nilai-nilai input dari formulir
+        document.getElementById('code').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('category_id').value = '';
+        document.getElementById('brand_id').value = '';
+
+        // Submit formulir secara otomatis untuk menghapus filter
+        document.getElementById('filterForm').submit();
+    }
+</script>

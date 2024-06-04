@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Project TA</title>
 
     <!-- Favicon -->
@@ -39,6 +40,11 @@
     <meta name="theme-color" content="#6777ef" />
     <link rel="apple-touch-icon" href="{{ asset('logo.PNG') }}">
     <link rel="manifest" href="{{ asset('/manifest.json') }}">
+    <style>
+    .my-custom-swal {
+      margin-top: 60px; /* Atau gunakan persentase, misalnya 10% */
+    }
+    </style>
     @stack('style')
 
 </head>
@@ -429,14 +435,56 @@
         } else {
             console.error("Service workers are not supported.");
         }
-    </script>
+        </script>
     <script>
         $("document").ready(function() {
             setTimeout(function() {
                 $("div.alert1").remove();
             }, 1500); // secs
         });
+        </script>
+    {{-- sweetalert2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if(session('success'))
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'my-custom-swal' 
+            },
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+            });
+            Toast.fire({
+            icon: "success",
+            title: "{{ session('success') }}"
+            });
+        @endif
+        @if($errors->any())
+            let errors = {!! json_encode($errors->all()) !!};
+            let errorList = '<ol>' + errors.map(function(error) {
+                return '<li style="text-align: start">' + error + '</li>';
+            }).join('') + '</ol>';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                html: errorList,
+                
+            });
+        @endif
     </script>
+
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    </script>
+
     @stack('script')
 </body>
 

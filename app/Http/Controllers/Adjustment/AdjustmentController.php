@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Adjustment;
 
+use App\Exports\AdjustmentsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Adjustment;
 use App\Models\AdjustmentDetail;
@@ -10,55 +11,143 @@ use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdjustmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $adjustment = Adjustment::with('warehouse')->where('deleted_at', '=', null)->latest()->paginate(10);
+        // Inisialisasi query dengan menggunakan model Adjustment
+        $adjustmentQuery = Adjustment::with('warehouse')->where('deleted_at', '=', null);
+
+        // Terapkan filter berdasarkan parameter yang diterima dari request
+        if ($request->filled('date')) {
+            $adjustmentQuery->whereDate('date', '=', $request->input('date'));
+        }
+
+        if ($request->filled('Ref')) {
+            $adjustmentQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
+        }
+
+        if ($request->filled('warehouse_id')) {
+            $adjustmentQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+
+        // Lakukan sorting sesuai request jika diperlukan
+        if ($request->has('SortField') && $request->has('SortType')) {
+            $sortField = $request->input('SortField');
+            $sortType = $request->input('SortType');
+            $adjustmentQuery->orderBy($sortField, $sortType);
+        }
+
+        // Lakukan pencarian jika diperlukan
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $adjustmentQuery->where('Ref', 'like', '%'.$search.'%');
+        }
+
+        // Ambil data dengan membatasi jumlah per halaman
+        $adjustment = $adjustmentQuery->paginate($request->input('limit', 10))->appends($request->except('page'));
+
+        // Siapkan data penyesuaian untuk ditampilkan di view
         $data = [];
         foreach ($adjustment as $adjustmentdata) {
-            $item['id'] = $adjustmentdata->id;
-            $item['date'] = $adjustmentdata->date;
-            $item['Ref'] = $adjustmentdata->Ref;
-            $item['warehouse'] = $adjustmentdata['warehouse']->name ?? 'deleted';
-            $item['items'] = $adjustmentdata['items'];
+            $item = [
+                'id' => $adjustmentdata->id,
+                'date' => $adjustmentdata->date,
+                'Ref' => $adjustmentdata->Ref,
+                'warehouse' => $adjustmentdata->warehouse->name ?? 'deleted',
+                'items' => $adjustmentdata->items,
+                'details_product' => [],
+                'details_product_variant' => [],
+                'details_code' => [],
+                'details_code_variant' => [],
+                'details_quantity' => [],
+                'details_type' => [],
+            ];
+
             $Adjustment_data = AdjustmentDetail::where('adjustment_id', $adjustmentdata->id)
                 ->where('deleted_at', '=', null)->get();
-            // dd($Adjustment_data);
-            $detail_product = [];
-            $detail_product_variant = [];
-            $detail_code = [];
-            $detail_code_variant = [];
-            $detail_quantity = [];
-            $detail_type = [];
+
             foreach ($Adjustment_data as $detail) {
-                $detail_product[] = $detail->product->name;
-                $detail_product_variant[] = $detail->productVariant->name ?? null;
-                $detail_code[] = $detail->product->code;
-                $detail_code_variant[] = $detail->productVariant->code ?? null;
-                $detail_quantity[] = $detail->quantity;
-                $detail_type[] = $detail->type;
+                $item['details_product'][] = $detail->product->name;
+                $item['details_product_variant'][] = $detail->productVariant->name ?? null;
+                $item['details_code'][] = $detail->product->code;
+                $item['details_code_variant'][] = $detail->productVariant->code ?? null;
+                $item['details_quantity'][] = $detail->quantity;
+                $item['details_type'][] = $detail->type;
             }
-            $item['details_product'] = $detail_product;
-            $item['details_product_variant'] = $detail_product_variant;
-            $item['details_code'] = $detail_code;
-            $item['details_code_variant'] = $detail_code_variant;
-            $item['details_quantity'] = $detail_quantity;
-            $item['details_type'] = $detail_type;
+
             $data[] = $item;
         }
 
-        // dd($data);
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+
+        // Mengembalikan view dengan data yang telah difilter
         return view('templates.adjustment.index', [
             'data' => $data,
             'adjustment' => $adjustment,
+            'warehouse' => $warehouses,
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "adjustments_{$timestamp}.xlsx";
+
+        return Excel::download(new AdjustmentsExport($request), $filename);
+    }
+
+    public function exportToPDF(Request $request)
+    {
+        // Inisialisasi query dengan menggunakan model Adjustment
+        $adjustmentQuery = Adjustment::with('warehouse')->where('deleted_at', '=', null);
+
+        // Terapkan filter berdasarkan parameter yang diterima dari request
+        if ($request->has('date') && $request->filled('date')) {
+            $adjustmentQuery->whereDate('date', '=', $request->input('date'));
+        }
+
+        if ($request->has('Ref') && $request->filled('Ref')) {
+            $adjustmentQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
+        }
+
+        if ($request->has('warehouse_id') && $request->filled('warehouse_id')) {
+            $adjustmentQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+
+        // Lakukan sorting sesuai request jika diperlukan
+        if ($request->has('SortField') && $request->has('SortType')) {
+            $sortField = $request->input('SortField');
+            $sortType = $request->input('SortType');
+            $adjustmentQuery->orderBy($sortField, $sortType);
+        }
+
+        // Lakukan pencarian jika diperlukan
+        if ($request->has('search') && $request->filled('search')) {
+            $search = $request->input('search');
+            $adjustmentQuery->where('Ref', 'like', '%'.$search.'%');
+        }
+
+        $adjustments = $adjustmentQuery->get();
+
+        // Generate PDF
+        $pdf = Pdf::loadView('export.adjustment', compact('adjustments'));
+
+        $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
+
+        return $pdf->download("adjustments_{$timestamp}.pdf");
     }
 
     /**

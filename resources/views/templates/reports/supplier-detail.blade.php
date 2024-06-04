@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>Reports</h1>
+<p>look up your daily report</p>
+@endsection
+
 <style>
     .status-completed {
         padding: 7px;

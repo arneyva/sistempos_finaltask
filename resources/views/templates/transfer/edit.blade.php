@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>Edit Transfer</h1>
+<p>Look All your transfer</p>
+@endsection
+
 @section('content')
     {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">

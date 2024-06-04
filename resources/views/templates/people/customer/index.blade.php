@@ -1,7 +1,10 @@
 @extends('templates.main')
-<!-- @section('pages_title')
-<h1>Client</h1>
-@endsection -->
+
+@section('pages_title')
+<h1>All Client</h1>
+<p>Do Something with all your client</p>
+@endsection
+
 @section('content')
 <style type="text/css">
     .background {
@@ -19,12 +22,11 @@
 </style>
 <div class="col-sm-12">
     <div class="mt-3">
-        @include('templates.alert')
+        <!-- @include('templates.alert') -->
     </div>
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <div class="header-title">
-                <h4 class="card-title">All Clients</h4>
             </div>
             <div class="header-title">
             <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">Filter</button>
@@ -56,6 +58,7 @@
                     </thead>
                     <tbody>
                         @foreach ($clients as $data)
+                        @continue($data->id == 1)
                             <tr>
                                 <td>{{ $data->name }}</td>
                                 <td>{{ $data->email }}</td>
@@ -64,7 +67,8 @@
                                 <td>{{ $data->created_at }}</td>
                                 <td>
                                     <div class="inline">
-                                        <button type="button" data-bs-toggle="modal" data-bs-target="#editClient"  style="background-color: transparent; border: none; display: inline-block;">
+                                        <button class="editBtn" data-id="{{$data['id']}}" data-name="{{$data->name}}" data-email="{{$data->email}}" data-phone="{{$data->phone}}" style="background-color: transparent; border: none; display: inline-block;">
+                                        <!-- <button type="button" data-bs-toggle="modal" data-bs-target="#editClient"  style="background-color: transparent; border: none; display: inline-block;"> -->
                                             <a href="#">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -80,7 +84,7 @@
                                                     </path>
                                                 </svg>
                                             </a>
-                                        <button type="button" data-bs-toggle="modal" data-bs-target="#deleteClient"  style="background-color: transparent; border: none; display: inline-block;">
+                                            <button type="button" onclick="confirmDelete({{ $data['id'] }})" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  style="background-color: transparent; border: none; display: inline-block;">
                                             <a href="#">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -102,11 +106,15 @@
                                                 </svg>
                                             </a>
                                         </button>
+                                        <form id="delete-form-{{  $data['id'] }}" action="{{ route('people.clients.destroy',  $data['id']) }}" method="POST" style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
                             <!-- modal edit -->
-                            <div class="modal fade " id="editClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal fade" id="editClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                 <div class="background">
                                     <div class="modal-dialog modal-dialog-centered modal-lg overlay">
                                         <div class="modal-content">
@@ -115,9 +123,9 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <form action="{{ route('people.clients.update', $data['id']) }}" method="POST" enctype="multipart/form-data">
+                                                <form action="{{ route('people.clients.update', $data['id']) }}" enctype="multipart/form-data" novalidate>
                                                 @csrf
-                                                @method('patch')
+                                                @method('PATCH')
                                                     <div class="form-group">
                                                         <label class="form-label" for="name">Name:</label>
                                                         <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
@@ -150,33 +158,10 @@
                                                         </small>
                                                     </div>
                                             </div>
+                                            <div id="formErrors"></div>
                                             <div class="modal-footer">
                                                     <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
                                                     <button type="submit" class="btn btn-soft-success">Save</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- modal hapus -->
-                            <div class="modal fade " id="deleteClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="background">
-                                    <div class="modal-dialog modal-dialog-centered modal-lg overlay">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="staticBackdropLabel">Delete Client</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p>Anda akan menghapus akun ini!</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <form action="{{ route('people.clients.destroy', $data['id']) }}" method="POST">
-                                                @csrf
-                                                @method('delete')
-                                                    <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-soft-danger">Understood</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -203,14 +188,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('people.clients.store') }}" method="POST" enctype="multipart/form-data">
+                    <form class="needs-validation" action="{{ route('people.clients.store') }}" method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
                         <div class="form-group">
                             <label class="form-label" for="name">Name:</label>
                             <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
-                                id="name" name="name" placeholder="name" required>
+                                id="name" name="name_create" placeholder="name" value="{{ old('name_create')}}" required>
                             <small class=" text-danger font-italic">
-                                @error('name')
+                                @error('name_create')
                                     {{ $message }}
                                 @enderror
                             </small>
@@ -218,20 +203,20 @@
                         <div class="form-group">
                             <label class="form-label" for="email">Email:</label>
                             <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror"
-                                id="email" name="email" placeholder="Email" required>
+                                id="email" name="email_create" placeholder="Email" value="{{ old('email_create')}}" required>
                             <small class=" text-danger font-italic">
-                                @error('email')
+                                @error('email_create')
                                     {{ $message }}
                                 @enderror
                             </small>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cname">Phone:</label>
-                            <input type="tel" name="phone"
+                            <input type="tel" name="phone_create"
                                 class="form-control bg-transparent @error('phone') is-invalid @enderror"
-                                id="cname" placeholder="Phone" required>
+                                id="cname" placeholder="Phone"  value="{{ old('phone_create')}}" required>
                             <small class=" text-danger font-italic">
-                                @error('phone')
+                                @error('phone_create')
                                     {{ $message }}
                                 @enderror
                             </small>
@@ -239,7 +224,7 @@
                 </div>
                 <div class="modal-footer">
                         <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-soft-success">Save</button>
+                        <button type="submit" id="submit_create" class="btn btn-soft-success">Save</button>
                     </form>
                 </div>
             </div>
@@ -255,14 +240,124 @@
     });
 </script>
 
-@if($errors->any())
-    <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            var errorModal = new bootstrap.Modal(document.getElementById('editClient'));
-            errorModal.show();
+<script>
+    document.querySelectorAll('.editBtn').forEach(button => {
+    button.addEventListener('click', function() {
+        let userId = this.getAttribute('data-id');
+        let userName = this.getAttribute('data-name');
+        let userEmail = this.getAttribute('data-email');
+        let userPhone = this.getAttribute('data-phone');
+
+        Swal.fire({
+        title: 'Edit Data',
+        html: `
+            <input type="text" id="swal-input1" class="swal2-input" value="${userName}">
+            <input type="email" id="swal-input2" class="swal2-input" value="${userEmail}">
+            <input type="email" id="swal-input3" class="swal2-input" value="${userPhone}">`,
+        focusConfirm: false,
+        showCancelButton: true,
+        preConfirm: () => {
+            const name = document.getElementById('swal-input1').value;
+            const email = document.getElementById('swal-input2').value;
+            const phone = document.getElementById('swal-input3').value;
+
+            // Validasi inputan
+            if (!name && !email && !phone) {
+            Swal.showValidationMessage(`Mohon isi kedua field`);
+            return false;
+            }
+
+            if (!name) {
+                Swal.showValidationMessage(`Mohon isi nama`);
+                return false;} else if (name.length > 12) {
+                Swal.showValidationMessage('Name must be less than or equal to 12 characters.');
+                return false;}
+
+            if (!email) {
+                Swal.showValidationMessage('Email is required.');
+                return false;} else if (!validateEmail(email)) {
+                Swal.showValidationMessage('Email must be a valid email address.');
+                return false;}
+
+            if (!phone) {
+                Swal.showValidationMessage('Phone is required.');
+                return false;} else if (!/^\d{12}$/.test(phone)) {
+                Swal.showValidationMessage('Phone must be exactly 12 digits.');
+                return false;}
+
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+
+            // Kirim data yang sudah diedit ke controller
+            fetch(`/people/clients/update/${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({name: name, email: email, phone: phone})
+            })
+            .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+            })
+            .then(data => {
+            console.log(data);
+            location.replace(location.href);
+            })
+            .catch(error => {
+            console.error('Error:', error);
+            });
+        }
         });
-    </script>
-@endif
+    });
+    });
+</script>
+
+<script>
+    @if(session('success'))
+    localStorage.removeItem('modalShown');
+    @endif
+    $('#createClient').on('shown.bs.modal', function () {
+    localStorage.setItem('modalShown', 'true');
+    });
+
+    $('#createClient').on('hidden.bs.modal', function () {
+    localStorage.removeItem('modalShown');
+    });
+
+    $(document).ready(function() {
+    if (localStorage.getItem('modalShown') === 'true') {
+        $('#createClient').modal('show');
+    }
+    });
+</script>
+
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-form-${id}`).submit();
+            }
+        });
+    }
+</script>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

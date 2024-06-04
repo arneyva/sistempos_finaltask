@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>Reports</h1>
+<p>look up your daily report</p>
+@endsection
+
 @section('content')
     <div class="col-md-12">
         <div class="row">

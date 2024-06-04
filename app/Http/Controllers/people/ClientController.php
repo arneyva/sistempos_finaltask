@@ -5,6 +5,7 @@ namespace App\Http\Controllers\people;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ClientController extends Controller
 {
@@ -46,10 +47,11 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
+
         $rules = [
-            'name' => 'required|max:12',
-            'email' => 'required|email|unique:clients',
-            'phone' => 'required|numeric|min_digits:12|max_digits:12',
+            'name_create' => 'required',
+            'email_create' => 'required|email|unique:clients,email',
+            'phone_create' => 'required|numeric|min_digits:12|max_digits:12',
         ];
         $message = [
             'required' => 'Tidak boleh kosong!',
@@ -64,12 +66,12 @@ class ClientController extends Controller
         $validateData = $request->validate($rules, $message);
 
         $client = new Client;
-        $client->name = $request['name'];
-        $client->email = $request['email'];
-        $client->phone = $request['phone'];
+        $client->name = $request['name_create'];
+        $client->email = $request['email_create'];
+        $client->phone = $request['phone_create'];
         $client->save();
 
-        return redirect()->route('people.clients.index')->with('success', 'Customer berhasil ditambahkan');
+        return redirect()->route('people.clients.index')->with(['success' => 'Client berhasil ditambahkan']);
     }
 
     /**

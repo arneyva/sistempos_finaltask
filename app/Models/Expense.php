@@ -42,6 +42,8 @@ class Expense extends Model
         'warehouse_id' => 'int',
         'amount' => 'float',
         'admin_id' => 'int',
+        'status' => 'int',
+        'agreed_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -52,8 +54,19 @@ class Expense extends Model
         'warehouse_id',
         'details',
         'amount',
+        'status',
+        'file_pendukung',
+        'agreed_at',
         'admin_id',
     ];
+
+    public function scopeFilter($query, array $filters)
+    {
+
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            return $query;
+        });
+    }
 
     public function user()
     {

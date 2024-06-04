@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Exports\ProductsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
@@ -10,23 +11,48 @@ use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
 use App\Models\Unit;
 use App\Models\Warehouse;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // ambil data product utama
-        $products = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null)->latest()->paginate(10);
+        $productsQuery = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null);
         //ambil data
+        // Ambil data kategori
+        $categories = Category::where('deleted_at', '=', null)->get(['id', 'name']);
+        $brands = Brand::where('deleted_at', '=', null)->get(['id', 'name']);
+        // dd($categories);
+
+        if ($request->filled('code')) {
+            $productsQuery->where('code', 'like', '%' . $request->input('code') . '%');
+        }
+
+        if ($request->filled('name')) {
+            $productsQuery->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        if ($request->filled('category_id')) {
+            $productsQuery->where('category_id', '=', $request->input('category_id'));
+        }
+        if ($request->filled('brand_id')) {
+            $productsQuery->where('brand_id', '=', $request->input('brand_id'));
+        }
+        $products = $productsQuery->paginate($request->input('limit', 10))->appends($request->except('page'));
         $items = [];
         foreach ($products as $product) {
             $item['id'] = $product->id;
@@ -42,7 +68,7 @@ class ProductController extends Controller
                 $item['unit'] = $product['unit']->ShortName;
                 // handle jumlah barang
                 $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+                $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
             } elseif ($product->type == 'is_variant') {
                 //untuk product variant
                 $item['type'] = 'Variant Product';
@@ -63,7 +89,7 @@ class ProductController extends Controller
                 $item['name'] = $variant_name;
                 // handle jumlah barang
                 $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+                $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
             }
             $items[] = $item;
         }
@@ -72,9 +98,178 @@ class ProductController extends Controller
         return view('templates.product.index', [
             'items' => $items,
             'products' => $products,
+            'categories' => $categories,
+            'brands' => $brands,
         ]);
     }
+    public function exportToPDF(Request $request)
+    {
+        // ambil data product utama
+        $productsQuery = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null);
+        //ambil data
 
+        if ($request->filled('code')) {
+            $productsQuery->where('code', 'like', '%' . $request->input('code') . '%');
+        }
+
+        if ($request->filled('name')) {
+            $productsQuery->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        if ($request->filled('category_id')) {
+            $productsQuery->where('category_id', '=', $request->input('category_id'));
+        }
+        if ($request->filled('brand_id')) {
+            $productsQuery->where('brand_id', '=', $request->input('brand_id'));
+        }
+        $products = $productsQuery->get();
+        // Generate PDF
+        $pdf = Pdf::loadView('export.product', compact('products'));
+
+        $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
+
+        return $pdf->download("products_{$timestamp}.pdf");
+    }
+    public function export(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "products_{$timestamp}.xlsx";
+
+        return Excel::download(new ProductsExport($request), $filename);
+    }
+    public function check_code_exist($code)
+    {
+        $check_code = Product::where('code', $code)->first();
+        if ($check_code) {
+            $this->generate_random_code($code);
+        } else {
+            return $code;
+        }
+    }
+    private function generateUniqueCategoryCode()
+    {
+        // return 'CAT-IMPORT-' . strtoupper(uniqid(2));
+        return 'CAT-IMPORT-' .Str::random(4);
+    }
+    public function import_products(Request $request)
+    {
+
+        $file_upload = $request->file('products');
+        // dd($file_upload);
+        $ext = pathinfo($file_upload->getClientOriginalName(), PATHINFO_EXTENSION);
+        if ($ext != 'csv') {
+            return response()->json([
+                'msg' => 'must be in csv format',
+                'status' => false,
+            ]);
+            // return redirect()->back()->with('errorzz', 'must be in csv format');
+        } else {
+            $data = array();
+            $rowcount = 0;
+            if (($handle = fopen($file_upload, "r")) !== false) {
+
+                $max_line_length = defined('MAX_LINE_LENGTH') ? MAX_LINE_LENGTH : 10000;
+                $header = fgetcsv($handle, $max_line_length, ';'); // Use semicolon as delimiter
+                $header_colcount = count($header);
+                while (($row = fgetcsv($handle, $max_line_length, ';')) !== false) { // Use semicolon as delimiter
+                    $row_colcount = count($row);
+                    if ($row_colcount == $header_colcount) {
+                        $entry = array_combine($header, $row);
+                        $data[] = $entry;
+                    } else {
+                        return null;
+                    }
+                    $rowcount++;
+                }
+                fclose($handle);
+            } else {
+                return null;
+            }
+
+            // dd($data);
+            $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
+
+            // Create a new instance of Illuminate\Http\Request and pass the imported data to it.
+
+            $validator = validator()->make($data, [
+                '*.name' => 'required',
+                '*.code' => 'required|unique:products',
+            ]);
+
+            if ($validator->fails()) {
+                // Validation failed
+                return response()->json([
+                    'msg' => 'Validation failed',
+                    'errors' => $validator->errors(),
+                    'status' => false,
+                ]);
+            }
+
+            try {
+                \DB::transaction(function () use ($data, $warehouses) {
+
+
+                    //-- Create New Product
+                    foreach ($data as $key => $value) {
+                        $category = Category::where('deleted_at', null)->firstOrCreate(
+                            ['name' => $value['category']],
+                            ['code' => $this->generateUniqueCategoryCode()]
+                        );
+                        $category_id = $category->id;
+                        // dd($category);
+                        $unit = Unit::where(['ShortName' => $value['unit']])
+                            ->orWhere(['name' => $value['unit']])
+                            ->where('deleted_at', null)->first();
+                        $unit_id = $unit->id;
+
+                        if ($value['brand'] != 'N/A' && $value['brand'] != '') {
+                            $brand = Brand::where('deleted_at', null)->firstOrCreate(['name' => $value['brand']]);
+                            $brand_id = $brand->id;
+                        } else {
+                            $brand_id = NULL;
+                        }
+                        $Product = new Product;
+                        $Product->name = $value['name'] == '' ? NULL : $value['name'];
+                        $Product->code = $this->check_code_exist($value['code']);
+                        $Product->Type_barcode = 'CODE128';
+                        $Product->type = 'is_single';
+                        $Product->price = $value['price'];
+                        $Product->cost = $value['cost'];
+                        $Product->category_id = $category_id;
+                        $Product->brand_id = $brand_id;
+                        $Product->TaxNet = 0;
+                        $Product->tax_method = 'Exclusive';
+                        $Product->note = $value['note'] ? $value['note'] : '';
+                        $Product->unit_id = $unit_id;
+                        $Product->unit_sale_id = $unit_id;
+                        $Product->unit_purchase_id = $unit_id;
+                        // $Product->stock_alert = $value['stock_alert'] ? $value['stock_alert'] : 0;
+                        $Product->is_variant = 0;
+                        $Product->image = 'no-image.png';
+                        $Product->save();
+
+                        if ($warehouses) {
+                            foreach ($warehouses as $warehouse) {
+                                $product_warehouse[] = [
+                                    'product_id' => $Product->id,
+                                    'warehouse_id' => $warehouse,
+                                ];
+                            }
+                        }
+                    }
+                    if ($warehouses) {
+                        ProductWarehouse::insert($product_warehouse);
+                    }
+                }, 10);
+            } catch (\Exception $e) {
+                // Return error response
+                return response()->json(['status' => false, 'message' => $e->getMessage()], 422);
+            }
+        }
+        // Return success response
+        // return response()->json(['status' => true]);
+        return redirect()->route('product.index')->with('success', 'Product Imported successfully');
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -200,7 +395,7 @@ class ProductController extends Controller
 
                 foreach ($variants as $variant) {
                     if (ProductVariant::where('code', $variant->code)->exists()) {
-                        $errors[] = 'The code '.$variant->code.' has already been taken.';
+                        $errors[] = 'The code ' . $variant->code . ' has already been taken.';
                     } else {
                         $Product_variants_data[] = [
                             'product_id' => $productValue->id,
@@ -212,7 +407,7 @@ class ProductController extends Controller
                     }
                 }
 
-                if (! empty($errors)) {
+                if (!empty($errors)) {
                     return redirect()->back()->withErrors(['variants' => $errors])->withInput();
                 }
 
@@ -411,12 +606,12 @@ class ProductController extends Controller
         $item['images'] = [];
         if ($Product->image != '' && $Product->image != 'no-image.png') {
             foreach (explode(',', $Product->image) as $img) {
-                $path = public_path().'/images/products/'.$img;
+                $path = public_path() . '/images/products/' . $img;
                 if (file_exists($path)) {
                     $itemImg['name'] = $img;
                     $type = pathinfo($path, PATHINFO_EXTENSION);
                     $data = file_get_contents($path);
-                    $itemImg['path'] = 'data:image/'.$type.';base64,'.base64_encode($data);
+                    $itemImg['path'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
 
                     $item['images'][] = $itemImg;
                 }
@@ -632,7 +827,7 @@ class ProductController extends Controller
                         }
                         ProductWarehouse::insert($product_warehouse);
                     }
-                    if (! empty($errors)) {
+                    if (!empty($errors)) {
                         return redirect()->back()->withErrors($errors)->withInput();
                     }
                 } else {
@@ -642,7 +837,7 @@ class ProductController extends Controller
                 if ($request['images'] === null) {
                     if ($Product->image !== null) {
                         foreach (explode(',', $Product->image) as $img) {
-                            $pathIMG = public_path().'/images/products/'.$img;
+                            $pathIMG = public_path() . '/images/products/' . $img;
                             if (file_exists($pathIMG)) {
                                 if ($img != 'no-image.png') {
                                     @unlink($pathIMG);

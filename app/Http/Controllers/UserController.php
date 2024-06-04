@@ -67,6 +67,7 @@ class UserController extends Controller
      */
     public function create()
     {
+
         return view('templates.people.user.create', [
             'users' => User::all(),
             'office_shifts' => OfficeShift::all(),

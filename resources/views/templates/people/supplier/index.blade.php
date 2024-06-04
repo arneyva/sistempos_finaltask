@@ -1,27 +1,47 @@
 @extends('templates.main')
 
+@section('pages_title')
+<h1>All Supplier</h1>
+<p>Do Something with all your supplier</p>
+@endsection
+
 @section('content')
+<style type="text/css">
+    .background {
+        position: fixed; /* atau 'absolute', tergantung kebutuhan */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Warna gelap dengan transparansi */
+        z-index: 1; /* Pastikan lebih tinggi dari elemen lain kecuali modal */
+    }
+    .overlay {
+        z-index: 2; /* Pastikan lebih tinggi dari elemen lain kecuali modal */
+    }
+</style>
 <div class="col-sm-12">
     <div class="mt-3">
-        @include('templates.alert')
+        <!-- @include('templates.alert') -->
     </div>
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <div class="header-title">
-                <h4 class="card-title">All Users</h4>
             </div>
             <div class="header-title">
-            <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-expanded="{{ session('filterState', 'false') === 'true' ? 'true' : 'false' }}" aria-controls="filter">Filter</button>
+            <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">Filter</button>
                 <button type="button" class="btn btn-soft-success">Excel</button>
                 <button type="button" class="btn btn-soft-danger">PDF</button>
-                <button type="button" class="btn btn-soft-gray">Import User</button>
-                <a href="{{ route('people.users.create') }}">
-                    <button type="button" class="btn btn-soft-primary">Create +</button>
+                <button type="button" class="btn btn-soft-gray">Import Client</button>
+                <a href="#" style="margin-left: 30px;">
+                    <a href="{{ route('people.suppliers.create') }}">
+                        <button type="button" class="btn btn-soft-primary">Create +</button>
+                    </a>
                 </a>
             </div>
         </div>
         <div class="card-body p-0">
-        <div class="collapse p-4 pt-3 {{ session('filterState', '') === 'true' ? 'show' : '' }}" id="filter">
+        <div class="collapse p-4 pt-3 " id="filter">
     Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
 </div>
         </div>
@@ -30,31 +50,34 @@
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                     <thead>
                         <tr>
-                            <th>Name</th>
+                            <th>Company Name</th>
+                            <th>Contact Person</th>
                             <th>Email</th>
-                            <th>Position</th>
-                            <th>Gender</th>
+                            <th>Company Phone</th>
+                            <th>CP Contact</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($users as $data)
+                        @foreach ($providers as $data)
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary"
-                                            src="/hopeui/html/assets/images/avatars/{{ $data->avatar }}" alt="profile">
                                         <div class="d-flex flex-column">
-                                            <h6>{{ ucfirst($data->firstname) }} {{ ucfirst($data->lastname) }}</h6>
+                                            <div style="margin-bottom: 5px;">
+                                                <h6>{{ ucfirst($data->name) }}</h6>
+                                            </div>
+                                            <div>{{ $data->code }}</div>
                                         </div>
                                     </div>
                                 </td>
+                                <td>{{ ucfirst($data->nama_kontak_person) }}</td>
                                 <td>{{ $data->email }}</td>
-                                <td>{{ ucfirst(substr($data->getRoleNames(), 2, -2)) }}</td>
-                                <td>{{ $data->gender }}</td>
+                                <td>{{ $data->phone }}</td>
+                                <td>{{ $data->nomor_kontak_person }}</td>
                                 <td>
                                     <div class="inline">
-                                        <a href="{{ route('people.users.show', $data['id']) }}">
+                                        <a href="{{ route('people.suppliers.show', $data['id']) }}">
                                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
@@ -69,7 +92,7 @@
                                                 </path>
                                             </svg>
                                         </a>
-                                        <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  style="background-color: transparent; border: none; display: inline-block;">
+                                        <button type="button" onclick="confirmDelete({{ $data['id'] }})" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  style="background-color: transparent; border: none; display: inline-block;">
                                             <a href="#">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -91,36 +114,18 @@
                                                 </svg>
                                             </a>
                                         </button>
+                                        <form id="delete-form-{{  $data['id'] }}" action="{{ route('people.suppliers.destroy',  $data['id']) }}" method="POST" style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
-                            <!-- modal hapus -->
-                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="staticBackdropLabel">Delete User</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Anda akan menghapus akun ini!</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <form action="{{ route('people.users.destroy', $data['id']) }}" method="post">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-soft-danger">Understood</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
                         @endforeach
                     </tbody>
                 </table>
                 <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                    {{ $users->links() }}
+                    {{ $providers->links() }}
                 </div>
             </div>
         </div>
@@ -131,35 +136,65 @@
 
 @push('script')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    var filterCollapse = document.getElementById('filter');
+    $('a[href="#"]').click(function(e) {
+        e.preventDefault(); 
+    });
+</script>
 
-    // Check if filter state is stored in localStorage
-    var storedState = localStorage.getItem('filterState');
-    if (storedState === 'true') {
-        filterCollapse.classList.add('show');
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-form-${id}`).submit();
+            }
+        });
     }
+</script>
 
-// Listen for click events on the filter button
-document.getElementById('filterButton').addEventListener('click', function () {
-    filterCollapse.addEventListener('show.bs.collapse', function () {
-        // Toggle the collapse state
-        filterCollapse.classList.toggle('show');
-        // Store the current collapse state in localStorage
-        localStorage.setItem('filterState', filterCollapse.classList.contains('show') ? 'true' : 'false');
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+        var filterCollapse = document.getElementById('filter');
+        
+        // Check if filter state is stored in localStorage
+        var storedState = localStorage.getItem('filterState');
+        if (storedState === 'true') {
+            filterCollapse.classList.add('show');
+            // filterCollapse.classList.toggle('show');
+            // filterCollapse.classList.remove('hide');
+        } 
+        //  else {
+        // //     filterCollapse.classList.toggle('hide');
+        //  filterCollapse.classList.remove('show');
+        //  }
+
+    // Listen for click events on the filter button
+    document.getElementById('filterButton').addEventListener('click', function () {
+        // filterCollapse.addEventListener('show.bs.collapse', function () {
+        //     // Toggle the collapse state
+        //     // filterCollapse.classList.toggle('show');
+        //     // Store the current collapse state in localStorage
+        //     // localStorage.setItem('filterState', 'true');
+        //     localStorage.setItem('filterState', filterCollapse.classList.contains('show') ? 'true' : 'false');
+        // });
+        filterCollapse.addEventListener('shown.bs.collapse', function () {
+            // Store the current collapse state in localStorage when the collapse is shown
+            localStorage.setItem('filterState', 'true');
+        });
+        filterCollapse.addEventListener('hidden.bs.collapse', function () {
+            // Remove collapse state from localStorage when the collapse is hidden
+            // localStorage.setItem('filterState', 'false');
+            localStorage.removeItem('filterState');
+        });
     });
-    filterCollapse.addEventListener('shown.bs.collapse', function () {
-        // Store the current collapse state in localStorage when the collapse is shown
-        localStorage.setItem('filterState', 'true');
     });
-    filterCollapse.addEventListener('hidden.bs.collapse', function () {
-        // Remove collapse state from localStorage when the collapse is hidden
-        localStorage.removeItem('filterState');
-    });
-});
-});
-
-
-
 </script>
 @endpush

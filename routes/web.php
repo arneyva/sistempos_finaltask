@@ -3,6 +3,7 @@
 use App\Http\Controllers\Adjustment\AdjustmentController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\people\ClientController;
+use App\Http\Controllers\people\ProviderController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ProductController;
@@ -14,6 +15,8 @@ use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
+use App\Http\Controllers\expense\ExpenseController;
+use App\Http\Controllers\expense\ExpenseCategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,6 +54,9 @@ Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->g
     Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
     Route::patch('/update/{id}', [ProductController::class, 'update'])->name('update');
     Route::delete('/destroy/{id}', [ProductController::class, 'destroy'])->name('destroy');
+    Route::get('export', [ProductController::class, 'export'])->name('export');
+    Route::get('pdf', [ProductController::class, 'exportToPDF'])->name('pdf');
+    Route::post('import/csv', [ProductController::class, 'import_products'])->name('import');
     // catgeory
     Route::prefix('/category')->name('category.')->group(function () {
         Route::get('/list', [CategoryController::class, 'index'])->name('index');
@@ -86,6 +92,9 @@ Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.
     //
     Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
     Route::get('show_product_data/{id}/{variant_id}/{warehouse_id}', [AdjustmentController::class, 'show_product_data']);
+    //
+    Route::get('export', [AdjustmentController::class, 'export'])->name('export');
+    Route::get('pdf', [AdjustmentController::class, 'exportToPDF'])->name('pdf');
 });
 Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->group(function () {
     Route::get('list', [TransferController::class, 'index'])->name('index');
@@ -96,6 +105,7 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
     Route::patch('update/{id}', [TransferController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
 });
+Route::get('/sale/payment/success/{transaction}', [SaleController::class, 'success'])->name('sale.payment.success');
 Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(function () {
     Route::get('list', [SaleController::class, 'index'])->name('index');
     Route::get('shipments', [SaleController::class, 'shipments'])->name('shipments');
@@ -157,6 +167,14 @@ Route::prefix('people')->middleware(['auth', 'verified'])->name('people.')->grou
         Route::patch('update/{id}', [UserController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
     });
+    Route::prefix('suppliers')->name('suppliers.')->group(function () {
+        Route::get('list', [ProviderController::class, 'index'])->name('index');
+        Route::get('create', [ProviderController::class, 'create'])->name('create');
+        Route::post('store', [ProviderController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [ProviderController::class, 'show'])->name('show');
+        Route::patch('update/{id}', [ProviderController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [ProviderController::class, 'destroy'])->name('destroy');
+    });
     Route::prefix('clients')->name('clients.')->group(function () {
         Route::get('list', [ClientController::class, 'index'])->name('index');
         Route::post('store', [ClientController::class, 'store'])->name('store');
@@ -164,10 +182,26 @@ Route::prefix('people')->middleware(['auth', 'verified'])->name('people.')->grou
         Route::delete('destroy/{id}', [ClientController::class, 'destroy'])->name('destroy');
     });
 });
+Route::prefix('expenses')->middleware(['auth', 'verified'])->name('expenses.')->group(function () {
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('list', [ExpenseCategoryController::class, 'index'])->name('index');
+        Route::post('store', [ExpenseCategoryController::class, 'store'])->name('store');
+        Route::patch('update/{id}', [ExpenseCategoryController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [ExpenseCategoryController::class, 'destroy'])->name('destroy');
+    });
+    Route::get('list', [ExpenseController::class, 'index'])->name('index');
+    Route::get('detail/{id}', [ExpenseController::class, 'show'])->name('show');
+    Route::get('create', [ExpenseController::class, 'create'])->name('create');
+    Route::post('store', [ExpenseController::class, 'store'])->name('store');
+    Route::get('edit/{id}', [ExpenseController::class, 'edit'])->name('edit');
+    Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
+    Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
+    Route::get('file/download/{id}', [ExpenseController::class, 'download'])->name('file');
+});
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

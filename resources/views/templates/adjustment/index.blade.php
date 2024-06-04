@@ -1,4 +1,10 @@
 @extends('templates.main')
+
+@section('pages_title')
+<h1>All Adjustment</h1>
+<p>Do Something with all your adjustment</p>
+@endsection
+
 <style>
     .warehousedeleted {
         padding: 7px;
@@ -10,7 +16,7 @@
 @section('content')
     <div class="col-sm-12">
         <div class="mt-3" style="justify-content-center">
-            @include('templates.alert')
+            <!-- @include('templates.alert') -->
         </div>
         <div class="card">
             <div class="card-header d-flex justify-content-between">
@@ -32,12 +38,55 @@
                     <input type="search" class="form-control" placeholder="Search...">
                 </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                        data-bs-target="#createModal">Filter</button>
+                    <a href="{{ route('adjustment.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                    <a href="{{ route('adjustment.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <button type="button" class="btn btn-soft-gray">Import Product</button>
                     <a href="{{ route('adjustment.create') }}" class="btn btn-soft-primary">+create</a>
-
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('adjustment.index') }}" method="GET" id="filterForm">
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="date">Date *</label>
+                                            <input type="date" class="form-control" id="date" name="date"
+                                                value="{{ request()->input('date') }}">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="Ref">Reference*</label>
+                                            <input type="text" class="form-control" id="Ref" name="Ref"
+                                                value="{{ request()->input('Ref') }}" placeholder="Input Ref ...">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="warehouse_id">From Warehouse/Outlet *</label>
+                                            <select class="form-select" id="warehouse_id" name="warehouse_id">
+                                                <option selected disabled value="">Choose...</option>
+                                                @foreach ($warehouse as $wh)
+                                                    <option value="{{ $wh->id }}"
+                                                        {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                                        {{ $wh->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
+                                        data-bs-dismiss="modal">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -89,7 +138,8 @@
                                                     <circle cx="12" cy="12" r="3" fill="#130F26">
                                                     </circle>
                                                 </mask>
-                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5" fill="white">
+                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
+                                                    fill="white">
                                                 </circle>
                                             </svg>
                                             <div class="modal fade" id="detailModal{{ $item['id'] }}" tabindex="-1"
@@ -303,3 +353,14 @@
         </div>
     </div>
 @endsection
+<script>
+    function resetFilters() {
+        // Reset nilai-nilai input dari formulir
+        document.getElementById('date').value = '';
+        document.getElementById('Ref').value = '';
+        document.getElementById('warehouse_id').value = '';
+
+        // Submit formulir secara otomatis untuk menghapus filter
+        document.getElementById('filterForm').submit();
+    }
+</script>
