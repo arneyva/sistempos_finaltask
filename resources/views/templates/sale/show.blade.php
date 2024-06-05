@@ -21,6 +21,10 @@
                                 </div>
                                 <div class="col-md-4">
                                     <h6 class="card-title">Company Info</h6>
+                                    <p class="mb-0">{{ $company['CompanyName'] }}</p>
+                                    <p class="mb-0">{{ $company['email'] }}</p>
+                                    <p class="mb-0">{{ $company['CompanyPhone'] }}</p>
+                                    <p class="mb-0">{{ $company['CompanyAdress'] }}</p>
                                 </div>
                                 <div class="col-md-4">
                                     <h6 class="card-title">Invoice Info</h6>
