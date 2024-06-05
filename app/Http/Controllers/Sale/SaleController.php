@@ -12,6 +12,7 @@ use App\Models\ProductWarehouse;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\SaleReturn;
+use App\Models\Setting;
 use App\Models\Unit;
 use App\Models\Warehouse;
 use Carbon\Carbon;
@@ -374,17 +375,19 @@ class SaleController extends Controller
             $details[] = $data;
         }
 
-        // $company = Setting::where('deleted_at', '=', null)->first();
+        $company = Setting::where('deleted_at', '=', null)->first();
 
         // return response()->json([
         //     'details' => $details,
         //     'sale' => $sale_details,
         //     // 'company' => $company,
         // ]);
-        return view('templates.sale.show',
+        return view(
+            'templates.sale.show',
             [
                 'details' => $details,
                 'sale' => $sale_details,
+                'company' => $company,
             ]
         );
     }
