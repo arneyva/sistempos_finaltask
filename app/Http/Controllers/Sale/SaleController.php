@@ -29,7 +29,6 @@ class SaleController extends Controller
     public function index()
     {
         $sale = Sale::with('user', 'warehouse', 'client', 'paymentSales')->latest()->get();
-
         return view('templates.sale.index', [
             'sale' => $sale,
         ]);
@@ -181,10 +180,9 @@ class SaleController extends Controller
                     'transaction_details' => array(
                         'order_id' => rand(),
                         'gross_amount' => $order->GrandTotal,
-                    )
+                    ),
                 );
                 $snapToken = \Midtrans\Snap::getSnapToken($params);
-                // dd($snapToken);
                 $transaction->Reglement = $snapToken;
                 $transaction->save();
             } else {
@@ -391,7 +389,16 @@ class SaleController extends Controller
             ]
         );
     }
+    public function Payments_Sale(Request $request, $id)
+    {
+        $Sale = Sale::findOrFail($id);
+        $payments = PaymentSale::with('sale')
+            ->where('sale_id', $id)->orderBy('id', 'DESC')->get();
 
+        $due = $Sale->GrandTotal - $Sale->paid_amount;
+
+        return response()->json(['payments' => $payments, 'due' => $due]);
+    }
     /**
      * Show the form for editing the specified resource.
      */
