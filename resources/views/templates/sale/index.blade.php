@@ -61,17 +61,6 @@
                                     <th>{{ $item->statut }}</th>
                                     <th>{{ $item->GrandTotal }}</th>
                                     <th>{{ $item->payment_statut }}</th>
-                                    {{-- <th>
-                                        @if ($item->paymentSales)
-                                            <button class="btn btn-soft-primary pay-button"
-                                                data-snap-token="{{ $item->paymentSales->Reglement }}"
-                                                data-payment-id="{{ $item->paymentSales->id }}">
-                                                Pay!
-                                            </button>
-                                        @else
-                                            Not available
-                                        @endif
-                                    </th> --}}
                                     <th>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="4em" height="4em"
                                             viewBox="0 0 24 24" class="dropdown-toggle"
@@ -90,6 +79,51 @@
                                                 d="M8 15.5a.5.5 0 0 1 .5-.5H18a.5.5 0 0 1 0 1H8.5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5"
                                                 clip-rule="evenodd" />
                                         </svg>
+                                        <div class="modal fade modal-lg" id="staticBackdrop{{ $item->id }}" data-bs-backdrop="static"
+                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">{{ $item->Ref }} Payment</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    {{-- body --}}
+                                                    <div class="modal-body">
+                                                        <div class="card-body p-0">
+                                                            <div class="table-responsive mt-4">
+                                                                <table class="table table-striped mb-0" role="grid">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Date</th>
+                                                                            <th>Reference</th>
+                                                                            <th>Montant</th>
+                                                                            <th>Change</th>
+                                                                            <th>Payment Status</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>{{ $item->paymentSales->date }}</td>
+                                                                            <td>{{ $item->paymentSales->Ref }}</td>
+                                                                            <td>{{ $item->paymentSales->montant }}</td>
+                                                                            <td>{{ $item->paymentSales->change }}</td>
+                                                                            <td>{{ $item->paymentSales->status }}</td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="p-0 sub-drop dropdown-menu dropdown-menu-end"
                                             aria-labelledby="dropdownMenuButton{{ $item->id }}"
                                             style="  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
@@ -171,13 +205,13 @@
                                                                         d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
                                                                 </svg> Edit Sale </a>
                                                         </li>
-                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                href="#">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                    height="1.5em" viewBox="0 0 256 256">
-                                                                    <path fill="currentColor"
-                                                                        d="M128 88a40 40 0 1 0 40 40a40 40 0 0 0-40-40m0 64a24 24 0 1 1 24-24a24 24 0 0 1-24 24m112-96H16a8 8 0 0 0-8 8v128a8 8 0 0 0 8 8h224a8 8 0 0 0 8-8V64a8 8 0 0 0-8-8m-46.35 128H62.35A56.78 56.78 0 0 0 24 145.65v-35.3A56.78 56.78 0 0 0 62.35 72h131.3A56.78 56.78 0 0 0 232 110.35v35.3A56.78 56.78 0 0 0 193.65 184M232 93.37A40.8 40.8 0 0 1 210.63 72H232ZM45.37 72A40.8 40.8 0 0 1 24 93.37V72ZM24 162.63A40.8 40.8 0 0 1 45.37 184H24ZM210.63 184A40.8 40.8 0 0 1 232 162.63V184Z" />
-                                                                </svg> Show Payment </a>
+                                                        <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
+                                                            data-bs-target="#staticBackdrop{{ $item->id }}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                height="1.5em" viewBox="0 0 256 256">
+                                                                <path fill="#546DEB"
+                                                                    d="M128 88a40 40 0 1 0 40 40a40 40 0 0 0-40-40m0 64a24 24 0 1 1 24-24a24 24 0 0 1-24 24m112-96H16a8 8 0 0 0-8 8v128a8 8 0 0 0 8 8h224a8 8 0 0 0 8-8V64a8 8 0 0 0-8-8m-46.35 128H62.35A56.78 56.78 0 0 0 24 145.65v-35.3A56.78 56.78 0 0 0 62.35 72h131.3A56.78 56.78 0 0 0 232 110.35v35.3A56.78 56.78 0 0 0 193.65 184M232 93.37A40.8 40.8 0 0 1 210.63 72H232ZM45.37 72A40.8 40.8 0 0 1 24 93.37V72ZM24 162.63A40.8 40.8 0 0 1 45.37 184H24ZM210.63 184A40.8 40.8 0 0 1 232 162.63V184Z" />
+                                                            </svg> Show Payment
                                                         </li>
                                                         <li class="iq-sub-card list-group-item"><a class="p-0"
                                                                 href="#">
