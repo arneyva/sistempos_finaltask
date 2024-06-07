@@ -17,6 +17,7 @@ use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\expense\ExpenseController;
 use App\Http\Controllers\expense\ExpenseCategoryController;
+use App\Http\Controllers\hrm\OfficeShiftController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -198,6 +199,16 @@ Route::prefix('expenses')->middleware(['auth', 'verified'])->name('expenses.')->
     Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
     Route::get('file/download/{id}', [ExpenseController::class, 'download'])->name('file');
+});
+Route::prefix('hrm')->middleware(['auth', 'verified'])->name('hrm.')->group(function () {
+    Route::prefix('shifts')->name('shifts.')->group(function () {
+        Route::get('list', [OfficeShiftController::class, 'index'])->name('index');
+        Route::get('create', [OfficeShiftController::class, 'create'])->name('create');
+        Route::post('store', [OfficeShiftController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [OfficeShiftController::class, 'show'])->name('show');
+        Route::patch('update/{id}', [OfficeShiftController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [OfficeShiftController::class, 'destroy'])->name('destroy');
+    });
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

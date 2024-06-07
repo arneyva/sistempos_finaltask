@@ -41,9 +41,21 @@ class OfficeShiftController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request['monday'] == null && $request['tuesday'] == null && $request['wednesday'] == null && $request['thursday'] == null && $request['friday'] == null && $request['saturday'] == null && $request['sunday'] == null ) {
+            return back()->with('error', 'Isi hari Masuk');
+        }
+
+        $rules = [
+            'location' => 'required',
+            'name' => 'required|unique:office_shifts',
+        ];
+        $messages = [
+            'required' => 'Tidak boleh kosong!',
+            'unique' => ':attribute sudah terdaftar',
+        ];
+
         $shift = new OfficeShift;
         $shift->name = $request['name'];
-        $shift->warehouses()->attach($request['location']);
         if($request['monday']){
             $shift->monday_in = $request['monday_in'];
             $shift->monday_out = $request['monday_out'];
@@ -51,7 +63,7 @@ class OfficeShiftController extends Controller
             $shift->monday_in = null;
             $shift->monday_out = null;
         }
-
+        
         // Selasa
         if($request['tuesday']){
             $shift->tuesday_in = $request['tuesday_in'];
@@ -96,7 +108,7 @@ class OfficeShiftController extends Controller
             $shift->saturday_in = null;
             $shift->saturday_out = null;
         }
-
+        
         // Minggu
         if($request['sunday']){
             $shift->sunday_in = $request['sunday_in'];
@@ -105,8 +117,11 @@ class OfficeShiftController extends Controller
             $shift->sunday_in = null;
             $shift->sunday_out = null;
         }
-
+        
         $shift->save();
+        $shift->warehouses()->attach($request['location']);
+
+        
     }
 
     /**
