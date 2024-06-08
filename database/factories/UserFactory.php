@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -43,14 +43,14 @@ class UserFactory extends Factory
         $isUnique = false;
         $uniqueCode = '';
 
-        while (!$isUnique) {
+        while (! $isUnique) {
             // Generate a random number between 0 and 999999, then pad it with zeros to ensure it is 6 digits
             $randomCode = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
             // Check if the code is unique (assuming 'code' is the column where the unique codes are stored)
             $codeExists = User::where('pin', $randomCode)->exists();
 
-            if (!$codeExists) {
+            if (! $codeExists) {
                 $isUnique = true;
                 $uniqueCode = $randomCode;
             }

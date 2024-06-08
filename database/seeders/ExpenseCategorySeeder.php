@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\ExpenseCategory;
+use Illuminate\Database\Seeder;
 
 class ExpenseCategorySeeder extends Seeder
 {
@@ -15,8 +14,8 @@ class ExpenseCategorySeeder extends Seeder
     {
         ExpenseCategory::firstOrCreate([
             'user_id' => 181,
-            'name' => "Dekorasi",
-            'description' => "Menanamkan Pohon di sekitaran",
+            'name' => 'Dekorasi',
+            'description' => 'Menanamkan Pohon di sekitaran',
         ]);
     }
 }

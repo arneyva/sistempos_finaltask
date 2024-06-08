@@ -18,10 +18,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -102,6 +102,7 @@ class ProductController extends Controller
             'brands' => $brands,
         ]);
     }
+
     public function exportToPDF(Request $request)
     {
         // ambil data product utama
@@ -130,6 +131,7 @@ class ProductController extends Controller
 
         return $pdf->download("products_{$timestamp}.pdf");
     }
+
     public function export(Request $request)
     {
         $timestamp = now()->format('Y-m-d_H-i-s');
@@ -137,6 +139,7 @@ class ProductController extends Controller
 
         return Excel::download(new ProductsExport($request), $filename);
     }
+
     public function check_code_exist($code)
     {
         $check_code = Product::where('code', $code)->first();
@@ -146,16 +149,16 @@ class ProductController extends Controller
             return $code;
         }
     }
+
     private function generateUniqueCategoryCode()
     {
-        // return 'CAT-IMPORT-' . strtoupper(uniqid(2));
-        return 'CAT-IMPORT-' .Str::random(4);
+        return 'CAT-IMPORT-' . Str::random(4);
     }
+
     public function import_products(Request $request)
     {
 
         $file_upload = $request->file('products');
-        // dd($file_upload);
         $ext = pathinfo($file_upload->getClientOriginalName(), PATHINFO_EXTENSION);
         if ($ext != 'csv') {
             return response()->json([
@@ -164,10 +167,9 @@ class ProductController extends Controller
             ]);
             // return redirect()->back()->with('errorzz', 'must be in csv format');
         } else {
-            $data = array();
+            $data = [];
             $rowcount = 0;
-            if (($handle = fopen($file_upload, "r")) !== false) {
-
+            if (($handle = fopen($file_upload, 'r')) !== false) {
                 $max_line_length = defined('MAX_LINE_LENGTH') ? MAX_LINE_LENGTH : 10000;
                 $header = fgetcsv($handle, $max_line_length, ';'); // Use semicolon as delimiter
                 $header_colcount = count($header);
@@ -185,12 +187,7 @@ class ProductController extends Controller
             } else {
                 return null;
             }
-
-            // dd($data);
             $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
-
-            // Create a new instance of Illuminate\Http\Request and pass the imported data to it.
-
             $validator = validator()->make($data, [
                 '*.name' => 'required',
                 '*.code' => 'required|unique:products',
@@ -208,7 +205,6 @@ class ProductController extends Controller
             try {
                 \DB::transaction(function () use ($data, $warehouses) {
 
-
                     //-- Create New Product
                     foreach ($data as $key => $value) {
                         $category = Category::where('deleted_at', null)->firstOrCreate(
@@ -216,7 +212,6 @@ class ProductController extends Controller
                             ['code' => $this->generateUniqueCategoryCode()]
                         );
                         $category_id = $category->id;
-                        // dd($category);
                         $unit = Unit::where(['ShortName' => $value['unit']])
                             ->orWhere(['name' => $value['unit']])
                             ->where('deleted_at', null)->first();
@@ -226,10 +221,10 @@ class ProductController extends Controller
                             $brand = Brand::where('deleted_at', null)->firstOrCreate(['name' => $value['brand']]);
                             $brand_id = $brand->id;
                         } else {
-                            $brand_id = NULL;
+                            $brand_id = null;
                         }
                         $Product = new Product;
-                        $Product->name = $value['name'] == '' ? NULL : $value['name'];
+                        $Product->name = $value['name'] == '' ? null : $value['name'];
                         $Product->code = $this->check_code_exist($value['code']);
                         $Product->Type_barcode = 'CODE128';
                         $Product->type = 'is_single';
@@ -266,10 +261,12 @@ class ProductController extends Controller
                 return response()->json(['status' => false, 'message' => $e->getMessage()], 422);
             }
         }
+
         // Return success response
         // return response()->json(['status' => true]);
         return redirect()->route('product.index')->with('success', 'Product Imported successfully');
     }
+
     /**
      * Show the form for creating a new resource.
      */

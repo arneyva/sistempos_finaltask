@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Adjustment\AdjustmentController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\expense\ExpenseCategoryController;
+use App\Http\Controllers\expense\ExpenseController;
+use App\Http\Controllers\hrm\OfficeShiftController;
 use App\Http\Controllers\people\ClientController;
 use App\Http\Controllers\people\ProviderController;
 use App\Http\Controllers\Product\BrandController;
@@ -15,9 +18,6 @@ use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
-use App\Http\Controllers\expense\ExpenseController;
-use App\Http\Controllers\expense\ExpenseCategoryController;
-use App\Http\Controllers\hrm\OfficeShiftController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -216,4 +216,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

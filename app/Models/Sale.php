@@ -57,6 +57,7 @@ class Sale extends Model
     {
         return $this->belongsTo('App\Models\Warehouse');
     }
+
     public function paymentSales()
     {
         return $this->hasOne('App\Models\PaymentSale', 'sale_id');
