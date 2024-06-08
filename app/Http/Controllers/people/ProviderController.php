@@ -30,6 +30,7 @@ class ProviderController extends Controller
 
     public function create()
     {
+
         return view('templates.people.supplier.create', [
             'provider' => Provider::all(),
         ]);

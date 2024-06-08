@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Adjustment\AdjustmentController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\expense\ExpenseCategoryController;
+use App\Http\Controllers\expense\ExpenseController;
+use App\Http\Controllers\hrm\OfficeShiftController;
 use App\Http\Controllers\people\ClientController;
 use App\Http\Controllers\people\ProviderController;
 use App\Http\Controllers\Product\BrandController;
@@ -15,8 +18,6 @@ use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
-use App\Http\Controllers\expense\ExpenseController;
-use App\Http\Controllers\expense\ExpenseCategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -118,6 +119,7 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
     //
     Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
     Route::get('show_product_data/{id}/{variant_id}/{warehouse_id}', [AdjustmentController::class, 'show_product_data']);
+    Route::get('get_payments_by_sale/{id}', [SaleController::class, 'Payments_Sale'])->name('get_payments_by_sale');
 });
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {
     Route::get('payments', [ReportsController::class, 'payments'])->name('payments');
@@ -198,10 +200,20 @@ Route::prefix('expenses')->middleware(['auth', 'verified'])->name('expenses.')->
     Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
     Route::get('file/download/{id}', [ExpenseController::class, 'download'])->name('file');
 });
+Route::prefix('hrm')->middleware(['auth', 'verified'])->name('hrm.')->group(function () {
+    Route::prefix('shifts')->name('shifts.')->group(function () {
+        Route::get('list', [OfficeShiftController::class, 'index'])->name('index');
+        Route::get('create', [OfficeShiftController::class, 'create'])->name('create');
+        Route::post('store', [OfficeShiftController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [OfficeShiftController::class, 'show'])->name('show');
+        Route::patch('update/{id}', [OfficeShiftController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [OfficeShiftController::class, 'destroy'])->name('destroy');
+    });
+});
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

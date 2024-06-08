@@ -62,6 +62,13 @@ class Warehouse extends Model
         return $this->hasMany(Expense::class);
     }
 
+    public function office_shifts()
+    {
+        return $this->belongsToMany(OfficeShift::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
     public function products()
     {
         return $this->belongsToMany(Product::class)

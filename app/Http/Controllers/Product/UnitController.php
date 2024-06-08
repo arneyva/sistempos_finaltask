@@ -13,14 +13,22 @@ class UnitController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $unit = Unit::query()->latest()->paginate(5);
-
+        $unitQuery = Unit::query()->where('deleted_at', '=', null)->latest();
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $unitQuery->where(function ($query) use ($search) {
+                $query->where('ShortName', 'like', '%' . $search . '%')
+                    ->orWhere('name', 'like', '%' . $search . '%');
+            });
+        }
+        $unit = $unitQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
         return view('templates.product.unit.index', [
             'unit' => $unit,
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -46,7 +54,7 @@ class UnitController extends Controller
                 Rule::unique('units')->whereNull('deleted_at'),
             ],
         ]);
-        if (! $request->base_unit) {
+        if (!$request->base_unit) {
             $operator = '*';
             $operator_value = 1;
         } else {
@@ -96,7 +104,7 @@ class UnitController extends Controller
                     Rule::unique('units')->whereNull('deleted_at')->ignore($id),
                 ],
             ]);
-            if (! $request->base_unit) {
+            if (!$request->base_unit) {
                 $operator = '*';
                 $operator_value = 1;
             } else {
