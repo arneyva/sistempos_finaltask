@@ -375,7 +375,7 @@
                                 '<td><input type="number" class="form-control item-quantity" name="details[' +
                                 data.id + '_' + variantId +
                                 '][quantity]" value="0" min="0"></td>'; // quantity
-                            row += '<td class="item-discount">0</td>';
+                            row += '<td class="item-discount">Rp 0</td>';
                             row += '<td>' + 'Rp ' + data.tax_price + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
                             row +=

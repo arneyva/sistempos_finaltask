@@ -52,67 +52,67 @@ class Warehouse extends Model
         'country',
     ];
 
-	public function adjustments()
-	{
-		return $this->hasMany(Adjustment::class);
-	}
+    public function adjustments()
+    {
+        return $this->hasMany(Adjustment::class);
+    }
 
-	public function expenses()
-	{
-		return $this->hasMany(Expense::class);
-	}
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
 
-	public function office_shifts()
-	{
-		return $this->belongsToMany(OfficeShift::class)
-					->withPivot('id')
-					->withTimestamps();
-	}
+    public function office_shifts()
+    {
+        return $this->belongsToMany(OfficeShift::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
 
-	public function products()
-	{
-		return $this->belongsToMany(Product::class)
-					->withPivot('id', 'product_variant_id', 'manage_stock', 'stock_alert', 'qty', 'deleted_at')
-					->withTimestamps();
-	}
+    public function products()
+    {
+        return $this->belongsToMany(Product::class)
+            ->withPivot('id', 'product_variant_id', 'manage_stock', 'stock_alert', 'qty', 'deleted_at')
+            ->withTimestamps();
+    }
 
-	public function purchase_returns()
-	{
-		return $this->hasMany(PurchaseReturn::class);
-	}
+    public function purchase_returns()
+    {
+        return $this->hasMany(PurchaseReturn::class);
+    }
 
-	public function purchases()
-	{
-		return $this->hasMany(Purchase::class);
-	}
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 
-	public function quotations()
-	{
-		return $this->hasMany(Quotation::class);
-	}
+    public function quotations()
+    {
+        return $this->hasMany(Quotation::class);
+    }
 
-	public function sale_returns()
-	{
-		return $this->hasMany(SaleReturn::class);
-	}
+    public function sale_returns()
+    {
+        return $this->hasMany(SaleReturn::class);
+    }
 
-	public function sales()
-	{
-		return $this->hasMany(Sale::class);
-	}
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
 
-	public function settings()
-	{
-		return $this->hasMany(Setting::class);
-	}
+    public function settings()
+    {
+        return $this->hasMany(Setting::class);
+    }
 
-	public function transfers()
-	{
-		return $this->hasMany(Transfer::class, 'to_warehouse_id');
-	}
+    public function transfers()
+    {
+        return $this->hasMany(Transfer::class, 'to_warehouse_id');
+    }
 
-	public function users()
-	{
-		return $this->belongsToMany(User::class);
-	}
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

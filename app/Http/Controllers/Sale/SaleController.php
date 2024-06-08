@@ -17,7 +17,6 @@ use App\Models\Unit;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +29,7 @@ class SaleController extends Controller
     public function index()
     {
         $sale = Sale::with('user', 'warehouse', 'client', 'paymentSales')->latest()->get();
+
         return view('templates.sale.index', [
             'sale' => $sale,
         ]);
@@ -61,7 +61,7 @@ class SaleController extends Controller
             $item = $last->Ref;
             $nwMsg = explode('_', $item);
             $inMsg = $nwMsg[1] + 1;
-            $code = $nwMsg[0] . '_' . $inMsg;
+            $code = $nwMsg[0].'_'.$inMsg;
         } else {
             // $code = 'SL_1111';
             $code = 'SL_1';
@@ -97,12 +97,11 @@ class SaleController extends Controller
             if ($order->statut == 'pending') {
                 $order->payment_statut = 'unpaid';
                 $order->paid_amount = 0;
-                // $payment_method == 'cash';
             } elseif ($order->statut == 'completed') {
                 if ($payment_method == 'cash') {
                     $order->payment_statut = 'paid';
                     $order->paid_amount = $request->GrandTotal;
-                } else if ($payment_method == 'midtrans') {
+                } elseif ($payment_method == 'midtrans') {
                     $order->payment_statut = 'unpaid';
                 } else {
                     $order->payment_statut = 'unpaid';
@@ -170,7 +169,7 @@ class SaleController extends Controller
                     $transaction = PaymentSale::create([
                         'user_id' => $order->user_id,
                         'date' => $order->date,
-                        'Ref' => 'INV-' . $order->Ref,
+                        'Ref' => 'INV-'.$order->Ref,
                         'sale_id' => $order->id,
                         'montant' => $order->GrandTotal,
                         'change' => 0,
@@ -185,12 +184,12 @@ class SaleController extends Controller
                     \Midtrans\Config::$isSanitized = true;
                     // Set 3DS transaction for credit card to true
                     \Midtrans\Config::$is3ds = true;
-                    $params = array(
-                        'transaction_details' => array(
+                    $params = [
+                        'transaction_details' => [
                             'order_id' => rand(),
                             'gross_amount' => $order->GrandTotal,
-                        ),
-                    );
+                        ],
+                    ];
                     $snapToken = \Midtrans\Snap::getSnapToken($params);
                     $transaction->Reglement = $snapToken;
                     $transaction->save();
@@ -198,7 +197,7 @@ class SaleController extends Controller
                     $transaction = PaymentSale::create([
                         'user_id' => $order->user_id,
                         'date' => $order->date,
-                        'Ref' => 'INV-' . $order->Ref,
+                        'Ref' => 'INV-'.$order->Ref,
                         'sale_id' => $order->id,
                         'montant' => $order->GrandTotal,
                         'change' => $request->change_return ?? 0,
@@ -206,11 +205,11 @@ class SaleController extends Controller
                         'status' => 'success',
                     ]);
                 }
-            } else if ($order->statut == 'pending') {
+            } elseif ($order->statut == 'pending') {
                 $transaction = PaymentSale::create([
                     'user_id' => $order->user_id,
                     'date' => $order->date,
-                    'Ref' => 'INV-' . $order->Ref,
+                    'Ref' => 'INV-'.$order->Ref,
                     'sale_id' => $order->id,
                     'montant' => $order->GrandTotal,
                     'change' => 0,
@@ -263,10 +262,12 @@ class SaleController extends Controller
             //{{==================================================================}}\\
             //{{==========================================================}}\\
         }, 10);
+
         // dd($request->all());
         return redirect()->route('sale.index')->with('success', 'Sale created successfully');
         // return response()->json(['success' => true]);
     }
+
     public function success($transactionId)
     {
         // Find the transaction by ID
@@ -295,22 +296,11 @@ class SaleController extends Controller
      */
     public function show(Request $request, $id)
     {
-        // dd('cek brow');
-        // $this->authorizeForUser($request->user('api'), 'view', Sale::class);
-        // $role = Auth::user()->roles()->first();
-        // $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $sale_data = Sale::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
 
-        $details = array();
-
-        // Check If User Has Permission view All Records
-        // if (!$view_records) {
-        //     // Check If User->id === sale->id
-        //     $this->authorizeForUser($request->user('api'), 'check_record', $sale_data);
-        // }
-
+        $details = [];
         $sale_details['Ref'] = $sale_data->Ref;
         $sale_details['date'] = $sale_data->date;
         $sale_details['note'] = $sale_data->notes;
@@ -350,9 +340,9 @@ class SaleController extends Controller
 
                 if ($product_unit_sale_id['unitSale']) {
                     $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
-                } {
-                    $unit = NULL;
                 }
+                $unit = null;
+
             }
 
             if ($detail->product_variant_id) {
@@ -361,7 +351,7 @@ class SaleController extends Controller
                     ->where('id', $detail->product_variant_id)->first();
 
                 $data['code'] = $productsVariants->code;
-                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
             } else {
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
@@ -412,6 +402,7 @@ class SaleController extends Controller
             ]
         );
     }
+
     public function Payments_Sale(Request $request, $id)
     {
         $Sale = Sale::findOrFail($id);
@@ -422,6 +413,7 @@ class SaleController extends Controller
 
         return response()->json(['payments' => $payments, 'due' => $due]);
     }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -433,7 +425,7 @@ class SaleController extends Controller
             $Sale_data = Sale::with('details.product.unitSale')
                 ->where('deleted_at', '=', null)
                 ->findOrFail($id);
-            $details = array();
+            $details = [];
             if ($Sale_data->client_id) {
                 if (Client::where('id', $Sale_data->client_id)
                     ->where('deleted_at', '=', null)
@@ -484,13 +476,11 @@ class SaleController extends Controller
 
                     if ($product_unit_sale_id['unitSale']) {
                         $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
-                    } {
-                        $unit = NULL;
                     }
+                    $unit = null;
 
                     $data['no_unit'] = 0;
                 }
-
 
                 if ($detail->product_variant_id) {
                     $item_product = ProductWarehouse::where('product_id', $detail->product_id)
@@ -505,11 +495,11 @@ class SaleController extends Controller
                     $item_product ? $data['del'] = 0 : $data['del'] = 1;
                     $data['product_variant_id'] = $detail->product_variant_id;
                     $data['code'] = $productsVariants->code;
-                    $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+                    $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
 
                     if ($unit && $unit->operator == '/') {
                         $stock = $item_product ? $item_product->qty * $unit->operator_value : 0;
-                    } else if ($unit && $unit->operator == '*') {
+                    } elseif ($unit && $unit->operator == '*') {
                         $stock = $item_product ? $item_product->qty / $unit->operator_value : 0;
                     } else {
                         $stock = 0;
@@ -526,7 +516,7 @@ class SaleController extends Controller
 
                     if ($unit && $unit->operator == '/') {
                         $stock = $item_product ? $item_product->qty * $unit->operator_value : 0;
-                    } else if ($unit && $unit->operator == '*') {
+                    } elseif ($unit && $unit->operator == '*') {
                         $stock = $item_product ? $item_product->qty / $unit->operator_value : 0;
                     } else {
                         $stock = 0;
@@ -605,30 +595,20 @@ class SaleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->authorizeForUser($request->user('api'), 'update', Sale::class);
-
         request()->validate([
             'warehouse_id' => 'required',
             'client_id' => 'required',
         ]);
 
         \DB::transaction(function () use ($request, $id) {
-
-            $role = Auth::user()->roles()->first();
-            $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $current_Sale = Sale::findOrFail($id);
 
             if (SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->exists()) {
                 return response()->json(['success' => false, 'Return exist for the Transaction' => false], 403);
             } else {
-                // Check If User Has Permission view All Records
-                if (!$view_records) {
-                    // Check If User->id === Sale->id
-                    $this->authorizeForUser($request->user('api'), 'check_record', $current_Sale);
-                }
                 $old_sale_details = SaleDetail::where('sale_id', $id)->get();
                 $new_sale_details = $request['details'];
-                $length = sizeof($new_sale_details);
+                $length = count($new_sale_details);
 
                 // Get Ids for new Details
                 $new_products_id = [];
@@ -651,15 +631,15 @@ class SaleController extends Controller
 
                         if ($product_unit_sale_id['unitSale']) {
                             $old_unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
-                        } {
-                            $old_unit = NULL;
                         }
+                        $old_unit = null;
+
                     }
 
-                    if ($current_Sale->statut == "completed") {
+                    if ($current_Sale->statut == 'completed') {
 
                         if ($value['product_variant_id'] !== null) {
-                            $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                            $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                                 ->where('warehouse_id', $current_Sale->warehouse_id)
                                 ->where('product_id', $value['product_id'])
                                 ->where('product_variant_id', $value['product_variant_id'])
@@ -667,48 +647,46 @@ class SaleController extends Controller
 
                             if ($product_warehouse && $old_unit) {
                                 if ($old_unit->operator == '/') {
-                                    $product_warehouse->qte += $value['quantity'] / $old_unit->operator_value;
+                                    $product_warehouse->qty += $value['quantity'] / $old_unit->operator_value;
                                 } else {
-                                    $product_warehouse->qte += $value['quantity'] * $old_unit->operator_value;
+                                    $product_warehouse->qty += $value['quantity'] * $old_unit->operator_value;
                                 }
                                 $product_warehouse->save();
                             }
                         } else {
-                            $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                            $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                                 ->where('warehouse_id', $current_Sale->warehouse_id)
                                 ->where('product_id', $value['product_id'])
                                 ->first();
                             if ($product_warehouse && $old_unit) {
                                 if ($old_unit->operator == '/') {
-                                    $product_warehouse->qte += $value['quantity'] / $old_unit->operator_value;
+                                    $product_warehouse->qty += $value['quantity'] / $old_unit->operator_value;
                                 } else {
-                                    $product_warehouse->qte += $value['quantity'] * $old_unit->operator_value;
+                                    $product_warehouse->qty += $value['quantity'] * $old_unit->operator_value;
                                 }
                                 $product_warehouse->save();
                             }
                         }
                     }
                     // Delete Detail
-                    if (!in_array($old_products_id[$key], $new_products_id)) {
+                    if (! in_array($old_products_id[$key], $new_products_id)) {
                         $SaleDetail = SaleDetail::findOrFail($value->id);
                         $SaleDetail->delete();
                     }
                 }
-
 
                 // Update Data with New request
                 foreach ($new_sale_details as $prd => $prod_detail) {
 
                     $get_type_product = Product::where('id', $prod_detail['product_id'])->first()->type;
 
-
                     if ($prod_detail['sale_unit_id'] !== null || $get_type_product == 'is_service') {
                         $unit_prod = Unit::where('id', $prod_detail['sale_unit_id'])->first();
 
-                        if ($request['statut'] == "completed") {
+                        if ($request['statut'] == 'completed') {
 
                             if ($prod_detail['product_variant_id'] !== null) {
-                                $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                                $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                                     ->where('warehouse_id', $request->warehouse_id)
                                     ->where('product_id', $prod_detail['product_id'])
                                     ->where('product_variant_id', $prod_detail['product_variant_id'])
@@ -716,79 +694,111 @@ class SaleController extends Controller
 
                                 if ($product_warehouse && $unit_prod) {
                                     if ($unit_prod->operator == '/') {
-                                        $product_warehouse->qte -= $prod_detail['quantity'] / $unit_prod->operator_value;
+                                        $product_warehouse->qty -= $prod_detail['quantity'] / $unit_prod->operator_value;
                                     } else {
-                                        $product_warehouse->qte -= $prod_detail['quantity'] * $unit_prod->operator_value;
+                                        $product_warehouse->qty -= $prod_detail['quantity'] * $unit_prod->operator_value;
                                     }
                                     $product_warehouse->save();
                                 }
                             } else {
-                                $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                                $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                                     ->where('warehouse_id', $request->warehouse_id)
                                     ->where('product_id', $prod_detail['product_id'])
                                     ->first();
 
                                 if ($product_warehouse && $unit_prod) {
                                     if ($unit_prod->operator == '/') {
-                                        $product_warehouse->qte -= $prod_detail['quantity'] / $unit_prod->operator_value;
+                                        $product_warehouse->qty -= $prod_detail['quantity'] / $unit_prod->operator_value;
                                     } else {
-                                        $product_warehouse->qte -= $prod_detail['quantity'] * $unit_prod->operator_value;
+                                        $product_warehouse->qty -= $prod_detail['quantity'] * $unit_prod->operator_value;
                                     }
                                     $product_warehouse->save();
                                 }
                             }
                         }
 
-                        $orderDetails['sale_id']      = $id;
-                        $orderDetails['date']         = $request['date'];
-                        $orderDetails['price']        = $prod_detail['Unit_price'];
+                        $orderDetails['sale_id'] = $id;
+                        $orderDetails['date'] = $request['date'];
+                        $orderDetails['price'] = $prod_detail['Unit_price'];
                         $orderDetails['sale_unit_id'] = $prod_detail['sale_unit_id'];
-                        $orderDetails['TaxNet']       = $prod_detail['tax_percent'];
-                        $orderDetails['tax_method']   = $prod_detail['tax_method'];
-                        $orderDetails['discount']     = $prod_detail['discount'];
-                        $orderDetails['discount_method'] = $prod_detail['discount_Method'];
-                        $orderDetails['quantity']        = $prod_detail['quantity'];
-                        $orderDetails['product_id']      = $prod_detail['product_id'];
+                        $orderDetails['TaxNet'] = $prod_detail['tax_percent'];
+                        $orderDetails['tax_method'] = 'Exclusive';
+                        $orderDetails['discount'] = 0;
+                        $orderDetails['discount_method'] = 'nodiscount';
+                        $orderDetails['quantity'] = $prod_detail['quantity'];
+                        $orderDetails['product_id'] = $prod_detail['product_id'];
                         $orderDetails['product_variant_id'] = $prod_detail['product_variant_id'];
-                        $orderDetails['total']              = $prod_detail['subtotal'];
-                        $orderDetails['imei_number']        = $prod_detail['imei_number'];
+                        $orderDetails['total'] = $prod_detail['subtotal'];
+                        // $orderDetails['imei_number']        = $prod_detail['imei_number'];
 
-                        if (!in_array($prod_detail['id'], $old_products_id)) {
+                        if (! in_array($prod_detail['id'], $old_products_id)) {
                             $orderDetails['date'] = Carbon::now();
-                            $orderDetails['sale_unit_id'] = $unit_prod ? $unit_prod->id : Null;
+                            $orderDetails['sale_unit_id'] = $unit_prod ? $unit_prod->id : null;
                             SaleDetail::Create($orderDetails);
                         } else {
                             SaleDetail::where('id', $prod_detail['id'])->update($orderDetails);
                         }
                     }
                 }
-
-                $due = $request['GrandTotal'] - $current_Sale->paid_amount;
-                if ($due === 0.0 || $due < 0.0) {
-                    $payment_statut = 'paid';
-                } else if ($due != $request['GrandTotal']) {
-                    $payment_statut = 'partial';
-                } else if ($due == $request['GrandTotal']) {
-                    $payment_statut = 'unpaid';
+                $payment_method = $request->payment_method;
+                $transaction = PaymentSale::where('sale_id', $id)->first();
+                $updateData = [
+                    'date' => $request['date'],
+                    'client_id' => $request['client_id'],
+                    'warehouse_id' => $request['warehouse_id'],
+                    'notes' => $request['notes'],
+                    'statut' => $request['statut'],
+                    'tax_rate' => $request['tax_rate'],
+                    'TaxNet' => $request['TaxNet'],
+                    'discount' => $request['discount'],
+                    'shipping' => $request['shipping'],
+                    'GrandTotal' => $request['GrandTotal'],
+                ];
+                if ($payment_method == 'cash') {
+                    $updateData['paid_amount'] = $request['GrandTotal'];
+                    $updateData['payment_statut'] = 'paid';
+                    if ($transaction) {
+                        $transaction->update([
+                            'montant' => $request->GrandTotal,
+                            'change' => $request->change_return ?? 0,
+                            'Reglement' => 'cash',
+                            'status' => 'success',
+                        ]);
+                    }
+                } else {
+                    $updateData['paid_amount'] = 0;
+                    $updateData['payment_statut'] = 'unpaid';
+                    if ($transaction) {
+                        // Set your Merchant Server Key
+                        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+                        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+                        \Midtrans\Config::$isProduction = false;
+                        // Set sanitization on (default)
+                        \Midtrans\Config::$isSanitized = true;
+                        // Set 3DS transaction for credit card to true
+                        \Midtrans\Config::$is3ds = true;
+                        $params = [
+                            'transaction_details' => [
+                                'order_id' => rand(),
+                                'gross_amount' => $request->GrandTotal,
+                            ],
+                        ];
+                        $snapToken = \Midtrans\Snap::getSnapToken($params);
+                        $transaction->update([
+                            'montant' => $request->GrandTotal,
+                            'change' => 0,
+                            'Reglement' => $snapToken,
+                            'status' => 'pending',
+                        ]);
+                    }
                 }
 
-                $current_Sale->update([
-                    'date'         => $request['date'],
-                    'client_id'    => $request['client_id'],
-                    'warehouse_id' => $request['warehouse_id'],
-                    'notes'        => $request['notes'],
-                    'statut'       => $request['statut'],
-                    'tax_rate'     => $request['tax_rate'],
-                    'TaxNet'       => $request['TaxNet'],
-                    'discount'     => $request['discount'],
-                    'shipping'     => $request['shipping'],
-                    'GrandTotal'   => $request['GrandTotal'],
-                    'payment_statut' => $payment_statut,
-                ]);
+                $current_Sale->update($updateData);
             }
         }, 10);
 
-        return response()->json(['success' => true]);
+        // return response()->json(['success' => true]);
+        return redirect()->route('sale.index')->with('success', 'Sale Updated Successfully');
     }
 
     /**
