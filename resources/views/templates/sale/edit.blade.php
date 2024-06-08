@@ -28,8 +28,8 @@
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="selectWarehouse">From Warehouse/Outlet *</label>
-                                    <input type="text" class="form-control" name="sale[warehouse_id]"
-                                        id="selectWarehouse" value="{{ $sale['warehouse_id'] }}" readonly>
+                                    <input type="text" class="form-control" name="warehouse_id" id="selectWarehouse"
+                                        value="{{ $sale['warehouse_id'] }}" readonly>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="customer">Customer *</label>
@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="exampleInputdate">Date *</label>
-                                    <input type="date" class="form-control" id="exampleInputdate" name="sale[date]"
+                                    <input type="date" class="form-control" id="exampleInputdate" name="date"
                                         value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
@@ -72,9 +72,9 @@
                                                 @foreach ($details as $detail)
                                                     <tr>
                                                         <td>#</td>
-                                                        <td>{{ $detail['name'] }}</td>
-                                                        <td>{{ $detail['Net_price'] }}</td>
-                                                        <td>{{ $detail['stock'] }}</td>
+                                                        <td>{{ $detail['code'] }} ~ {{ $detail['name'] }}</td>
+                                                        <td>Rp {{ $detail['Net_price'] }}</td>
+                                                        <td>{{ $detail['stock'] }} {{ $detail['unitSale'] }}</td>
                                                         <td>
                                                             <input type="number" class="form-control item-quantity"
                                                                 name="details[{{ $loop->index }}][quantity]"
@@ -83,9 +83,9 @@
                                                                 data-tax-percent="{{ $detail['tax_percent'] }}"
                                                                 data-tax-method="{{ $detail['tax_method'] }}">
                                                         </td>
-                                                        <td>Rp. {{ $detail['DiscountNet'] }}</td>
-                                                        <td>Rp. {{ $detail['taxe'] }}</td>
-                                                        <td class="item-total">Rp. {{ $detail['subtotal'] }}</td>
+                                                        <td>Rp {{ $detail['DiscountNet'] }}</td>
+                                                        <td>Rp {{ $detail['taxe'] }}</td>
+                                                        <td class="item-total">Rp {{ $detail['subtotal'] }}</td>
                                                         <td>
                                                             <input type="hidden" class="item-subtotal"
                                                                 name="details[{{ $loop->index }}][subtotal]"
@@ -150,7 +150,7 @@
                                             <label class="form-label" for="tax_rate">Order Tax *</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="tax_rate"
-                                                    placeholder="input tax" name="sale[tax_rate]"
+                                                    placeholder="input tax" name="tax_rate"
                                                     value="{{ $sale['tax_rate'] }}">
                                                 <span class="input-group-text" id="basic-addon1">%</span>
                                             </div>
@@ -165,7 +165,7 @@
                                             @enderror
                                         </div>
                                         <input type="hidden" class="form-control" id="tax_net"
-                                            placeholder="input tax net" name="sale[TaxNet]"
+                                            placeholder="input tax net" name="TaxNet"
                                             value="{{ $sale['TaxNet'] }}">
                                         <input class="" type="hidden" id="grandTotal" name="GrandTotal"
                                             value="{{ $sale['GrandTotal'] }}">
@@ -173,7 +173,7 @@
                                             <label class="form-label" for="discount">Discount *</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="discount"
-                                                    placeholder="input discount" name="sale[discount]"
+                                                    placeholder="input discount" name="discount"
                                                     value="{{ $sale['discount'] }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
@@ -191,7 +191,7 @@
                                             <label class="form-label" for="shipping">Shipping *</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="shipping"
-                                                    placeholder="input shipping" name="sale[shipping]"
+                                                    placeholder="input shipping" name="shipping"
                                                     value="{{ $sale['shipping'] }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
@@ -206,15 +206,16 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="status">Status *</label>
-                                            <select class="form-select select2" id="status" name="sale[statut]"
-                                                required data-placeholder="Select a Status">
-                                                <option value="{{ $sale['statut'] }}">{{ $sale['statut'] }}
+                                            <label class="form-label" for="typeStatus">Status</label>
+                                            <select class="form-select select2" id="typeStatus" required name="statut"
+                                                data-placeholder="Select a Status">
+                                                <option value="completed"
+                                                    {{ $sale['statut'] == 'completed' ? 'selected' : '' }}>Completed
                                                 </option>
-                                                <option value="sent">Sent</option>
-                                                <option value="completed">Completed</option>
+                                                <option value="pending"
+                                                    {{ $sale['statut'] == 'pending' ? 'selected' : '' }}>Pending</option>
                                             </select>
-                                            @error('sale.statut')
+                                            @error('brand_id')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                                     role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
                                                     <span style="margin-left: 3px"> {{ $message }}</span>
@@ -301,7 +302,7 @@
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="exampleFormControlTextarea1">Note</label>
                                     <input type="text" class="form-control" id="exampleFormControlTextarea1"
-                                        rows="3" name="sale[notes]" value="{{ $sale['notes'] }}">
+                                        rows="3" name="notes" value="{{ $sale['notes'] }}">
                                 </div>
                                 <div class="col-md-12">
                                     <button type="submit" class="btn btn-primary">Add sale</button>
@@ -317,22 +318,51 @@
 
 @push('script')
     <script>
-        document.getElementById('selectWarehouse').addEventListener('change', function() {
-            var fromWarehouse = this.value;
-            var toWarehouse = document.getElementById('selectToWarehouse').value;
-            if (fromWarehouse === toWarehouse) {
-                alert('From Warehouse and To Warehouse cannot be the same.');
-                this.value = '';
-            }
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            var statusDropdown = document.getElementById('typeStatus');
+            var paymentMethod = document.getElementById('payment_method');
+            var paymentMethodContainer = document.getElementById('paymentMethod');
+            var receivedAmount = document.getElementById('receivedAmount');
+            var payingAmount = document.getElementById('payingAmount');
+            var changeReturn = document.getElementById('changeReturn');
 
-        document.getElementById('selectToWarehouse').addEventListener('change', function() {
-            var toWarehouse = this.value;
-            var fromWarehouse = document.getElementById('selectWarehouse').value;
-            if (fromWarehouse === toWarehouse) {
-                alert('From Warehouse and To Warehouse cannot be the same.');
-                this.value = '';
+            function updateVisibility() {
+                var selectedStatus = statusDropdown.value;
+                var selectedPaymentMethod = paymentMethod.value;
+
+                if (selectedStatus === 'completed') {
+                    paymentMethodContainer.style.display = 'block';
+
+                    if (selectedPaymentMethod === 'cash') {
+                        receivedAmount.style.display = 'block';
+                        payingAmount.style.display = 'block';
+                        changeReturn.style.display = 'block';
+                    } else {
+                        receivedAmount.style.display = 'none';
+                        payingAmount.style.display = 'none';
+                        changeReturn.style.display = 'none';
+                    }
+                } else {
+                    paymentMethodContainer.style.display = 'none';
+                    receivedAmount.style.display = 'none';
+                    payingAmount.style.display = 'none';
+                    changeReturn.style.display = 'none';
+                }
             }
+
+            function calculateChange() {
+                var received = parseFloat(document.getElementById('received_amount').value) || 0;
+                var paying = parseFloat(document.getElementById('paying_amount').value) || 0;
+                var change = received - paying;
+                document.getElementById('change_return').value = change >= 0 ? change : 0;
+            }
+
+            statusDropdown.addEventListener('change', updateVisibility);
+            paymentMethod.addEventListener('change', updateVisibility);
+            document.getElementById('received_amount').addEventListener('input', calculateChange);
+            document.getElementById('paying_amount').addEventListener('input', calculateChange);
+
+            updateVisibility(); // Initial call to set the correct visibility on page load
         });
     </script>
     <script>
@@ -349,7 +379,7 @@
                 var warehouseId = $(this).val();
                 if (warehouseId) {
                     // Mengirimkan nilai warehouse_id ke server
-                    $('input[name="sale[from_warehouse]"]').val(warehouseId);
+                    $('input[name="warehouse_id"]').val(warehouseId);
                     loadProductsByWarehouse(warehouseId);
                 } else {
                     $('#selectProduct').empty().prop('disabled', true);
@@ -371,14 +401,14 @@
                             row += '<td>#</td>';
                             row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
                             row += '<td>' + 'Rp ' + data.Unit_price + '</td>';
-                            row += '<td>' + data.qty + ' ' + data.unitsale + '</td>';
+                            row += '<td>' + data.qty + ' ' + data.unitSale + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control item-quantity" name="details[new-' +
                                 newIndex +
                                 '][quantity]" value="0" min="0" data-unit-price="' + data
                                 .Unit_price + '" data-tax-percent="' + data.tax_percent +
                                 '" data-tax-method="' + data.tax_method + '"></td>'; //quantity
-                            row += '<td class="item-discount">0</td>';
+                            row += '<td class="item-discount">Rp 0</td>';
                             row += '<td>' + 'Rp ' + data.tax_price + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
                             row += '<td><input type="hidden" name="details[new-' + newIndex +
@@ -495,7 +525,7 @@
 
                 $('#tax_net').val(taxNet.toFixed(2));
                 $('#grandTotal').val(grandTotal.toFixed(2));
-
+                $('#paying_amount').val(grandTotal.toFixed(2));
                 // Update the displayed values in the table
                 $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNetFromRate.toFixed(2)); // Order Tax
                 $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
@@ -503,63 +533,5 @@
                 $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
             }
         });
-    </script>
-    <script>
-        // $('#selectProduct').on('change', function() {
-        //     var productId = $(this).val();
-        //     var warehouseId = $('#selectWarehouse').val();
-        //     var variantId = $(this).find(':selected').data('variant-id') || null;
-
-        //     if (productId && warehouseId) {
-        //         $.ajax({
-        //             url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
-        //                 warehouseId,
-        //             type: "GET",
-        //             dataType: "json",
-        //             success: function(data) {
-        //                 var row = '<tr>';
-        //                 row += '<td>#</td>';
-        //                 row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-        //                 row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
-        //                 row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
-        //                 row +=
-        //                     '<td><input type="number" class="form-control item-quantity" name="details[' +
-        //                     data.id + '_' + variantId +
-        //                     '][quantity]" value="0" min="0" data-unit-cost="' + data
-        //                     .Unit_cost + '" data-tax-percent="' + data.tax_percent +
-        //                     '" data-tax-method="' + data.tax_method + '"></td>';
-        //                 row += '<td class="item-discount">0</td>';
-        //                 row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
-        //                 row += '<td class="item-total">Rp 0</td>';
-        //                 row +=
-        //                     '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][product_id]" value="' + data.id + '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][product_variant_id]" value="' + (variantId ||
-        //                         '') + '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][purchase_unit_id]" value="' + data
-        //                     .purchase_unit_id + '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][Unit_cost]" value="' + data.Unit_cost +
-        //                     '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][tax_percent]" value="' + data.tax_percent +
-        //                     '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][tax_method]" value="' + data.tax_method +
-        //                     '"></td>';
-        //                 row +=
-        //                     '<td><input type="hidden" class="item-subtotal" name="details[' +
-        //                     data.id + '_' + variantId + '][subtotal]" value="0"></td>';
-        //                 row += '</tr>';
-
-        //                 $('#product-table-body').append(row);
-        //                 updateGrandTotal();
-        //             }
-        //         });
-        //     }
-        // });
     </script>
 @endpush

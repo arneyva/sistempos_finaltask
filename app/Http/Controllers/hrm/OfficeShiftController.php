@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\hrm;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\OfficeShift;
 use App\Models\User;
 use App\Models\Warehouse;
-use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class OfficeShiftController extends Controller
 {
@@ -21,7 +20,7 @@ class OfficeShiftController extends Controller
      */
     public function index()
     {
-        
+
     }
 
     /**
@@ -29,7 +28,7 @@ class OfficeShiftController extends Controller
      */
     public function create()
     {
-        
+
         return view('templates.hrm.shift.create', [
             'users' => User::all(),
             'warehouses' => Warehouse::all(),
@@ -41,7 +40,7 @@ class OfficeShiftController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request['monday'] == null && $request['tuesday'] == null && $request['wednesday'] == null && $request['thursday'] == null && $request['friday'] == null && $request['saturday'] == null && $request['sunday'] == null ) {
+        if ($request['monday'] == null && $request['tuesday'] == null && $request['wednesday'] == null && $request['thursday'] == null && $request['friday'] == null && $request['saturday'] == null && $request['sunday'] == null) {
             return back()->with('error', 'Isi hari Masuk');
         }
 
@@ -56,16 +55,16 @@ class OfficeShiftController extends Controller
 
         $shift = new OfficeShift;
         $shift->name = $request['name'];
-        if($request['monday']){
+        if ($request['monday']) {
             $shift->monday_in = $request['monday_in'];
             $shift->monday_out = $request['monday_out'];
         } else {
             $shift->monday_in = null;
             $shift->monday_out = null;
         }
-        
+
         // Selasa
-        if($request['tuesday']){
+        if ($request['tuesday']) {
             $shift->tuesday_in = $request['tuesday_in'];
             $shift->tuesday_out = $request['tuesday_out'];
         } else {
@@ -74,7 +73,7 @@ class OfficeShiftController extends Controller
         }
 
         // Rabu
-        if($request['wednesday']){
+        if ($request['wednesday']) {
             $shift->wednesday_in = $request['wednesday_in'];
             $shift->wednesday_out = $request['wednesday_out'];
         } else {
@@ -83,7 +82,7 @@ class OfficeShiftController extends Controller
         }
 
         // Kamis
-        if($request['thursday']){
+        if ($request['thursday']) {
             $shift->thursday_in = $request['thursday_in'];
             $shift->thursday_out = $request['thursday_out'];
         } else {
@@ -92,7 +91,7 @@ class OfficeShiftController extends Controller
         }
 
         // Jumat
-        if($request['friday']){
+        if ($request['friday']) {
             $shift->friday_in = $request['friday_in'];
             $shift->friday_out = $request['friday_out'];
         } else {
@@ -101,27 +100,26 @@ class OfficeShiftController extends Controller
         }
 
         // Sabtu
-        if($request['saturday']){
+        if ($request['saturday']) {
             $shift->saturday_in = $request['saturday_in'];
             $shift->saturday_out = $request['saturday_out'];
         } else {
             $shift->saturday_in = null;
             $shift->saturday_out = null;
         }
-        
+
         // Minggu
-        if($request['sunday']){
+        if ($request['sunday']) {
             $shift->sunday_in = $request['sunday_in'];
             $shift->sunday_out = $request['sunday_out'];
         } else {
             $shift->sunday_in = null;
             $shift->sunday_out = null;
         }
-        
+
         $shift->save();
         $shift->warehouses()->attach($request['location']);
 
-        
     }
 
     /**
@@ -129,7 +127,7 @@ class OfficeShiftController extends Controller
      */
     public function show(string $id)
     {
-        
+
     }
 
     /**
@@ -137,7 +135,7 @@ class OfficeShiftController extends Controller
      */
     public function edit(string $id)
     {
-        
+
     }
 
     /**
@@ -145,7 +143,7 @@ class OfficeShiftController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+
     }
 
     /**
@@ -153,6 +151,6 @@ class OfficeShiftController extends Controller
      */
     public function destroy(string $id)
     {
-        
+
     }
 }

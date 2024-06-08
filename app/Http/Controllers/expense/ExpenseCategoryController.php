@@ -3,22 +3,17 @@
 namespace App\Http\Controllers\expense;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Expense;
-use App\Models\User;
 use App\Models\ExpenseCategory;
-use App\Models\Warehouse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExpenseCategoryController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('role:superadmin');
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -41,7 +36,7 @@ class ExpenseCategoryController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -62,7 +57,6 @@ class ExpenseCategoryController extends Controller
             'unique' => ':attribute sudah terdaftar',
         ];
 
-
         $validateData = $request->validate($rules, $message);
 
         $expensecat = new ExpenseCategory;
@@ -79,7 +73,7 @@ class ExpenseCategoryController extends Controller
      */
     public function show(string $id)
     {
-        
+
     }
 
     /**
@@ -87,7 +81,7 @@ class ExpenseCategoryController extends Controller
      */
     public function edit(string $id)
     {
-        
+
     }
 
     /**

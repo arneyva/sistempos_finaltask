@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Setting;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SettingSeeder extends Seeder
@@ -19,8 +18,8 @@ class SettingSeeder extends Seeder
             'client_id' => 1,
             'sms_gateway' => 1,
             'is_invoice_footer' => 0,
-            'invoice_footer' => Null,
-            'warehouse_id' => Null,
+            'invoice_footer' => null,
+            'warehouse_id' => null,
             'CompanyName' => 'ProjectTA',
             'CompanyPhone' => '081921731912',
             'CompanyAdress' => 'Jebres,Surakarta',

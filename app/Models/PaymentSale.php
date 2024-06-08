@@ -13,7 +13,7 @@ class PaymentSale extends Model
     protected $table = 'payment_sales';
 
     protected $fillable = [
-        'sale_id', 'date', 'montant', 'Ref', 'change', 'Reglement', 'user_id', 'notes', 'status'
+        'sale_id', 'date', 'montant', 'Ref', 'change', 'Reglement', 'user_id', 'notes', 'status',
     ];
 
     protected $casts = [
