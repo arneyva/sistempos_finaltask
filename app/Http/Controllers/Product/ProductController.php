@@ -39,11 +39,11 @@ class ProductController extends Controller
         // dd($categories);
 
         if ($request->filled('code')) {
-            $productsQuery->where('code', 'like', '%'.$request->input('code').'%');
+            $productsQuery->where('code', 'like', '%' . $request->input('code') . '%');
         }
 
         if ($request->filled('name')) {
-            $productsQuery->where('name', 'like', '%'.$request->input('name').'%');
+            $productsQuery->where('name', 'like', '%' . $request->input('name') . '%');
         }
 
         if ($request->filled('category_id')) {
@@ -68,7 +68,7 @@ class ProductController extends Controller
                 $item['unit'] = $product['unit']->ShortName;
                 // handle jumlah barang
                 $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+                $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
             } elseif ($product->type == 'is_variant') {
                 //untuk product variant
                 $item['type'] = 'Variant Product';
@@ -89,7 +89,7 @@ class ProductController extends Controller
                 $item['name'] = $variant_name;
                 // handle jumlah barang
                 $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+                $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
             }
             $items[] = $item;
         }
@@ -110,11 +110,11 @@ class ProductController extends Controller
         //ambil data
 
         if ($request->filled('code')) {
-            $productsQuery->where('code', 'like', '%'.$request->input('code').'%');
+            $productsQuery->where('code', 'like', '%' . $request->input('code') . '%');
         }
 
         if ($request->filled('name')) {
-            $productsQuery->where('name', 'like', '%'.$request->input('name').'%');
+            $productsQuery->where('name', 'like', '%' . $request->input('name') . '%');
         }
 
         if ($request->filled('category_id')) {
@@ -152,15 +152,13 @@ class ProductController extends Controller
 
     private function generateUniqueCategoryCode()
     {
-        // return 'CAT-IMPORT-' . strtoupper(uniqid(2));
-        return 'CAT-IMPORT-'.Str::random(4);
+        return 'CAT-IMPORT-' . Str::random(4);
     }
 
     public function import_products(Request $request)
     {
 
         $file_upload = $request->file('products');
-        // dd($file_upload);
         $ext = pathinfo($file_upload->getClientOriginalName(), PATHINFO_EXTENSION);
         if ($ext != 'csv') {
             return response()->json([
@@ -172,7 +170,6 @@ class ProductController extends Controller
             $data = [];
             $rowcount = 0;
             if (($handle = fopen($file_upload, 'r')) !== false) {
-
                 $max_line_length = defined('MAX_LINE_LENGTH') ? MAX_LINE_LENGTH : 10000;
                 $header = fgetcsv($handle, $max_line_length, ';'); // Use semicolon as delimiter
                 $header_colcount = count($header);
@@ -190,12 +187,7 @@ class ProductController extends Controller
             } else {
                 return null;
             }
-
-            // dd($data);
             $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
-
-            // Create a new instance of Illuminate\Http\Request and pass the imported data to it.
-
             $validator = validator()->make($data, [
                 '*.name' => 'required',
                 '*.code' => 'required|unique:products',
@@ -220,7 +212,6 @@ class ProductController extends Controller
                             ['code' => $this->generateUniqueCategoryCode()]
                         );
                         $category_id = $category->id;
-                        // dd($category);
                         $unit = Unit::where(['ShortName' => $value['unit']])
                             ->orWhere(['name' => $value['unit']])
                             ->where('deleted_at', null)->first();
@@ -401,7 +392,7 @@ class ProductController extends Controller
 
                 foreach ($variants as $variant) {
                     if (ProductVariant::where('code', $variant->code)->exists()) {
-                        $errors[] = 'The code '.$variant->code.' has already been taken.';
+                        $errors[] = 'The code ' . $variant->code . ' has already been taken.';
                     } else {
                         $Product_variants_data[] = [
                             'product_id' => $productValue->id,
@@ -413,7 +404,7 @@ class ProductController extends Controller
                     }
                 }
 
-                if (! empty($errors)) {
+                if (!empty($errors)) {
                     return redirect()->back()->withErrors(['variants' => $errors])->withInput();
                 }
 
@@ -612,12 +603,12 @@ class ProductController extends Controller
         $item['images'] = [];
         if ($Product->image != '' && $Product->image != 'no-image.png') {
             foreach (explode(',', $Product->image) as $img) {
-                $path = public_path().'/images/products/'.$img;
+                $path = public_path() . '/images/products/' . $img;
                 if (file_exists($path)) {
                     $itemImg['name'] = $img;
                     $type = pathinfo($path, PATHINFO_EXTENSION);
                     $data = file_get_contents($path);
-                    $itemImg['path'] = 'data:image/'.$type.';base64,'.base64_encode($data);
+                    $itemImg['path'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
 
                     $item['images'][] = $itemImg;
                 }
@@ -833,7 +824,7 @@ class ProductController extends Controller
                         }
                         ProductWarehouse::insert($product_warehouse);
                     }
-                    if (! empty($errors)) {
+                    if (!empty($errors)) {
                         return redirect()->back()->withErrors($errors)->withInput();
                     }
                 } else {
@@ -843,7 +834,7 @@ class ProductController extends Controller
                 if ($request['images'] === null) {
                     if ($Product->image !== null) {
                         foreach (explode(',', $Product->image) as $img) {
-                            $pathIMG = public_path().'/images/products/'.$img;
+                            $pathIMG = public_path() . '/images/products/' . $img;
                             if (file_exists($pathIMG)) {
                                 if ($img != 'no-image.png') {
                                     @unlink($pathIMG);
