@@ -30,7 +30,7 @@ class UserFactory extends Factory
             'username' => $this->faker->unique()->name,
             // Set semua password sama
             'password' => bcrypt('password'), // Gunakan bcrypt atau Hash::make
-            'pin' => Hash::make($this->getPin()), // Gunakan bcrypt atau Hash::make
+            'pin' => $this->getPin(), // Gunakan bcrypt atau Hash::make
             'phone' => '089655443322',
             'gender' => 'Laki-laki',
             'status' => 1,
