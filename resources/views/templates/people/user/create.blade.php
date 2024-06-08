@@ -95,16 +95,6 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="username">Username:</label>
-                        <input type="text" class="form-control bg-transparent @error('username') is-invalid @enderror"
-                            id="username" name="username" placeholder="Username" required>
-                        <small class=" text-danger font-italic">
-                            @error('username')
-                                {{ $message }}
-                            @enderror
-                        </small>
-                    </div>
-                    <div class="form-group">
                         <label class="form-label" for="email">Email:</label>
                         <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror"
                             id="email" name="email" placeholder="Email" required>

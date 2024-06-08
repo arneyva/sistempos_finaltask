@@ -84,7 +84,6 @@ class UserController extends Controller
         $role = Role::find($request['role']);
         if ($role->name === 'superadmin') {
             $rules = [
-                'username' => 'required|min:3|unique:users',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
                 'firstname' => 'required|max:12',
@@ -107,7 +106,6 @@ class UserController extends Controller
             ];
         } else {
             $rules = [
-                'username' => 'required|min:3|unique:users',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
                 'firstname' => 'required|max:12',
@@ -155,12 +153,11 @@ class UserController extends Controller
         $user = new User;
         $user->firstname = $request['firstname'];
         $user->lastname = $request['lastname'];
-        $user->username = $request['username'];
         $user->email = $request['email'];
         $user->phone = $request['phone'];
         $user->gender = $request['gender'];
         $user->password = Hash::make($request['password']);
-        $user->pin = Hash::make($this->getPin());
+        $user->pin = $this->getPin();
         $user->avatar = $filename;
         $user->status = 1;
         $user->save();
@@ -207,8 +204,6 @@ class UserController extends Controller
         $role = Role::find($request['role']);
         if ($role->name === 'superadmin') {
             $rules = [
-                'username' => 'required|min:3|unique:users',
-                'username' => Rule::unique('users')->ignore($id),
                 'email' => 'required|email|unique:users',
                 'email' => Rule::unique('users')->ignore($id),
                 'firstname' => 'required|max:12',
@@ -231,8 +226,6 @@ class UserController extends Controller
             ];
         } else {
             $rules = [
-                'username' => 'required|min:3|unique:users',
-                'username' => Rule::unique('users')->ignore($id),
                 'email' => 'required|email|unique:users',
                 'email' => Rule::unique('users')->ignore($id),
                 'firstname' => 'required|max:12',
@@ -301,7 +294,6 @@ class UserController extends Controller
         User::whereId($id)->update([
             'firstname' => $request['firstname'],
             'lastname' => $request['lastname'],
-            'username' => $request['username'],
             'email' => $request['email'],
             'phone' => $request['phone'],
             'gender' => $request['gender'],
@@ -364,7 +356,7 @@ class UserController extends Controller
             // Generate a random number between 0 and 999999, then pad it with zeros to ensure it is 6 digits
             $randomCode = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
-            // Check if the code is unique (assuming 'code' is the column where the unique codes are stored)
+            // Check if the code is unique (assuming 'pin' is the column where the unique codes are stored)
             $codeExists = User::where('pin', $randomCode)->exists();
 
             if (!$codeExists) {
