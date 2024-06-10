@@ -54,13 +54,6 @@ class TransfersExport implements FromQuery, WithHeadings, WithMapping
             $sortType = $this->request->input('SortType');
             $TransferQuery->orderBy($sortField, $sortType);
         }
-
-        // Lakukan pencarian jika diperlukan
-        // if ($this->request->has('search') && $this->request->filled('search')) {
-        //     $search = $this->request->input('search');
-        //     $TransferQuery->where('Ref', 'like', '%' . $search . '%');
-        // }
-
         return $TransferQuery;
     }
 

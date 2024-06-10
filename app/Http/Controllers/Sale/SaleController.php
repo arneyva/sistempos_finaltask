@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Sale;
 
+use App\Exports\SalesExport;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Membership;
@@ -20,6 +21,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleController extends Controller
 {
@@ -69,6 +72,66 @@ class SaleController extends Controller
             'warehouse' => $warehouses,
             'client' => $client
         ]);
+    }
+    public function export(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "Sales_{$timestamp}.xlsx";
+
+        return Excel::download(new SalesExport($request), $filename);
+    }
+
+    public function exportToPDF(Request $request)
+    {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $SaleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->latest();
+        } else {
+            $SaleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->where('to_warehouse_id', $warehouses_id)->latest();
+        }
+        // Terapkan filter berdasarkan parameter yang diterima dari request
+        if ($request->has('date') && $request->filled('date')) {
+            $SaleQuery->whereDate('date', '=', $request->input('date'));
+        }
+
+        if ($request->has('Ref') && $request->filled('Ref')) {
+            $SaleQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+        }
+
+        if ($request->has('warehouse_id') && $request->filled('warehouse_id')) {
+            $SaleQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+
+        if ($request->has('client_id') && $request->filled('client_id')) {
+            $SaleQuery->where('client_id', '=', $request->input('client_id'));
+        }
+
+        if ($request->has('statut') && $request->filled('statut')) {
+            $SaleQuery->where('statut', '=', $request->input('statut'));
+        }
+        if ($request->has('payment_statut') && $request->filled('payment_statut')) {
+            $SaleQuery->where('payment_statut', '=', $request->input('payment_statut'));
+        }
+        if ($request->has('shipping_status') && $request->filled('shipping_status')) {
+            $SaleQuery->where('shipping_status', '=', $request->input('shipping_status'));
+        }
+
+        // Lakukan sorting sesuai request jika diperlukan
+        if ($request->has('SortField') && $request->has('SortType')) {
+            $sortField = $request->input('SortField');
+            $sortType = $request->input('SortType');
+            $SaleQuery->orderBy($sortField, $sortType);
+        }
+
+        $sales = $SaleQuery->get();
+
+        // Generate PDF
+        $pdf = Pdf::loadView('export.sale', compact('sales'));
+
+        $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
+
+        return $pdf->download("sales_{$timestamp}.pdf");
     }
 
     public function shipments()
