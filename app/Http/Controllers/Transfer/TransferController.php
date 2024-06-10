@@ -25,9 +25,9 @@ class TransferController extends Controller
         $user_auth = auth()->user();
         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
         if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
-            $transferQuery = Transfer::query()->with('from_warehouse', 'to_warehouse')->where('deleted_at', '=', null)->latest();
+            $transferQuery = Transfer::query()->with(['from_warehouse', 'to_warehouse', 'details'])->where('deleted_at', '=', null)->latest();
         } else {
-            $transferQuery = Transfer::query()->with('from_warehouse', 'to_warehouse')->where('deleted_at', '=', null)->where('to_warehouse_id', $warehouses_id)->latest();
+            $transferQuery = Transfer::query()->with(['from_warehouse', 'to_warehouse', 'details'])->where('deleted_at', '=', null)->where('to_warehouse_id', $warehouses_id)->latest();
         }
         if ($request->filled('date')) {
             $transferQuery->whereDate('date', '=', $request->input('date'));

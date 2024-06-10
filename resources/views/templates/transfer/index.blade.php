@@ -53,31 +53,31 @@
                                                 value="{{ request()->input('Ref') }}" placeholder="Input Ref ...">
                                         </div>
                                         @role('superadmin|inventaris')
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="from_warehouse_id">From Warehouse/Outlet
-                                                *</label>
-                                            <select class="form-select" id="from_warehouse_id" name="from_warehouse_id">
-                                                <option selected disabled value="">Choose...</option>
-                                                @foreach ($warehouse as $wh)
-                                                    <option value="{{ $wh->id }}"
-                                                        {{ request()->input('from_warehouse_id') == $wh->id ? 'selected' : '' }}>
-                                                        {{ $wh->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="to_warehouse_id">To Warehouse/Outlet *</label>
-                                            <select class="form-select" id="to_warehouse_id" name="to_warehouse_id">
-                                                <option selected disabled value="">Choose...</option>
-                                                @foreach ($warehouse as $wh)
-                                                    <option value="{{ $wh->id }}"
-                                                        {{ request()->input('to_warehouse_id') == $wh->id ? 'selected' : '' }}>
-                                                        {{ $wh->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="from_warehouse_id">From Warehouse/Outlet
+                                                    *</label>
+                                                <select class="form-select" id="from_warehouse_id" name="from_warehouse_id">
+                                                    <option selected disabled value="">Choose...</option>
+                                                    @foreach ($warehouse as $wh)
+                                                        <option value="{{ $wh->id }}"
+                                                            {{ request()->input('from_warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                                            {{ $wh->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="to_warehouse_id">To Warehouse/Outlet *</label>
+                                                <select class="form-select" id="to_warehouse_id" name="to_warehouse_id">
+                                                    <option selected disabled value="">Choose...</option>
+                                                    @foreach ($warehouse as $wh)
+                                                        <option value="{{ $wh->id }}"
+                                                            {{ request()->input('to_warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                                            {{ $wh->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         @endrole
                                         <div class="col mb-3">
                                             <label class="form-label" for="statut">Status *</label>
@@ -129,10 +129,143 @@
                                     <td>Rp {{ $item['GrandTotal'] }}</td>
                                     <td>{{ $item['statut'] }}</td>
                                     <td>
-                                        <a href="{{ route('transfer.edit', $item['id']) }}"><button type="button"
-                                                class="btn btn-soft-primary">Edit</button></a>
-                                        <a href="{{ route('transfer.destroy', $item['id']) }}"><button type="button"
-                                                class="btn btn-soft-danger">Delete</button></a>
+                                        <div class="inline">
+                                            <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal"
+                                                data-bs-target="#detailModal{{ $item['id'] }}">
+                                                <path
+                                                    d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
+                                                    stroke="#130F26"></path>
+                                                <circle cx="12" cy="12" r="5" stroke="#130F26"></circle>
+                                                <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
+                                                <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
+                                                    width="6" height="6">
+                                                    <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
+                                                </mask>
+                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
+                                                    fill="white"></circle>
+                                            </svg>
+                                            <div class="modal fade" id="detailModal{{ $item['id'] }}" tabindex="-1"
+                                                role="dialog" aria-labelledby="showDetailsLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="showDetailsLabel">Transfer Detail
+                                                            </h5>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <div class="col-lg-5 col-md-12 col-sm-12 mt-3">
+                                                                    <table
+                                                                        class="table table-hover table-bordered table-sm">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>{{ __('Date') }}</td>
+                                                                                <th>{{ $item['date'] }}</th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('Reference') }}</td>
+                                                                                <th>{{ $item['Ref'] }}</th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('From Warehouse') }}</td>
+                                                                                <th>{{ $item['from_warehouse']['name'] }}
+                                                                                </th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('To Warehouse') }}</td>
+                                                                                <th>{{ $item['to_warehouse']['name'] }}
+                                                                                </th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('Grand Total') }}</td>
+                                                                                <th>Rp. {{ $item['GrandTotal'] }}
+                                                                                </th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('Status') }}</td>
+                                                                                <th>{{ $item['statut'] }}
+                                                                                </th>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="col-lg-7 col-md-12 col-sm-12 mt-3">
+                                                                    <div class="table-responsive">
+                                                                        <table
+                                                                            class="table table-hover table-bordered table-sm">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th scope="col">
+                                                                                        {{ __('ProductName') }}</th>
+                                                                                    <th scope="col">
+                                                                                        {{ __('CodeProduct') }}</th>
+                                                                                    <th scope="col">
+                                                                                        {{ __('Quantity') }}</th>
+                                                                                    <th scope="col">{{ __('Cost') }}
+                                                                                    </th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach ($item->details as $detail)
+                                                                                    <tr>
+                                                                                        <td>{{ $detail->product->name }}
+                                                                                        </td>
+                                                                                        <td>{{ $detail->product->code }}
+                                                                                        </td>
+                                                                                        <td>{{ $detail->quantity }}</td>
+                                                                                        <td>Rp {{ $detail->cost }}</td>
+                                                                                    </tr>
+                                                                                @endforeach
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="{{ route('transfer.edit', $item['id']) }}">
+                                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                    </path>
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
+                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round"></path>
+                                                    <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                    </path>
+                                                </svg>
+                                            </a>
+                                            <a href="{{ route('transfer.destroy', $item['id']) }}">
+                                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
+                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round"></path>
+                                                    <path
+                                                        d="M14.4736 2.75024V5.65924C14.4736 7.07924 15.6216 8.23024 17.0416 8.23424H19.7966"
+                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round"></path>
+                                                    <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                    </path>
+                                                    <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                    </path>
+                                                </svg>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
