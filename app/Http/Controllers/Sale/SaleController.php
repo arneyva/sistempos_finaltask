@@ -26,9 +26,38 @@ class SaleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sale = Sale::with('user', 'warehouse', 'client', 'paymentSales')->latest()->get();
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->latest();
+        } else {
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
+        }
+        if ($request->filled('date')) {
+            $saleQuery->whereDate('date', '=', $request->input('date'));
+        }
+        if ($request->filled('Ref')) {
+            $saleQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+        }
+
+        if ($request->filled('warehouse_id')) {
+            $saleQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        if ($request->filled('client_id')) {
+            $saleQuery->where('client_id', '=', $request->input('client_id'));
+        }
+        if ($request->filled('statut')) {
+            $saleQuery->where('statut', '=', $request->input('statut'));
+        }
+        if ($request->filled('payment_statut')) {
+            $saleQuery->where('payment_statut', '=', $request->input('payment_statut'));
+        }
+        if ($request->filled('shipping_status')) {
+            $saleQuery->where('shipping_status', '=', $request->input('shipping_status'));
+        }
+        $sale = $saleQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
 
         return view('templates.sale.index', [
             'sale' => $sale,
