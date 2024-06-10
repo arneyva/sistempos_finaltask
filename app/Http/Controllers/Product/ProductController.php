@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
 use App\Models\Unit;
+use App\Models\UserWarehouse;
 use App\Models\Warehouse;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -30,10 +31,9 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // ambil data product utama
-        $productsQuery = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null);
-        //ambil data
-        // Ambil data kategori
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        $productsQuery = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null)->latest();
         $categories = Category::where('deleted_at', '=', null)->get(['id', 'name']);
         $brands = Brand::where('deleted_at', '=', null)->get(['id', 'name']);
         // dd($categories);
@@ -59,6 +59,7 @@ class ProductController extends Controller
             $item['code'] = $product->code;
             $item['category'] = $product['category']->name;
             $item['brand'] = $product['brand']->name;
+            $item['TaxNet'] = $product->TaxNet;
             // untuk product single
             if ($product->type == 'is_single') {
                 $item['name'] = $product->name;
@@ -67,8 +68,13 @@ class ProductController extends Controller
                 $item['price'] = $product->price;
                 $item['unit'] = $product['unit']->ShortName;
                 // handle jumlah barang
-                $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+                    $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
+                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                } else {
+                    $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->sum('qty');
+                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                }
             } elseif ($product->type == 'is_variant') {
                 //untuk product variant
                 $item['type'] = 'Variant Product';
@@ -88,13 +94,16 @@ class ProductController extends Controller
                 $item['price'] = $variant_price;
                 $item['name'] = $variant_name;
                 // handle jumlah barang
-                $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+                    $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
+                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                } else {
+                    $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->sum('qty');
+                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                }
             }
             $items[] = $item;
         }
-
-        // dd($items);
         return view('templates.product.index', [
             'items' => $items,
             'products' => $products,
@@ -451,7 +460,6 @@ class ProductController extends Controller
     public function show(string $id)
     {
         $product = Product::where('deleted_at', '=', null)->findOrFail($id);
-        // belom  pakai spatie
         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         $item['id'] = $product->id;
         $item['type'] = $product->type;
@@ -516,8 +524,6 @@ class ProductController extends Controller
             $item['CountQTY'][] = $war;
         }
         $data[] = $item;
-
-        // dd($data);
         return view('templates.product.show', [
             'data' => $data,
         ]);

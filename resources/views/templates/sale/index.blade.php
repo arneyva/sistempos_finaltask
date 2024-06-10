@@ -25,11 +25,109 @@
                     </h4>
                 </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                        data-bs-target="#createModal">Filter</button>
+                    <a href="{{ route('sale.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <a href="{{ route('sale.create') }}"><button type="button" class="btn btn-soft-primary">Create
                             +</button></a>
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('sale.index') }}" method="GET" id="filterForm">
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="date">Date *</label>
+                                            <input type="date" class="form-control" id="date" name="date"
+                                                value="{{ request()->input('date') }}">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="Ref">Reference*</label>
+                                            <input type="text" class="form-control" id="Ref" name="Ref"
+                                                value="{{ request()->input('Ref') }}" placeholder="Input Ref ...">
+                                        </div>
+                                        @role('superadmin|inventaris')
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="warehouse_id">Warehouse/Outlet
+                                                    *</label>
+                                                <select class="form-select" id="warehouse_id" name="warehouse_id">
+                                                    <option selected disabled value="">Choose...</option>
+                                                    @foreach ($warehouse as $wh)
+                                                        <option value="{{ $wh->id }}"
+                                                            {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                                            {{ $wh->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endrole
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="client_id">Customer
+                                                *</label>
+                                            <select class="form-select" id="client_id" name="client_id">
+                                                <option selected disabled value="">Choose...</option>
+                                                @foreach ($client as $wh)
+                                                    <option value="{{ $wh->id }}"
+                                                        {{ request()->input('client_id') == $wh->id ? 'selected' : '' }}>
+                                                        {{ $wh->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="statut">Status *</label>
+                                            <select class="form-select" id="statut" name="statut">
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value="completed"
+                                                    {{ request()->input('statut') == 'completed' ? 'selected' : '' }}>
+                                                    Completed</option>
+                                                <option value="pending"
+                                                    {{ request()->input('statut') == 'pending' ? 'selected' : '' }}>Pending
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="shipping_status">Shipping Status </label>
+                                            <select class="form-select" id="shipping_status" name="shipping_status">
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value="completed"
+                                                    {{ request()->input('shipping_status') == 'completed' ? 'selected' : '' }}>
+                                                    Completed</option>
+                                                <option value="sent"
+                                                    {{ request()->input('shipping_status') == 'pending' ? 'selected' : '' }}>
+                                                    Pending
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="payment_statut">Payment Status *</label>
+                                            <select class="form-select" id="payment_statut" name="payment_statut">
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value="paid"
+                                                    {{ request()->input('payment_statut') == 'paid' ? 'selected' : '' }}>
+                                                    Paid</option>
+                                                <option value="unpaid"
+                                                    {{ request()->input('payment_statut') == 'unpaid' ? 'selected' : '' }}>
+                                                    Unpaid
+                                                </option>
+                                            </select>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
+                                        data-bs-dismiss="modal">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -46,7 +144,7 @@
                                 <th>Status</th>
                                 <th>Grand Total</th>
                                 <th>Payment Status</th>
-                                {{-- <th>Shipping Status</th> --}}
+                                <th>Shipping Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -61,6 +159,7 @@
                                     <th>{{ $item->statut }}</th>
                                     <th>{{ $item->GrandTotal }}</th>
                                     <th>{{ $item->payment_statut }}</th>
+                                    <th>Shipping</th>
                                     <th>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="4em" height="4em"
                                             viewBox="0 0 24 24" class="dropdown-toggle"
@@ -212,14 +311,50 @@
                                                                         d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
                                                                 </svg> Sale Detail </a>
                                                         </li>
-                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                href="{{ route('sale.edit', $item->id) }}">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                    height="1.5em" viewBox="0 0 24 24">
-                                                                    <path fill="currentColor"
-                                                                        d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
-                                                                </svg> Edit Sale </a>
-                                                        </li>
+                                                        {{-- @if ($item->payment_statut == 'paid' && $item->statut != 'completed')
+                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                    href="{{ route('sale.edit', $item->id) }}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                    </svg> Edit Sale </a>
+                                                            </li>
+                                                        @else
+                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                    href="{{ route('sale.edit', $item->id) }}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                    </svg> Edit Sale </a>
+                                                            </li>
+                                                        @endif --}}
+                                                        @if ($item->payment_statut == 'paid' && $item->statut == 'completed')
+                                                            <li class="iq-sub-card list-group-item">
+                                                                <a class="p-0 text-danger" href="javascript:void(0)"
+                                                                    style="pointer-events: none;">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24"
+                                                                        fill="red">
+                                                                        <path fill="currentColor"
+                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                    </svg> Edit Sale
+                                                                </a>
+                                                            </li>
+                                                        @else
+                                                            <li class="iq-sub-card list-group-item">
+                                                                <a class="p-0"
+                                                                    href="{{ route('sale.edit', $item->id) }}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                    </svg> Edit Sale
+                                                                </a>
+                                                            </li>
+                                                        @endif
+
                                                         <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
                                                             data-bs-target="#staticBackdrop{{ $item->id }}">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
@@ -246,7 +381,7 @@
                         </tbody>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                        {{-- {{ $sales->links() }} --}}
+                        {{ $sale->links() }}
                     </div>
                 </div>
             </div>
@@ -281,5 +416,34 @@
                 });
             });
         });
+    </script>
+    <script>
+        function resetFilters() {
+            // Reset nilai-nilai input dari formulir
+            if (document.getElementById('date')) {
+                document.getElementById('date').value = '';
+            }
+            if (document.getElementById('Ref')) {
+                document.getElementById('Ref').value = '';
+            }
+            if (document.getElementById('statut')) {
+                document.getElementById('statut').value = '';
+            }
+            if (document.getElementById('payment_statut')) {
+                document.getElementById('payment_statut').value = '';
+            }
+            if (document.getElementById('shipping_status')) {
+                document.getElementById('shipping_status').value = '';
+            }
+            if (document.getElementById('warehouse_id')) {
+                document.getElementById('warehouse_id').value = '';
+            }
+            if (document.getElementById('client_id')) {
+                document.getElementById('client_id').value = '';
+            }
+
+            // Submit formulir secara otomatis untuk menghapus filter
+            document.getElementById('filterForm').submit();
+        }
     </script>
 @endpush

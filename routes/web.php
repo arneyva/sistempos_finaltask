@@ -105,6 +105,8 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
     Route::get('edit/{id}', [TransferController::class, 'edit'])->name('edit');
     Route::patch('update/{id}', [TransferController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
+    Route::get('export', [TransferController::class, 'export'])->name('export');
+    Route::get('pdf', [TransferController::class, 'exportToPDF'])->name('pdf');
 });
 Route::get('/sale/payment/success/{transaction}', [SaleController::class, 'success'])->name('sale.payment.success');
 Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(function () {
@@ -120,6 +122,8 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
     Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
     Route::get('show_product_data/{id}/{variant_id}/{warehouse_id}', [AdjustmentController::class, 'show_product_data']);
     Route::get('get_payments_by_sale/{id}', [SaleController::class, 'Payments_Sale'])->name('get_payments_by_sale');
+    Route::get('export', [SaleController::class, 'export'])->name('export');
+    Route::get('pdf', [SaleController::class, 'exportToPDF'])->name('pdf');
 });
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {
     Route::get('payments', [ReportsController::class, 'payments'])->name('payments');

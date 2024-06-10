@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Transfer;
 
+use App\Exports\TransfersExport;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -14,18 +15,103 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class TransferController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $transfer = Transfer::with('from_warehouse', 'to_warehouse')->where('deleted_at', '=', null)->latest()->get();
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $transferQuery = Transfer::query()->with(['from_warehouse', 'to_warehouse', 'details'])->where('deleted_at', '=', null)->latest();
+        } else {
+            $transferQuery = Transfer::query()->with(['from_warehouse', 'to_warehouse', 'details'])->where('deleted_at', '=', null)->where('to_warehouse_id', $warehouses_id)->latest();
+        }
+        if ($request->filled('date')) {
+            $transferQuery->whereDate('date', '=', $request->input('date'));
+        }
+        if ($request->filled('Ref')) {
+            $transferQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+        }
 
-        // dd($transfer);
-        return view('templates.transfer.index', ['transfer' => $transfer]);
+        if ($request->filled('from_warehouse_id')) {
+            $transferQuery->where('from_warehouse_id', '=', $request->input('from_warehouse_id'));
+        }
+        if ($request->filled('to_warehouse_id')) {
+            $transferQuery->where('to_warehouse_id', '=', $request->input('to_warehouse_id'));
+        }
+        if ($request->filled('statut')) {
+            $transferQuery->where('statut', '=', $request->input('statut'));
+        }
+        // dd($transferQuery);
+        $transfer = $transferQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        return view('templates.transfer.index', ['transfer' => $transfer, 'warehouse' => $warehouses]);
+    }
+    public function export(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "transfers_{$timestamp}.xlsx";
+
+        return Excel::download(new TransfersExport($request), $filename);
+    }
+
+    public function exportToPDF(Request $request)
+    {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $TransferQuery = Transfer::query()->with(['from_warehouse', 'to_warehouse', 'details'])->where('deleted_at', '=', null)->latest();
+        } else {
+            $TransferQuery = Transfer::query()->with(['from_warehouse', 'to_warehouse', 'details'])->where('deleted_at', '=', null)->where('to_warehouse_id', $warehouses_id)->latest();
+        }
+        // Terapkan filter berdasarkan parameter yang diterima dari request
+        if ($request->has('date') && $request->filled('date')) {
+            $TransferQuery->whereDate('date', '=', $request->input('date'));
+        }
+
+        if ($request->has('Ref') && $request->filled('Ref')) {
+            $TransferQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+        }
+
+        if ($request->has('from_warehouse_id') && $request->filled('from_warehouse_id')) {
+            $TransferQuery->where('from_warehouse_id', '=', $request->input('from_warehouse_id'));
+        }
+
+        if ($request->has('to_warehouse_id') && $request->filled('to_warehouse_id')) {
+            $TransferQuery->where('to_warehouse_id', '=', $request->input('to_warehouse_id'));
+        }
+
+        if ($request->has('statut') && $request->filled('statut')) {
+            $TransferQuery->where('statut', '=', $request->input('statut'));
+        }
+
+        // Lakukan sorting sesuai request jika diperlukan
+        if ($request->has('SortField') && $request->has('SortType')) {
+            $sortField = $request->input('SortField');
+            $sortType = $request->input('SortType');
+            $TransferQuery->orderBy($sortField, $sortType);
+        }
+
+        $transfers = $TransferQuery->get();
+
+        // Generate PDF
+        $pdf = Pdf::loadView('export.transfer', compact('transfers'));
+
+        $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
+
+        return $pdf->download("transfers_{$timestamp}.pdf");
     }
 
     /**
@@ -47,7 +133,7 @@ class TransferController extends Controller
             $item = $last->Ref;
             $nwMsg = explode('_', $item);
             $inMsg = $nwMsg[1] + 1;
-            $code = $nwMsg[0].'_'.$inMsg;
+            $code = $nwMsg[0] . '_' . $inMsg;
         } else {
             $code = 'TR_1';
         }
@@ -67,10 +153,8 @@ class TransferController extends Controller
             'transfer.from_warehouse.required' => 'Gudang asal harus dipilih.',
             'transfer.to_warehouse.required' => 'Gudang tujuan harus dipilih.',
         ]);
-        // dd($request->all()); //ini dah jalan
         \DB::transaction(function () use ($request) {
             $order = new Transfer;
-
             $order->date = $request->transfer['date'];
             $order->Ref = $this->getNumbertransferValue();
             $order->from_warehouse_id = $request->transfer['from_warehouse'];
@@ -288,7 +372,7 @@ class TransferController extends Controller
                     ->where('id', $detail->product_variant_id)->first();
 
                 $item_product ? $data['del'] = 0 : $data['del'] = 1;
-                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
                 $data['code'] = $productsVariants->code;
 
                 $data['product_variant_id'] = $detail->product_variant_id;
@@ -508,7 +592,7 @@ class TransferController extends Controller
                     }
 
                     // Delete Detail
-                    if (! in_array($old_products_id[$key], $new_products_id)) {
+                    if (!in_array($old_products_id[$key], $new_products_id)) {
                         $TransferDetail = TransferDetail::findOrFail($value->id);
                         $TransferDetail->delete();
                     }
@@ -636,7 +720,7 @@ class TransferController extends Controller
                     // } else {
                     //     TransferDetail::where('id', $product_detail['id'])->update($TransDetail);
                     // }
-                    if (! isset($product_detail['id']) || ! in_array($product_detail['id'], $old_products_id)) {
+                    if (!isset($product_detail['id']) || !in_array($product_detail['id'], $old_products_id)) {
                         TransferDetail::create($TransDetail);
                     } else {
                         TransferDetail::where('id', $product_detail['id'])->update($TransDetail);

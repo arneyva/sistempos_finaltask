@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Sale;
 
+use App\Exports\SalesExport;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Membership;
@@ -20,19 +21,117 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sale = Sale::with('user', 'warehouse', 'client', 'paymentSales')->latest()->get();
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->latest();
+        } else {
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
+        }
+        if ($request->filled('date')) {
+            $saleQuery->whereDate('date', '=', $request->input('date'));
+        }
+        if ($request->filled('Ref')) {
+            $saleQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+        }
 
+        if ($request->filled('warehouse_id')) {
+            $saleQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        if ($request->filled('client_id')) {
+            $saleQuery->where('client_id', '=', $request->input('client_id'));
+        }
+        if ($request->filled('statut')) {
+            $saleQuery->where('statut', '=', $request->input('statut'));
+        }
+        if ($request->filled('payment_statut')) {
+            $saleQuery->where('payment_statut', '=', $request->input('payment_statut'));
+        }
+        if ($request->filled('shipping_status')) {
+            $saleQuery->where('shipping_status', '=', $request->input('shipping_status'));
+        }
+        $sale = $saleQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        $client = Client::where('deleted_at', '=', null)->get(['id', 'name']);
         return view('templates.sale.index', [
             'sale' => $sale,
+            'warehouse' => $warehouses,
+            'client' => $client
         ]);
+    }
+    public function export(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "Sales_{$timestamp}.xlsx";
+
+        return Excel::download(new SalesExport($request), $filename);
+    }
+
+    public function exportToPDF(Request $request)
+    {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $SaleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->latest();
+        } else {
+            $SaleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->where('to_warehouse_id', $warehouses_id)->latest();
+        }
+        // Terapkan filter berdasarkan parameter yang diterima dari request
+        if ($request->has('date') && $request->filled('date')) {
+            $SaleQuery->whereDate('date', '=', $request->input('date'));
+        }
+
+        if ($request->has('Ref') && $request->filled('Ref')) {
+            $SaleQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+        }
+
+        if ($request->has('warehouse_id') && $request->filled('warehouse_id')) {
+            $SaleQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+
+        if ($request->has('client_id') && $request->filled('client_id')) {
+            $SaleQuery->where('client_id', '=', $request->input('client_id'));
+        }
+
+        if ($request->has('statut') && $request->filled('statut')) {
+            $SaleQuery->where('statut', '=', $request->input('statut'));
+        }
+        if ($request->has('payment_statut') && $request->filled('payment_statut')) {
+            $SaleQuery->where('payment_statut', '=', $request->input('payment_statut'));
+        }
+        if ($request->has('shipping_status') && $request->filled('shipping_status')) {
+            $SaleQuery->where('shipping_status', '=', $request->input('shipping_status'));
+        }
+
+        // Lakukan sorting sesuai request jika diperlukan
+        if ($request->has('SortField') && $request->has('SortType')) {
+            $sortField = $request->input('SortField');
+            $sortType = $request->input('SortType');
+            $SaleQuery->orderBy($sortField, $sortType);
+        }
+
+        $sales = $SaleQuery->get();
+
+        // Generate PDF
+        $pdf = Pdf::loadView('export.sale', compact('sales'));
+
+        $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
+
+        return $pdf->download("sales_{$timestamp}.pdf");
     }
 
     public function shipments()
@@ -61,7 +160,7 @@ class SaleController extends Controller
             $item = $last->Ref;
             $nwMsg = explode('_', $item);
             $inMsg = $nwMsg[1] + 1;
-            $code = $nwMsg[0].'_'.$inMsg;
+            $code = $nwMsg[0] . '_' . $inMsg;
         } else {
             // $code = 'SL_1111';
             $code = 'SL_1';
@@ -93,15 +192,15 @@ class SaleController extends Controller
             $order->shipping = $request->shipping;
             $order->statut = $request->statut;
             // handle status pending
-            $payment_method = $request->payment_method;
+            $order->payment_method = $request->payment_method;
             if ($order->statut == 'pending') {
                 $order->payment_statut = 'unpaid';
                 $order->paid_amount = 0;
             } elseif ($order->statut == 'completed') {
-                if ($payment_method == 'cash') {
+                if ($order->payment_method == 'cash') {
                     $order->payment_statut = 'paid';
                     $order->paid_amount = $request->GrandTotal;
-                } elseif ($payment_method == 'midtrans') {
+                } elseif ($order->payment_method == 'midtrans') {
                     $order->payment_statut = 'unpaid';
                 } else {
                     $order->payment_statut = 'unpaid';
@@ -165,11 +264,11 @@ class SaleController extends Controller
             }
             SaleDetail::insert($orderDetails);
             if ($order->statut == 'completed') {
-                if ($payment_method == 'midtrans') {
+                if ($order->payment_method == 'midtrans') {
                     $transaction = PaymentSale::create([
                         'user_id' => $order->user_id,
                         'date' => $order->date,
-                        'Ref' => 'INV-'.$order->Ref,
+                        'Ref' => 'INV-' . $order->Ref,
                         'sale_id' => $order->id,
                         'montant' => $order->GrandTotal,
                         'change' => 0,
@@ -197,7 +296,7 @@ class SaleController extends Controller
                     $transaction = PaymentSale::create([
                         'user_id' => $order->user_id,
                         'date' => $order->date,
-                        'Ref' => 'INV-'.$order->Ref,
+                        'Ref' => 'INV-' . $order->Ref,
                         'sale_id' => $order->id,
                         'montant' => $order->GrandTotal,
                         'change' => $request->change_return ?? 0,
@@ -209,7 +308,7 @@ class SaleController extends Controller
                 $transaction = PaymentSale::create([
                     'user_id' => $order->user_id,
                     'date' => $order->date,
-                    'Ref' => 'INV-'.$order->Ref,
+                    'Ref' => 'INV-' . $order->Ref,
                     'sale_id' => $order->id,
                     'montant' => $order->GrandTotal,
                     'change' => 0,
@@ -342,7 +441,6 @@ class SaleController extends Controller
                     $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
                 }
                 $unit = null;
-
             }
 
             if ($detail->product_variant_id) {
@@ -351,7 +449,7 @@ class SaleController extends Controller
                     ->where('id', $detail->product_variant_id)->first();
 
                 $data['code'] = $productsVariants->code;
-                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
             } else {
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
@@ -460,6 +558,7 @@ class SaleController extends Controller
             $sale['discount'] = $Sale_data->discount;
             $sale['shipping'] = $Sale_data->shipping;
             $sale['statut'] = $Sale_data->statut;
+            $sale['payment_method'] = $Sale_data->payment_method ?? 'cash';
             $sale['notes'] = $Sale_data->notes;
 
             $detail_id = 0;
@@ -495,7 +594,7 @@ class SaleController extends Controller
                     $item_product ? $data['del'] = 0 : $data['del'] = 1;
                     $data['product_variant_id'] = $detail->product_variant_id;
                     $data['code'] = $productsVariants->code;
-                    $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                    $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
 
                     if ($unit && $unit->operator == '/') {
                         $stock = $item_product ? $item_product->qty * $unit->operator_value : 0;
@@ -633,7 +732,6 @@ class SaleController extends Controller
                             $old_unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
                         }
                         $old_unit = null;
-
                     }
 
                     if ($current_Sale->statut == 'completed') {
@@ -669,7 +767,7 @@ class SaleController extends Controller
                         }
                     }
                     // Delete Detail
-                    if (! in_array($old_products_id[$key], $new_products_id)) {
+                    if (!in_array($old_products_id[$key], $new_products_id)) {
                         $SaleDetail = SaleDetail::findOrFail($value->id);
                         $SaleDetail->delete();
                     }
@@ -731,7 +829,7 @@ class SaleController extends Controller
                         $orderDetails['total'] = $prod_detail['subtotal'];
                         // $orderDetails['imei_number']        = $prod_detail['imei_number'];
 
-                        if (! in_array($prod_detail['id'], $old_products_id)) {
+                        if (!in_array($prod_detail['id'], $old_products_id)) {
                             $orderDetails['date'] = Carbon::now();
                             $orderDetails['sale_unit_id'] = $unit_prod ? $unit_prod->id : null;
                             SaleDetail::Create($orderDetails);
@@ -753,6 +851,7 @@ class SaleController extends Controller
                     'discount' => $request['discount'],
                     'shipping' => $request['shipping'],
                     'GrandTotal' => $request['GrandTotal'],
+                    'payment_method' => $payment_method,
                 ];
                 if ($payment_method == 'cash') {
                     $updateData['paid_amount'] = $request['GrandTotal'];

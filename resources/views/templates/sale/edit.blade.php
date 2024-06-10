@@ -165,8 +165,7 @@
                                             @enderror
                                         </div>
                                         <input type="hidden" class="form-control" id="tax_net"
-                                            placeholder="input tax net" name="TaxNet"
-                                            value="{{ $sale['TaxNet'] }}">
+                                            placeholder="input tax net" name="TaxNet" value="{{ $sale['TaxNet'] }}">
                                         <input class="" type="hidden" id="grandTotal" name="GrandTotal"
                                             value="{{ $sale['GrandTotal'] }}">
                                         <div class="col-md-4 mb-3">
@@ -229,8 +228,10 @@
                                             <label class="form-label" for="payment_method">Payment Method</label>
                                             <select class="form-select select2" name="payment_method" id="payment_method"
                                                 data-placeholder="Select a payment_method">
-                                                <option value="cash">Cash</option>
-                                                <option value="midtrans">Other</option>
+                                                <option value="cash"
+                                                    {{ $sale['payment_method'] == 'cash' ? 'selected' : '' }}>Cash</option>
+                                                <option value="midtrans"
+                                                    {{ $sale['payment_method'] == 'midtrans' ? 'selected' : '' }}>Other</option>
                                             </select>
                                             @error('payment_method')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -305,7 +306,7 @@
                                         rows="3" name="notes" value="{{ $sale['notes'] }}">
                                 </div>
                                 <div class="col-md-12">
-                                    <button type="submit" class="btn btn-primary">Add sale</button>
+                                    <button type="submit" class="btn btn-primary">Update sale</button>
                                 </div>
                             </div>
                         </form>

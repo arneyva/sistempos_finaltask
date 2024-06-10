@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>All Transfer</h1>
-<p>Look All your transfer</p>
+    <h1>All Transfer</h1>
+    <p>Look All your transfer</p>
 @endsection
 
 <style>
@@ -25,15 +25,84 @@
                     </h4>
                 </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
-                    <button type="button" class="btn btn-soft-gray">Import Product</button>
+                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                        data-bs-target="#createModal">Filter</button>
+                    <a href="{{ route('transfer.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                    <a href="{{ route('transfer.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <a href="{{ route('transfer.create') }}"><button type="button" class="btn btn-soft-primary">Create
                             +</button></a>
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('transfer.index') }}" method="GET" id="filterForm">
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="date">Date *</label>
+                                            <input type="date" class="form-control" id="date" name="date"
+                                                value="{{ request()->input('date') }}">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="Ref">Reference*</label>
+                                            <input type="text" class="form-control" id="Ref" name="Ref"
+                                                value="{{ request()->input('Ref') }}" placeholder="Input Ref ...">
+                                        </div>
+                                        @role('superadmin|inventaris')
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="from_warehouse_id">From Warehouse/Outlet
+                                                    *</label>
+                                                <select class="form-select" id="from_warehouse_id" name="from_warehouse_id">
+                                                    <option selected disabled value="">Choose...</option>
+                                                    @foreach ($warehouse as $wh)
+                                                        <option value="{{ $wh->id }}"
+                                                            {{ request()->input('from_warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                                            {{ $wh->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="to_warehouse_id">To Warehouse/Outlet *</label>
+                                                <select class="form-select" id="to_warehouse_id" name="to_warehouse_id">
+                                                    <option selected disabled value="">Choose...</option>
+                                                    @foreach ($warehouse as $wh)
+                                                        <option value="{{ $wh->id }}"
+                                                            {{ request()->input('to_warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                                            {{ $wh->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endrole
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="statut">Status *</label>
+                                            <select class="form-select" id="statut" name="statut">
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value="completed"
+                                                    {{ request()->input('statut') == 'completed' ? 'selected' : '' }}>
+                                                    Completed</option>
+                                                <option value="sent"
+                                                    {{ request()->input('statut') == 'sent' ? 'selected' : '' }}>Sent
+                                                </option>
+                                            </select>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
+                                        data-bs-dismiss="modal">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
             <div class="card-body p-0">
                 <div class="table-responsive mt-4">
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
@@ -60,32 +129,6 @@
                                     <td>Rp {{ $item['GrandTotal'] }}</td>
                                     <td>{{ $item['statut'] }}</td>
                                     <td>
-                                        <a href="{{ route('transfer.edit', $item['id']) }}"><button type="button"
-                                                class="btn btn-soft-primary">Edit</button></a>
-                                        <a href="{{ route('transfer.destroy', $item['id']) }}"><button type="button"
-                                                class="btn btn-soft-danger">Delete</button></a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            {{-- @foreach ($data as $item)
-                                <tr>
-                                    <td>
-                                        {{ $item['date'] }}
-                                    </td>
-                                    <td>
-                                        {{ $item['Ref'] }}
-                                    </td>
-                                    <td>
-                                        @if ($item['warehouse'] === 'deleted')
-                                            <span class="warehousedeleted">warehouse deleted</span>
-                                        @else
-                                            {{ $item['warehouse'] }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        {{ $item['items'] }} Items
-                                    </td>
-                                    <td>
                                         <div class="inline">
                                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal"
@@ -93,24 +136,22 @@
                                                 <path
                                                     d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
                                                     stroke="#130F26"></path>
-                                                <circle cx="12" cy="12" r="5" stroke="#130F26">
-                                                </circle>
+                                                <circle cx="12" cy="12" r="5" stroke="#130F26"></circle>
                                                 <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
                                                 <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
                                                     width="6" height="6">
-                                                    <circle cx="12" cy="12" r="3" fill="#130F26">
-                                                    </circle>
+                                                    <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
                                                 </mask>
-                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5" fill="white">
-                                                </circle>
+                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
+                                                    fill="white"></circle>
                                             </svg>
                                             <div class="modal fade" id="detailModal{{ $item['id'] }}" tabindex="-1"
                                                 role="dialog" aria-labelledby="showDetailsLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="showDetailsLabel">
-                                                                Adjustment Detail</h5>
+                                                            <h5 class="modal-title" id="showDetailsLabel">Transfer Detail
+                                                            </h5>
                                                         </div>
                                                         <div class="modal-body">
                                                             <div class="row">
@@ -127,8 +168,24 @@
                                                                                 <th>{{ $item['Ref'] }}</th>
                                                                             </tr>
                                                                             <tr>
-                                                                                <td>{{ __('Warehouse') }}</td>
-                                                                                <th>{{ $item['warehouse'] }}</th>
+                                                                                <td>{{ __('From Warehouse') }}</td>
+                                                                                <th>{{ $item['from_warehouse']['name'] }}
+                                                                                </th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('To Warehouse') }}</td>
+                                                                                <th>{{ $item['to_warehouse']['name'] }}
+                                                                                </th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('Grand Total') }}</td>
+                                                                                <th>Rp. {{ $item['GrandTotal'] }}
+                                                                                </th>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{{ __('Status') }}</td>
+                                                                                <th>{{ $item['statut'] }}
+                                                                                </th>
                                                                             </tr>
                                                                         </tbody>
                                                                     </table>
@@ -145,37 +202,19 @@
                                                                                         {{ __('CodeProduct') }}</th>
                                                                                     <th scope="col">
                                                                                         {{ __('Quantity') }}</th>
-                                                                                    <th scope="col">{{ __('Type') }}
+                                                                                    <th scope="col">{{ __('Cost') }}
                                                                                     </th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                @foreach ($item['details_product'] as $key => $product)
+                                                                                @foreach ($item->details as $detail)
                                                                                     <tr>
-
-                                                                                        <td>
-                                                                                            @if ($item['details_product_variant'][$key])
-                                                                                                {{ $item['details_product'][$key] . ' - ' . $item['details_product_variant'][$key] }}
-                                                                                            @else
-                                                                                                {{ $item['details_product'][$key] }}
-                                                                                            @endif
+                                                                                        <td>{{ $detail->product->name }}
                                                                                         </td>
-                                                                                        <td>
-                                                                                            @if ($item['details_code_variant'][$key])
-                                                                                                {{ $item['details_code'][$key] . ' - ' . $item['details_code_variant'][$key] }}
-                                                                                            @else
-                                                                                                {{ $item['details_code'][$key] }}
-                                                                                            @endif
+                                                                                        <td>{{ $detail->product->code }}
                                                                                         </td>
-                                                                                        <td>{{ $item['details_quantity'][$key] }}
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            @if ($item['details_type'][$key] == 'add')
-                                                                                                {{ __('Addition') }}
-                                                                                            @elseif($item['details_type'][$key] == 'sub')
-                                                                                                {{ __('Subtraction') }}
-                                                                                            @endif
-                                                                                        </td>
+                                                                                        <td>{{ $detail->quantity }}</td>
+                                                                                        <td>Rp {{ $detail->cost }}</td>
                                                                                     </tr>
                                                                                 @endforeach
                                                                             </tbody>
@@ -184,30 +223,28 @@
                                                                 </div>
                                                             </div>
                                                             <hr>
-                                                            }
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
-
-
-                                            <a href="edit.html">
+                                            <a href="{{ route('transfer.edit', $item['id']) }}">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
                                                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
                                                     <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round">
                                                     </path>
                                                 </svg>
                                             </a>
-                                            <a href="hapus.html">
+                                            <a href="{{ route('transfer.destroy', $item['id']) }}">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -231,79 +268,39 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach --}}
+                            @endforeach
                         </tbody>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                        {{-- {{ $adjustment->links() }} --}}
+                        {{ $transfer->links() }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {{-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="">
-                        <div class="col mb-3">
-                            <label class="form-label" for="validationDefault01">Name *</label>
-                            <input type="text" class="form-control" id="validationDefault01" required
-                                placeholder="input product cost">
-                        </div>
-                        <div class="col mb-3">
-                            <label class="form-label" for="validationDefault01">Short Name*</label>
-                            <input type="text" class="form-control" id="validationDefault01" required
-                                placeholder="input product cost">
-                        </div>
-                        <div class="accordion" id="accordionExample">
-                            <div class="accordion-item">
-                                <h4 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        Base Unit
-                                    </button>
-                                </h4>
-                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                                    data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        <label for="validationCustomUsername" class="form-label">Product Unit</label>
-                                        <select class="form-select" id="validationDefault04" required>
-                                            <option selected disabled value="">Choose...</option>
-                                            <option>Gram</option>
-                                            <option>Liter</option>
-                                            <option>Meter</option>
-                                            <option>Gram</option>
-                                        </select>
-                                    </div>
-                                    <div class="accordion-body">
-                                        <label for="validationCustomUsername" class="form-label">Operator</label>
-                                        <select class="form-select" id="validationDefault04" required>
-                                            <option selected disabled value="">Choose...</option>
-                                            <option>Multiply (*)</option>
-                                            <option>Devide (/)</option>
-                                        </select>
-                                    </div>
-                                    <div class="accordion-body">
-                                        <label class="form-label" for="validationDefault01">Operation value *</label>
-                                        <input type="text" class="form-control" id="validationDefault01" required
-                                            placeholder="input product cost">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 @endsection
+@push('script')
+    <script>
+        function resetFilters() {
+            // Reset nilai-nilai input dari formulir jika elemen ada
+            if (document.getElementById('date')) {
+                document.getElementById('date').value = '';
+            }
+            if (document.getElementById('Ref')) {
+                document.getElementById('Ref').value = '';
+            }
+            if (document.getElementById('statut')) {
+                document.getElementById('statut').value = '';
+            }
+            if (document.getElementById('from_warehouse_id')) {
+                document.getElementById('from_warehouse_id').value = '';
+            }
+            if (document.getElementById('to_warehouse_id')) {
+                document.getElementById('to_warehouse_id').value = '';
+            }
+
+            // Submit formulir secara otomatis untuk menghapus filter
+            document.getElementById('filterForm').submit();
+        }
+    </script>
+@endpush
