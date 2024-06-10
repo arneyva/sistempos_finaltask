@@ -28,7 +28,7 @@
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
                     <a href="{{ route('sale.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
-                    <a href="{{ route('transfer.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <a href="{{ route('sale.create') }}"><button type="button" class="btn btn-soft-primary">Create
                             +</button></a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
@@ -100,7 +100,8 @@
                                                     {{ request()->input('shipping_status') == 'completed' ? 'selected' : '' }}>
                                                     Completed</option>
                                                 <option value="sent"
-                                                    {{ request()->input('shipping_status') == 'pending' ? 'selected' : '' }}>Pending
+                                                    {{ request()->input('shipping_status') == 'pending' ? 'selected' : '' }}>
+                                                    Pending
                                                 </option>
                                             </select>
                                         </div>
@@ -112,7 +113,8 @@
                                                     {{ request()->input('payment_statut') == 'paid' ? 'selected' : '' }}>
                                                     Paid</option>
                                                 <option value="unpaid"
-                                                    {{ request()->input('payment_statut') == 'unpaid' ? 'selected' : '' }}>Unpaid
+                                                    {{ request()->input('payment_statut') == 'unpaid' ? 'selected' : '' }}>
+                                                    Unpaid
                                                 </option>
                                             </select>
                                         </div>
@@ -382,13 +384,27 @@
     <script>
         function resetFilters() {
             // Reset nilai-nilai input dari formulir
-            document.getElementById('date').value = '';
-            document.getElementById('Ref').value = '';
-            document.getElementById('statut').value = '';
-            document.getElementById('payment_statut').value = '';
-            document.getElementById('shipping_status').value = '';
-            document.getElementById('warehouse_id').value = '';
-            document.getElementById('client_id').value = '';
+            if (document.getElementById('date')) {
+                document.getElementById('date').value = '';
+            }
+            if (document.getElementById('Ref')) {
+                document.getElementById('Ref').value = '';
+            }
+            if (document.getElementById('statut')) {
+                document.getElementById('statut').value = '';
+            }
+            if (document.getElementById('payment_statut')) {
+                document.getElementById('payment_statut').value = '';
+            }
+            if (document.getElementById('shipping_status')) {
+                document.getElementById('shipping_status').value = '';
+            }
+            if (document.getElementById('warehouse_id')) {
+                document.getElementById('warehouse_id').value = '';
+            }
+            if (document.getElementById('client_id')) {
+                document.getElementById('client_id').value = '';
+            }
 
             // Submit formulir secara otomatis untuk menghapus filter
             document.getElementById('filterForm').submit();

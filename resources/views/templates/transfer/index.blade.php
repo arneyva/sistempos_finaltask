@@ -27,8 +27,8 @@
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
-                        <a href="{{ route('transfer.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
-                        <a href="{{ route('transfer.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    <a href="{{ route('transfer.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                    <a href="{{ route('transfer.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <a href="{{ route('transfer.create') }}"><button type="button" class="btn btn-soft-primary">Create
                             +</button></a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
@@ -282,12 +282,22 @@
 @push('script')
     <script>
         function resetFilters() {
-            // Reset nilai-nilai input dari formulir
-            document.getElementById('date').value = '';
-            document.getElementById('Ref').value = '';
-            document.getElementById('statut').value = '';
-            document.getElementById('from_warehouse_id').value = '';
-            document.getElementById('to_warehouse_id').value = '';
+            // Reset nilai-nilai input dari formulir jika elemen ada
+            if (document.getElementById('date')) {
+                document.getElementById('date').value = '';
+            }
+            if (document.getElementById('Ref')) {
+                document.getElementById('Ref').value = '';
+            }
+            if (document.getElementById('statut')) {
+                document.getElementById('statut').value = '';
+            }
+            if (document.getElementById('from_warehouse_id')) {
+                document.getElementById('from_warehouse_id').value = '';
+            }
+            if (document.getElementById('to_warehouse_id')) {
+                document.getElementById('to_warehouse_id').value = '';
+            }
 
             // Submit formulir secara otomatis untuk menghapus filter
             document.getElementById('filterForm').submit();
