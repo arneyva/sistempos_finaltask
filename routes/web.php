@@ -105,6 +105,8 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
     Route::get('edit/{id}', [TransferController::class, 'edit'])->name('edit');
     Route::patch('update/{id}', [TransferController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
+    Route::get('export', [TransferController::class, 'export'])->name('export');
+    Route::get('pdf', [TransferController::class, 'exportToPDF'])->name('pdf');
 });
 Route::get('/sale/payment/success/{transaction}', [SaleController::class, 'success'])->name('sale.payment.success');
 Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(function () {

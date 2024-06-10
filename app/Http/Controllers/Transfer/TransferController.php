@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Transfer;
 
+use App\Exports\TransfersExport;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -14,6 +15,9 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class TransferController extends Controller
 {
@@ -54,6 +58,60 @@ class TransferController extends Controller
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
         return view('templates.transfer.index', ['transfer' => $transfer, 'warehouse' => $warehouses]);
+    }
+    public function export(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "transfers_{$timestamp}.xlsx";
+
+        return Excel::download(new TransfersExport($request), $filename);
+    }
+
+    public function exportToPDF(Request $request)
+    {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $TransferQuery = Transfer::query()->with(['from_warehouse', 'to_warehouse', 'details'])->where('deleted_at', '=', null)->latest();
+        } else {
+            $TransferQuery = Transfer::query()->with(['from_warehouse', 'to_warehouse', 'details'])->where('deleted_at', '=', null)->where('to_warehouse_id', $warehouses_id)->latest();
+        }
+        // Terapkan filter berdasarkan parameter yang diterima dari request
+        if ($request->has('date') && $request->filled('date')) {
+            $TransferQuery->whereDate('date', '=', $request->input('date'));
+        }
+
+        if ($request->has('Ref') && $request->filled('Ref')) {
+            $TransferQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+        }
+
+        if ($request->has('from_warehouse_id') && $request->filled('from_warehouse_id')) {
+            $TransferQuery->where('from_warehouse_id', '=', $request->input('from_warehouse_id'));
+        }
+
+        if ($request->has('to_warehouse_id') && $request->filled('to_warehouse_id')) {
+            $TransferQuery->where('to_warehouse_id', '=', $request->input('to_warehouse_id'));
+        }
+
+        if ($request->has('statut') && $request->filled('statut')) {
+            $TransferQuery->where('statut', '=', $request->input('statut'));
+        }
+
+        // Lakukan sorting sesuai request jika diperlukan
+        if ($request->has('SortField') && $request->has('SortType')) {
+            $sortField = $request->input('SortField');
+            $sortType = $request->input('SortType');
+            $TransferQuery->orderBy($sortField, $sortType);
+        }
+
+        $transfers = $TransferQuery->get();
+
+        // Generate PDF
+        $pdf = Pdf::loadView('export.transfer', compact('transfers'));
+
+        $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
+
+        return $pdf->download("transfers_{$timestamp}.pdf");
     }
 
     /**

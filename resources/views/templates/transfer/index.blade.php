@@ -27,8 +27,8 @@
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                        <a href="{{ route('transfer.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                        <a href="{{ route('transfer.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <a href="{{ route('transfer.create') }}"><button type="button" class="btn btn-soft-primary">Create
                             +</button></a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
