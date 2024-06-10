@@ -192,15 +192,15 @@ class SaleController extends Controller
             $order->shipping = $request->shipping;
             $order->statut = $request->statut;
             // handle status pending
-            $payment_method = $request->payment_method;
+            $order->payment_method = $request->payment_method;
             if ($order->statut == 'pending') {
                 $order->payment_statut = 'unpaid';
                 $order->paid_amount = 0;
             } elseif ($order->statut == 'completed') {
-                if ($payment_method == 'cash') {
+                if ($order->payment_method == 'cash') {
                     $order->payment_statut = 'paid';
                     $order->paid_amount = $request->GrandTotal;
-                } elseif ($payment_method == 'midtrans') {
+                } elseif ($order->payment_method == 'midtrans') {
                     $order->payment_statut = 'unpaid';
                 } else {
                     $order->payment_statut = 'unpaid';
@@ -264,7 +264,7 @@ class SaleController extends Controller
             }
             SaleDetail::insert($orderDetails);
             if ($order->statut == 'completed') {
-                if ($payment_method == 'midtrans') {
+                if ($order->payment_method == 'midtrans') {
                     $transaction = PaymentSale::create([
                         'user_id' => $order->user_id,
                         'date' => $order->date,
@@ -558,6 +558,7 @@ class SaleController extends Controller
             $sale['discount'] = $Sale_data->discount;
             $sale['shipping'] = $Sale_data->shipping;
             $sale['statut'] = $Sale_data->statut;
+            $sale['payment_method'] = $Sale_data->payment_method ?? 'cash';
             $sale['notes'] = $Sale_data->notes;
 
             $detail_id = 0;
@@ -850,6 +851,7 @@ class SaleController extends Controller
                     'discount' => $request['discount'],
                     'shipping' => $request['shipping'],
                     'GrandTotal' => $request['GrandTotal'],
+                    'payment_method' => $payment_method,
                 ];
                 if ($payment_method == 'cash') {
                     $updateData['paid_amount'] = $request['GrandTotal'];
