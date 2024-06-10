@@ -246,7 +246,7 @@
                         </tbody>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                        {{-- {{ $sales->links() }} --}}
+                        {{ $sale->links() }}
                     </div>
                 </div>
             </div>
