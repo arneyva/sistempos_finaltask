@@ -33,7 +33,7 @@ class ProductController extends Controller
     {
         $user_auth = auth()->user();
         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
-        $productsQuery = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null);
+        $productsQuery = Product::with('unit', 'category', 'brand')->where('deleted_at', '=', null)->latest();
         $categories = Category::where('deleted_at', '=', null)->get(['id', 'name']);
         $brands = Brand::where('deleted_at', '=', null)->get(['id', 'name']);
         // dd($categories);
