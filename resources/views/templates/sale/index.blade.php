@@ -25,11 +25,107 @@
                     </h4>
                 </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                        data-bs-target="#createModal">Filter</button>
+                    <a href="{{ route('sale.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                    <a href="{{ route('transfer.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <a href="{{ route('sale.create') }}"><button type="button" class="btn btn-soft-primary">Create
                             +</button></a>
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('sale.index') }}" method="GET" id="filterForm">
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="date">Date *</label>
+                                            <input type="date" class="form-control" id="date" name="date"
+                                                value="{{ request()->input('date') }}">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="Ref">Reference*</label>
+                                            <input type="text" class="form-control" id="Ref" name="Ref"
+                                                value="{{ request()->input('Ref') }}" placeholder="Input Ref ...">
+                                        </div>
+                                        @role('superadmin|inventaris')
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="warehouse_id">Warehouse/Outlet
+                                                    *</label>
+                                                <select class="form-select" id="warehouse_id" name="warehouse_id">
+                                                    <option selected disabled value="">Choose...</option>
+                                                    @foreach ($warehouse as $wh)
+                                                        <option value="{{ $wh->id }}"
+                                                            {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                                            {{ $wh->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endrole
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="client_id">Customer
+                                                *</label>
+                                            <select class="form-select" id="client_id" name="client_id">
+                                                <option selected disabled value="">Choose...</option>
+                                                @foreach ($client as $wh)
+                                                    <option value="{{ $wh->id }}"
+                                                        {{ request()->input('client_id') == $wh->id ? 'selected' : '' }}>
+                                                        {{ $wh->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="statut">Status *</label>
+                                            <select class="form-select" id="statut" name="statut">
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value="completed"
+                                                    {{ request()->input('statut') == 'completed' ? 'selected' : '' }}>
+                                                    Completed</option>
+                                                <option value="pending"
+                                                    {{ request()->input('statut') == 'pending' ? 'selected' : '' }}>Pending
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="shipping_status">Shipping Status </label>
+                                            <select class="form-select" id="shipping_status" name="shipping_status">
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value="completed"
+                                                    {{ request()->input('shipping_status') == 'completed' ? 'selected' : '' }}>
+                                                    Completed</option>
+                                                <option value="sent"
+                                                    {{ request()->input('shipping_status') == 'pending' ? 'selected' : '' }}>Pending
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="payment_statut">Payment Status *</label>
+                                            <select class="form-select" id="payment_statut" name="payment_statut">
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value="paid"
+                                                    {{ request()->input('payment_statut') == 'paid' ? 'selected' : '' }}>
+                                                    Paid</option>
+                                                <option value="unpaid"
+                                                    {{ request()->input('payment_statut') == 'unpaid' ? 'selected' : '' }}>Unpaid
+                                                </option>
+                                            </select>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
+                                        data-bs-dismiss="modal">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -46,7 +142,7 @@
                                 <th>Status</th>
                                 <th>Grand Total</th>
                                 <th>Payment Status</th>
-                                {{-- <th>Shipping Status</th> --}}
+                                <th>Shipping Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -61,6 +157,7 @@
                                     <th>{{ $item->statut }}</th>
                                     <th>{{ $item->GrandTotal }}</th>
                                     <th>{{ $item->payment_statut }}</th>
+                                    <th>Shipping</th>
                                     <th>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="4em" height="4em"
                                             viewBox="0 0 24 24" class="dropdown-toggle"
@@ -281,5 +378,20 @@
                 });
             });
         });
+    </script>
+    <script>
+        function resetFilters() {
+            // Reset nilai-nilai input dari formulir
+            document.getElementById('date').value = '';
+            document.getElementById('Ref').value = '';
+            document.getElementById('statut').value = '';
+            document.getElementById('payment_statut').value = '';
+            document.getElementById('shipping_status').value = '';
+            document.getElementById('warehouse_id').value = '';
+            document.getElementById('client_id').value = '';
+
+            // Submit formulir secara otomatis untuk menghapus filter
+            document.getElementById('filterForm').submit();
+        }
     </script>
 @endpush

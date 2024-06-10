@@ -58,9 +58,16 @@ class SaleController extends Controller
             $saleQuery->where('shipping_status', '=', $request->input('shipping_status'));
         }
         $sale = $saleQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
-
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        $client = Client::where('deleted_at', '=', null)->get(['id', 'name']);
         return view('templates.sale.index', [
             'sale' => $sale,
+            'warehouse' => $warehouses,
+            'client' => $client
         ]);
     }
 
@@ -90,7 +97,7 @@ class SaleController extends Controller
             $item = $last->Ref;
             $nwMsg = explode('_', $item);
             $inMsg = $nwMsg[1] + 1;
-            $code = $nwMsg[0].'_'.$inMsg;
+            $code = $nwMsg[0] . '_' . $inMsg;
         } else {
             // $code = 'SL_1111';
             $code = 'SL_1';
@@ -198,7 +205,7 @@ class SaleController extends Controller
                     $transaction = PaymentSale::create([
                         'user_id' => $order->user_id,
                         'date' => $order->date,
-                        'Ref' => 'INV-'.$order->Ref,
+                        'Ref' => 'INV-' . $order->Ref,
                         'sale_id' => $order->id,
                         'montant' => $order->GrandTotal,
                         'change' => 0,
@@ -226,7 +233,7 @@ class SaleController extends Controller
                     $transaction = PaymentSale::create([
                         'user_id' => $order->user_id,
                         'date' => $order->date,
-                        'Ref' => 'INV-'.$order->Ref,
+                        'Ref' => 'INV-' . $order->Ref,
                         'sale_id' => $order->id,
                         'montant' => $order->GrandTotal,
                         'change' => $request->change_return ?? 0,
@@ -238,7 +245,7 @@ class SaleController extends Controller
                 $transaction = PaymentSale::create([
                     'user_id' => $order->user_id,
                     'date' => $order->date,
-                    'Ref' => 'INV-'.$order->Ref,
+                    'Ref' => 'INV-' . $order->Ref,
                     'sale_id' => $order->id,
                     'montant' => $order->GrandTotal,
                     'change' => 0,
@@ -371,7 +378,6 @@ class SaleController extends Controller
                     $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
                 }
                 $unit = null;
-
             }
 
             if ($detail->product_variant_id) {
@@ -380,7 +386,7 @@ class SaleController extends Controller
                     ->where('id', $detail->product_variant_id)->first();
 
                 $data['code'] = $productsVariants->code;
-                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
             } else {
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
@@ -524,7 +530,7 @@ class SaleController extends Controller
                     $item_product ? $data['del'] = 0 : $data['del'] = 1;
                     $data['product_variant_id'] = $detail->product_variant_id;
                     $data['code'] = $productsVariants->code;
-                    $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                    $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
 
                     if ($unit && $unit->operator == '/') {
                         $stock = $item_product ? $item_product->qty * $unit->operator_value : 0;
@@ -662,7 +668,6 @@ class SaleController extends Controller
                             $old_unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
                         }
                         $old_unit = null;
-
                     }
 
                     if ($current_Sale->statut == 'completed') {
@@ -698,7 +703,7 @@ class SaleController extends Controller
                         }
                     }
                     // Delete Detail
-                    if (! in_array($old_products_id[$key], $new_products_id)) {
+                    if (!in_array($old_products_id[$key], $new_products_id)) {
                         $SaleDetail = SaleDetail::findOrFail($value->id);
                         $SaleDetail->delete();
                     }
@@ -760,7 +765,7 @@ class SaleController extends Controller
                         $orderDetails['total'] = $prod_detail['subtotal'];
                         // $orderDetails['imei_number']        = $prod_detail['imei_number'];
 
-                        if (! in_array($prod_detail['id'], $old_products_id)) {
+                        if (!in_array($prod_detail['id'], $old_products_id)) {
                             $orderDetails['date'] = Carbon::now();
                             $orderDetails['sale_unit_id'] = $unit_prod ? $unit_prod->id : null;
                             SaleDetail::Create($orderDetails);

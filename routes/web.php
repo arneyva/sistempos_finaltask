@@ -122,6 +122,8 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
     Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
     Route::get('show_product_data/{id}/{variant_id}/{warehouse_id}', [AdjustmentController::class, 'show_product_data']);
     Route::get('get_payments_by_sale/{id}', [SaleController::class, 'Payments_Sale'])->name('get_payments_by_sale');
+    Route::get('export', [SaleController::class, 'export'])->name('export');
+    Route::get('pdf', [SaleController::class, 'exportToPDF'])->name('pdf');
 });
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {
     Route::get('payments', [ReportsController::class, 'payments'])->name('payments');
