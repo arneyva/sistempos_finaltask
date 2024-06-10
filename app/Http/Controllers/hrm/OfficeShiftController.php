@@ -28,9 +28,11 @@ class OfficeShiftController extends Controller
      */
     public function create()
     {
+        //ambil user yang belum terhubung dengan jadwal
+        $usersWithoutOfficeShift = User::whereDoesntHave('office_shifts')->get();
 
         return view('templates.hrm.shift.create', [
-            'users' => User::all(),
+            'users' => $usersWithoutOfficeShift,
             'warehouses' => Warehouse::all(),
         ]);
     }
@@ -53,9 +55,16 @@ class OfficeShiftController extends Controller
             'unique' => ':attribute sudah terdaftar',
         ];
 
+        $validateData = $request->validate($rules, $messages);
+
         $shift = new OfficeShift;
         $shift->name = $request['name'];
         if ($request['monday']) {
+            request()->validate([
+                'monday_in'           => 'required',
+                'monday_out'     => 'required',
+            ]);
+
             $shift->monday_in = $request['monday_in'];
             $shift->monday_out = $request['monday_out'];
         } else {
@@ -65,6 +74,11 @@ class OfficeShiftController extends Controller
 
         // Selasa
         if ($request['tuesday']) {
+            request()->validate([
+                'tuesday_in'           => 'required',
+                'tuesday_out'     => 'required',
+            ]);
+
             $shift->tuesday_in = $request['tuesday_in'];
             $shift->tuesday_out = $request['tuesday_out'];
         } else {
@@ -74,6 +88,11 @@ class OfficeShiftController extends Controller
 
         // Rabu
         if ($request['wednesday']) {
+            request()->validate([
+                'wednesday_in'           => 'required',
+                'wednesday_out'     => 'required',
+            ]);
+
             $shift->wednesday_in = $request['wednesday_in'];
             $shift->wednesday_out = $request['wednesday_out'];
         } else {
@@ -83,6 +102,11 @@ class OfficeShiftController extends Controller
 
         // Kamis
         if ($request['thursday']) {
+            request()->validate([
+                'thursday_in'           => 'required',
+                'thursday_out'     => 'required',
+            ]);
+
             $shift->thursday_in = $request['thursday_in'];
             $shift->thursday_out = $request['thursday_out'];
         } else {
@@ -92,6 +116,11 @@ class OfficeShiftController extends Controller
 
         // Jumat
         if ($request['friday']) {
+            request()->validate([
+                'friday_in'           => 'required',
+                'friday_out'     => 'required',
+            ]);
+
             $shift->friday_in = $request['friday_in'];
             $shift->friday_out = $request['friday_out'];
         } else {
@@ -101,6 +130,11 @@ class OfficeShiftController extends Controller
 
         // Sabtu
         if ($request['saturday']) {
+            request()->validate([
+                'saturday_in'           => 'required',
+                'saturday_out'     => 'required',
+            ]);
+
             $shift->saturday_in = $request['saturday_in'];
             $shift->saturday_out = $request['saturday_out'];
         } else {
@@ -110,6 +144,11 @@ class OfficeShiftController extends Controller
 
         // Minggu
         if ($request['sunday']) {
+            request()->validate([
+                'sunday_in'           => 'required',
+                'sunday_out'     => 'required',
+            ]);
+
             $shift->sunday_in = $request['sunday_in'];
             $shift->sunday_out = $request['sunday_out'];
         } else {
