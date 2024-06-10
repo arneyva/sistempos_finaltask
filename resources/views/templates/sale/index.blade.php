@@ -311,14 +311,50 @@
                                                                         d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
                                                                 </svg> Sale Detail </a>
                                                         </li>
-                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                href="{{ route('sale.edit', $item->id) }}">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                    height="1.5em" viewBox="0 0 24 24">
-                                                                    <path fill="currentColor"
-                                                                        d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
-                                                                </svg> Edit Sale </a>
-                                                        </li>
+                                                        {{-- @if ($item->payment_statut == 'paid' && $item->statut != 'completed')
+                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                    href="{{ route('sale.edit', $item->id) }}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                    </svg> Edit Sale </a>
+                                                            </li>
+                                                        @else
+                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                    href="{{ route('sale.edit', $item->id) }}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                    </svg> Edit Sale </a>
+                                                            </li>
+                                                        @endif --}}
+                                                        @if ($item->payment_statut == 'paid' && $item->statut == 'completed')
+                                                            <li class="iq-sub-card list-group-item">
+                                                                <a class="p-0 text-danger" href="javascript:void(0)"
+                                                                    style="pointer-events: none;">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24"
+                                                                        fill="red">
+                                                                        <path fill="currentColor"
+                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                    </svg> Edit Sale
+                                                                </a>
+                                                            </li>
+                                                        @else
+                                                            <li class="iq-sub-card list-group-item">
+                                                                <a class="p-0"
+                                                                    href="{{ route('sale.edit', $item->id) }}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                    </svg> Edit Sale
+                                                                </a>
+                                                            </li>
+                                                        @endif
+
                                                         <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
                                                             data-bs-target="#staticBackdrop{{ $item->id }}">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
