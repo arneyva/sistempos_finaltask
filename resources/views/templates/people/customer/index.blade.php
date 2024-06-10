@@ -241,7 +241,7 @@
 </script>
 
 <script>
-    document.querySelectorAll('.editBtn').forEach(button => {
+document.querySelectorAll('.editBtn').forEach(button => {
     button.addEventListener('click', function() {
         let userId = this.getAttribute('data-id');
         let userName = this.getAttribute('data-name');
@@ -249,74 +249,75 @@
         let userPhone = this.getAttribute('data-phone');
 
         Swal.fire({
-        title: 'Edit Data',
-        html: `
-            <input type="text" id="swal-input1" class="swal2-input" value="${userName}">
-            <input type="email" id="swal-input2" class="swal2-input" value="${userEmail}">
-            <input type="email" id="swal-input3" class="swal2-input" value="${userPhone}">`,
-        focusConfirm: false,
-        showCancelButton: true,
-        preConfirm: () => {
-            const name = document.getElementById('swal-input1').value;
-            const email = document.getElementById('swal-input2').value;
-            const phone = document.getElementById('swal-input3').value;
+            title: 'Edit Data',
+            html: `
+                <input type="text" id="swal-input1" class="swal2-input" value="${userName}">
+                <input type="email" id="swal-input2" class="swal2-input" value="${userEmail}">
+                <input type="text" id="swal-input3" class="swal2-input" value="${userPhone}">`,
+            focusConfirm: false,
+            showCancelButton: true,
+            preConfirm: () => {
+                const name = document.getElementById('swal-input1').value;
+                const email = document.getElementById('swal-input2').value;
+                const phone = document.getElementById('swal-input3').value;
 
-            // Validasi inputan
-            if (!name && !email && !phone) {
-            Swal.showValidationMessage(`Mohon isi kedua field`);
-            return false;
+                if (!name) {
+                    Swal.showValidationMessage(`Nama tidak boleh kosong`);
+                    return false;
+                } else if (name.length > 12) {
+                    Swal.showValidationMessage('Nama tidak lebih dari 12 karakter.');
+                    return false;
+                }
+
+                if (!email) {
+                    Swal.showValidationMessage('Email tidak boleh kosong');
+                    return false;
+                } else if (!validateEmail(email)) {
+                    Swal.showValidationMessage('Alamat email tidak valid.');
+                    return false;
+                }
+
+                if (!phone) {
+                    Swal.showValidationMessage('Nomor telepon tidak boleh kosong');
+                    return false;
+                } else if (!/^\d{12}$/.test(phone)) {
+                    Swal.showValidationMessage('Nomor telepon harus terdiri dari 12 digit.');
+                    return false;
+                }
+
+                function validateEmail(email) {
+                    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return re.test(email);
+                }
+
+                // Kirim data yang sudah diedit ke controller
+                return fetch(`/people/clients/update/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({name: name, email: email, phone: phone})
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'Network response was not ok');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    location.reload();
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                });
             }
-
-            if (!name) {
-                Swal.showValidationMessage(`Mohon isi nama`);
-                return false;} else if (name.length > 12) {
-                Swal.showValidationMessage('Name must be less than or equal to 12 characters.');
-                return false;}
-
-            if (!email) {
-                Swal.showValidationMessage('Email is required.');
-                return false;} else if (!validateEmail(email)) {
-                Swal.showValidationMessage('Email must be a valid email address.');
-                return false;}
-
-            if (!phone) {
-                Swal.showValidationMessage('Phone is required.');
-                return false;} else if (!/^\d{12}$/.test(phone)) {
-                Swal.showValidationMessage('Phone must be exactly 12 digits.');
-                return false;}
-
-            function validateEmail(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            }
-
-
-            // Kirim data yang sudah diedit ke controller
-            fetch(`/people/clients/update/${userId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify({name: name, email: email, phone: phone})
-            })
-            .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-            })
-            .then(data => {
-            console.log(data);
-            location.replace(location.href);
-            })
-            .catch(error => {
-            console.error('Error:', error);
-            });
-        }
         });
     });
-    });
+});
 </script>
 
 <script>
