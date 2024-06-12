@@ -34,9 +34,9 @@ class SaleController extends Controller
         $user_auth = auth()->user();
         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
         if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
-            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->latest();
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales','shipment'])->where('deleted_at', '=', null)->latest();
         } else {
-            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales','shipment'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
         }
         if ($request->filled('date')) {
             $saleQuery->whereDate('date', '=', $request->input('date'));
@@ -134,10 +134,10 @@ class SaleController extends Controller
         return $pdf->download("sales_{$timestamp}.pdf");
     }
 
-    public function shipments()
-    {
-        return view('templates.sale.shipments');
-    }
+    // public function shipments()
+    // {
+    //     return view('templates.sale.shipments');
+    // }
 
     /**
      * Show the form for creating a new resource.

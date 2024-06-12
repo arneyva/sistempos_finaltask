@@ -151,16 +151,26 @@
                         <tbody>
                             @foreach ($sale as $item)
                                 <tr>
-                                    <th>{{ $item->created_at }}</th>
-                                    <th>{{ $item->Ref }}</th>
-                                    <th>{{ $item->user->username }}</th>
-                                    <th>{{ $item->client->name }}</th>
-                                    <th>{{ $item->warehouse->name }}</th>
-                                    <th>{{ $item->statut }}</th>
-                                    <th>{{ $item->GrandTotal }}</th>
-                                    <th>{{ $item->payment_statut }}</th>
-                                    <th>Shipping</th>
-                                    <th>
+                                    <td>{{ $item->created_at }}</td>
+                                    <td>{{ $item->Ref }}</td>
+                                    <td>{{ $item->user->username }}</td>
+                                    <td>{{ $item->client->name }}</td>
+                                    <td>{{ $item->warehouse->name }}</td>
+                                    <td>{{ $item->statut }}</td>
+                                    <td>{{ $item->GrandTotal }}</td>
+                                    <td>{{ $item->payment_statut }}</td>
+                                    <td>
+                                        @if ($item->shipping_status == 'shipped')
+                                            <span class="btn btn-outline-success btn-sm">Shipped</span>
+                                        @elseif ($item->shipping_status == 'delivered')
+                                            <span class="btn btn-outline-primary btn-sm">Delivered</span>
+                                        @elseif ($item->shipping_status == 'cancelled')
+                                            <span class="btn btn-outline-warning btn-sm">Cancelled</span>
+                                        @else
+                                            <span class="btn btn-outline-danger btn-sm">Without Shipment</span>
+                                        @endif
+                                    </td>
+                                    <td>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="4em" height="4em"
                                             viewBox="0 0 24 24" class="dropdown-toggle"
                                             id="dropdownMenuButton{{ $item->id }}" data-bs-toggle="dropdown"
@@ -221,6 +231,74 @@
                                                         <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal">Close</button>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal fade" id="shippingmodal{{ $item->id }}" tabindex="-1"
+                                            aria-labelledby="shippingmodalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="shippingmodalLabel">Shipping</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{{ route('sale.shipment.store') }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="sale_id"
+                                                                value="{{ $item->id }}">
+                                                            <input type="hidden" name="Ref"
+                                                                value="SM-{{ $item->Ref }}">
+                                                            <div class="col mb-3">
+                                                                <label class="form-label" for="status">Status *</label>
+                                                                <select class="form-select" id="status"
+                                                                    name="status">
+                                                                    <option selected disabled value="">Choose...
+                                                                    </option>
+                                                                    <option value="shipped"
+                                                                        {{ $item->shipment && $item->shipment->status == 'shipped' ? 'selected' : '' }}>
+                                                                        Shipped</option>
+                                                                    <option value="delivered"
+                                                                        {{ $item->shipment && $item->shipment->status == 'delivered' ? 'selected' : '' }}>
+                                                                        Delivered</option>
+                                                                    <option value="cancelled"
+                                                                        {{ $item->shipment && $item->shipment->status == 'cancelled' ? 'selected' : '' }}>
+                                                                        Cancelled</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col mb-3">
+                                                                <label class="form-label" for="delivered_to">Delivered To
+                                                                    *</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="delivered_to" required name="delivered_to"
+                                                                    value="{{ $item->shipment ? $item->shipment->delivered_to : '' }}"
+                                                                    placeholder="input...">
+                                                            </div>
+                                                            <div class="col mb-3">
+                                                                <label class="form-label" for="shipping_address">Address
+                                                                    *</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="shipping_address" required name="shipping_address"
+                                                                    value="{{ $item->shipment ? $item->shipment->shipping_address : '' }}"
+                                                                    placeholder="input...">
+                                                            </div>
+                                                            <div class="col mb-3">
+                                                                <label class="form-label"
+                                                                    for="shipping_details">Details/Notes *</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="shipping_details" required name="shipping_details"
+                                                                    value="{{ $item->shipment ? $item->shipment->shipping_details : '' }}"
+                                                                    placeholder="input...">
+                                                            </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Save
+                                                            changes</button>
+                                                    </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
@@ -311,25 +389,6 @@
                                                                         d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
                                                                 </svg> Sale Detail </a>
                                                         </li>
-                                                        {{-- @if ($item->payment_statut == 'paid' && $item->statut != 'completed')
-                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                    href="{{ route('sale.edit', $item->id) }}">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                        height="1.5em" viewBox="0 0 24 24">
-                                                                        <path fill="currentColor"
-                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
-                                                                    </svg> Edit Sale </a>
-                                                            </li>
-                                                        @else
-                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                    href="{{ route('sale.edit', $item->id) }}">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                        height="1.5em" viewBox="0 0 24 24">
-                                                                        <path fill="currentColor"
-                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
-                                                                    </svg> Edit Sale </a>
-                                                            </li>
-                                                        @endif --}}
                                                         @if ($item->payment_statut == 'paid' && $item->statut == 'completed')
                                                             <li class="iq-sub-card list-group-item">
                                                                 <a class="p-0 text-danger" href="javascript:void(0)"
@@ -363,19 +422,29 @@
                                                                     d="M128 88a40 40 0 1 0 40 40a40 40 0 0 0-40-40m0 64a24 24 0 1 1 24-24a24 24 0 0 1-24 24m112-96H16a8 8 0 0 0-8 8v128a8 8 0 0 0 8 8h224a8 8 0 0 0 8-8V64a8 8 0 0 0-8-8m-46.35 128H62.35A56.78 56.78 0 0 0 24 145.65v-35.3A56.78 56.78 0 0 0 62.35 72h131.3A56.78 56.78 0 0 0 232 110.35v35.3A56.78 56.78 0 0 0 193.65 184M232 93.37A40.8 40.8 0 0 1 210.63 72H232ZM45.37 72A40.8 40.8 0 0 1 24 93.37V72ZM24 162.63A40.8 40.8 0 0 1 45.37 184H24ZM210.63 184A40.8 40.8 0 0 1 232 162.63V184Z" />
                                                             </svg> Show Payment
                                                         </li>
-                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                href="#">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                    height="1.5em" viewBox="0 0 32 32">
-                                                                    <path fill="currentColor"
-                                                                        d="M0 6v2h19v15h-6.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H4v-5H2v7h3.156c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3h8.312c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3H32v-8.156l-.063-.157l-2-6L29.72 10H21V6zm1 4v2h9v-2zm20 2h7.281L30 17.125V23h-1.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H21zM2 14v2h6v-2zm7 8c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2m16 0c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2" />
-                                                                </svg> Shipping </a>
+                                                        {{-- <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
+                                                            data-bs-target="#shippingmodal{{ $item->id }}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                height="1.5em" viewBox="0 0 32 32">
+                                                                <path fill="currentColor"
+                                                                    d="M0 6v2h19v15h-6.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H4v-5H2v7h3.156c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3h8.312c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3H32v-8.156l-.063-.157l-2-6L29.72 10H21V6zm1 4v2h9v-2zm20 2h7.281L30 17.125V23h-1.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H21zM2 14v2h6v-2zm7 8c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2m16 0c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2" />
+                                                            </svg> Shipping
+                                                        </li> --}}
+                                                        <li class="iq-sub-card list-group-item {{ $item->shipping ? '' : 'text-danger text-decoration-line-through' }}"
+                                                            {{ $item->shipping ? 'data-bs-toggle=modal data-bs-target=#shippingmodal' . $item->id : '' }}>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                height="1.5em" viewBox="0 0 32 32">
+                                                                <path fill="currentColor"
+                                                                    d="M0 6v2h19v15h-6.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H4v-5H2v7h3.156c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3h8.312c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3H32v-8.156l-.063-.157l-2-6L29.72 10H21V6zm1 4v2h9v-2zm20 2h7.281L30 17.125V23h-1.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H21zM2 14v2h6v-2zm7 8c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2m16 0c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2" />
+                                                            </svg>
+                                                            Shipping
                                                         </li>
+
                                                     </ul>
                                                 </div>
                                             </div>
                                         </div>
-                                    </th>
+                                        </th>
                                 </tr>
                             @endforeach
                         </tbody>
