@@ -14,6 +14,7 @@ use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Reports\ReportsController;
 use App\Http\Controllers\Sale\SaleController;
+use App\Http\Controllers\Sale\ShipmentController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Settings\WarehousesController;
@@ -111,7 +112,7 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
 Route::get('/sale/payment/success/{transaction}', [SaleController::class, 'success'])->name('sale.payment.success');
 Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(function () {
     Route::get('list', [SaleController::class, 'index'])->name('index');
-    Route::get('shipments', [SaleController::class, 'shipments'])->name('shipments');
+    Route::get('shipments', [ShipmentController::class, 'index'])->name('shipments');
     Route::get('detail/{id}', [SaleController::class, 'show'])->name('show');
     Route::get('create', [SaleController::class, 'create'])->name('create');
     Route::post('store', [SaleController::class, 'store'])->name('store');
@@ -124,6 +125,10 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
     Route::get('get_payments_by_sale/{id}', [SaleController::class, 'Payments_Sale'])->name('get_payments_by_sale');
     Route::get('export', [SaleController::class, 'export'])->name('export');
     Route::get('pdf', [SaleController::class, 'exportToPDF'])->name('pdf');
+    // 
+    Route::prefix('/shipment')->name('shipment.')->group(function () {
+        Route::post('store', [ShipmentController::class, 'store'])->name('store');
+    });
 });
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {
     Route::get('payments', [ReportsController::class, 'payments'])->name('payments');
@@ -220,4 +225,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
