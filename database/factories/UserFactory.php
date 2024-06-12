@@ -24,13 +24,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'firstname' => $this->faker->name,
-            'lastname' => $this->faker->name,
+            'firstname' => $this->faker->firstName,
+            'lastname' => $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,
-            'username' => $this->faker->unique()->name,
-            // Set semua password sama
-            'password' => bcrypt('password'), // Gunakan bcrypt atau Hash::make
-            'pin' => $this->getPin(), // Gunakan bcrypt atau Hash::make
+            'password' => bcrypt('password'), // Set semua password sama, Gunakan bcrypt atau Hash::make
+            'pin' => $this->getPin(),
             'phone' => '089655443322',
             'gender' => 'Laki-laki',
             'status' => 1,
