@@ -575,8 +575,9 @@
                         </i>
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-maps" data-bs-parent="#sidebar-menu">
+                        @role('superadmin')
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/maps/google.html">
+                            <a class="nav-link " href="{{ route('hrm.shifts.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -587,9 +588,10 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> G </i>
-                                <span class="item-name">Google</span>
+                                <span class="item-name">Shifts</span>
                             </a>
                         </li>
+                        @endrole
                         <li class="nav-item">
                             <a class="nav-link " href="../dashboard/maps/vector.html">
                                 <i class="icon">
