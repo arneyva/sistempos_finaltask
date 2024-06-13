@@ -35,7 +35,7 @@ class SalesReturnExport implements FromQuery, WithHeadings, WithMapping
         }
 
         if ($this->request->has('Ref') && $this->request->filled('Ref')) {
-            $salereturnQuery->where('Ref', 'like', '%' . $this->request->input('Ref') . '%');
+            $salereturnQuery->where('Ref', 'like', '%'.$this->request->input('Ref').'%');
         }
 
         if ($this->request->has('warehouse_id') && $this->request->filled('warehouse_id')) {
@@ -53,6 +53,7 @@ class SalesReturnExport implements FromQuery, WithHeadings, WithMapping
             $sortType = $this->request->input('SortType');
             $salereturnQuery->orderBy($sortField, $sortType);
         }
+
         return $salereturnQuery;
     }
 
@@ -67,7 +68,7 @@ class SalesReturnExport implements FromQuery, WithHeadings, WithMapping
             'Status',
             'Grand Total',
             'Payment Status',
-            'notes'
+            'notes',
         ];
     }
 
@@ -82,7 +83,7 @@ class SalesReturnExport implements FromQuery, WithHeadings, WithMapping
             $SaleReturn->statut,
             $SaleReturn->GrandTotal,
             $SaleReturn->payment_statut,
-            $SaleReturn->notes
+            $SaleReturn->notes,
         ];
     }
 }

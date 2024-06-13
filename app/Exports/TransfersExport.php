@@ -35,7 +35,7 @@ class TransfersExport implements FromQuery, WithHeadings, WithMapping
         }
 
         if ($this->request->has('Ref') && $this->request->filled('Ref')) {
-            $TransferQuery->where('Ref', 'like', '%' . $this->request->input('Ref') . '%');
+            $TransferQuery->where('Ref', 'like', '%'.$this->request->input('Ref').'%');
         }
 
         if ($this->request->has('from_warehouse_id') && $this->request->filled('from_warehouse_id')) {
@@ -54,6 +54,7 @@ class TransfersExport implements FromQuery, WithHeadings, WithMapping
             $sortType = $this->request->input('SortType');
             $TransferQuery->orderBy($sortField, $sortType);
         }
+
         return $TransferQuery;
     }
 
@@ -81,7 +82,7 @@ class TransfersExport implements FromQuery, WithHeadings, WithMapping
             $transfer->items,
             $transfer->GrandTotal,
             $transfer->notes,
-            $transfer->statut
+            $transfer->statut,
         ];
     }
 }

@@ -59,7 +59,7 @@ class ShipmentController extends Controller
             $shipmentQuery->whereDate('date', '=', $request->input('date'));
         }
         if ($request->filled('Ref')) {
-            $shipmentQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+            $shipmentQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
         }
 
         if ($request->filled('warehouse_id')) {
@@ -78,6 +78,7 @@ class ShipmentController extends Controller
         } else {
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
+
         return view('templates.sale.shipments', [
             'shipments' => $shipments,
             'warehouse' => $warehouses,

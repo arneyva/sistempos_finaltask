@@ -39,11 +39,11 @@ class ProductController extends Controller
         // dd($categories);
 
         if ($request->filled('code')) {
-            $productsQuery->where('code', 'like', '%' . $request->input('code') . '%');
+            $productsQuery->where('code', 'like', '%'.$request->input('code').'%');
         }
 
         if ($request->filled('name')) {
-            $productsQuery->where('name', 'like', '%' . $request->input('name') . '%');
+            $productsQuery->where('name', 'like', '%'.$request->input('name').'%');
         }
 
         if ($request->filled('category_id')) {
@@ -70,10 +70,10 @@ class ProductController extends Controller
                 // handle jumlah barang
                 if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
                     $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                    $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
                 } else {
                     $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->sum('qty');
-                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                    $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
                 }
             } elseif ($product->type == 'is_variant') {
                 //untuk product variant
@@ -96,14 +96,15 @@ class ProductController extends Controller
                 // handle jumlah barang
                 if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
                     $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                    $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
                 } else {
                     $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->sum('qty');
-                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
+                    $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
                 }
             }
             $items[] = $item;
         }
+
         return view('templates.product.index', [
             'items' => $items,
             'products' => $products,
@@ -119,11 +120,11 @@ class ProductController extends Controller
         //ambil data
 
         if ($request->filled('code')) {
-            $productsQuery->where('code', 'like', '%' . $request->input('code') . '%');
+            $productsQuery->where('code', 'like', '%'.$request->input('code').'%');
         }
 
         if ($request->filled('name')) {
-            $productsQuery->where('name', 'like', '%' . $request->input('name') . '%');
+            $productsQuery->where('name', 'like', '%'.$request->input('name').'%');
         }
 
         if ($request->filled('category_id')) {
@@ -161,7 +162,7 @@ class ProductController extends Controller
 
     private function generateUniqueCategoryCode()
     {
-        return 'CAT-IMPORT-' . Str::random(4);
+        return 'CAT-IMPORT-'.Str::random(4);
     }
 
     public function import_products(Request $request)
@@ -401,7 +402,7 @@ class ProductController extends Controller
 
                 foreach ($variants as $variant) {
                     if (ProductVariant::where('code', $variant->code)->exists()) {
-                        $errors[] = 'The code ' . $variant->code . ' has already been taken.';
+                        $errors[] = 'The code '.$variant->code.' has already been taken.';
                     } else {
                         $Product_variants_data[] = [
                             'product_id' => $productValue->id,
@@ -413,7 +414,7 @@ class ProductController extends Controller
                     }
                 }
 
-                if (!empty($errors)) {
+                if (! empty($errors)) {
                     return redirect()->back()->withErrors(['variants' => $errors])->withInput();
                 }
 
@@ -524,6 +525,7 @@ class ProductController extends Controller
             $item['CountQTY'][] = $war;
         }
         $data[] = $item;
+
         return view('templates.product.show', [
             'data' => $data,
         ]);
@@ -609,12 +611,12 @@ class ProductController extends Controller
         $item['images'] = [];
         if ($Product->image != '' && $Product->image != 'no-image.png') {
             foreach (explode(',', $Product->image) as $img) {
-                $path = public_path() . '/images/products/' . $img;
+                $path = public_path().'/images/products/'.$img;
                 if (file_exists($path)) {
                     $itemImg['name'] = $img;
                     $type = pathinfo($path, PATHINFO_EXTENSION);
                     $data = file_get_contents($path);
-                    $itemImg['path'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                    $itemImg['path'] = 'data:image/'.$type.';base64,'.base64_encode($data);
 
                     $item['images'][] = $itemImg;
                 }
@@ -830,7 +832,7 @@ class ProductController extends Controller
                         }
                         ProductWarehouse::insert($product_warehouse);
                     }
-                    if (!empty($errors)) {
+                    if (! empty($errors)) {
                         return redirect()->back()->withErrors($errors)->withInput();
                     }
                 } else {
@@ -840,7 +842,7 @@ class ProductController extends Controller
                 if ($request['images'] === null) {
                     if ($Product->image !== null) {
                         foreach (explode(',', $Product->image) as $img) {
-                            $pathIMG = public_path() . '/images/products/' . $img;
+                            $pathIMG = public_path().'/images/products/'.$img;
                             if (file_exists($pathIMG)) {
                                 if ($img != 'no-image.png') {
                                     @unlink($pathIMG);

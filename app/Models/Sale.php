@@ -62,6 +62,7 @@ class Sale extends Model
     {
         return $this->hasOne('App\Models\PaymentSale', 'sale_id');
     }
+
     public function shipment()
     {
         return $this->hasOne('App\Models\Shipment');

@@ -126,7 +126,7 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
     Route::get('get_payments_by_sale/{id}', [SaleController::class, 'Payments_Sale'])->name('get_payments_by_sale');
     Route::get('export', [SaleController::class, 'export'])->name('export');
     Route::get('pdf', [SaleController::class, 'exportToPDF'])->name('pdf');
-    // 
+    //
     Route::prefix('/shipment')->name('shipment.')->group(function () {
         Route::post('store', [ShipmentController::class, 'store'])->name('store');
     });
@@ -135,6 +135,7 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
         Route::get('create/{id}', [SaleReturnController::class, 'create_sell_return'])->name('create');
         Route::post('store', [SaleReturnController::class, 'store'])->name('store');
         Route::get('export', [SaleReturnController::class, 'export'])->name('export');
+        Route::get('detail/{id}', [SaleReturnController::class, 'show'])->name('show');
     });
 });
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {
@@ -232,4 +233,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

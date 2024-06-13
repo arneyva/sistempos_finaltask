@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use App\Models\User;
 
 class LoginRequest extends FormRequest
 {
@@ -30,7 +30,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required_without:pin', 'string', 'email', 'nullable'],
             'password' => ['required_without:pin', 'string', 'nullable'],
-            'pin' => ['required_without_all:email,password', 'numeric', 'min_digits:6','max_digits:6', 'nullable'],
+            'pin' => ['required_without_all:email,password', 'numeric', 'min_digits:6', 'max_digits:6', 'nullable'],
         ];
     }
 
@@ -47,7 +47,7 @@ class LoginRequest extends FormRequest
         if ($this->filled('pin')) {
             $user = User::where('pin', $this->pin)->first();
 
-            if (!$user) {
+            if (! $user) {
                 RateLimiter::hit($this->throttleKey());
 
                 throw ValidationException::withMessages([
@@ -56,6 +56,7 @@ class LoginRequest extends FormRequest
             }
 
             Auth::login($user, $this->boolean('remember'));
+
             return;
         }
 

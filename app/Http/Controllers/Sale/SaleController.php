@@ -17,12 +17,12 @@ use App\Models\Setting;
 use App\Models\Unit;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleController extends Controller
 {
@@ -34,15 +34,15 @@ class SaleController extends Controller
         $user_auth = auth()->user();
         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
         if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
-            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales','shipment'])->where('deleted_at', '=', null)->latest();
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales', 'shipment'])->where('deleted_at', '=', null)->latest();
         } else {
-            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales','shipment'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales', 'shipment'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
         }
         if ($request->filled('date')) {
             $saleQuery->whereDate('date', '=', $request->input('date'));
         }
         if ($request->filled('Ref')) {
-            $saleQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+            $saleQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
         }
 
         if ($request->filled('warehouse_id')) {
@@ -67,12 +67,14 @@ class SaleController extends Controller
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
         $client = Client::where('deleted_at', '=', null)->get(['id', 'name']);
+
         return view('templates.sale.index', [
             'sale' => $sale,
             'warehouse' => $warehouses,
-            'client' => $client
+            'client' => $client,
         ]);
     }
+
     public function export(Request $request)
     {
         $timestamp = now()->format('Y-m-d_H-i-s');
@@ -96,7 +98,7 @@ class SaleController extends Controller
         }
 
         if ($request->has('Ref') && $request->filled('Ref')) {
-            $SaleQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+            $SaleQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
         }
 
         if ($request->has('warehouse_id') && $request->filled('warehouse_id')) {
@@ -160,7 +162,7 @@ class SaleController extends Controller
             $item = $last->Ref;
             $nwMsg = explode('_', $item);
             $inMsg = $nwMsg[1] + 1;
-            $code = $nwMsg[0] . '_' . $inMsg;
+            $code = $nwMsg[0].'_'.$inMsg;
         } else {
             // $code = 'SL_1111';
             $code = 'SL_1';
@@ -268,7 +270,7 @@ class SaleController extends Controller
                     $transaction = PaymentSale::create([
                         'user_id' => $order->user_id,
                         'date' => $order->date,
-                        'Ref' => 'INV-' . $order->Ref,
+                        'Ref' => 'INV-'.$order->Ref,
                         'sale_id' => $order->id,
                         'montant' => $order->GrandTotal,
                         'change' => 0,
@@ -296,7 +298,7 @@ class SaleController extends Controller
                     $transaction = PaymentSale::create([
                         'user_id' => $order->user_id,
                         'date' => $order->date,
-                        'Ref' => 'INV-' . $order->Ref,
+                        'Ref' => 'INV-'.$order->Ref,
                         'sale_id' => $order->id,
                         'montant' => $order->GrandTotal,
                         'change' => $request->change_return ?? 0,
@@ -308,7 +310,7 @@ class SaleController extends Controller
                 $transaction = PaymentSale::create([
                     'user_id' => $order->user_id,
                     'date' => $order->date,
-                    'Ref' => 'INV-' . $order->Ref,
+                    'Ref' => 'INV-'.$order->Ref,
                     'sale_id' => $order->id,
                     'montant' => $order->GrandTotal,
                     'change' => 0,
@@ -449,7 +451,7 @@ class SaleController extends Controller
                     ->where('id', $detail->product_variant_id)->first();
 
                 $data['code'] = $productsVariants->code;
-                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
             } else {
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
@@ -594,7 +596,7 @@ class SaleController extends Controller
                     $item_product ? $data['del'] = 0 : $data['del'] = 1;
                     $data['product_variant_id'] = $detail->product_variant_id;
                     $data['code'] = $productsVariants->code;
-                    $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+                    $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
 
                     if ($unit && $unit->operator == '/') {
                         $stock = $item_product ? $item_product->qty * $unit->operator_value : 0;
@@ -767,7 +769,7 @@ class SaleController extends Controller
                         }
                     }
                     // Delete Detail
-                    if (!in_array($old_products_id[$key], $new_products_id)) {
+                    if (! in_array($old_products_id[$key], $new_products_id)) {
                         $SaleDetail = SaleDetail::findOrFail($value->id);
                         $SaleDetail->delete();
                     }
@@ -829,7 +831,7 @@ class SaleController extends Controller
                         $orderDetails['total'] = $prod_detail['subtotal'];
                         // $orderDetails['imei_number']        = $prod_detail['imei_number'];
 
-                        if (!in_array($prod_detail['id'], $old_products_id)) {
+                        if (! in_array($prod_detail['id'], $old_products_id)) {
                             $orderDetails['date'] = Carbon::now();
                             $orderDetails['sale_unit_id'] = $unit_prod ? $unit_prod->id : null;
                             SaleDetail::Create($orderDetails);

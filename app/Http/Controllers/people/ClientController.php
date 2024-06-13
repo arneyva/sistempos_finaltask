@@ -105,20 +105,20 @@ class ClientController extends Controller
             'email' => ['required', 'email', Rule::unique('clients')->ignore($id)],
             'phone' => 'required|numeric|digits:12',
         ];
-    
+
         $messages = [
             'required' => 'Tidak boleh kosong!',
             'email' => 'Alamat email tidak valid!',
             'digits' => 'Nomor telepon harus terdiri dari :digits digit.',
             'unique' => ':attribute sudah terdaftar',
         ];
-    
+
         $validateData = $request->validate($rules, $messages);
-    
+
         $client->update($validateData);
 
         session()->flash('success', 'Client berhasil diedit');
-    
+
         return response()->json(['message' => 'Client berhasil diedit'], 200);
     }
 
