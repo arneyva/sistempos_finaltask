@@ -15,15 +15,16 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $categoryQuery = Category::query()->where('deleted_at','=', null)->latest();
+        $categoryQuery = Category::query()->where('deleted_at', '=', null)->latest();
         if ($request->filled('search')) {
             $search = $request->input('search');
             $categoryQuery->where(function ($query) use ($search) {
-                $query->where('code', 'like', '%' . $search . '%')
-                    ->orWhere('name', 'like', '%' . $search . '%');
+                $query->where('code', 'like', '%'.$search.'%')
+                    ->orWhere('name', 'like', '%'.$search.'%');
             });
         }
         $category = $categoryQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+
         return view('templates.product.category.index', [
             'category' => $category,
         ]);

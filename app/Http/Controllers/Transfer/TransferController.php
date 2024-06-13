@@ -12,12 +12,12 @@ use App\Models\TransferDetail;
 use App\Models\Unit;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 
 class TransferController extends Controller
 {
@@ -37,7 +37,7 @@ class TransferController extends Controller
             $transferQuery->whereDate('date', '=', $request->input('date'));
         }
         if ($request->filled('Ref')) {
-            $transferQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+            $transferQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
         }
 
         if ($request->filled('from_warehouse_id')) {
@@ -57,8 +57,10 @@ class TransferController extends Controller
         } else {
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
+
         return view('templates.transfer.index', ['transfer' => $transfer, 'warehouse' => $warehouses]);
     }
+
     public function export(Request $request)
     {
         $timestamp = now()->format('Y-m-d_H-i-s');
@@ -82,7 +84,7 @@ class TransferController extends Controller
         }
 
         if ($request->has('Ref') && $request->filled('Ref')) {
-            $TransferQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
+            $TransferQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
         }
 
         if ($request->has('from_warehouse_id') && $request->filled('from_warehouse_id')) {
@@ -133,7 +135,7 @@ class TransferController extends Controller
             $item = $last->Ref;
             $nwMsg = explode('_', $item);
             $inMsg = $nwMsg[1] + 1;
-            $code = $nwMsg[0] . '_' . $inMsg;
+            $code = $nwMsg[0].'_'.$inMsg;
         } else {
             $code = 'TR_1';
         }
@@ -372,7 +374,7 @@ class TransferController extends Controller
                     ->where('id', $detail->product_variant_id)->first();
 
                 $item_product ? $data['del'] = 0 : $data['del'] = 1;
-                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
                 $data['code'] = $productsVariants->code;
 
                 $data['product_variant_id'] = $detail->product_variant_id;
@@ -592,7 +594,7 @@ class TransferController extends Controller
                     }
 
                     // Delete Detail
-                    if (!in_array($old_products_id[$key], $new_products_id)) {
+                    if (! in_array($old_products_id[$key], $new_products_id)) {
                         $TransferDetail = TransferDetail::findOrFail($value->id);
                         $TransferDetail->delete();
                     }
@@ -720,7 +722,7 @@ class TransferController extends Controller
                     // } else {
                     //     TransferDetail::where('id', $product_detail['id'])->update($TransDetail);
                     // }
-                    if (!isset($product_detail['id']) || !in_array($product_detail['id'], $old_products_id)) {
+                    if (! isset($product_detail['id']) || ! in_array($product_detail['id'], $old_products_id)) {
                         TransferDetail::create($TransDetail);
                     } else {
                         TransferDetail::where('id', $product_detail['id'])->update($TransDetail);

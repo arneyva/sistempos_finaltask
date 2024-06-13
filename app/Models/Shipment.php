@@ -6,19 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Shipment extends Model
 {
-
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'user_id', 'date', 'Ref', 'sale_id', 'delivered_to', 'shipping_address', 'status', 'shipping_details',
 
     ];
+
     protected $table = 'shipments';
+
     protected $casts = [
         'user_id' => 'integer',
         'sale_id' => 'integer',
     ];
-
 
     public function sale()
     {

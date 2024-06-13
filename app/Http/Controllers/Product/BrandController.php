@@ -15,12 +15,12 @@ class BrandController extends Controller
      */
     public function index(Request $request)
     {
-        $brandQuery = Brand::query()->where('deleted_at','=', null)->latest();
-        if($request->filled('search')){
+        $brandQuery = Brand::query()->where('deleted_at', '=', null)->latest();
+        if ($request->filled('search')) {
             $search = $request->input('search');
             $brandQuery->where(function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('description', 'like', '%' . $search . '%');
+                $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%');
             });
         }
         $brands = $brandQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
