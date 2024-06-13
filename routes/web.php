@@ -134,6 +134,7 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
         Route::get('list', [SaleReturnController::class, 'index'])->name('index');
         Route::get('create/{id}', [SaleReturnController::class, 'create_sell_return'])->name('create');
         Route::post('store', [SaleReturnController::class, 'store'])->name('store');
+        Route::get('export', [SaleReturnController::class, 'export'])->name('export');
     });
 });
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {

@@ -27,8 +27,7 @@
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
-                    <a href="{{ route('sale.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
-                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    <a href="{{ route('sale.return.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <a href="{{ route('sale.create') }}"><button type="button" class="btn btn-soft-primary">Create
                             +</button></a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"

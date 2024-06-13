@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Sale;
 
+use App\Exports\SalesExport;
+use App\Exports\SalesReturnExport;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Product;
@@ -16,6 +18,7 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SaleReturnController extends Controller
 {
@@ -169,6 +172,13 @@ class SaleReturnController extends Controller
             'details' => $details,
             'sale_return' => $Return_detail,
         ]);
+    }
+    public function export(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "SalesReturn_{$timestamp}.xlsx";
+
+        return Excel::download(new SalesReturnExport($request), $filename);
     }
     public function getNumberOrder()
     {
