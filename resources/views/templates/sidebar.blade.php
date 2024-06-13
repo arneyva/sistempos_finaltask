@@ -432,7 +432,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="utilities-error" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/errors/error404.html">
+                            <a class="nav-link " href="{{ route('sale.return.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -442,35 +442,7 @@
                                         </g>
                                     </svg>
                                 </i>
-                                <span class="item-name">Error 404</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/errors/error500.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <span class="item-name">Error 500</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/errors/maintenance.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <span class="item-name">Maintenance</span>
+                                <span class="item-name">All Sales Return</span>
                             </a>
                         </li>
                     </ul>
@@ -576,21 +548,21 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-maps" data-bs-parent="#sidebar-menu">
                         @role('superadmin')
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('hrm.shifts.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> G </i>
-                                <span class="item-name">Shifts</span>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('hrm.shifts.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> G </i>
+                                    <span class="item-name">Shifts</span>
+                                </a>
+                            </li>
                         @endrole
                         <li class="nav-item">
                             <a class="nav-link " href="../dashboard/maps/vector.html">

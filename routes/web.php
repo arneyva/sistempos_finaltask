@@ -14,6 +14,7 @@ use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Reports\ReportsController;
 use App\Http\Controllers\Sale\SaleController;
+use App\Http\Controllers\Sale\SaleReturnController;
 use App\Http\Controllers\Sale\ShipmentController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\MembershipController;
@@ -128,6 +129,11 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
     // 
     Route::prefix('/shipment')->name('shipment.')->group(function () {
         Route::post('store', [ShipmentController::class, 'store'])->name('store');
+    });
+    Route::prefix('/return')->name('return.')->group(function () {
+        Route::get('list', [SaleReturnController::class, 'index'])->name('index');
+        Route::get('create/{id}', [SaleReturnController::class, 'create_sell_return'])->name('create');
+        Route::post('store', [SaleReturnController::class, 'store'])->name('store');
     });
 });
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {

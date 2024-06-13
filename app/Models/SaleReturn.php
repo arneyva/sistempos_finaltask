@@ -60,6 +60,7 @@ class SaleReturn extends Model
 
     public function facture()
     {
-        return $this->hasMany('App\Models\PaymentSaleReturns');
+        // return $this->hasMany('App\Models\PaymentSaleReturns');
+        return $this->hasOne('App\Models\PaymentSaleReturns');
     }
 }
