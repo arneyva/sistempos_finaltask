@@ -101,7 +101,7 @@
                     <div class="row">
                         @foreach($days as $day => $dayName)
                         <div class="col-md-12 mb-2">
-                            <div class="checkbox-wrapper-46">
+                            <div class="checkbox-wrapper-46" id="{{ $day }}-wrapper">
                                 <input type="checkbox" id="{{ $day }}" name="{{ $day }}" value="1" class="inp-cbx" />
                                 <label for="{{ $day }}" class="cbx">
                                     <span>
@@ -112,7 +112,7 @@
                                     <span>{{ $dayName }}</span>
                                 </label>
                             </div>
-                            <div id="{{ $day }}-times" class="my-2" style="display: none; ">
+                            <div id="{{ $day }}-times" class="mt-2 mb-3" style="display: none; ">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="{{ $day }}_in">In-Time</label>
@@ -147,11 +147,14 @@
         days.forEach(day => {
             const checkbox = document.getElementById(day);
             const times = document.getElementById(day + '-times');
+            const wrapper = document.getElementById(day + '-wrapper');
 
             checkbox.addEventListener('change', function() {
                 if (this.checked) {
                     times.style.display = 'block';
+                    wrapper.classList.add('mt-3');
                 } else {
+                    wrapper.classList.remove('mt-3');
                     times.style.display = 'none';
                 }
             });

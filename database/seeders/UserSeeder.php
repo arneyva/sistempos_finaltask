@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     {
 
         User::firstOrCreate([
-            'firstname' => 'user',
+            'firstname' => 'Staff',
             'lastname' => 'biasa',
             'username' => 'user',
             'email' => 'user@gmail.com',
@@ -25,12 +25,13 @@ class UserSeeder extends Seeder
             'gender' => 'Laki-laki',
             'status' => 1,
             'avatar' => 'no_avatar.png',
-        ])->assignRole('staff');
+        ])->assignRole('staff')
+            ->warehouses()->attach(2);
         User::firstOrCreate([
-            'firstname' => 'user',
-            'lastname' => 'utama',
+            'firstname' => 'Inventaris',
+            'lastname' => 'Biasa',
             'username' => 'userutama',
-            'email' => 'user2@gmail.com',
+            'email' => 'inventaris@gmail.com',
             'password' => bcrypt('password'),
             'pin' => $this->getPin(),
             'phone' => '089655443322',
