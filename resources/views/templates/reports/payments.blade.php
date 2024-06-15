@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Reports</h1>
-<p>look up your daily report</p>
+    <h1>Reports</h1>
+    <p>look up your daily report</p>
 @endsection
 
 <style>
@@ -225,7 +225,7 @@
                                 <th>Date</th>
                                 <th>Reference</th>
                                 <th>Sale</th>
-                                <th>Supplier</th>
+                                <th>Customer</th>
                                 <th>Paid by</th>
                                 <th>Account</th>
                                 <th>Amount</th>
@@ -233,31 +233,13 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>12-01-2024</td>
-                                <td>70171027</td>
-                                <td>1</td>
-                                <td>Budi</td>
-                                <td>Budi</td>
-                                <td>Budi</td>
-                                <td>Rp. 50000</td>
-                            </tr>
-                            <tr>
-                                <td>12-01-2024</td>
-                                <td>70171027</td>
-                                <td>1</td>
-                                <td>Budi</td>
-                                <td>Budi</td>
-                                <td>Budi</td>
-                                <td>Rp. 50000</td>
-                            </tr>
-                            <tr>
-                                <td>12-01-2024</td>
-                                <td>70171027</td>
-                                <td>1</td>
-                                <td>Budi</td>
-                                <td>Budi</td>
-                                <td>Budi</td>
-                                <td>Rp. 50000</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </tbody>
                         <tr>
@@ -266,8 +248,8 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td style="background-color: #dfd5ce">Total</td>
-                            <td style="background-color: #dfd5ce">Rp 10000</td>
+                            <td>Total</td>
+                            <td>Rp 10000</td>
                         </tr>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
@@ -287,8 +269,9 @@
                     <span class="input-group-text d-inline" id="search-input">
                         <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></circle>
+                            <circle cx="11.7669" cy="11.7666" r=" 8.98856" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round">
+                            </circle>
                             <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
                                 stroke-linecap="round" stroke-linejoin="round"></path>
                         </svg>

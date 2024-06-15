@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Reports</h1>
-<p>look up your daily report</p>
+    <h1>Reports</h1>
+    <p>look up your daily report</p>
 @endsection
 
 <style>
@@ -32,18 +32,21 @@
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
-                <div class="input-group search-input" style="width: 30%">
-                    <span class="input-group-text d-inline" id="search-input">
-                        <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></circle>
-                            <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    </span>
-                    <input type="search" class="form-control" placeholder="Search...">
-                </div>
+                <form action="{{ route('reports.customers') }}" method="GET">
+                    <div class="input-group search-input">
+                        <span class="input-group-text d-inline" id="search-input">
+                            <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"></circle>
+                                <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </span>
+                        <input type="search" class="form-control" name="search" value="{{ request()->input('search') }}"
+                            placeholder="Search...">
+                    </div>
+                </form>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive mt-4">
@@ -61,50 +64,40 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Budi</td>
-                                <td>070171027</td>
-                                <td>1</td>
-                                <td>2000</td>
-                                <td>2000</td>
-                                <td>2000</td>
-                                <td>2000</td>
-                                <td>
-                                    <a href="#" class="warehousedeleted" style="margin-right: 10px">Report
-                                    </a>
-                                    <a href="#" class="pdfstyle">Pdf
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Budi</td>
-                                <td>070171027</td>
-                                <td>1</td>
-                                <td>2000</td>
-                                <td>2000</td>
-                                <td>2000</td>
-                                <td>2000</td>
-                                <td>
-                                    <a href="#" class="warehousedeleted" style="margin-right: 10px">Report
-                                    </a>
-                                    <a href="#" class="pdfstyle">Pdf
-                                    </a>
-                                </td>
-                            </tr>
+                            @foreach ($report as $item)
+                                <tr>
+                                    <td>{{ $item['name'] }}</td>
+                                    <td>{{ $item['phone'] }}</td>
+                                    <td>{{ $item['total_sales'] }}</td>
+                                    <td>{{ 'Rp ' . number_format($item['total_amount'], 2, ',', '.') }}</td>
+                                    <td>{{ 'Rp ' . number_format($item['total_paid'], 2, ',', '.') }}</td>
+                                    <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}</td>
+                                    <td>{{ 'Rp ' . number_format($item['return_Due'], 2, ',', '.') }}</td>
+                                    <td>
+                                        <a href="#" class="warehousedeleted" style="margin-right: 10px">Report
+                                        </a>
+                                        <a href="#" class="pdfstyle">Pdf
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
-                        <tr>
-                            <td style=""></td>
-                            <td style=""></td>
-                            <td style="font-weight: bold">Total</td>
-                            <td style="font-weight: bold">Rp 10000</td>
-                            <td style="font-weight: bold">Rp 10000</td>
-                            <td style="font-weight: bold">Rp 10000</td>
-                            <td style="font-weight: bold">Rp 10000</td>
-                            <td style="font-weight: bold"></td>
-                        </tr>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td style="font-weight: bold">Total</td>
+                                <td>{{ $total_sales }}</td>
+                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_amount, 2, ',', '.') }}</td>
+                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_paid, 2, ',', '.') }}</td>
+                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_due, 2, ',', '.') }}</td>
+                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_return_due, 2, ',', '.') }}
+                                </td>
+                                <td style="font-weight: bold"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-right: 10px; margin-top:10px">
-                        {{-- {{ $brands->links() }} --}}
+                        {{ $clients->links() }}
                     </div>
                 </div>
             </div>
@@ -112,26 +105,4 @@
     </div>
 @endsection
 @push('script')
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const searchInput = document.querySelector('.search-input input');
-            const rows = document.querySelectorAll('#basic-table tbody tr');
-
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.trim().toLowerCase();
-
-                rows.forEach(row => {
-                    const nameColumn = row.querySelector('td:first-child').textContent.trim()
-                        .toLowerCase();
-
-
-                    if (nameColumn.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
-        });
-    </script>
 @endpush
