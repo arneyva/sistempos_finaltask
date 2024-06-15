@@ -133,10 +133,11 @@
                     <div class="row">
                         @foreach($days as $day => $dayName)
                         <div class="col-md-12 mb-2">
-                            <div class="checkbox-wrapper-46">
-                                @if (!is_null($shift->$dayName))
+                            @if (!is_null($shift->$dayName))
+                            <div class="checkbox-wrapper-46 mt-3" id="{{ $day }}-wrapper">
                                 <input type="checkbox" id="{{ $day }}" name="{{ $day }}" value="1" class="inp-cbx" checked=""/>
                                 @else
+                                <div class="checkbox-wrapper-46" id="{{ $day }}-wrapper">
                                 <input type="checkbox" id="{{ $day }}" name="{{ $day }}" value="1" class="inp-cbx" />
                                 @endif
                                 <label for="{{ $day }}" class="cbx">
@@ -256,7 +257,7 @@
                 return user.text;
             }
             var $user = $(
-                '<div class="d-flex align-items-center"> <img class="img-fluid avatar avatar-50 avatar-rounded" src="/hopeui/html/assets/images/avatars/'+ $(user.element).data('avatar') + '"alt="profile"> <div class="caption ms-3 d-none d-md-block"><h6 class="mb-0 caption-title">'+ user.text + '</h6><p class="mb-0 caption-sub-title">' +  $(user.element).data('pin') + '</p></div></div>'
+                '<div class="d-flex align-items-center"> <img class="img-fluid avatar avatar-50 avatar-rounded" src="/hopeui/html/assets/images/avatars/'+ $(user.element).data('avatar') + '"alt="profile"><a style="margin-right:10px;"><a/><div><h6 class="mb-0 caption-title">'+ user.text + '</h6><p class="mb-0 caption-sub-title">' +  $(user.element).data('pin') + '</p></div></div>'
             );
             return $user;
         };
@@ -356,11 +357,14 @@
         days.forEach(day => {
             const checkbox = document.getElementById(day);
             const times = document.getElementById(day + '-times');
+            const wrapper = document.getElementById(day + '-wrapper');
 
             checkbox.addEventListener('change', function() {
                 if (this.checked) {
                     times.style.display = 'block';
+                    wrapper.classList.add('mt-3');
                 } else {
+                    wrapper.classList.remove('mt-3');
                     times.style.display = 'none';
                 }
             });

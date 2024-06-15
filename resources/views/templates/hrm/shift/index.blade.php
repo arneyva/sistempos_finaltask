@@ -134,6 +134,27 @@
     .button-edit:hover p::before {
     width: 100%;
     }
+    .card-list {
+    display: flex;
+    flex-direction: column;
+    height: 349px; /* Tetapkan tinggi tetap untuk card */
+    }
+
+    .card-header {
+    flex-shrink: 0; /* Pastikan header tidak menyusut */
+    max-height: 21%; /* Tetapkan tinggi maksimum untuk header, misalnya 50% dari card */
+    overflow: hidden; /* Sembunyikan overflow jika teks terlalu banyak */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* Batas jumlah baris (ganti sesuai kebutuhan) */
+    text-overflow: ellipsis;
+    white-space: normal;
+    color:#000000;
+    }
+
+    .card-body-list {
+        flex-grow: 1; /* Pastikan body mengambil sisa ruang */
+    }
 </style>
 <div class="col-lg-12">
     <div class="card">
@@ -158,63 +179,61 @@
 </div>
 @foreach ($shifts as $data)
 <div class="col-lg-3">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title"> {{$data->name}} </h5>
-        </div>
-        <div class="card-body card-body-scroll py-0">
+    <div class="card card-list">
+        <h5 class="card-header"> {{$data->name}} </h5>
+        <div class="card-body card-body-scroll card-body-list mt-3 py-0">
             <ul class="list-group list-group-flush">  
                 @if (!is_null($data->monday_in) || !is_null($data->monday_out)) 
-                <li class="list-group-item"> Monday</li>
-                    <ul class="list-group list-group-flush mx-3">   
+                <li class="list-group-item text-center pt-0 "> Monday</li>
+                    <ul class="list-group list-group-flush mx-2 text-center">   
                         <pre class="text-muted">In-Time:    {{$data->monday_in}}
 Out-TIme:   {{$data->monday_out}}
 </pre>
                     </ul>
                 @endif
                 @if (!is_null($data->tuesday_in) || !is_null($data->tuesday_out)) 
-                <li class="list-group-item"> Tuesday</li>
-                    <ul class="list-group list-group-flush mx-3">   
+                <li class="list-group-item text-center pt-0 "> Tuesday</li>
+                    <ul class="list-group list-group-flush mx-2 text-center">   
                         <pre class="text-muted">In-Time:    {{$data->tuesday_in}}
 Out-TIme:   {{$data->tuesday_out}}
 </pre>
                     </ul>
                     @endif
                 @if (!is_null($data->wednesday_in) || !is_null($data->wednesday_out)) 
-                <li class="list-group-item"> Wednesday</li>
-                    <ul class="list-group list-group-flush mx-3">   
+                <li class="list-group-item text-center pt-0 "> Wednesday</li>
+                    <ul class="list-group list-group-flush mx-2 text-center">   
                         <pre class="text-muted">In-Time:    {{$data->wednesday_in}}
 Out-TIme:   {{$data->wednesday_out}}
 </pre>
                     </ul>
                     @endif
                 @if (!is_null($data->thursday_in) || !is_null($data->thursday_out)) 
-                <li class="list-group-item"> Thursday</li>
-                    <ul class="list-group list-group-flush mx-3">   
+                <li class="list-group-item text-center pt-0 "> Thursday</li>
+                    <ul class="list-group list-group-flush mx-2 text-center">   
                         <pre class="text-muted">In-Time:    {{$data->thursday_in}}
 Out-TIme:   {{$data->thursday_out}}
 </pre>
                     </ul>
                     @endif
                 @if (!is_null($data->friday_in) || !is_null($data->friday_out)) 
-                <li class="list-group-item"> Friday</li>
-                    <ul class="list-group list-group-flush mx-3">   
+                <li class="list-group-item text-center pt-0 "> Friday</li>
+                    <ul class="list-group list-group-flush mx-2 text-center">   
                         <pre class="text-muted">In-Time:    {{$data->friday_in}}
 Out-TIme:   {{$data->friday_out}}
 </pre>
                     </ul>
                     @endif
                 @if (!is_null($data->saturday_in) || !is_null($data->saturday_out)) 
-                <li class="list-group-item"> Saturday</li>
-                    <ul class="list-group list-group-flush mx-3">   
+                <li class="list-group-item text-center pt-0 "> Saturday</li>
+                    <ul class="list-group list-group-flush mx-2 text-center">   
                         <pre class="text-muted">In-Time:    {{$data->saturday_in}}
 Out-TIme:   {{$data->saturday_out}}
 </pre>
                     </ul>
                     @endif
                 @if (!is_null($data->sunday_in) || !is_null($data->sunday_out)) 
-                <li class="list-group-item"> Sunday</li>
-                    <ul class="list-group list-group-flush mx-3">   
+                <li class="list-group-item text-center pt-0 "> Sunday</li>
+                    <ul class="list-group list-group-flush mx-2 text-center">   
                         <pre class="text-muted">In-Time:    {{$data->sunday_in}}
 Out-TIme:   {{$data->sunday_out}}
 </pre>
@@ -222,7 +241,7 @@ Out-TIme:   {{$data->sunday_out}}
                 @endif
             </ul>
         </div>
-        <div class="card-body">   
+        <div class="card-body pt-2">   
             <div class="d-flex flex-wrap align-items-center" style="float: right;">
                 <a class="button-edit" href="{{ route('hrm.shifts.show', $data['id']) }}">
                     <p>
@@ -234,7 +253,7 @@ Out-TIme:   {{$data->sunday_out}}
                         Delete
                     </p>
                 </a>
-                <form id="delete-form-{{  $data['id'] }}" action="{{ route('expenses.destroy',  $data['id']) }}" method="POST" style="display: none;">
+                <form id="delete-form-{{  $data['id'] }}" action="{{ route('hrm.shifts.destroy',  $data['id']) }}" method="POST" style="display: none;">
                     @csrf
                     @method('DELETE')
                 </form>

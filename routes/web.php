@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\expense\ExpenseCategoryController;
 use App\Http\Controllers\expense\ExpenseController;
 use App\Http\Controllers\hrm\OfficeShiftController;
+use App\Http\Controllers\hrm\ClockController;
 use App\Http\Controllers\people\ClientController;
 use App\Http\Controllers\people\ProviderController;
 use App\Http\Controllers\Product\BrandController;
@@ -49,6 +50,14 @@ use Illuminate\Support\Facades\Route;
 //     // return view('auth.login');
 // });
 Route::get('/', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| Universal SmartClock has clock-in and clock-out functions 
+|--------------------------------------------------------------------------
+*/
+Route::get('hrm/attendances/webclock', [ClockController::class, 'index']);
+
 Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
     Route::get('/detail/{id}', [ProductController::class, 'show'])->name('show');

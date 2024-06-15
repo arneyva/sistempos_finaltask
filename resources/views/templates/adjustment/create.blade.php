@@ -101,6 +101,7 @@
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
+                            console.log(data);
                             $('#selectProduct').empty().append(
                                 '<option selected disabled value="">Choose...</option>');
                             $.each(data, function(key, value) {

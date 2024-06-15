@@ -32,11 +32,6 @@
 
     <link rel="stylesheet" href="{{ asset('hopeui/html/assets/css/bootstrap-pincode-input.css') }}">
 
-    <style>
-        .pincode-input-text {
-            border-width: 2px; 
-        }
-    </style>
 
 
 </head>
