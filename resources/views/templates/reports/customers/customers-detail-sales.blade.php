@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Reports</h1>
+    <h1>Customers ~ Sales Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -81,7 +81,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
-                    <h4 class="card-title" style="align-self:center;margin-top:20px;">Budi Purnomo</h4>
+                    <h4 class="card-title" style="align-self:center;margin-top:20px;">{{ $client->name }}</h4>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3 mb-3">
@@ -163,16 +163,15 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" data-bs-toggle="tab" href="#profile-feed"
-                                            role="tab" aria-selected="false">Sales</a>
+                                        <a class="nav-link active show" role="tab" aria-selected="false">Sales</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#profile-friends" role="tab"
-                                            aria-selected="false">Sales Return</a>
+                                        <a class="nav-link" href="{{ route('reports.customers.returns', $client->id) }}"
+                                            role="tab" aria-selected="false">Sales Return</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#adjustment" role="tab"
-                                            aria-selected="false">Sales Payments</a>
+                                        <a class="nav-link" href="{{ route('reports.customers.payments', $client->id) }}"
+                                            role="tab" aria-selected="false">Sales Payments</a>
                                     </li>
                                 </ul>
                             </div>
@@ -180,7 +179,8 @@
                                 <div class="profile-content tab-content">
                                     <div id="profile-feed" class="tab-pane fade active show">
                                         <div class="card-header d-flex justify-content-between">
-                                            <form action="#" method="GET">
+                                            <form action="{{ route('reports.customers.sales', $client->id) }}"
+                                                method="GET">
                                                 <div class="input-group search-input">
                                                     <span class="input-group-text d-inline" id="search-input">
                                                         <svg class="icon-18" width="18" viewBox="0 0 24 24"
@@ -197,7 +197,11 @@
                                                         value="{{ request()->input('search') }}" placeholder="Search...">
                                                 </div>
                                             </form>
+                                            <div class="header-title">
+                                                <button type="button" class="btn btn-soft-danger">Excel</button>
+                                            </div>
                                         </div>
+
                                         <div class="card-body p-0">
                                             <div class="table-responsive mt-4">
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
@@ -247,8 +251,11 @@
                                                                         <span class="shipping-shipped">shipped</span>
                                                                     @elseif($item['shipping_status'] == 'delivered')
                                                                         <span class="shipping-delivered">delivered</span>
-                                                                    @else
+                                                                    @elseif($item['shipping_status'] == 'cancelled')
                                                                         <span class="shipping-cancelled">cancelled</span>
+                                                                    @else
+                                                                        <span class="shipping-cancelled">Without
+                                                                            Shipping</span>
                                                                     @endif
                                                                 </td>
                                                             </tr>
@@ -258,121 +265,6 @@
                                                 <div class="bd-example"
                                                     style="margin-left: 10px; margin-top:10px; margin-right:10px">
                                                     {{ $sales->links() }}
-                                                    {{-- {{ $sales->appends(['sales_page' => $sales->currentPage()])->links() }} --}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="profile-friends" class="tab-pane fade">
-                                        <div class="card-header d-flex justify-content-between">
-                                            <div class="input-group search-input" style="width: 30%">
-                                                <span class="input-group-text d-inline" id="search-input">
-                                                    <svg class="icon-18" width="18" viewBox="0 0 24 24"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle cx="11.7669" cy="11.7666" r="8.98856"
-                                                            stroke="currentColor" stroke-width="1.5"
-                                                            stroke-linecap="round" stroke-linejoin="round"></circle>
-                                                        <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor"
-                                                            stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round"></path>
-                                                    </svg>
-                                                </span>
-                                                <input type="search" class="form-control" placeholder="Search...">
-                                            </div>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <div class="table-responsive mt-4">
-                                                <table id="basic-table" class="table table-striped mb-0" role="grid">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Reference</th>
-                                                            <th>Customer Name</th>
-                                                            <th>Sale Ref</th>
-                                                            <th>Warehouse</th>
-                                                            <th>Grand Total</th>
-                                                            <th>Paid</th>
-                                                            <th>Due</th>
-                                                            <th>Status</th>
-                                                            <th>Payment</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($returns_customer as $item)
-                                                            <tr>
-                                                                <td>{{ $item['Ref'] }}</td>
-                                                                <td>{{ $item['client_name'] }}</td>
-                                                                <td>{{ $item['sale_ref'] }}</td>
-                                                                <td>{{ $item['warehouse_name'] }}</td>
-                                                                <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}
-                                                                </td>
-                                                                <td>{{ 'Rp ' . number_format($item['paid_amount'], 2, ',', '.') }}
-                                                                </td>
-                                                                <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}
-                                                                </td>
-                                                                <td>{{ $item['statut'] }}</td>
-                                                                <td>{{ $item['payment_status'] }}</td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                                <div class="bd-example"
-                                                    style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                                                    {{ $saleReturns->links() }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="adjustment" class="tab-pane fade">
-                                        <div class="card-header d-flex justify-content-between">
-                                            <div class="input-group search-input" style="width: 30%">
-                                                <span class="input-group-text d-inline" id="search-input">
-                                                    <svg class="icon-18" width="18" viewBox="0 0 24 24"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle cx="11.7669" cy="11.7666" r="8.98856"
-                                                            stroke="currentColor" stroke-width="1.5"
-                                                            stroke-linecap="round" stroke-linejoin="round"></circle>
-                                                        <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor"
-                                                            stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round"></path>
-                                                    </svg>
-                                                </span>
-                                                <input type="search" class="form-control" placeholder="Search...">
-                                            </div>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <div class="table-responsive mt-4">
-                                                <table id="basic-table" class="table table-striped mb-0" role="grid">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Date</th>
-                                                            <th>Reference</th>
-                                                            <th>Sale</th>
-                                                            <th>Paid by</th>
-                                                            <th>Amount</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($payments as $item)
-                                                            <tr>
-                                                                <td>{{ $item['date'] }}</td>
-                                                                <td>{{ $item['Payment_Ref'] }}</td>
-                                                                <td>{{ $item['Sale_Ref'] }}</td>
-                                                                <td>
-                                                                    @if ($item['Reglement'] == 'Cash')
-                                                                        Cash
-                                                                    @else
-                                                                        Midtrans
-                                                                    @endif
-                                                                </td>
-                                                                <td>{{ 'Rp ' . number_format($item['montant'], 2, ',', '.') }}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                                <div class="bd-example"
-                                                    style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                                                    {{-- {{ $sales->links() }} --}}
                                                 </div>
                                             </div>
                                         </div>

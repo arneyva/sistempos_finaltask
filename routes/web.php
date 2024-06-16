@@ -153,7 +153,13 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::get('quantity-alerts', [ReportsController::class, 'quantityAlerts'])->name('quantity-alerts');
     Route::get('stock', [ReportsController::class, 'stock'])->name('stock');
     Route::get('stock/{id}', [ReportsController::class, 'stockDetail'])->name('stock-detail');
-    Route::get('customers', [ReportsController::class, 'customers'])->name('customers');
+    // Route::get('customers', [ReportsController::class, 'customers'])->name('customers');
+    Route::prefix('/customers')->name('customers.')->group(function () {
+        Route::get('list', [ReportsController::class, 'customers'])->name('index');
+        Route::get('sales/{id}', [ReportsController::class, 'customersDetailSales'])->name('sales');
+        Route::get('returns/{id}', [ReportsController::class, 'customersDetailReturns'])->name('returns');
+        Route::get('payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('payments');
+    });
     Route::get('customers/{id}', [ReportsController::class, 'customersDetail'])->name('customers-detail');
     Route::get('supplier', [ReportsController::class, 'supplier'])->name('supplier');
     Route::get('supplier/{id}', [ReportsController::class, 'supplierDetail'])->name('supplier-detail');
@@ -242,4 +248,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

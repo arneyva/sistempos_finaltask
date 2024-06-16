@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
-                <form action="{{ route('reports.customers') }}" method="GET">
+                <form action="{{ route('reports.customers.index') }}" method="GET">
                     <div class="input-group search-input">
                         <span class="input-group-text d-inline" id="search-input">
                             <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
@@ -74,7 +74,8 @@
                                     <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}</td>
                                     <td>{{ 'Rp ' . number_format($item['return_Due'], 2, ',', '.') }}</td>
                                     <td>
-                                        <a href="#" class="warehousedeleted" style="margin-right: 10px">Report
+                                        <a href="{{ route('reports.customers.sales', $item['id']) }}"
+                                            class="warehousedeleted" style="margin-right: 10px">Report
                                         </a>
                                         <a href="#" class="pdfstyle">Pdf
                                         </a>
