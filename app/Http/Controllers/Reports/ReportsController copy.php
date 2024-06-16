@@ -36,7 +36,12 @@ class ReportsController extends Controller
         return view('templates.reports.stock-detail');
     }
 
+    // public function customers()
+    // {
+    //     return view('templates.reports.customers');
+    // }
     //----------------- Customers Report -----------------------\\
+
     public function customers(Request $request)
     {
         $clientsQuery = Client::where('deleted_at', '=', null)->latest();
@@ -97,6 +102,16 @@ class ReportsController extends Controller
             $totalDue += $item['due'];
             $totalReturnDue += $item['return_Due'];
         }
+
+        // return response()->json([
+        //     'report' => $data,
+        //     'total_sales' => $totalSales,
+        //     'total_amount' => $totalAmount,
+        //     'total_paid' => $totalPaid,
+        //     'total_due' => $totalDue,
+        //     'total_return_due' => $totalReturnDue,
+
+        // ]);
         return view('templates.reports.customers', [
             'report' => $data,
             'clients' => $clients,
@@ -123,11 +138,8 @@ class ReportsController extends Controller
         $salesQuery = Sale::where('deleted_at', '=', null)->where('client_id', $id)->with('client', 'warehouse')->latest();
         if ($request->filled('search')) {
             $salesQuery->where(function ($query) use ($request) {
-                $query->orWhere('Ref', 'like', '%' . $request->input('search') . '%')
-                    ->orWhere('statut', 'like', '%' . $request->input('search') . '%')
-                    ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
-                    ->orWhere('payment_method', 'like', '%' . $request->input('search') . '%')
-                    ->orWhere('shipping_status', 'like', '%' . $request->input('search') . '%');
+                $query->orWhere('Ref', 'like', '%' . $request->input('search') . '%');
+                // ->orWhere('phone', 'like', '%' . $request->input('search') . '%');
             });
         }
         $sales =  $salesQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
@@ -167,29 +179,28 @@ class ReportsController extends Controller
         $data['total_amount'] = DB::table('sales')->where('deleted_at', '=', null)->where('client_id', $id)->sum('GrandTotal');
         $data['total_paid'] = DB::table('sales')->where('deleted_at', '=', null)->where('client_id', $id)->sum('paid_amount');
         $data['due'] = $data['total_amount'] - $data['total_paid'];
+        // Retrieve sale returns data for the specific client
         $saleReturnsQuery = SaleReturn::where('deleted_at', '=', null)
-            ->where('client_id', $id)
             ->with('sale', 'client', 'warehouse')
-            ->latest();
-
-        if ($request->filled('search')) {
-            $saleReturnsQuery->where(function ($query) use ($request) {
-                $query->orWhere('Ref', 'LIKE', '%' . $request->input('search') . '%')
-                    ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
-                    ->orWhere('payment_statut', 'LIKE', '%' . $request->input('search') . '%')
-                    ->orWhereHas('client', function ($q) use ($request) {
-                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
-                    })
-                    ->orWhereHas('sale', function ($q) use ($request) {
-                        $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
-                    })
-                    ->orWhereHas('warehouse', function ($q) use ($request) {
-                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
-                    });
+            ->where('client_id', $id)
+            ->when($request->filled('search'), function ($query) use ($request) {
+                return $query->where(function ($query) use ($request) {
+                    return $query->where('Ref', 'LIKE', "%{$request->search}%")
+                        ->orWhere('statut', 'LIKE', "%{$request->search}%")
+                        ->orWhere('payment_statut', 'LIKE', "%{$request->search}%")
+                        ->orWhereHas('client', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', "%{$request->search}%");
+                        })
+                        ->orWhereHas('sale', function ($q) use ($request) {
+                            $q->where('Ref', 'LIKE', "%{$request->search}%");
+                        })
+                        ->orWhereHas('warehouse', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', "%{$request->search}%");
+                        });
+                });
             });
-        }
 
-        $saleReturns = $saleReturnsQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $saleReturns = $saleReturnsQuery->paginate($request->input('limit', 1))->appends($request->except('page'));
         $returnsCustomer = [];
         foreach ($saleReturns as $saleReturn) {
             $item = [
@@ -215,6 +226,56 @@ class ReportsController extends Controller
             'client' =>  $client,
         ]);
     }
+    // public function customersDetailPayments(Request $request, $id)
+    // {
+    //     // Find the client or fail if not found
+    //     $client = Client::where('deleted_at', '=', null)->findOrFail($id);
+
+    //     // Calculate client-specific data
+    //     $data['total_sales'] = DB::table('sales')->where('deleted_at', '=', null)->where('client_id', $id)->count();
+    //     $data['total_amount'] = DB::table('sales')->where('deleted_at', '=', null)->where('client_id', $id)->sum('GrandTotal');
+    //     $data['total_paid'] = DB::table('sales')->where('deleted_at', '=', null)->where('client_id', $id)->sum('paid_amount');
+    //     $data['due'] = $data['total_amount'] - $data['total_paid'];
+
+    //     $paymentsQuery = DB::table('payment_sales')
+    //         ->where('payment_sales.deleted_at', '=', null)
+    //         ->join('sales', 'payment_sales.sale_id', '=', 'sales.id')
+    //         ->where('sales.client_id', $id)
+    //         ->when($request->filled('search'), function ($query) use ($request) {
+    //             return $query->where(function ($query) use ($request) {
+    //                 return $query->where('payment_sales.Ref', 'LIKE', "%{$request->search}%")
+    //                     ->orWhere('payment_sales.date', 'LIKE', "%{$request->search}%")
+    //                     ->orWhere('payment_sales.Reglement', 'LIKE', "%{$request->search}%");
+    //             });
+    //         });
+
+    //     $payments = $paymentsQuery->select(
+    //         'payment_sales.date',
+    //         'payment_sales.Ref AS Payment_Ref',
+    //         'sales.Ref AS Sale_Ref',
+    //         'payment_sales.Reglement',
+    //         'payment_sales.montant'
+    //     )->paginate($request->input('payments_page', 5), ['*'], 'payments_page')->appends($request->except('payments_page'));
+
+    //     $paymentDetails = [];
+    //     foreach ($payments as $payment) {
+    //         $item = [
+    //             'date' => $payment->date,
+    //             'Payment_Ref' => $payment->Payment_Ref,
+    //             'Sale_Ref' => $payment->Sale_Ref,
+    //             'Reglement' => $payment->Reglement,
+    //             'montant' => $payment->montant,
+    //         ];
+
+    //         $paymentDetails[] = $item;
+    //     }
+
+    //     return view('templates.reports.customers.customers-detail-payments', [
+    //         'client_data' => $data,
+    //         'payments' => $paymentDetails,
+    //         'client' =>  $client,
+    //     ]);
+    // }
     public function customersDetailPayments(Request $request, $id)
     {
         // Find the client or fail if not found
@@ -225,27 +286,28 @@ class ReportsController extends Controller
         $data['total_amount'] = DB::table('sales')->where('deleted_at', '=', null)->where('client_id', $id)->sum('GrandTotal');
         $data['total_paid'] = DB::table('sales')->where('deleted_at', '=', null)->where('client_id', $id)->sum('paid_amount');
         $data['due'] = $data['total_amount'] - $data['total_paid'];
+
+        // Retrieve payment data for the specific client
         $paymentsQuery = DB::table('payment_sales')
             ->where('payment_sales.deleted_at', '=', null)
             ->join('sales', 'payment_sales.sale_id', '=', 'sales.id')
             ->where('sales.client_id', $id)
-            ->latest('payment_sales.date');
-
-        if ($request->filled('search')) {
-            $paymentsQuery->where(function ($query) use ($request) {
-                $query->orWhere('payment_sales.Ref', 'LIKE', '%' . $request->input('search') . '%')
-                    ->orWhere('payment_sales.date', 'LIKE', '%' . $request->input('search') . '%')
-                    ->orWhere('payment_sales.Reglement', 'LIKE', '%' . $request->input('search') . '%');
+            ->when($request->filled('search'), function ($query) use ($request) {
+                return $query->where(function ($query) use ($request) {
+                    return $query->where('payment_sales.Ref', 'LIKE', "%{$request->search}%")
+                        ->orWhere('payment_sales.date', 'LIKE', "%{$request->search}%")
+                        ->orWhere('payment_sales.Reglement', 'LIKE', "%{$request->search}%");
+                });
             });
-        }
+            dd($paymentsQuery->get());
         $payments = $paymentsQuery->select(
             'payment_sales.date',
             'payment_sales.Ref AS Payment_Ref',
             'sales.Ref AS Sale_Ref',
             'payment_sales.Reglement',
             'payment_sales.montant'
-        )->paginate($request->input('limit', 10))->appends($request->except('page'));
-        // dd($payments);
+        )->paginate($request->input('limit', 5))->appends($request->except('page'));
+
         $paymentDetails = [];
         foreach ($payments as $payment) {
             $item = [
@@ -258,9 +320,10 @@ class ReportsController extends Controller
 
             $paymentDetails[] = $item;
         }
+
         return view('templates.reports.customers.customers-detail-payments', [
             'client_data' => $data,
-            'paymentDetails' => $paymentDetails,
+            'report' => $paymentDetails,
             'payments' => $payments,
             'client' =>  $client,
         ]);
