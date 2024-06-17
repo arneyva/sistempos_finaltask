@@ -546,6 +546,96 @@ class ReportsController extends Controller
             'saleReturns_data' => $return_data
         ]);
     }
+    public function warehousePurchaseReturns(Request $request)
+    {
+        $saleQuery = Sale::where('deleted_at', '=', null);
+        if ($request->filled('warehouse_id')) {
+            $saleQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        $data['sales'] = $saleQuery->count();
+
+        $data['purchases'] = Purchase::where('deleted_at', '=', null);
+        if ($request->filled('warehouse_id')) {
+            $data['purchases']->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        $data['purchases'] = $data['purchases']->count();
+
+        $data['ReturnPurchase'] = PurchaseReturn::where('deleted_at', '=', null);
+        if ($request->filled('warehouse_id')) {
+            $data['ReturnPurchase']->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        $data['ReturnPurchase'] = $data['ReturnPurchase']->count();
+
+        $data['ReturnSale'] = SaleReturn::where('deleted_at', '=', null);
+        if ($request->filled('warehouse_id')) {
+            $data['ReturnSale']->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        $data['ReturnSale'] = $data['ReturnSale']->count();
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        $purchaseReturnQuery = PurchaseReturn::where('deleted_at', '=', null)
+            ->with('purchase', 'provider', 'warehouse');
+
+        if ($request->filled('warehouse_id')) {
+            $purchaseReturnQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+
+        if ($request->filled('search')) {
+            $purchaseReturnQuery->where(function ($query) use ($request) {
+                $query->whereHas('purchase', function ($q) use ($request) {
+                    $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
+                })
+                    ->orWhere('Ref', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('GrandTotal', $request->input('search'))
+                    ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('provider', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    });
+            });
+        }
+
+        $purchaseReturns = $purchaseReturnQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+
+        $purchase_return_data = [];
+        foreach ($purchaseReturns as $purchaseReturn) {
+            $item = [
+                'id' => $purchaseReturn->id,
+                'Ref' => $purchaseReturn->Ref,
+                'statut' => $purchaseReturn->statut,
+                'purchase_ref' => $purchaseReturn->purchase ? $purchaseReturn->purchase->Ref : '---',
+                'purchase_id' => $purchaseReturn->purchase ? $purchaseReturn->purchase->id : null,
+                'warehouse_name' => $purchaseReturn->warehouse->name,
+                'provider_name' => $purchaseReturn->provider->name,
+                'GrandTotal' => $purchaseReturn->GrandTotal,
+                'paid_amount' => $purchaseReturn->paid_amount,
+                'due' => $purchaseReturn->GrandTotal - $purchaseReturn->paid_amount,
+                'payment_status' => $purchaseReturn->payment_statut,
+            ];
+
+            $purchase_return_data[] = $item;
+        }
+
+        // return response()->json([
+        //     'data' => $data,
+        //     'warehouses' => $warehouses,
+        //     'saleReturns' => $saleReturns,
+        //     'saleReturns_data' => $return_data
+        // ]);
+        return view('templates.reports.warehouse.warehouse-purchase-returns', [
+            'data' => $data,
+            'warehouses' => $warehouses,
+            'purchaseReturns' => $purchaseReturns,
+            'purchase_return_data' => $purchase_return_data
+        ]);
+    }
 
     //----------------- Warehouse Report-----------------------\\
     public function sale()
