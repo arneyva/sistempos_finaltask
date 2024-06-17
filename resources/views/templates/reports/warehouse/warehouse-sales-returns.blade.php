@@ -2,7 +2,7 @@
 
 @section('pages_title')
     <h1>
-        Warehouse ~ Sales Reports</h1>
+        Warehouse ~ Sales Return Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -83,7 +83,7 @@
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div style="align-self:center;margin-top:20px;">
-                        <form action="{{ route('reports.warehouse.sales') }}" method="GET">
+                        <form action="{{ route('reports.warehouse.sales-returns') }}" method="GET">
                             <select class="form-select" id="selectWarehouse" name="warehouse_id">
                                 <option value="">All Warehouse/Outlet</option>
                                 @foreach ($warehouses as $wh)
@@ -93,7 +93,6 @@
                                     </option>
                                 @endforeach
                             </select>
-                            {{-- </form> --}}
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -172,11 +171,12 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">Sales</a>
+                                        <a class="nav-link active show" role="tab" aria-selected="false">Sales
+                                            Return</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.warehouse.sales-returns') }}"
-                                            role="tab" aria-selected="false">Sales Return</a>
+                                        <a class="nav-link" href="{{ route('reports.warehouse.sales') }}" role="tab"
+                                            aria-selected="false">Sales</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.purchase') }}" role="tab"
@@ -222,21 +222,22 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Reference</th>
-                                                            <th>Customer</th>
+                                                            <th>Customer Name</th>
+                                                            <th>Sale Ref</th>
                                                             <th>Warehouse</th>
                                                             <th>Grand Total</th>
                                                             <th>Paid</th>
                                                             <th>Due</th>
                                                             <th>Status</th>
                                                             <th>Payment</th>
-                                                            <th>Shipping </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($sales_data as $item)
+                                                        @foreach ($saleReturns_data as $item)
                                                             <tr>
                                                                 <td>{{ $item['Ref'] }}</td>
                                                                 <td>{{ $item['client_name'] }}</td>
+                                                                <td>{{ $item['sale_ref'] }}</td>
                                                                 <td>{{ $item['warehouse_name'] }}</td>
                                                                 <td> {{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}
                                                                 </td>
@@ -245,8 +246,8 @@
                                                                 <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}
                                                                 </td>
                                                                 <td>
-                                                                    @if ($item['statut'] == 'completed')
-                                                                        <span class="status-completed">completed</span>
+                                                                    @if ($item['statut'] == 'received')
+                                                                        <span class="status-completed">received</span>
                                                                     @elseif($item['statut'] == 'ordered')
                                                                         <span class="status-ordered">ordered</span>
                                                                     @else
@@ -260,25 +261,13 @@
                                                                         <span class="payment-unpaid">unpaid</span>
                                                                     @endif
                                                                 </td>
-                                                                <td>
-                                                                    @if ($item['shipping_status'] == 'shipped')
-                                                                        <span class="shipping-shipped">shipped</span>
-                                                                    @elseif($item['shipping_status'] == 'delivered')
-                                                                        <span class="shipping-delivered">delivered</span>
-                                                                    @elseif($item['shipping_status'] == 'cancelled')
-                                                                        <span class="shipping-cancelled">cancelled</span>
-                                                                    @else
-                                                                        <span class="shipping-cancelled">Without
-                                                                            Shipping</span>
-                                                                    @endif
-                                                                </td>
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
                                                 </table>
                                                 <div class="bd-example"
                                                     style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                                                    {{ $sales->links() }}
+                                                    {{ $saleReturns->links() }}
                                                 </div>
                                             </div>
                                         </div>

@@ -165,9 +165,10 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
     Route::prefix('/warehouse')->name('warehouse.')->group(function () {
         Route::get('sales', [ReportsController::class, 'warehouseSales'])->name('sales');
-        // Route::get('sales/{id}', [ReportsController::class, 'customersDetailSales'])->name('sales');
-        // Route::get('returns/{id}', [ReportsController::class, 'customersDetailReturns'])->name('returns');
-        // Route::get('payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('payments');
+        Route::get('expenses', [ReportsController::class, 'warehouseExpenses'])->name('expenses');
+        Route::get('sales-returns', [ReportsController::class, 'warehouseSalesReturns'])->name('sales-returns');
+        Route::get('purchase', [ReportsController::class, 'warehousePurchase'])->name('purchase');
+        Route::get('purchase-returns', [ReportsController::class, 'warehousePurchaseReturns'])->name('purchase-returns');
     });
     Route::get('sale', [ReportsController::class, 'sale'])->name('sale');
     Route::get('purchase', [ReportsController::class, 'purchase'])->name('purchase');

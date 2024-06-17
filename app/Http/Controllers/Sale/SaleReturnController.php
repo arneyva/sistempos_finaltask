@@ -57,7 +57,7 @@ class SaleReturnController extends Controller
 
         return view('templates.sale.return_index', [
             'salereturn' => $salereturn,
-            'warehouses' => $warehouses,
+            'warehouse' => $warehouses,
             'client' => $client,
         ]);
     }
