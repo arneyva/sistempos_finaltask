@@ -1,8 +1,9 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Reports</h1>
-<p>look up your daily report</p>
+    <h1>
+        Sale ~ Reports</h1>
+    <p>look up your daily report</p>
 @endsection
 
 <style>
@@ -11,6 +12,10 @@
         border-radius: 7px;
         background-color: #c9f1c4;
         color: #0f4c11;
+        border: 1px solid #0f4c11;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 
     .status-ordered {
@@ -18,6 +23,10 @@
         border-radius: 7px;
         background-color: #eff1c4;
         color: #4c4b0f;
+        border: 1px solid #4c4b0f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 
     .status-pending {
@@ -25,6 +34,10 @@
         border-radius: 7px;
         background-color: #f1c4c4;
         color: #4c0f0f;
+        border: 1px solid #4c0f0f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 
     .payment-paid {
@@ -32,6 +45,10 @@
         border-radius: 7px;
         background-color: #c4d9f1;
         color: #105e7f;
+        border: 1px solid #105e7f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 
     .payment-unpaid {
@@ -39,6 +56,10 @@
         border-radius: 7px;
         background-color: #f0c4f1;
         color: #7f107b;
+        border: 1px solid #7f107b;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 
     .payment-partial {
@@ -46,6 +67,10 @@
         border-radius: 7px;
         background-color: #f1dcc4;
         color: #7f6710;
+        border: 1px solid #7f6710;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 
     .shipping-shipped {
@@ -53,6 +78,10 @@
         border-radius: 7px;
         background-color: #c4c8f1;
         color: #33107f;
+        border: 1px solid #33107f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 
     .shipping-delivered {
@@ -60,6 +89,10 @@
         border-radius: 7px;
         background-color: #c4f1d1;
         color: #107f2c;
+        border: 1px solid #107f2c;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 
     .shipping-packed {
@@ -67,6 +100,10 @@
         border-radius: 7px;
         background-color: #b19785;
         color: #583606;
+        border: 1px solid #583606;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 
     .shipping-cancelled {
@@ -74,37 +111,113 @@
         border-radius: 7px;
         background-color: #f1c4e1;
         color: #7f104f;
+        border: 1px solid #7f104f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
     }
 </style>
 @section('content')
     <div class="col-sm-12">
         <div class="card">
-            <input class="input-group-text d-inline"
-                style="align-self:center;margin-top:20px;border-radius:5px;padding-left:20px;border-color:#b19785"
-                type="text" name="daterange" value='{{ date('m/d/Y') }} - {{ date('m/d/Y') }}' />
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
                     <h4 class="card-title">Sale Report</h4>
                 </div>
-            </div>
-            <div class="card-header d-flex justify-content-between">
-                <div class="input-group search-input" style="width: 30%">
-                    <span class="input-group-text d-inline" id="search-input">
-                        <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></circle>
-                            <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    </span>
-                    <input type="search" class="form-control" placeholder="Search...">
-                </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
-                    <button type="button" class="btn btn-soft-gray">Import Product</button>
+                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                        data-bs-target="#createModal">Filter</button>
+                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    </button></a>
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('reports.sale') }}" method="GET" id="filterForm">
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="from_date">From Date *</label>
+                                            <input type="date" class="form-control" id="from_date" name="from_date"
+                                                value="{{ request()->input('from_date') }}">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="to_date">To Date *</label>
+                                            <input type="date" class="form-control" id="to_date" name="to_date"
+                                                value="{{ request()->input('to_date') }}">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="search">Search *</label>
+                                            <input type="text" class="form-control" id="search" name="search"
+                                                value="{{ request()->input('search') }}" placeholder="Search ...">
+                                        </div>
+                                        @role('superadmin|inventaris')
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="warehouse_id">Warehouse/Outlet
+                                                    *</label>
+                                                <select class="form-select" id="warehouse_id" name="warehouse_id">
+                                                    <option selected disabled value="">Choose...</option>
+                                                    @foreach ($warehouse as $wh)
+                                                        <option value="{{ $wh->id }}"
+                                                            {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                                            {{ $wh->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endrole
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="client_id">Customer
+                                                *</label>
+                                            <select class="form-select" id="client_id" name="client_id">
+                                                <option selected disabled value="">Choose...</option>
+                                                @foreach ($client as $wh)
+                                                    <option value="{{ $wh->id }}"
+                                                        {{ request()->input('client_id') == $wh->id ? 'selected' : '' }}>
+                                                        {{ $wh->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="statut">Status *</label>
+                                            <select class="form-select" id="statut" name="statut">
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value="completed"
+                                                    {{ request()->input('statut') == 'completed' ? 'selected' : '' }}>
+                                                    Completed</option>
+                                                <option value="pending"
+                                                    {{ request()->input('statut') == 'pending' ? 'selected' : '' }}>Pending
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="payment_statut">Payment Status *</label>
+                                            <select class="form-select" id="payment_statut" name="payment_statut">
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value="paid"
+                                                    {{ request()->input('payment_statut') == 'paid' ? 'selected' : '' }}>
+                                                    Paid</option>
+                                                <option value="unpaid"
+                                                    {{ request()->input('payment_statut') == 'unpaid' ? 'selected' : '' }}>
+                                                    Unpaid
+                                                </option>
+                                            </select>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
+                                        data-bs-dismiss="modal">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -124,66 +237,51 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>SL-01</td>
-                                <td>Budi Pranomo</td>
-                                <td>Warehouse 1</td>
-                                <td>Rp. 50000</td>
-                                <td>Rp 0</td>
-                                <td>Rp 50000</td>
-                                <td>Rp 10000 </td>
-                                <td>Rp 10000</td>
-                                <td><span class="shipping-shipped">shipped</span></td>
-                            </tr>
-                            <tr>
-                                <td>SL-01</td>
-                                <td>Budi Pranomo</td>
-                                <td>Warehouse 1</td>
-                                <td>Rp. 50000</td>
-                                <td>Rp 0</td>
-                                <td>Rp 50000</td>
-                                <td>Rp 50000</td>
-                                <td>Rp 10000 </td>
-                                <td><span class="shipping-packed">packed</span></td>
-                            </tr>
-                            <tr>
-                                <td>SL-01</td>
-                                <td>Budi Pranomo</td>
-                                <td>Warehouse 1</td>
-                                <td>Rp. 50000</td>
-                                <td>Rp 0</td>
-                                <td>Rp 7000</td>
-                                <td>Rp 50000</td>
-                                <td>Rp 10000 </td>
-                                <td><span class="shipping-cancelled">cancelled</span></td>
-                            </tr>
-                            <tr>
-                                <td>SL-01</td>
-                                <td>Budi Pranomo</td>
-                                <td>Warehouse 1</td>
-                                <td>Rp. 50000</td>
-                                <td>Rp 0</td>
-                                <td>Rp 7000</td>
-                                <td>Rp 50000</td>
-                                <td>Rp 10000 </td>
-                                <td><span class="shipping-delivered">delivered</span></td>
-                            </tr>
+                            @foreach ($sales_data as $item)
+                                <tr>
+                                    <td>{{ $item['date'] }}</td>
+                                    <td>{{ $item['Ref'] }}</td>
+                                    <td>{{ $item['client_name'] }}</td>
+                                    <td>{{ $item['warehouse_name'] }}</td>
+                                    <td>
+                                        @if ($item['statut'] == 'completed')
+                                            <span class="status-completed">completed</span>
+                                        @elseif($item['statut'] == 'ordered')
+                                            <span class="status-ordered">ordered</span>
+                                        @else
+                                            <span class="status-pending">pending</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}</td>
+                                    <td>{{ 'Rp ' . number_format($item['paid_amount'], 2, ',', '.') }} </td>
+                                    <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}</td>
+                                    <td>
+                                        @if ($item['payment_status'] == 'paid')
+                                            <span class="payment-paid">paid</span>
+                                        @else
+                                            <span class="payment-unpaid">unpaid</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
-                        <tr>
-                            <td style=""></td>
-                            <td style=""></td>
-                            <td style=""></td>
-                            <td style=""></td>
-                            <td style="font-weight: bold">Total</td>
-                            <td style="font-weight: bold">Rp 10000</td>
-                            <td style="font-weight: bold">Rp 10000</td>
-                            <td style="font-weight: bold">Rp 10000</td>
-                            <td style="font-weight: bold">Rp 10000</td>
-                            <td style="font-weight: bold"></td>
-                        </tr>
+                        <tfoot>
+                            <tr style="background-color: #f9f9f9;">
+                                <td></td>
+                                <td style="font-weight: bold">Total</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_amount, 2, ',', '.') }}</td>
+                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_paid, 2, ',', '.') }}</td>
+                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_due, 2, ',', '.') }}</td>
+                                </td>
+                                <td style="font-weight: bold"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                        {{-- {{ $adjustment->links() }} --}}
+                        {{ $sales->links() }}
                     </div>
                 </div>
             </div>
@@ -192,13 +290,32 @@
 @endsection
 @push('script')
     <script>
-        $(function() {
-            $('input[name="daterange"]').daterangepicker({
-                opens: 'left'
-            }, function(start, end, label) {
-                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end
-                    .format('YYYY-MM-DD'));
-            });
-        });
+        function resetFilters() {
+            // Reset nilai-nilai input dari formulir
+            if (document.getElementById('from_date')) {
+                document.getElementById('from_date').value = '';
+            }
+            if (document.getElementById('to_date')) {
+                document.getElementById('to_date').value = '';
+            }
+            if (document.getElementById('search')) {
+                document.getElementById('search').value = '';
+            }
+            if (document.getElementById('statut')) {
+                document.getElementById('statut').value = '';
+            }
+            if (document.getElementById('payment_statut')) {
+                document.getElementById('payment_statut').value = '';
+            }
+            if (document.getElementById('warehouse_id')) {
+                document.getElementById('warehouse_id').value = '';
+            }
+            if (document.getElementById('client_id')) {
+                document.getElementById('client_id').value = '';
+            }
+
+            // Submit formulir secara otomatis untuk menghapus filter
+            document.getElementById('filterForm').submit();
+        }
     </script>
 @endpush
