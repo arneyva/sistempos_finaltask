@@ -11,6 +11,7 @@ use App\Models\Sale;
 use App\Models\SaleReturn;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -625,9 +626,92 @@ class ReportsController extends Controller
         ]);
     }
     //----------------- Warehouse Report-----------------------\\
-    public function sale()
+    public function sale(request $request)
     {
-        return view('templates.reports.sale');
+        $saleQuery = Sale::select('sales.*')
+            ->with('facture', 'client', 'warehouse')
+            ->join('clients', 'sales.client_id', '=', 'clients.id')
+            ->where('sales.deleted_at', '=', null)->latest();
+
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $saleQuery->whereBetween('sales.date', [$request->from_date, $request->to_date]);
+        }
+        if ($request->filled('search')) {
+            $saleQuery->where(function ($query) use ($request) {
+                $query->where('Ref', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('GrandTotal', $request->input('search'))
+                    ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere('shipping_status', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('client', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    })
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('warehouse', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    });
+            });
+        }
+        if ($request->filled('warehouse_id')) {
+            $saleQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        if ($request->filled('client_id')) {
+            $saleQuery->where('client_id', '=', $request->input('client_id'));
+        }
+        if ($request->filled('statut')) {
+            $saleQuery->where('statut', '=', $request->input('statut'));
+        }
+        if ($request->filled('payment_statut')) {
+            $saleQuery->where('payment_statut', '=', $request->input('payment_statut'));
+        }
+        $sales = $saleQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $totalPaid = $sales->sum('paid_amount');
+        $totalAmount = $sales->sum('GrandTotal');
+        $totalDue = $totalAmount - $totalPaid;
+        $sales_data = [];
+        foreach ($sales as $sale) {
+            $item = [
+                'id' => $sale->id,
+                'date' => $sale->date,
+                'Ref' => $sale->Ref,
+                'statut' => $sale->statut,
+                'discount' => $sale->discount,
+                'shipping' => $sale->shipping,
+                'warehouse_name' => $sale->warehouse->name,
+                'client_name' => $sale->client->name,
+                'client_email' => $sale->client->email,
+                'client_tele' => $sale->client->phone,
+                'client_code' => $sale->client->code,
+                'client_adr' => $sale->client->adresse,
+                'GrandTotal' => $sale->GrandTotal,
+                'paid_amount' => $sale->paid_amount,
+                'due' => $sale->GrandTotal - $sale->paid_amount,
+                'payment_status' => $sale->payment_statut,
+            ];
+
+            $sales_data[] = $item;
+        }
+
+        $customers = client::where('deleted_at', '=', null)->get(['id', 'name']);
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        return view('templates.reports.sale', [
+            'sales' => $sales,
+            'sales_data' => $sales_data,
+            'client' => $customers,
+            'warehouse' => $warehouses,
+            'total_paid' => $totalPaid,
+            'total_due' => $totalDue,
+            'total_amount' => $totalAmount,
+        ]);
     }
 
     public function purchase()
