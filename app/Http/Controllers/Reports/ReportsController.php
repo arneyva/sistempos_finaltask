@@ -371,6 +371,182 @@ class ReportsController extends Controller
             'warehouses' => $warehouses,
         ]);
     }
+    // public function warehouseSalesReturns(request $request)
+    // {
+    //     $saleQuery = Sale::where('deleted_at', '=', null);
+    //     if ($request->filled('warehouse_id')) {
+    //         $saleQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+    //     }
+    //     $data['sales'] = $saleQuery->count();
+
+    //     $data['purchases'] = Purchase::where('deleted_at', '=', null);
+    //     if ($request->filled('warehouse_id')) {
+    //         $data['purchases']->where('warehouse_id', '=', $request->input('warehouse_id'));
+    //     }
+    //     $data['purchases'] = $data['purchases']->count();
+
+    //     $data['ReturnPurchase'] = PurchaseReturn::where('deleted_at', '=', null);
+    //     if ($request->filled('warehouse_id')) {
+    //         $data['ReturnPurchase']->where('warehouse_id', '=', $request->input('warehouse_id'));
+    //     }
+    //     $data['ReturnPurchase'] = $data['ReturnPurchase']->count();
+
+    //     $data['ReturnSale'] = SaleReturn::where('deleted_at', '=', null);
+    //     if ($request->filled('warehouse_id')) {
+    //         $data['ReturnSale']->where('warehouse_id', '=', $request->input('warehouse_id'));
+    //     }
+    //     $data['ReturnSale'] = $data['ReturnSale']->count();
+
+    //     $user_auth = auth()->user();
+    //     if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+    //         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+    //     } else {
+    //         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+    //         $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+    //     }
+    //     // 
+    //     $data = array();
+    //     $SaleReturn = SaleReturn::where('deleted_at', '=', null)
+    //         ->with('sale', 'client', 'warehouse')
+    //         ->where(function ($query) use ($request) {
+    //             return $query->when($request->filled('warehouse_id'), function ($query) use ($request) {
+    //                 return $query->where('warehouse_id', $request->warehouse_id);
+    //             });
+    //         })
+    //         //Search With Multiple Param
+    //         ->where(function ($query) use ($request) {
+    //             return $query->when($request->filled('search'), function ($query) use ($request) {
+    //                 return $query->where('Ref', 'LIKE', "%{$request->search}%")
+    //                     ->orWhere('statut', 'LIKE', "%{$request->search}%")
+    //                     ->orWhere('GrandTotal', $request->search)
+    //                     ->orWhere('payment_statut', 'like', "$request->search")
+
+    //                     ->orWhere(function ($query) use ($request) {
+    //                         return $query->whereHas('sale', function ($q) use ($request) {
+    //                             $q->where('Ref', 'LIKE', "%{$request->search}%");
+    //                         });
+    //                     })
+    //                     ->orWhere(function ($query) use ($request) {
+    //                         return $query->whereHas('client', function ($q) use ($request) {
+    //                             $q->where('name', 'LIKE', "%{$request->search}%");
+    //                         });
+    //                     });
+    //             });
+    //         });
+    //     foreach ($SaleReturn as $Sale_Return) {
+    //         $item['id'] = $Sale_Return->id;
+    //         $item['warehouse_name'] = $Sale_Return['warehouse']->name;
+    //         $item['Ref'] = $Sale_Return->Ref;
+    //         $item['statut'] = $Sale_Return->statut;
+    //         $item['client_name'] = $Sale_Return['client']->name;
+    //         $item['sale_ref'] = $Sale_Return['sale'] ? $Sale_Return['sale']->Ref : '---';
+    //         $item['sale_id'] = $Sale_Return['sale'] ? $Sale_Return['sale']->id : NULL;
+    //         $item['GrandTotal'] = $Sale_Return->GrandTotal;
+    //         $item['paid_amount'] = $Sale_Return->paid_amount;
+    //         $item['due'] = $Sale_Return->GrandTotal - $Sale_Return->paid_amount;
+    //         $item['payment_status'] = $Sale_Return->payment_statut;
+
+    //         $data[] = $item;
+    //     }
+    //     return view('templates.reports.warehouse.warehouse-sales-returns', [
+    //         'data' => $data,
+
+    //         'warehouses' => $warehouses,
+    //     ]);
+    // }
+    public function warehouseSalesReturns(Request $request)
+    {
+        $saleQuery = Sale::where('deleted_at', '=', null);
+        if ($request->filled('warehouse_id')) {
+            $saleQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        $data['sales'] = $saleQuery->count();
+
+        $data['purchases'] = Purchase::where('deleted_at', '=', null);
+        if ($request->filled('warehouse_id')) {
+            $data['purchases']->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        $data['purchases'] = $data['purchases']->count();
+
+        $data['ReturnPurchase'] = PurchaseReturn::where('deleted_at', '=', null);
+        if ($request->filled('warehouse_id')) {
+            $data['ReturnPurchase']->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        $data['ReturnPurchase'] = $data['ReturnPurchase']->count();
+
+        $data['ReturnSale'] = SaleReturn::where('deleted_at', '=', null);
+        if ($request->filled('warehouse_id')) {
+            $data['ReturnSale']->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        $data['ReturnSale'] = $data['ReturnSale']->count();
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        // Sale Returns with pagination and filtering
+        $saleReturnQuery = SaleReturn::where('deleted_at', '=', null)
+            ->with('sale', 'client', 'warehouse');
+
+        if ($request->filled('warehouse_id')) {
+            $saleReturnQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+
+        if ($request->filled('search')) {
+            $saleReturnQuery->where(function ($query) use ($request) {
+                $query->where('Ref', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('GrandTotal', $request->input('search'))
+                    ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('sale', function ($q) use ($request) {
+                            $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    })
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('client', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    });
+            });
+        }
+
+        $saleReturns = $saleReturnQuery->paginate($request->input('limit', 1))->appends($request->except('page'));
+
+        $return_data = [];
+        foreach ($saleReturns as $saleReturn) {
+            $item = [
+                'id' => $saleReturn->id,
+                'warehouse_name' => $saleReturn->warehouse->name,
+                'Ref' => $saleReturn->Ref,
+                'statut' => $saleReturn->statut,
+                'client_name' => $saleReturn->client->name,
+                'sale_ref' => $saleReturn->sale ? $saleReturn->sale->Ref : '---',
+                'sale_id' => $saleReturn->sale ? $saleReturn->sale->id : null,
+                'GrandTotal' => $saleReturn->GrandTotal,
+                'paid_amount' => $saleReturn->paid_amount,
+                'due' => $saleReturn->GrandTotal - $saleReturn->paid_amount,
+                'payment_status' => $saleReturn->payment_statut,
+            ];
+
+            $return_data[] = $item;
+        }
+        // return response()->json([
+        //     'data' => $data,
+        //     'warehouses' => $warehouses,
+        //     'saleReturns' => $saleReturns,
+        //     'saleReturns_data' => $return_data
+        // ]);
+        return view('templates.reports.warehouse.warehouse-sales-returns', [
+            'data' => $data,
+            'warehouses' => $warehouses,
+            'saleReturns' => $saleReturns,
+            'saleReturns_data' => $return_data
+        ]);
+    }
+
     //----------------- Warehouse Report-----------------------\\
     public function sale()
     {
