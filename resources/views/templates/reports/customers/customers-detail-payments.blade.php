@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Reports</h1>
+    <h1>Customers ~ Payments Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -81,7 +81,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
-                    <h4 class="card-title" style="align-self:center;margin-top:20px;">Budi Purnomo</h4>
+                    <h4 class="card-title" style="align-self:center;margin-top:20px;">{{ $client->name }}</h4>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3 mb-3">
@@ -163,7 +163,7 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">Sales
+                                        <a class="nav-link active show" role="tab" aria-selected="false">
                                             Payments</a>
                                     </li>
                                     <li class="nav-item">

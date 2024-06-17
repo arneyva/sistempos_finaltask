@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Reports</h1>
-<p>look up your daily report</p>
+    <h1>Warehouse ~ Sales Reports</h1>
+    <p>look up your daily report</p>
 @endsection
 
 <style>
@@ -82,10 +82,17 @@
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div style="align-self:center;margin-top:20px;">
-                        <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
-                            <option selected disabled value="">Choose Warehouse/Outlet</option>
-                            <option value="">Warehouse 1</option>
-                        </select>
+                        <form action="{{ route('reports.warehouse.sales') }}" method="GET">
+                            <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
+                                <option value="">All Warehouse/Outlet</option>
+                                @foreach ($warehouses as $wh)
+                                    <option value="{{ $wh->id }}"
+                                        {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                        {{ $wh->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -100,7 +107,7 @@
                                             </div>
                                             <div class="progress-detail">
                                                 <p class="mb-2">Sales</p>
-                                                <h4 class="counter">$185K</h4>
+                                                <h7 class="counter">{{ $data['sales'] }}</h7>
                                             </div>
                                         </div>
                                     </div>
@@ -117,7 +124,7 @@
                                             </div>
                                             <div class="progress-detail">
                                                 <p class="mb-2">Purchases</p>
-                                                <h4 class="counter">$185K</h4>
+                                                <h7 class="counter">{{ $data['purchases'] }}</h7>
                                             </div>
                                         </div>
                                     </div>
@@ -134,7 +141,7 @@
                                             </div>
                                             <div class="progress-detail">
                                                 <p class="mb-2">Purchases Return</p>
-                                                <h4 class="counter">$185K</h4>
+                                                <h4 class="counter">{{ $data['ReturnPurchase'] }}</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -151,7 +158,7 @@
                                             </div>
                                             <div class="progress-detail">
                                                 <p class="mb-2">Sales Return</p>
-                                                <h4 class="counter">$375K</h4>
+                                                <h7 class="counter">{{ $data['ReturnSale'] }}</h7>
                                             </div>
                                         </div>
                                     </div>
@@ -187,8 +194,8 @@
                                         <div class="card-header d-flex justify-content-between">
                                             <div class="input-group search-input" style="width: 30%">
                                                 <span class="input-group-text d-inline" id="search-input">
-                                                    <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
+                                                    <svg class="icon-18" width="18" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <circle cx="11.7669" cy="11.7666" r="8.98856"
                                                             stroke="currentColor" stroke-width="1.5"
                                                             stroke-linecap="round" stroke-linejoin="round"></circle>
@@ -200,7 +207,6 @@
                                                 <input type="search" class="form-control" placeholder="Search...">
                                             </div>
                                             <div class="header-title">
-                                                <button type="button" class="btn btn-soft-success">PDF</button>
                                                 <button type="button" class="btn btn-soft-danger">Excel</button>
                                             </div>
                                         </div>
@@ -463,6 +469,17 @@
 @endsection
 
 @push('script')
+    <script>
+        // Mendapatkan elemen dropdown
+        const selectWarehouse = document.getElementById('selectWarehouse');
+
+        // Menambahkan event listener untuk perubahan nilai dropdown
+        selectWarehouse.addEventListener('change', function() {
+            // Menyubmit formulir secara otomatis saat nilai dropdown berubah
+            this.form.submit();
+        });
+    </script>
+
     <script>
         var ctx = document.getElementById('chartjs1').getContext('2d');
         var myPieChart = new Chart(ctx, {

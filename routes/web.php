@@ -153,7 +153,6 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::get('quantity-alerts', [ReportsController::class, 'quantityAlerts'])->name('quantity-alerts');
     Route::get('stock', [ReportsController::class, 'stock'])->name('stock');
     Route::get('stock/{id}', [ReportsController::class, 'stockDetail'])->name('stock-detail');
-    // Route::get('customers', [ReportsController::class, 'customers'])->name('customers');
     Route::prefix('/customers')->name('customers.')->group(function () {
         Route::get('list', [ReportsController::class, 'customers'])->name('index');
         Route::get('sales/{id}', [ReportsController::class, 'customersDetailSales'])->name('sales');
@@ -164,7 +163,12 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::get('supplier', [ReportsController::class, 'supplier'])->name('supplier');
     Route::get('supplier/{id}', [ReportsController::class, 'supplierDetail'])->name('supplier-detail');
     Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
-    Route::get('warehouse', [ReportsController::class, 'warehouse'])->name('warehouse');
+    Route::prefix('/warehouse')->name('warehouse.')->group(function () {
+        Route::get('sales', [ReportsController::class, 'warehouseSales'])->name('sales');
+        // Route::get('sales/{id}', [ReportsController::class, 'customersDetailSales'])->name('sales');
+        // Route::get('returns/{id}', [ReportsController::class, 'customersDetailReturns'])->name('returns');
+        // Route::get('payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('payments');
+    });
     Route::get('sale', [ReportsController::class, 'sale'])->name('sale');
     Route::get('purchase', [ReportsController::class, 'purchase'])->name('purchase');
 });
