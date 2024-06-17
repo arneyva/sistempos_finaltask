@@ -2,7 +2,7 @@
 
 @section('pages_title')
     <h1>
-        Warehouse ~ Sales Return Reports</h1>
+        Warehouse ~ Purchase Return Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -83,7 +83,7 @@
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div style="align-self:center;margin-top:20px;">
-                        <form action="{{ route('reports.warehouse.sales-returns') }}" method="GET">
+                        <form action="{{ route('reports.warehouse.purchase-returns') }}" method="GET">
                             <select class="form-select" id="selectWarehouse" name="warehouse_id">
                                 <option value="">All Warehouse/Outlet</option>
                                 @foreach ($warehouses as $wh)
@@ -171,8 +171,9 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">Sales
-                                            Return</a>
+                                        <a class="nav-link active show" role="tab" aria-selected="false"> Purchase
+                                            Returns
+                                        </a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.sales') }}" role="tab"
@@ -183,8 +184,8 @@
                                             aria-selected="false">Purchase</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.warehouse.purchase-returns') }}"
-                                            role="tab" aria-selected="false">Purchase Returns</a>
+                                        <a class="nav-link" href="{{ route('reports.warehouse.sales-returns') }}"
+                                            role="tab" aria-selected="false">Sales Returns</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.expenses') }}" role="tab"
@@ -222,23 +223,23 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Reference</th>
-                                                            <th>Customer Name</th>
-                                                            <th>Sale Ref</th>
+                                                            <th>Supplier</th>
                                                             <th>Warehouse</th>
+                                                            <th>Purchase ref</th>
                                                             <th>Grand Total</th>
                                                             <th>Paid</th>
                                                             <th>Due</th>
                                                             <th>Status</th>
-                                                            <th>Payment</th>
+                                                            <th>Payment Status</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($saleReturns_data as $item)
+                                                        @foreach ($purchase_return_data as $item)
                                                             <tr>
                                                                 <td>{{ $item['Ref'] }}</td>
-                                                                <td>{{ $item['client_name'] }}</td>
-                                                                <td>{{ $item['sale_ref'] }}</td>
+                                                                <td>{{ $item['provider_name'] }}</td>
                                                                 <td>{{ $item['warehouse_name'] }}</td>
+                                                                <td>{{ $item['purchase_ref'] }}</td>
                                                                 <td> {{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}
                                                                 </td>
                                                                 <td>{{ 'Rp ' . number_format($item['paid_amount'], 2, ',', '.') }}
@@ -267,7 +268,7 @@
                                                 </table>
                                                 <div class="bd-example"
                                                     style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                                                    {{ $saleReturns->links() }}
+                                                    {{ $purchaseReturns->links() }}
                                                 </div>
                                             </div>
                                         </div>

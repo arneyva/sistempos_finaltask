@@ -142,7 +142,7 @@
                                             </div>
                                             <div class="progress-detail">
                                                 <p class="mb-2">Purchases Return</p>
-                                                <h4 class="counter">{{ $data['ReturnPurchase'] }}</h4>
+                                                <h7 class="counter">{{ $data['ReturnPurchase'] }}</h7>
                                             </div>
                                         </div>
                                     </div>
