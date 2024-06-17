@@ -1,7 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Reports</h1>
+    <h1>
+        Warehouse ~ Sales Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -81,7 +82,19 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
-                    <h4 class="card-title" style="align-self:center;margin-top:20px;">Budi Purnomo</h4>
+                    <div style="align-self:center;margin-top:20px;">
+                        <form action="{{ route('reports.warehouse.sales') }}" method="GET">
+                            <select class="form-select" id="selectWarehouse" name="warehouse_id">
+                                <option value="">All Warehouse/Outlet</option>
+                                @foreach ($warehouses as $wh)
+                                    <option value="{{ $wh->id }}"
+                                        {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                        {{ $wh->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            {{-- </form> --}}
+                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3 mb-3">
@@ -90,12 +103,12 @@
                                         <div class="progress-widget">
                                             <div
                                                 class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
-                                                    alt="purchase" style="max-height: 70px;max-width: 70px">
+                                                <img src="{{ asset('hopeui/html/assets/images/sales.svg') }}" alt="purchase"
+                                                    style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
                                                 <p class="mb-2">Sales</p>
-                                                <h7 class="counter">{{ $client_data['total_sales'] }}</h7>
+                                                <h7 class="counter">{{ $data['sales'] }}</h7>
                                             </div>
                                         </div>
                                     </div>
@@ -111,10 +124,8 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Total Amount</p>
-                                                <h7 class="counter">
-                                                    {{ 'Rp ' . number_format($client_data['total_amount'], 2, ',', '.') }}
-                                                </h7>
+                                                <p class="mb-2">Purchases</p>
+                                                <h7 class="counter">{{ $data['purchases'] }}</h7>
                                             </div>
                                         </div>
                                     </div>
@@ -126,14 +137,12 @@
                                         <div class="progress-widget">
                                             <div
                                                 class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
+                                                <img src="{{ asset('hopeui/html/assets/images/purchase-return.png') }}"
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Total Paid</p>
-                                                <h7 class="counter">
-                                                    {{ 'Rp ' . number_format($client_data['total_paid'], 2, ',', '.') }}
-                                                </h7>
+                                                <p class="mb-2">Purchases Return</p>
+                                                <h4 class="counter">{{ $data['ReturnPurchase'] }}</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -145,19 +154,19 @@
                                         <div class="progress-widget">
                                             <div
                                                 class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
+                                                <img src="{{ asset('hopeui/html/assets/images/sales-return.png') }}"
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Due</p>
-                                                <h7 class="counter">
-                                                    {{ 'Rp ' . number_format($client_data['due'], 2, ',', '.') }}</h7>
+                                                <p class="mb-2">Sales Return</p>
+                                                <h7 class="counter">{{ $data['ReturnSale'] }}</h7>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {{--  --}}
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
                             <div class="card-body" style="background-color:bisque">
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
@@ -172,7 +181,11 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#adjustment" role="tab"
-                                            aria-selected="false">Sales Payments</a>
+                                            aria-selected="false">Purchases Return</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#expenses" role="tab"
+                                            aria-selected="false">Expenses</a>
                                     </li>
                                 </ul>
                             </div>
@@ -180,23 +193,26 @@
                                 <div class="profile-content tab-content">
                                     <div id="profile-feed" class="tab-pane fade active show">
                                         <div class="card-header d-flex justify-content-between">
-                                            <form action="#" method="GET">
-                                                <div class="input-group search-input">
-                                                    <span class="input-group-text d-inline" id="search-input">
-                                                        <svg class="icon-18" width="18" viewBox="0 0 24 24"
-                                                            fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <circle cx="11.7669" cy="11.7666" r="8.98856"
-                                                                stroke="currentColor" stroke-width="1.5"
-                                                                stroke-linecap="round" stroke-linejoin="round"></circle>
-                                                            <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor"
-                                                                stroke-width="1.5" stroke-linecap="round"
-                                                                stroke-linejoin="round"></path>
-                                                        </svg>
-                                                    </span>
-                                                    <input type="search" class="form-control" name="search"
-                                                        value="{{ request()->input('search') }}" placeholder="Search...">
-                                                </div>
+                                            {{-- <form action="{{ route('reports.warehouse.sales') }}" method="GET"> --}}
+                                            <div class="input-group search-input">
+                                                <span class="input-group-text d-inline" id="search-input">
+                                                    <svg class="icon-18" width="18" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <circle cx="11.7669" cy="11.7666" r="8.98856"
+                                                            stroke="currentColor" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round"></circle>
+                                                        <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor"
+                                                            stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round"></path>
+                                                    </svg>
+                                                </span>
+                                                <input type="search" class="form-control" name="search"
+                                                    value="{{ request()->input('search') }}" placeholder="Search...">
+                                            </div>
                                             </form>
+                                            <div class="header-title">
+                                                <button type="button" class="btn btn-soft-danger">Excel</button>
+                                            </div>
                                         </div>
                                         <div class="card-body p-0">
                                             <div class="table-responsive mt-4">
@@ -215,12 +231,12 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($report as $item)
+                                                        @foreach ($sales_data as $item)
                                                             <tr>
                                                                 <td>{{ $item['Ref'] }}</td>
                                                                 <td>{{ $item['client_name'] }}</td>
                                                                 <td>{{ $item['warehouse_name'] }}</td>
-                                                                <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}
+                                                                <td> {{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}
                                                                 </td>
                                                                 <td>{{ 'Rp ' . number_format($item['paid_amount'], 2, ',', '.') }}
                                                                 </td>
@@ -247,132 +263,92 @@
                                                                         <span class="shipping-shipped">shipped</span>
                                                                     @elseif($item['shipping_status'] == 'delivered')
                                                                         <span class="shipping-delivered">delivered</span>
-                                                                    @else
+                                                                    @elseif($item['shipping_status'] == 'cancelled')
                                                                         <span class="shipping-cancelled">cancelled</span>
+                                                                    @else
+                                                                        <span class="shipping-cancelled">Without
+                                                                            Shipping</span>
                                                                     @endif
                                                                 </td>
                                                             </tr>
                                                         @endforeach
+
+                                                        {{-- <tr>
+                                                            <td>SL-01</td>
+                                                            <td>Budi Pranomo</td>
+                                                            <td>Warehouse 1</td>
+                                                            <td>Rp. 50000</td>
+                                                            <td>Rp 0</td>
+                                                            <td>Rp 50000</td>
+                                                            <td> <span class="status-ordered">ordered</span>
+                                                            </td>
+                                                            <td><span class="payment-unpaid">unpaid</span></td>
+                                                            <td><span class="shipping-packed">packed</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SL-01</td>
+                                                            <td>Budi Pranomo</td>
+                                                            <td>Warehouse 1</td>
+                                                            <td>Rp. 50000</td>
+                                                            <td>Rp 0</td>
+                                                            <td>Rp 7000</td>
+                                                            <td> <span class="status-pending">pending</span>
+                                                            </td>
+                                                            <td><span class="payment-partial">partial</span></td>
+                                                            <td><span class="shipping-cancelled">cancelled</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SL-01</td>
+                                                            <td>Budi Pranomo</td>
+                                                            <td>Warehouse 1</td>
+                                                            <td>Rp. 50000</td>
+                                                            <td>Rp 0</td>
+                                                            <td>Rp 7000</td>
+                                                            <td> <span class="status-pending">pending</span>
+                                                            </td>
+                                                            <td><span class="payment-partial">partial</span></td>
+                                                            <td><span class="shipping-delivered">delivered</span></td>
+                                                        </tr> --}}
                                                     </tbody>
                                                 </table>
                                                 <div class="bd-example"
                                                     style="margin-left: 10px; margin-top:10px; margin-right:10px">
                                                     {{ $sales->links() }}
-                                                    {{-- {{ $sales->appends(['sales_page' => $sales->currentPage()])->links() }} --}}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="profile-friends" class="tab-pane fade">
-                                        <div class="card-header d-flex justify-content-between">
-                                            <div class="input-group search-input" style="width: 30%">
-                                                <span class="input-group-text d-inline" id="search-input">
-                                                    <svg class="icon-18" width="18" viewBox="0 0 24 24"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle cx="11.7669" cy="11.7666" r="8.98856"
-                                                            stroke="currentColor" stroke-width="1.5"
-                                                            stroke-linecap="round" stroke-linejoin="round"></circle>
-                                                        <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor"
-                                                            stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round"></path>
-                                                    </svg>
-                                                </span>
-                                                <input type="search" class="form-control" placeholder="Search...">
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-12 mt-5">
+                                <div class="row">
+                                    <div class="col-md-12 col-xl-6">
+                                        <div class="card" data-aos="fade-up" data-aos-delay="900">
+                                            <div class="flex-wrap card-header d-flex justify-content-between">
+                                                <div class="header-title">
+                                                    <h4 class="card-title">Total Items & Quantity</h4>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <div class="table-responsive mt-4">
-                                                <table id="basic-table" class="table table-striped mb-0" role="grid">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Reference</th>
-                                                            <th>Customer Name</th>
-                                                            <th>Sale Ref</th>
-                                                            <th>Warehouse</th>
-                                                            <th>Grand Total</th>
-                                                            <th>Paid</th>
-                                                            <th>Due</th>
-                                                            <th>Status</th>
-                                                            <th>Payment</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($returns_customer as $item)
-                                                            <tr>
-                                                                <td>{{ $item['Ref'] }}</td>
-                                                                <td>{{ $item['client_name'] }}</td>
-                                                                <td>{{ $item['sale_ref'] }}</td>
-                                                                <td>{{ $item['warehouse_name'] }}</td>
-                                                                <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}
-                                                                </td>
-                                                                <td>{{ 'Rp ' . number_format($item['paid_amount'], 2, ',', '.') }}
-                                                                </td>
-                                                                <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}
-                                                                </td>
-                                                                <td>{{ $item['statut'] }}</td>
-                                                                <td>{{ $item['payment_status'] }}</td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                                <div class="bd-example"
-                                                    style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                                                    {{ $saleReturns->links() }}
+                                            <div class="card-body">
+                                                <div class="flex-wrap d-flex align-items-center justify-content-between">
+                                                    <div> <canvas id="chartjs1"
+                                                            class="col-md-8 col-lg-8 myChart"></canvas></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="adjustment" class="tab-pane fade">
-                                        <div class="card-header d-flex justify-content-between">
-                                            <div class="input-group search-input" style="width: 30%">
-                                                <span class="input-group-text d-inline" id="search-input">
-                                                    <svg class="icon-18" width="18" viewBox="0 0 24 24"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle cx="11.7669" cy="11.7666" r="8.98856"
-                                                            stroke="currentColor" stroke-width="1.5"
-                                                            stroke-linecap="round" stroke-linejoin="round"></circle>
-                                                        <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor"
-                                                            stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round"></path>
-                                                    </svg>
-                                                </span>
-                                                <input type="search" class="form-control" placeholder="Search...">
+                                    <div class="col-md-12 col-xl-6">
+                                        <div class="card" data-aos="fade-up" data-aos-delay="900">
+                                            <div class="flex-wrap card-header d-flex justify-content-between">
+                                                <div class="header-title">
+                                                    <h4 class="card-title">Value by Cost and Price</h4>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <div class="table-responsive mt-4">
-                                                <table id="basic-table" class="table table-striped mb-0" role="grid">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Date</th>
-                                                            <th>Reference</th>
-                                                            <th>Sale</th>
-                                                            <th>Paid by</th>
-                                                            <th>Amount</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($payments as $item)
-                                                            <tr>
-                                                                <td>{{ $item['date'] }}</td>
-                                                                <td>{{ $item['Payment_Ref'] }}</td>
-                                                                <td>{{ $item['Sale_Ref'] }}</td>
-                                                                <td>
-                                                                    @if ($item['Reglement'] == 'Cash')
-                                                                        Cash
-                                                                    @else
-                                                                        Midtrans
-                                                                    @endif
-                                                                </td>
-                                                                <td>{{ 'Rp ' . number_format($item['montant'], 2, ',', '.') }}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                                <div class="bd-example"
-                                                    style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                                                    {{-- {{ $sales->links() }} --}}
+                                            <div class="card-body">
+                                                <div class="flex-wrap d-flex align-items-center justify-content-between">
+                                                    <div>
+                                                        <canvas id="chartjs2" class="col-md-8 col-lg-8 myChart"></canvas>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -388,4 +364,72 @@
 @endsection
 
 @push('script')
+    <script>
+        // Mendapatkan elemen dropdown
+        const selectWarehouse = document.getElementById('selectWarehouse');
+
+        // Menambahkan event listener untuk perubahan nilai dropdown
+        selectWarehouse.addEventListener('change', function() {
+            // Menyubmit formulir secara otomatis saat nilai dropdown berubah
+            this.form.submit();
+        });
+    </script>
+
+    <script>
+        var ctx = document.getElementById('chartjs1').getContext('2d');
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Warehouse 1', 'Warehouse 2', 'Warehouse 3'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3],
+                    // backgroundColor: [
+                    //     'red',
+                    //     'blue',
+                    //     'yellow'
+                    // ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'right', // Atur posisi legenda di sini
+                        labels: {
+                            font: {
+                                size: 16 // Atur ukuran font legenda di sini
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    <script>
+        const ctx1 = document.getElementById('chartjs2');
+        new Chart(ctx1, {
+            type: 'pie',
+            data: {
+                labels: ['warehouse1', 'warehouse2', 'Warehouse 3'],
+                datasets: [{
+                    label: 'warehouse1',
+                    data: [12, 30, 40],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'right', // Atur posisi legenda di sini
+                        labels: {
+                            font: {
+                                size: 16 // Atur ukuran font legenda di sini
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 @endpush

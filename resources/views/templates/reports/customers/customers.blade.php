@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Reports</h1>
+    <h1>Customers ~ Reports</h1>
     <p>look up your daily report</p>
 @endsection
 

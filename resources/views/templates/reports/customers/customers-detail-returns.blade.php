@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Reports</h1>
+    <h1>Customers ~ Sales Returns Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -172,7 +172,7 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.customers.payments', $client->id) }}"
-                                            role="tab" aria-selected="false">Sales Payments</a>
+                                            role="tab" aria-selected="false">Payments</a>
                                     </li>
                                 </ul>
                             </div>
