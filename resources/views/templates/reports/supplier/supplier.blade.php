@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Customers ~ Reports</h1>
+    <h1>SUppliers ~ Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -28,7 +28,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Customer Report</h4>
+                    <h4 class="card-title">Supplier Report</h4>
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
@@ -53,13 +53,13 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Customer Name</th>
+                                <th>Supplier Name</th>
                                 <th>Phone</th>
-                                <th>Total Sales</th>
-                                <th>Amount</th>
+                                <th>Purchases</th>
+                                <th>Total Amount</th>
                                 <th>Paid</th>
-                                <th>Total Sale Due</th>
-                                <th>Total Sell Return Due</th>
+                                <th>Total Purchase Due</th>
+                                <th>Total Purchase Return Due</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -68,13 +68,13 @@
                                 <tr>
                                     <td>{{ $item['name'] }}</td>
                                     <td>{{ $item['phone'] }}</td>
-                                    <td>{{ $item['total_sales'] }}</td>
+                                    <td>{{ $item['total_purchase'] }}</td>
                                     <td>{{ 'Rp ' . number_format($item['total_amount'], 2, ',', '.') }}</td>
                                     <td>{{ 'Rp ' . number_format($item['total_paid'], 2, ',', '.') }}</td>
                                     <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}</td>
                                     <td>{{ 'Rp ' . number_format($item['return_Due'], 2, ',', '.') }}</td>
                                     <td>
-                                        <a href="{{ route('reports.customers.sales', $item['id']) }}"
+                                        <a href="{{ route('reports.supplier.purchases', $item['id']) }}"
                                             class="warehousedeleted" style="margin-right: 10px">Report
                                         </a>
                                         <a href="#" class="pdfstyle">Pdf
@@ -87,7 +87,7 @@
                             <tr>
                                 <td></td>
                                 <td style="font-weight: bold">Total</td>
-                                <td>{{ $total_sales }}</td>
+                                <td>{{ $total_purchase }}</td>
                                 <td style="font-weight: bold">{{ 'Rp ' . number_format($total_amount, 2, ',', '.') }}</td>
                                 <td style="font-weight: bold">{{ 'Rp ' . number_format($total_paid, 2, ',', '.') }}</td>
                                 <td style="font-weight: bold">{{ 'Rp ' . number_format($total_due, 2, ',', '.') }}</td>
@@ -98,7 +98,7 @@
                         </tfoot>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-right: 10px; margin-top:10px">
-                        {{ $clients->links() }}
+                        {{ $providers->links() }}
                     </div>
                 </div>
             </div>
