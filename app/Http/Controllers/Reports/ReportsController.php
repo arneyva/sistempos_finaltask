@@ -9,6 +9,7 @@ use App\Models\Provider;
 use App\Models\Purchase;
 use App\Models\PurchaseReturn;
 use App\Models\Sale;
+use App\Models\SaleDetail;
 use App\Models\SaleReturn;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
@@ -282,11 +283,44 @@ class ReportsController extends Controller
     {
         return view('templates.reports.supplier-detail');
     }
-
-    public function topSellingProduct()
+    public function topSellingProduct(Request $request)
     {
-        return view('templates.reports.top-selling-product');
+        $productsQuery = SaleDetail::join('sales', 'sale_details.sale_id', '=', 'sales.id')
+            ->join('products', 'sale_details.product_id', '=', 'products.id')
+            ->whereNull('sales.deleted_at');
+
+        // Filter berdasarkan tanggal jika `from_date` dan `to_date` diisi
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $productsQuery->whereBetween('sale_details.date', [$request->from_date, $request->to_date]);
+        }
+
+        // Filter berdasarkan pencarian jika `search` diisi
+        if ($request->filled('search')) {
+            $productsQuery->where(function ($query) use ($request) {
+                $query->where('products.name', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('products.code', 'LIKE', '%' . $request->input('search') . '%');
+            });
+        }
+
+        // Mengambil data produk yang dijual
+        $productsQuery->select(
+            DB::raw('products.name as name'),
+            DB::raw('products.code as code'),
+            DB::raw('count(*) as total_sales'),
+            DB::raw('sum(sale_details.total) as total')
+        )->groupBy('products.name', 'products.code');
+
+        // Mengurutkan berdasarkan total penjualan
+        $products = $productsQuery->orderBy('total_sales', 'desc')->get();
+        return view('templates.reports.top-selling-product', [
+            'products' => $products,
+        ]);
+        // Mengembalikan data sebagai JSON response
+        // return response()->json([
+        //     'products' => $products,
+        // ]);
     }
+
 
     //----------------- Warehouse Report-----------------------\\
     public function warehouseSales(request $request)
@@ -718,10 +752,7 @@ class ReportsController extends Controller
     }
     //----------------- Sale Report-----------------------\\
 
-    // public function purchase()
-    // {
-    //     return view('templates.reports.purchase');
-    // }
+
     public function purchase(request $request)
     {
         $data = array();
