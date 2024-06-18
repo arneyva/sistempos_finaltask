@@ -404,10 +404,76 @@ class ReportsController extends Controller
         //     'report' => $report,
         // ]);
         return view('templates.reports.supplier.supplier-detail-purchase', [
-            'purchases' => $purchases,
             'purchases_data' => $data,
+            'purchases' => $purchases,
+            'provider' => $provider,
             'report' => $report,
-            'provider' => $provider
+        ]);
+    }
+    public function Returns_Provider(request $request, $id)
+    {
+
+        $provider = Provider::where('deleted_at', '=', null)->findOrFail($id);
+        // Calculate client-specific data
+        $data['total_purchases'] = DB::table('purchases')->where('deleted_at', '=', null)->where('provider_id', $id)->count();
+        $data['total_amount'] = DB::table('purchases')->where('deleted_at', '=', null)->where('provider_id', $id)->sum('GrandTotal');
+        $data['total_paid'] = DB::table('purchases')->where('deleted_at', '=', null)->where('provider_id', $id)->sum('paid_amount');
+        $data['due'] = $data['total_amount'] - $data['total_paid'];
+
+
+        $PurchaseReturnQuery = PurchaseReturn::where('deleted_at', '=', null)
+            ->with('purchase', 'provider', 'warehouse')
+            ->where('provider_id', $id)->latest();
+        if ($request->filled('search')) {
+            $PurchaseReturnQuery->where(function ($query) use ($request) {
+                $query->orWhere('Ref', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere('statut', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('provider', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    })
+                    ->orWhere(function ($query) use ($request) {
+                        return $query->whereHas('purchase', function ($q) use ($request) {
+                            $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    })
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('warehouse', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    });
+            });
+        }
+        $PurchaseReturn =  $PurchaseReturnQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $report = [];
+        foreach ($PurchaseReturn as $Purchase_Return) {
+            $item['id'] = $Purchase_Return->id;
+            $item['Ref'] = $Purchase_Return->Ref;
+            $item['statut'] = $Purchase_Return->statut;
+            $item['purchase_ref'] = $Purchase_Return['purchase'] ? $Purchase_Return['purchase']->Ref : '---';
+            $item['purchase_id'] = $Purchase_Return['purchase'] ? $Purchase_Return['purchase']->id : NULL;
+            $item['provider_name'] = $Purchase_Return['provider']->name;
+            $item['warehouse_name'] = $Purchase_Return['warehouse']->name;
+            $item['GrandTotal'] = $Purchase_Return->GrandTotal;
+            $item['paid_amount'] = $Purchase_Return->paid_amount;
+            $item['due'] = $Purchase_Return->GrandTotal - $Purchase_Return->paid_amount;
+            $item['payment_status'] = $Purchase_Return->payment_statut;
+
+            $report[] = $item;
+        }
+        // return response()->json([
+        //     'purchases_data' => $data,
+        //     'PurchaseReturn' => $PurchaseReturn,
+        //     'provider' => $provider,
+        //     'report' => $report,
+        // ]);
+        return view('templates.reports.supplier.supplier-detail-returns', [
+            'purchases_data' => $data,
+            'PurchaseReturn' => $PurchaseReturn,
+            'provider' => $provider,
+            'report' => $report,
         ]);
     }
     public function supplierDetail($id)
