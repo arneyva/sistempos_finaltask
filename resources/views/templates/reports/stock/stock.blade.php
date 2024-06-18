@@ -94,7 +94,7 @@
                                     <td>{{ $item['category'] }}</td>
                                     <td>{{ $item['quantity'] }}</td>
                                     <td>
-                                        <a href="{{ route('reports.customers.sales', $item['id']) }}"
+                                        <a href="{{ route('reports.stock.sales', $item['id']) }}"
                                             class="warehousedeleted" style="margin-right: 10px">Report
                                         </a>
                                         {{-- <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"

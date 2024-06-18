@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Expense;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
 use App\Models\Provider;
 use App\Models\Purchase;
@@ -13,6 +14,7 @@ use App\Models\PurchaseReturn;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\SaleReturn;
+use App\Models\Unit;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
 use Carbon\Carbon;
@@ -110,10 +112,10 @@ class ReportsController extends Controller
     //         'warehouses' => $warehouses,
     //     ]);
     // }
-    // public function stockDetail($id)
-    // {
-    //     return view('templates.reports.stock-detail');
-    // }
+    public function stockDetail($id)
+    {
+        return view('templates.reports.stock.stock-detail');
+    }
     public function stock(Request $request)
     {
         $data = array();
@@ -171,7 +173,7 @@ class ReportsController extends Controller
                 $data[] = $item;
             }
         }
-        return view('templates.reports.stock', [
+        return view('templates.reports.stock.stock', [
             'report' => $data,
             'products' => $products,
             'warehouses' => $warehouses,
@@ -182,6 +184,176 @@ class ReportsController extends Controller
             'warehouses' => $warehouses,
         ]);
     }
+    // public function stockDetailSales(request $request, $id)
+    // {
+    //     $sale_details_dataQuery = SaleDetail::with('product', 'sale', 'sale.client', 'sale.warehouse')
+    //         ->where('product_id', $id)->latest();
+    //     // dd($sale_details_dataQuery);
+    //     if ($request->filled('search')) {
+    //         $sale_details_dataQuery->where(function ($query) use ($request) {
+    //             $query->orWhereHas('sale.client', function ($q) use ($request) {
+    //                 $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+    //             })
+    //                 ->orWhereHas('sale.warehouse', function ($q) use ($request) {
+    //                     $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+    //                 })
+    //                 ->orWhereHas('sale', function ($q) use ($request) {
+    //                     $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%')
+    //                         ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
+    //                         ->orWhere('payment_statut', 'LIKE', '%' . $request->input('search') . '%')
+    //                         ->orWhere('payment_method', 'LIKE', '%' . $request->input('search') . '%')
+    //                         ->orWhere('shipping_status', 'LIKE', '%' . $request->input('search') . '%');
+    //                 })
+    //                 ->orWhereHas('product', function ($q) use ($request) {
+    //                     $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+    //                 });
+    //         });
+    //     }
+    //     $sale_details =  $sale_details_dataQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+    //     $data = [];
+    //     foreach ($sale_details as $detail) {
+    //         //check if detail has sale_unit_id Or Null
+    //         if ($detail->sale_unit_id !== null) {
+    //             $unit = Unit::where('id', $detail->sale_unit_id)->first();
+    //         } else {
+    //             $product_unit_sale_id = Product::with('unitSale')
+    //                 ->where('id', $detail->product_id)
+    //                 ->first();
+
+    //             if ($product_unit_sale_id['unitSale']) {
+    //                 $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
+    //             } {
+    //                 $unit = NULL;
+    //             }
+    //         }
+
+    //         if ($detail->product_variant_id) {
+    //             $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+    //                 ->where('id', $detail->product_variant_id)->first();
+
+    //             $product_name = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+    //         } else {
+    //             $product_name = $detail['product']['name'];
+    //         }
+
+    //         $item['date'] = $detail->date;
+    //         $item['Ref'] = $detail['sale']->Ref;
+    //         $item['sale_id'] = $detail['sale']->id;
+    //         $item['client_name'] = $detail['sale']['client']->name;
+    //         $item['unit_sale'] = $unit ? $unit->ShortName : '';
+    //         $item['warehouse_name'] = $detail['sale']['warehouse']->name;
+    //         $item['quantity'] = $detail->quantity . ' ' . $item['unit_sale'];
+    //         $item['total'] = $detail->total;
+    //         $item['product_name'] = $product_name;
+
+    //         $data[] = $item;
+    //     }
+    // $current_stock = ProductWarehouse::where('product_id', $id)
+    //     ->where('deleted_at', '=', null)
+    //     ->where(function ($query) use ($request) {
+    //         return $query->when($request->filled('warehouse_id'), function ($query) use ($request) {
+    //             return $query->where('warehouse_id', $request->warehouse_id);
+    //         });
+    //     })
+    //     ->sum('qty');
+    //     return view('templates.reports.stock.stock-detail-sales', [
+    //         'sales' => $data,
+    //         'sale_details' => $sale_details,
+    //     ]);
+    //     return response()->json([
+    //         'sales' => $data,
+    //         'sale_details' => $sale_details,
+    //     ]);
+    // }
+    public function stockDetailSales(Request $request, $id)
+    {
+        $product = Product::where('deleted_at', '=', null)->findOrFail($id);
+        $sale_details_dataQuery = SaleDetail::with('product', 'sale', 'sale.client', 'sale.warehouse')
+            ->where('product_id', $id)->latest();
+
+        if ($request->filled('search')) {
+            $sale_details_dataQuery->where(function ($query) use ($request) {
+                $query->orWhereHas('sale.client', function ($q) use ($request) {
+                    $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                })
+                    ->orWhereHas('sale.warehouse', function ($q) use ($request) {
+                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                    })
+                    ->orWhereHas('sale', function ($q) use ($request) {
+                        $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%')
+                            ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
+                            ->orWhere('payment_statut', 'LIKE', '%' . $request->input('search') . '%')
+                            ->orWhere('payment_method', 'LIKE', '%' . $request->input('search') . '%')
+                            ->orWhere('shipping_status', 'LIKE', '%' . $request->input('search') . '%');
+                    })
+                    ->orWhereHas('product', function ($q) use ($request) {
+                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                    });
+            });
+        }
+
+        $sale_details = $sale_details_dataQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+
+        $data = [];
+        foreach ($sale_details as $detail) {
+            $unit = null;
+
+            if ($detail->sale_unit_id !== null) {
+                $unit = Unit::where('id', $detail->sale_unit_id)->first();
+            } else {
+                $product_unit_sale_id = Product::with('unitSale')
+                    ->where('id', $detail->product_id)
+                    ->first();
+
+                if ($product_unit_sale_id && $product_unit_sale_id->unitSale) {
+                    $unit = Unit::where('id', $product_unit_sale_id->unitSale->id)->first();
+                }
+            }
+
+            $product_name = $detail->product->name;
+            if ($detail->product_variant_id) {
+                $productVariant = ProductVariant::where('product_id', $detail->product_id)
+                    ->where('id', $detail->product_variant_id)->first();
+                if ($productVariant) {
+                    $product_name = '[' . $productVariant->name . ']' . $detail->product->name;
+                }
+            }
+
+            // Check if related models exist before accessing their properties
+            $sale = $detail->sale;
+            $client = $sale ? $sale->client : null;
+            $warehouse = $sale ? $sale->warehouse : null;
+
+            $item['date'] = $detail->date ?? '';
+            $item['Ref'] = $sale ? $sale->Ref : '';
+            $item['sale_id'] = $sale ? $sale->id : '';
+            $item['client_name'] = $client ? $client->name : '';
+            $item['unit_sale'] = $unit ? $unit->ShortName : '';
+            $item['warehouse_name'] = $warehouse ? $warehouse->name : '';
+            $item['quantity'] = $detail->quantity . ' ' . ($unit ? $unit->ShortName : '');
+            $item['total'] = $detail->total ?? 0;
+            $item['product_name'] = $product_name;
+
+            $data[] = $item;
+        }
+        $product_stock = ProductWarehouse::where('product_id', $id)->where('deleted_at', '=', null)->get();
+        $b = [];
+        foreach ($product_stock as $value) {
+            $a['warehouse'] = $value->warehouse->name;
+            $a['qty'] = $value->qty;
+            $a['unit'] = $value->product->unit->ShortName;
+            $b[] = $a;
+        }
+        // dd($b);
+        return view('templates.reports.stock.stock-detail-sales', [
+            'sales' => $data,
+            'sale_details' => $sale_details,
+            'product' => $product,
+            'b' => $b
+        ]);
+        return response()->json($data);
+    }
+
 
     //----------------- Customers Report -----------------------\\
     public function customers(Request $request)

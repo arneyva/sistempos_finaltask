@@ -154,7 +154,7 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     // Route::get('stock', [ReportsController::class, 'stock'])->name('stock');
     Route::prefix('/stock')->name('stock.')->group(function () {
         Route::get('list', [ReportsController::class, 'stock'])->name('index');
-        Route::get('sales/{id}', [ReportsController::class, 'customersDetailSales'])->name('sales');
+        Route::get('sales/{id}', [ReportsController::class, 'stockDetailSales'])->name('sales');
         Route::get('sales-returns/{id}', [ReportsController::class, 'customersDetailReturns'])->name('sales-returns');
         Route::get('sales-payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('sales-payments');
         Route::get('purchases/{id}', [ReportsController::class, 'customersDetailSales'])->name('purchases');
