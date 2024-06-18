@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Reports;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Expense;
+use App\Models\Product;
+use App\Models\ProductWarehouse;
 use App\Models\Provider;
 use App\Models\Purchase;
 use App\Models\PurchaseReturn;
@@ -34,14 +36,151 @@ class ReportsController extends Controller
         return view('templates.reports.quantity-alerts');
     }
 
-    public function stock()
-    {
-        return view('templates.reports.stock');
-    }
+    // public function stock()
+    // {
+    //     return view('templates.reports.stock');
+    // }
+    // public function stock(request $request)
+    // {
+    //     $data = array();
+    //     //get warehouses assigned to user
+    //     $user_auth = auth()->user();
+    //     if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+    //         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+    //     } else {
+    //         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+    //         $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+    //     }
+    //     $products_dataQuery = Product::with('unit', 'category', 'brand')
+    //         ->where('deleted_at', '=', null)->latest();
+    //     if ($request->filled('search')) {
+    //         $products_dataQuery->where(function ($query) use ($request) {
+    //             $query->where('products.name', 'LIKE', '%' . $request->input('search') . '%')
+    //                 ->orWhere('products.code', 'LIKE', '%' . $request->input('search') . '%')
+    //                 ->orWhere(function ($query) use ($request) {
+    //                     $query->whereHas('category', function ($q) use ($request) {
+    //                         $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+    //                     });
+    //                 });
+    //         });
+    //     }
+    //     $products =  $products_dataQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
 
-    public function stockDetail($id)
+    //     foreach ($products as $product) {
+    //         if ($product->type != 'is_service') {
+
+    //             $item['id'] = $product->id;
+    //             $item['code'] = $product->code;
+    //             $item['name'] = $product->name;
+    //             $item['category'] = $product['category']->name;
+
+    //             $current_stock = ProductWarehouse::where('product_id', $product->id)
+    //                 ->where('deleted_at', '=', null)
+    //                 ->whereIn('warehouse_id', $warehouses_id)
+    //                 ->where(function ($query) use ($request) {
+    //                     return $query->when($request->filled('warehouse_id'), function ($query) use ($request) {
+    //                         return $query->where('warehouse_id', $request->warehouse_id);
+    //                     });
+    //                 })
+    //                 ->sum('qty');
+
+    //             $item['quantity'] = $current_stock . ' ' . $product['unit']->ShortName;
+
+    //             $data[] = $item;
+    //         } else {
+
+    //             $item['id'] = $product->id;
+    //             $item['code'] = $product->code;
+    //             $item['name'] = $product->name;
+    //             $item['category'] = $product['category']->name;
+    //             $item['quantity'] = '---';
+
+    //             $data[] = $item;
+    //         }
+    //     }
+    //     return view('templates.reports.stock', [
+    //         'report' => $data,
+    //         'products' => $products,
+    //         'warehouses' => $warehouses,
+    //     ]);
+    //     return view('templates.reports.stock');
+    //     return response()->json([
+    //         'report' => $data,
+    //         'products' => $products,
+    //         'warehouses' => $warehouses,
+    //     ]);
+    // }
+    // public function stockDetail($id)
+    // {
+    //     return view('templates.reports.stock-detail');
+    // }
+    public function stock(Request $request)
     {
-        return view('templates.reports.stock-detail');
+        $data = array();
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+
+        $products_dataQuery = Product::with('unit', 'category', 'brand')
+            ->where('deleted_at', '=', null)->latest();
+
+        if ($request->filled('search')) {
+            $products_dataQuery->where(function ($query) use ($request) {
+                $query->where('products.name', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('products.code', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('category', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    });
+            });
+        }
+
+        $products = $products_dataQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+
+        foreach ($products as $product) {
+            if ($product->type != 'is_service') {
+                $item['id'] = $product->id;
+                $item['code'] = $product->code;
+                $item['name'] = $product->name;
+                $item['category'] = $product['category']->name;
+
+                $current_stock = ProductWarehouse::where('product_id', $product->id)
+                    ->where('deleted_at', '=', null)
+                    ->where(function ($query) use ($request) {
+                        return $query->when($request->filled('warehouse_id'), function ($query) use ($request) {
+                            return $query->where('warehouse_id', $request->warehouse_id);
+                        });
+                    })
+                    ->sum('qty');
+
+                $item['quantity'] = $current_stock . ' ' . $product['unit']->ShortName;
+
+                $data[] = $item;
+            } else {
+                $item['id'] = $product->id;
+                $item['code'] = $product->code;
+                $item['name'] = $product->name;
+                $item['category'] = $product['category']->name;
+                $item['quantity'] = '---';
+
+                $data[] = $item;
+            }
+        }
+        return view('templates.reports.stock', [
+            'report' => $data,
+            'products' => $products,
+            'warehouses' => $warehouses,
+        ]);
+        return response()->json([
+            'report' => $data,
+            'products' => $products,
+            'warehouses' => $warehouses,
+        ]);
     }
 
     //----------------- Customers Report -----------------------\\
