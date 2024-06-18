@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Supplier ~ Purchase Reports</h1>
+    <h1>Supplier ~ Payments Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -163,15 +163,15 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">Purchases</a>
+                                        <a class="nav-link active show" role="tab" aria-selected="false">Payments</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.supplier.returns', $provider->id) }}"
                                             role="tab" aria-selected="false">Purchases Return</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.supplier.payments', $provider->id) }}"
-                                            role="tab" aria-selected="false">Payments</a>
+                                        <a class="nav-link" href="{{ route('reports.supplier.purchases', $provider->id) }}"
+                                            role="tab" aria-selected="false">Purchase</a>
                                     </li>
                                 </ul>
                             </div>
@@ -179,7 +179,7 @@
                                 <div class="profile-content tab-content">
                                     <div id="profile-feed" class="tab-pane fade active show">
                                         <div class="card-header d-flex justify-content-between">
-                                            <form action="{{ route('reports.supplier.purchases', $provider->id) }}"
+                                            <form action="{{ route('reports.supplier.payments', $provider->id) }}"
                                                 method="GET">
                                                 <div class="input-group search-input">
                                                     <span class="input-group-text d-inline" id="search-input">
@@ -207,43 +207,27 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
+                                                            <th>Date</th>
                                                             <th>Reference</th>
-                                                            <th>Supplier</th>
-                                                            <th>Warehouse</th>
-                                                            <th>Grand Total</th>
-                                                            <th>Paid</th>
-                                                            <th>Due</th>
-                                                            <th>Status</th>
-                                                            <th>Payment Status</th>
+                                                            <th>Purchase</th>
+                                                            <th>Paid by</th>
+                                                            <th>Amount</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($report as $item)
+                                                        @foreach ($paymentDetails as $item)
                                                             <tr>
+                                                                <td>{{ $item['date'] }}</td>
                                                                 <td>{{ $item['Ref'] }}</td>
-                                                                <td>{{ $item['provider_name'] }}</td>
-                                                                <td>{{ $item['warehouse_name'] }}</td>
-                                                                <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}
-                                                                </td>
-                                                                <td>{{ 'Rp ' . number_format($item['paid_amount'], 2, ',', '.') }}
-                                                                </td>
-                                                                <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}
-                                                                </td>
+                                                                <td>{{ $item['purchase_Ref'] }}</td>
                                                                 <td>
-                                                                    @if ($item['statut'] == 'completed')
-                                                                        <span class="status-completed">completed</span>
-                                                                    @elseif($item['statut'] == 'ordered')
-                                                                        <span class="status-ordered">ordered</span>
+                                                                    @if ($item['Reglement'] == 'Cash')
+                                                                        Cash
                                                                     @else
-                                                                        <span class="status-pending">pending</span>
+                                                                        Midtrans
                                                                     @endif
                                                                 </td>
-                                                                <td>
-                                                                    @if ($item['payment_status'] == 'paid')
-                                                                        <span class="payment-paid">paid</span>
-                                                                    @else
-                                                                        <span class="payment-unpaid">unpaid</span>
-                                                                    @endif
+                                                                <td>{{ 'Rp ' . number_format($item['montant'], 2, ',', '.') }}
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -251,7 +235,7 @@
                                                 </table>
                                                 <div class="bd-example"
                                                     style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                                                    {{ $purchases->links() }}
+                                                    {{ $payments->links() }}
                                                 </div>
                                             </div>
                                         </div>

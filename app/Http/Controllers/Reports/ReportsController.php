@@ -243,7 +243,6 @@ class ReportsController extends Controller
             ->join('sales', 'payment_sales.sale_id', '=', 'sales.id')
             ->where('sales.client_id', $id)
             ->latest('payment_sales.date');
-
         if ($request->filled('search')) {
             $paymentsQuery->where(function ($query) use ($request) {
                 $query->orWhere('payment_sales.Ref', 'LIKE', '%' . $request->input('search') . '%')
@@ -475,6 +474,65 @@ class ReportsController extends Controller
             'provider' => $provider,
             'report' => $report,
         ]);
+    }
+    public function Payments_Provider(request $request, $id)
+    {
+        $provider = Provider::where('deleted_at', '=', null)->findOrFail($id);
+        // Calculate client-specific data
+        $data['total_purchases'] = DB::table('purchases')->where('deleted_at', '=', null)->where('provider_id', $id)->count();
+        $data['total_amount'] = DB::table('purchases')->where('deleted_at', '=', null)->where('provider_id', $id)->sum('GrandTotal');
+        $data['total_paid'] = DB::table('purchases')->where('deleted_at', '=', null)->where('provider_id', $id)->sum('paid_amount');
+        $data['due'] = $data['total_amount'] - $data['total_paid'];
+
+        $paymentsQuery = DB::table('payment_purchases')
+            ->where('payment_purchases.deleted_at', '=', null)
+            ->join('purchases', 'payment_purchases.purchase_id', '=', 'purchases.id')
+            ->where('purchases.provider_id', $id)->latest();
+        if ($request->filled('search')) {
+            $paymentsQuery->where(function ($query) use ($request) {
+                $query->orWhere('payment_purchases.Ref', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('payment_purchases.date', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('payment_purchases.Reglement', 'LIKE', '%' . $request->input('search') . '%');
+            });
+        }
+        $payments = $paymentsQuery->select(
+            'payment_purchases.date',
+            'payment_purchases.Ref AS Ref',
+            'purchases.Ref AS purchase_Ref',
+            'payment_purchases.Reglement',
+            'payment_purchases.montant'
+        )->paginate($request->input('limit', 10))->appends($request->except('page'));
+
+
+        // $payments = $payments->offset($offSet)
+        //     ->limit($perPage)
+        //     ->orderBy('payment_purchases.id', 'desc')
+        //     ->get();
+        $paymentDetails = [];
+        foreach ($payments as $payment) {
+            $item = [
+                'date' => $payment->date,
+                'Ref' => $payment->Ref,
+                'purchase_Ref' => $payment->purchase_Ref,
+                'Reglement' => $payment->Reglement,
+                'montant' => $payment->montant,
+            ];
+
+            $paymentDetails[] = $item;
+        }
+        return view('templates.reports.supplier.supplier-detail-payments', [
+            'purchases_data' => $data,
+            'payments' => $payments,
+            'paymentDetails' => $paymentDetails,
+            'provider' => $provider,
+        ]);
+        // return response()->json([
+        //     'payments' => $payments,
+        //     'purchases_data' => $data,
+        //     'payments' => $payments,
+        //     'paymentDetails' => $paymentDetails,
+        //     'provider' => $provider,
+        // ]);
     }
     public function supplierDetail($id)
     {
