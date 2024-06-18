@@ -163,7 +163,7 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
         Route::get('list', [ReportsController::class, 'supplier'])->name('index');
         Route::get('purchases/{id}', [ReportsController::class, 'Purchases_Provider'])->name('purchases');
         Route::get('returns/{id}', [ReportsController::class, 'Returns_Provider'])->name('returns');
-        Route::get('payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('payments');
+        Route::get('payments/{id}', [ReportsController::class, 'Payments_Provider'])->name('payments');
     });
     // Route::get('supplier/{id}', [ReportsController::class, 'supplierDetail'])->name('supplier-detail');
     Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
