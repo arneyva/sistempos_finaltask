@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Reports;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Expense;
+use App\Models\Provider;
 use App\Models\Purchase;
 use App\Models\PurchaseReturn;
 use App\Models\Sale;
@@ -626,6 +627,8 @@ class ReportsController extends Controller
         ]);
     }
     //----------------- Warehouse Report-----------------------\\
+
+    //----------------- Sale Report-----------------------\\
     public function sale(request $request)
     {
         $saleQuery = Sale::select('sales.*')
@@ -713,9 +716,106 @@ class ReportsController extends Controller
             'total_amount' => $totalAmount,
         ]);
     }
+    //----------------- Sale Report-----------------------\\
 
-    public function purchase()
+    // public function purchase()
+    // {
+    //     return view('templates.reports.purchase');
+    // }
+    public function purchase(request $request)
     {
-        return view('templates.reports.purchase');
+        $data = array();
+
+        $PurchasesQuery = Purchase::select('purchases.*')
+            ->with('facture', 'provider', 'warehouse')
+            ->join('providers', 'purchases.provider_id', '=', 'providers.id')
+            ->where('purchases.deleted_at', '=', null)->latest();
+        // ->whereBetween('purchases.date', array($request->from, $request->to));
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $PurchasesQuery->whereBetween('sales.date', [$request->from_date, $request->to_date]);
+        }
+        if ($request->filled('search')) {
+            $PurchasesQuery->where(function ($query) use ($request) {
+                $query->where('Ref', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('GrandTotal', $request->input('search'))
+                    ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('provider', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    })
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('warehouse', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    });
+            });
+        }
+        if ($request->filled('warehouse_id')) {
+            $PurchasesQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
+        }
+        if ($request->filled('provider_id')) {
+            $PurchasesQuery->where('provider_id', '=', $request->input('provider_id'));
+        }
+        if ($request->filled('statut')) {
+            $PurchasesQuery->where('statut', '=', $request->input('statut'));
+        }
+        if ($request->filled('payment_statut')) {
+            $PurchasesQuery->where('payment_statut', '=', $request->input('payment_statut'));
+        }
+        $Purchases = $PurchasesQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $totalPaid = $Purchases->sum('paid_amount');
+        $totalAmount = $Purchases->sum('GrandTotal');
+        $totalDue = $totalAmount - $totalPaid;
+        $Purchases_data = [];
+        foreach ($Purchases as $Purchase) {
+
+            $item['id'] = $Purchase->id;
+            $item['date'] = $Purchase->date;
+            $item['Ref'] = $Purchase->Ref;
+            $item['warehouse_name'] = $Purchase['warehouse']->name;
+            $item['discount'] = $Purchase->discount;
+            $item['shipping'] = $Purchase->shipping;
+            $item['statut'] = $Purchase->statut;
+            $item['provider_name'] = $Purchase['provider']->name;
+            $item['provider_email'] = $Purchase['provider']->email;
+            $item['provider_tele'] = $Purchase['provider']->phone;
+            $item['provider_code'] = $Purchase['provider']->code;
+            $item['provider_adr'] = $Purchase['provider']->adresse;
+            $item['GrandTotal'] = $Purchase['GrandTotal'];
+            $item['paid_amount'] = $Purchase['paid_amount'];
+            $item['due'] = $Purchase['GrandTotal'] - $Purchase['paid_amount'];
+            $item['payment_status'] = $Purchase['payment_statut'];
+
+            $Purchases_data[] = $item;
+        }
+
+        $provider = Provider::where('deleted_at', '=', null)->get(['id', 'name']);
+
+        //get warehouses assigned to user
+        $user_auth = auth()->user();
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        // return response()->json([
+        //     'totalRows' => $totalRows,
+        //     'purchases' => $data,
+        //     'suppliers' => $suppliers,
+        //     'warehouses' => $warehouses,
+        // ]);
+        return view('templates.reports.purchase', [
+            'purchases' => $Purchases,
+            'purchases_data' => $Purchases_data,
+            'provider' => $provider,
+            'warehouse' => $warehouses,
+            'total_paid' => $totalPaid,
+            'total_due' => $totalDue,
+            'total_amount' => $totalAmount,
+        ]);
     }
 }
