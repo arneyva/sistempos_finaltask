@@ -135,7 +135,12 @@ class ReportsController extends Controller
                     ->orWhere('statut', 'like', '%' . $request->input('search') . '%')
                     ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
                     ->orWhere('payment_method', 'like', '%' . $request->input('search') . '%')
-                    ->orWhere('shipping_status', 'like', '%' . $request->input('search') . '%');
+                    ->orWhere('shipping_status', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('client', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    });
             });
         }
         $sales =  $salesQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
@@ -274,11 +279,137 @@ class ReportsController extends Controller
         ]);
     }
     //----------------- Customers Report -----------------------\\
-    public function supplier()
+    public function supplier(request $request)
     {
-        return view('templates.reports.supplier');
-    }
+        $providersQuery = Provider::where('deleted_at', '=', null)->latest();
+        if ($request->filled('search')) {
+            $providersQuery->where(function ($query) use ($request) {
+                $query->orWhere('name', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere('phone', 'like', '%' . $request->input('search') . '%');
+            });
+        }
+        $providers = $providersQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $data = array();
+        $totalPurchase = 0;
+        $totalAmount = 0;
+        $totalPaid = 0;
+        $totalDue = 0;
+        $totalReturnDue = 0;
+        foreach ($providers as $provider) {
+            $item['total_purchase'] = DB::table('purchases')
+                ->where('deleted_at', '=', null)
+                ->where('provider_id', $provider->id)
+                ->count();
 
+            $item['total_amount'] = DB::table('purchases')
+                ->where('deleted_at', '=', null)
+                ->where('provider_id', $provider->id)
+                ->sum('GrandTotal');
+
+            $item['total_paid'] = DB::table('purchases')
+                ->where('purchases.deleted_at', '=', null)
+                ->where('purchases.provider_id', $provider->id)
+                ->sum('paid_amount');
+
+            $item['due'] = $item['total_amount'] - $item['total_paid'];
+
+            $item['total_amount_return'] = DB::table('purchase_returns')
+                ->where('deleted_at', '=', null)
+                ->where('provider_id', $provider->id)
+                ->sum('GrandTotal');
+
+            $item['total_paid_return'] = DB::table('purchase_returns')
+                ->where('deleted_at', '=', null)
+                ->where('provider_id', $provider->id)
+                ->sum('paid_amount');
+
+            $item['return_Due'] = $item['total_amount_return'] - $item['total_paid_return'];
+
+            $item['id'] = $provider->id;
+            $item['name'] = $provider->name;
+            $item['phone'] = $provider->phone;
+            $item['code'] = $provider->code;
+
+            $data[] = $item;
+            $totalPurchase += $item['total_purchase'];
+            $totalAmount += $item['total_amount'];
+            $totalPaid += $item['total_paid'];
+            $totalDue += $item['due'];
+            $totalReturnDue += $item['return_Due'];
+        }
+        return view('templates.reports.supplier.supplier', [
+            'report' => $data,
+            'providers' => $providers,
+            'total_purchase' => $totalPurchase,
+            'total_amount' => $totalAmount,
+            'total_paid' => $totalPaid,
+            'total_due' => $totalDue,
+            'total_return_due' => $totalReturnDue,
+
+        ]);
+        // return response()->json([
+        //     'totalRows' => $totalRows,
+        // ]);
+    }
+    public function Purchases_Provider(request $request, $id)
+    {
+        $provider = Provider::where('deleted_at', '=', null)->findOrFail($id);
+        // Calculate client-specific data
+        $data['total_purchases'] = DB::table('purchases')->where('deleted_at', '=', null)->where('provider_id', $id)->count();
+        $data['total_amount'] = DB::table('purchases')->where('deleted_at', '=', null)->where('provider_id', $id)->sum('GrandTotal');
+        $data['total_paid'] = DB::table('purchases')->where('deleted_at', '=', null)->where('provider_id', $id)->sum('paid_amount');
+        $data['due'] = $data['total_amount'] - $data['total_paid'];
+
+        $purchasesQuery = Purchase::where('deleted_at', '=', null)
+            ->with('provider', 'warehouse')
+            ->where('provider_id', $id)->latest();
+        if ($request->filled('search')) {
+            $purchasesQuery->where(function ($query) use ($request) {
+                $query->orWhere('Ref', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere('statut', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
+                    // ->orWhere('payment_method', 'like', '%' . $request->input('search') . '%')
+                    // ->orWhere('shipping_status', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('provider', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    })
+                    ->orWhere(function ($query) use ($request) {
+                        $query->whereHas('warehouse', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                        });
+                    });
+            });
+        }
+        $purchases =  $purchasesQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $report = [];
+        foreach ($purchases as $purchase) {
+            $item['id'] = $purchase->id;
+            $item['Ref'] = $purchase->Ref;
+            $item['warehouse_name'] = $purchase['warehouse']->name;
+            $item['provider_name'] = $purchase['provider']->name;
+            $item['statut'] = $purchase->statut;
+            $item['GrandTotal'] = $purchase->GrandTotal;
+            $item['paid_amount'] = $purchase->paid_amount;
+            $item['due'] = $purchase->GrandTotal - $purchase->paid_amount;
+            $item['payment_status'] = $purchase->payment_statut;
+
+            $report[] = $item;
+        }
+
+        // return response()->json([
+        //     'purchases' => $purchases,
+        //     'purchases_data' => $data,
+        //     'report' => $report,
+        // ]);
+        return view('templates.reports.supplier.supplier-detail-purchase', [
+            'purchases' => $purchases,
+            'purchases_data' => $data,
+            'report' => $report,
+            'provider' => $provider
+        ]);
+    }
     public function supplierDetail($id)
     {
         return view('templates.reports.supplier-detail');
