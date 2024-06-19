@@ -64,7 +64,20 @@ class WarehousesController extends Controller
                 'country' => [
                     'required',
                 ],
+                'google_maps' => [
+                    'required',
+                    'url',
+                    'size:41',
+                ],
             ]);
+
+            $gmaps = $request->input('google_maps');
+            $expandedUrl = $this->expandUrl($gmaps);
+            $coordinates = $this->extractCoordinates($expandedUrl);
+            if (! $coordinates) {
+                return back()->with('error', 'Invalid Google Maps URL, Use link from share feature in Google Maps');
+            }
+
             $warehouses = Warehouse::create([
                 'name' => $validated['name'],
                 'city' => $validated['city'],
@@ -72,6 +85,9 @@ class WarehousesController extends Controller
                 'zip' => $validated['zip'],
                 'email' => $validated['email'],
                 'country' => $validated['country'],
+                'google_maps' => $validated['google_maps'],
+                'longitude' => $coordinates['longitude'],
+                'latitude' => $coordinates['latitude'],
             ]);
 
             $products = Product::where('deleted_at', '=', null)->get(['id', 'type']);
@@ -141,7 +157,20 @@ class WarehousesController extends Controller
             'country' => [
                 'required',
             ],
+            'google_maps' => [
+                'required',
+                'url',
+                'size:41',
+            ],
         ]);
+
+        $gmaps = $request->input('google_maps');
+        $expandedUrl = $this->expandUrl($gmaps);
+        $coordinates = $this->extractCoordinates($expandedUrl);
+
+        if (! $coordinates) {
+            return redirect()->back()->with('error', 'Invalid Google Maps URL, Use link from share feature in Google Maps');
+        }
 
         $warehouses = Warehouse::where('id', $id)->update([
             'name' => $updateRules['name'],
@@ -150,6 +179,9 @@ class WarehousesController extends Controller
             'zip' => $updateRules['zip'],
             'email' => $updateRules['email'],
             'country' => $updateRules['country'],
+            'google_maps' => $updateRules['google_maps'],
+            'longitude' => $coordinates['longitude'],
+            'latitude' => $coordinates['latitude'],
         ]);
 
         return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse updated successfully');
@@ -174,12 +206,43 @@ class WarehousesController extends Controller
 
                 return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse deleted successfully');
             } else {
-                return redirect()->back()->with('errorzz', 'Warehouse cannot be deleted because it is used in adjustments !!');
+                return redirect()->back()->with('error', 'Warehouse cannot be deleted because it is used in adjustments !!');
             }
         } catch (\Throwable $th) {
             DB::rollBack();
 
             return redirect()->back()->with('error', 'Data Warehouse deleted failed');
         }
+    }
+
+    public function expandUrl($gmaps)
+    {
+        $ch = curl_init($gmaps);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_NOBODY, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        $r = curl_exec($ch);
+
+        if (preg_match('/Location: (?P<url>.*)/i', $r, $match))
+        {
+            return $this->expandUrl($match['url']);
+        }
+
+        return rtrim($gmaps);
+    }
+
+    private function extractCoordinates($gmaps)
+    {
+        $pattern = '/!3d([-+]?\d*\.?\d+)!4d([-+]?\d*\.?\d+)/';
+        if (preg_match($pattern, $gmaps, $matches)) {
+            $latitude = $matches[1];
+            $longitude = $matches[2];
+            return [
+                'latitude' => $latitude,
+                'longitude' => $longitude
+            ];
+        }
+        return null;
     }
 }

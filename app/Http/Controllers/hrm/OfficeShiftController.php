@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class OfficeShiftController extends Controller
 {
@@ -65,9 +66,19 @@ class OfficeShiftController extends Controller
                 'monday_in' => 'required',
                 'monday_out' => 'required',
             ]);
-
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['monday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['monday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->monday_in = $request['monday_in'];
-            $shift->monday_out = $request['monday_out'];
+            $shift->monday_out = $request['monday_out'];}
         } else {
             $shift->monday_in = null;
             $shift->monday_out = null;
@@ -79,9 +90,19 @@ class OfficeShiftController extends Controller
                 'tuesday_in' => 'required',
                 'tuesday_out' => 'required',
             ]);
-
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['tuesday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['tuesday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->tuesday_in = $request['tuesday_in'];
-            $shift->tuesday_out = $request['tuesday_out'];
+            $shift->tuesday_out = $request['tuesday_out'];}
         } else {
             $shift->tuesday_in = null;
             $shift->tuesday_out = null;
@@ -93,9 +114,19 @@ class OfficeShiftController extends Controller
                 'wednesday_in' => 'required',
                 'wednesday_out' => 'required',
             ]);
-
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['wednesday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['wednesday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->wednesday_in = $request['wednesday_in'];
-            $shift->wednesday_out = $request['wednesday_out'];
+            $shift->wednesday_out = $request['wednesday_out'];}
         } else {
             $shift->wednesday_in = null;
             $shift->wednesday_out = null;
@@ -107,9 +138,19 @@ class OfficeShiftController extends Controller
                 'thursday_in' => 'required',
                 'thursday_out' => 'required',
             ]);
-
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['thursday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['thursday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->thursday_in = $request['thursday_in'];
-            $shift->thursday_out = $request['thursday_out'];
+            $shift->thursday_out = $request['thursday_out'];}
         } else {
             $shift->thursday_in = null;
             $shift->thursday_out = null;
@@ -121,9 +162,20 @@ class OfficeShiftController extends Controller
                 'friday_in' => 'required',
                 'friday_out' => 'required',
             ]);
-
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['friday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['friday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->friday_in = $request['friday_in'];
             $shift->friday_out = $request['friday_out'];
+            }
         } else {
             $shift->friday_in = null;
             $shift->friday_out = null;
@@ -135,9 +187,20 @@ class OfficeShiftController extends Controller
                 'saturday_in' => 'required',
                 'saturday_out' => 'required',
             ]);
-
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['saturday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['saturday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->saturday_in = $request['saturday_in'];
             $shift->saturday_out = $request['saturday_out'];
+            }
         } else {
             $shift->saturday_in = null;
             $shift->saturday_out = null;
@@ -149,9 +212,21 @@ class OfficeShiftController extends Controller
                 'sunday_in' => 'required',
                 'sunday_out' => 'required',
             ]);
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['sunday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['sunday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
+                $shift->sunday_in = $request['sunday_in'];
+                $shift->sunday_out = $request['sunday_out'];
+            }
 
-            $shift->sunday_in = $request['sunday_in'];
-            $shift->sunday_out = $request['sunday_out'];
         } else {
             $shift->sunday_in = null;
             $shift->sunday_out = null;
@@ -230,26 +305,47 @@ class OfficeShiftController extends Controller
                 'monday_in'           => 'required',
                 'monday_out'     => 'required',
             ]);
-
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['monday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['monday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->update([
                 'monday_in' => $request['monday_in'],
                 'monday_out' => $request['monday_out'],
-            ]);
+            ]);}
         } else {
             $shift->monday_in = null;
             $shift->monday_out = null;
         }
-
+        
         // Selasa
         if ($request['tuesday']) {
             request()->validate([
                 'tuesday_in'           => 'required',
                 'tuesday_out'     => 'required',
             ]);
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['tuesday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['tuesday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->update([
                 'tuesday_in' => $request['tuesday_in'],
                 'tuesday_out' => $request['tuesday_out'],
-            ]);
+            ]);}
 
         } else {
             $shift->tuesday_in = null;
@@ -262,56 +358,101 @@ class OfficeShiftController extends Controller
                 'wednesday_in'           => 'required',
                 'wednesday_out'     => 'required',
             ]);
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['wednesday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['wednesday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->update([
                 'wednesday_in' => $request['wednesday_in'],
                 'wednesday_out' => $request['wednesday_out'],
-            ]);
+            ]);}
         } else {
             $shift->wednesday_in = null;
             $shift->wednesday_out = null;
         }
-
+        
         // Kamis
         if ($request['thursday']) {
             request()->validate([
                 'thursday_in'           => 'required',
                 'thursday_out'     => 'required',
             ]);
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['thursday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['thursday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return redirect()->back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->update([
                 'thursday_in' => $request['thursday_in'],
                 'thursday_out' => $request['thursday_out'],
-            ]);
+            ]);}
 
         } else {
             $shift->thursday_in = null;
             $shift->thursday_out = null;
         }
-
+        
         // Jumat
         if ($request['friday']) {
             request()->validate([
                 'friday_in'           => 'required',
                 'friday_out'     => 'required',
             ]);
+            
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['friday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['friday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->update([
                 'friday_in' => $request['friday_in'],
                 'friday_out' => $request['friday_out'],
-            ]);
+            ]);}
         } else {
             $shift->friday_in = null;
             $shift->friday_out = null;
         }
-
+        
         // Sabtu
         if ($request['saturday']) {
             request()->validate([
                 'saturday_in'           => 'required',
                 'saturday_out'     => 'required',
             ]);
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['saturday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['saturday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->update([
                 'saturday_in' => $request['saturday_in'],
                 'saturday_out' => $request['saturday_out'],
-            ]);
+            ]);}
         } else {
             $shift->saturday_in = null;
             $shift->saturday_out = null;
@@ -323,19 +464,31 @@ class OfficeShiftController extends Controller
                 'sunday_in'           => 'required',
                 'sunday_out'     => 'required',
             ]);
+            $scheduleTime1 = Carbon::createFromFormat('H:i', $request['sunday_in'], 'Asia/Jakarta');
+            $scheduleTime2 = Carbon::createFromFormat('H:i', $request['sunday_out'], 'Asia/Jakarta');
+            // Jika waktu keluar lebih kecil dari waktu masuk, tambahkan satu hari ke waktu keluar
+            if ($scheduleTime2->lessThan($scheduleTime1)) {
+                $scheduleTime2->addDay();
+            }
+            // Menambahkan 20 menit ke jadwal
+            $schedule_in_end_time = $scheduleTime1->copy()->addMinutes(20);
+            if ($schedule_in_end_time->greaterThan($scheduleTime2)) {
+                return back()->with('error', 'waktu keluar minimal lebih lama 20 menit daripada waktu masuk');
+            } else {
             $shift->update([
                 'sunday_in' => $request['sunday_in'],
                 'sunday_out' => $request['sunday_out'],
-            ]);
+            ]);}
         } else {
             $shift->sunday_in = null;
             $shift->sunday_out = null;
         }
-
+        dd($request->input('users'));
         if ($request->input('users') != null) {
             // Ambil array ID user dari request
             $usersToInput = json_decode($request->input('users'), true);
             $usersToInput = User::whereIn('id', $usersToInput)->get();
+            dd($usersToInput);
     
             foreach ($usersToInput as $user) {
                 $user->office_shifts()->sync($id);

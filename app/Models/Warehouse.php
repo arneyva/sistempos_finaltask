@@ -43,6 +43,11 @@ class Warehouse extends Model
 
     protected $table = 'warehouses';
 
+    protected $casts = [
+        'latitude' => 'float',
+        'longitude' => 'float',
+    ];
+
     protected $fillable = [
         'name',
         'city',
@@ -50,6 +55,9 @@ class Warehouse extends Model
         'zip',
         'email',
         'country',
+        'google_maps',
+        'latitude',
+        'longitude',
     ];
 
     public function adjustments()

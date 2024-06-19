@@ -479,6 +479,22 @@
                 
             });
         @endif
+        @if(session('warning'))
+            let error = '{{ session('warning') }}';
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
+            });
+        @endif
+        @if(session('error'))
+            let error = '{{ session('error') }}';
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
+            });
+        @endif
     </script>
 
     <script>
