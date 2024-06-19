@@ -12,6 +12,7 @@ use App\Models\Provider;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseReturn;
+use App\Models\PurchaseReturnDetails;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\SaleReturn;
@@ -506,6 +507,83 @@ class ReportsController extends Controller
         //     'totalRows' => $totalRows,
         //     'purchases' => $data,
         // ]);
+    }
+    public function stockDetailPurchasesReturn(request $request, $id)
+    {
+        $product = Product::where('deleted_at', '=', null)->findOrFail($id);
+        $purchase_return_details_data = PurchaseReturnDetails::with('product', 'PurchaseReturn', 'PurchaseReturn.provider', 'PurchaseReturn.warehouse')
+            ->where('quantity', '>', 0)
+            ->where('product_id', $id)
+            ->latest();
+
+        if ($request->filled('search')) {
+            $purchase_return_details_data->where(function ($query) use ($request) {
+                $query->orWhereHas('PurchaseReturn.provider', function ($q) use ($request) {
+                    $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                })
+                    ->orWhereHas('PurchaseReturn.warehouse', function ($q) use ($request) {
+                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                    })
+                    ->orWhereHas('PurchaseReturn', function ($q) use ($request) {
+                        $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
+                    })
+                    ->orWhereHas('product', function ($q) use ($request) {
+                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                    });
+            });
+        }
+        $purchase_return_details = $purchase_return_details_data->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $data = [];
+        foreach ($purchase_return_details as $detail) {
+            //-------check if detail has purchase_unit_id Or Null
+            if ($detail->purchase_unit_id !== null) {
+                $unit = Unit::where('id', $detail->purchase_unit_id)->first();
+            } else {
+                $product_unit_purchase_id = Product::with('unitPurchase')
+                    ->where('id', $detail->product_id)
+                    ->first();
+                $unit = Unit::where('id', $product_unit_purchase_id['unitPurchase']->id)->first();
+            }
+
+            if ($detail->product_variant_id) {
+                $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+                    ->where('id', $detail->product_variant_id)->first();
+
+                $product_name = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+            } else {
+                $product_name = $detail['product']['name'];
+            }
+
+            $item['date'] = $detail['PurchaseReturn']->date;
+            $item['Ref'] = $detail['PurchaseReturn']->Ref;
+            $item['return_purchase_id'] = $detail['PurchaseReturn']->id;
+            $item['provider_name'] = $detail['PurchaseReturn']['provider']->name;
+            $item['warehouse_name'] = $detail['PurchaseReturn']['warehouse']->name;
+            $item['quantity'] = $detail->quantity . ' ' . $unit->ShortName;;
+            $item['total'] = $detail->total;
+            $item['product_name'] = $product_name;
+            $item['unit_purchase'] = $unit->ShortName;
+
+            $data[] = $item;
+        }
+        $product_stock = ProductWarehouse::where('product_id', $id)->where('deleted_at', '=', null)->get();
+        $b = [];
+        foreach ($product_stock as $value) {
+            $a['warehouse'] = $value->warehouse->name;
+            $a['qty'] = $value->qty;
+            $a['unit'] = $value->product->unit->ShortName;
+            $b[] = $a;
+        }
+        return view('templates.reports.stock.stock-detail-purchases-return', [
+            'purchases_return' => $data,
+            'purchase_return_details' => $purchase_return_details,
+            'product' => $product,
+            'b' => $b
+        ]);
+        return response()->json([
+
+            'purchases_return' => $data,
+        ]);
     }
     //----------------- Customers Report -----------------------\\
     public function customers(Request $request)
