@@ -14,6 +14,7 @@ use App\Models\PurchaseReturn;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\SaleReturn;
+use App\Models\SaleReturnDetails;
 use App\Models\Unit;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
@@ -353,7 +354,82 @@ class ReportsController extends Controller
         ]);
         return response()->json($data);
     }
+    public function stockDetailSalesReturn(request $request, $id)
+    {
+        $product = Product::where('deleted_at', '=', null)->findOrFail($id);
+        $Sale_Return_details_data = SaleReturnDetails::with('product', 'SaleReturn', 'SaleReturn.client', 'SaleReturn.warehouse')
+            ->where('quantity', '>', 0)
+            ->where('product_id', $request->id)->latest();
+        if ($request->filled('search')) {
+            $Sale_Return_details_data->where(function ($query) use ($request) {
+                $query->orWhereHas('SaleReturn.client', function ($q) use ($request) {
+                    $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                })
+                    ->orWhereHas('SaleReturn.warehouse', function ($q) use ($request) {
+                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                    })
+                    ->orWhereHas('SaleReturn', function ($q) use ($request) {
+                        $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
+                    })
+                    ->orWhereHas('product', function ($q) use ($request) {
+                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                    });
+            });
+        }
+        $Sale_Return_details = $Sale_Return_details_data->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $data = [];
+        foreach ($Sale_Return_details as $detail) {
+            //check if detail has sale_unit_id Or Null
+            if ($detail->sale_unit_id !== null) {
+                $unit = Unit::where('id', $detail->sale_unit_id)->first();
+            } else {
+                $product_unit_sale_id = Product::with('unitSale')
+                    ->where('id', $detail->product_id)
+                    ->first();
 
+                if ($product_unit_sale_id['unitSale']) {
+                    $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
+                } {
+                    $unit = NULL;
+                }
+            }
+
+            if ($detail->product_variant_id) {
+                $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+                    ->where('id', $detail->product_variant_id)->first();
+
+                $product_name = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+            } else {
+                $product_name = $detail['product']['name'];
+            }
+
+            $item['date'] = $detail['SaleReturn']->date;
+            $item['Ref'] = $detail['SaleReturn']->Ref;
+            $item['return_sale_id'] = $detail['SaleReturn']->id;
+            $item['client_name'] = $detail['SaleReturn']['client']->name;
+            $item['warehouse_name'] = $detail['SaleReturn']['warehouse']->name;
+            $item['unit_sale'] = $unit ? $unit->ShortName : '';
+            $item['quantity'] = $detail->quantity . ' ' . $item['unit_sale'];
+            $item['total'] = $detail->total;
+            $item['product_name'] = $product_name;
+
+            $data[] = $item;
+        }
+        $product_stock = ProductWarehouse::where('product_id', $id)->where('deleted_at', '=', null)->get();
+        $b = [];
+        foreach ($product_stock as $value) {
+            $a['warehouse'] = $value->warehouse->name;
+            $a['qty'] = $value->qty;
+            $a['unit'] = $value->product->unit->ShortName;
+            $b[] = $a;
+        }
+        return view('templates.reports.stock.stock-detail-sales-return', [
+            'sales_return' => $data,
+            'Sale_Return_details' => $Sale_Return_details,
+            'product' => $product,
+            'b' => $b
+        ]);
+    }
 
     //----------------- Customers Report -----------------------\\
     public function customers(Request $request)

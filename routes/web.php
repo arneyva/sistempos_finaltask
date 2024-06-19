@@ -155,11 +155,11 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::prefix('/stock')->name('stock.')->group(function () {
         Route::get('list', [ReportsController::class, 'stock'])->name('index');
         Route::get('sales/{id}', [ReportsController::class, 'stockDetailSales'])->name('sales');
-        Route::get('sales-returns/{id}', [ReportsController::class, 'customersDetailReturns'])->name('sales-returns');
-        Route::get('sales-payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('sales-payments');
+        Route::get('sales-returns/{id}', [ReportsController::class, 'stockDetailSalesReturn'])->name('sales-returns');
+        Route::get('adjustment/{id}', [ReportsController::class, 'customersDetailReturns'])->name('adjustment');
+        Route::get('transfer/{id}', [ReportsController::class, 'customersDetailReturns'])->name('transfer');
         Route::get('purchases/{id}', [ReportsController::class, 'customersDetailSales'])->name('purchases');
         Route::get('purchases-returns/{id}', [ReportsController::class, 'customersDetailReturns'])->name('purchases-returns');
-        Route::get('purchases-payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('purchases-payments');
     });
     Route::get('stock/{id}', [ReportsController::class, 'stockDetail'])->name('stock-detail');
     Route::prefix('/customers')->name('customers.')->group(function () {

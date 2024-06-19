@@ -14,7 +14,6 @@
                     <div class="card-body">
                         <div class="col-md-6 col-lg-12" style="margin-bottom: 30px">
                             <table class="table table-striped mb-0" role="grid">
-
                                 <thead>
                                     <tr>
                                         <th>Warehouse</th>
@@ -37,11 +36,11 @@
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active show" data-bs-toggle="tab" href="#profile-feed"
-                                            role="tab" aria-selected="false">Sales</a>
+                                            role="tab" aria-selected="false">Sales Return</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.stock.sales-returns', $product->id) }}"
-                                            role="tab" aria-selected="false">Sales Return</a>
+                                        <a class="nav-link" href="{{ route('reports.stock.sales', $product->id) }}"
+                                            role="tab" aria-selected="false">Sales</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.purchases', $product->id) }}"
@@ -66,7 +65,7 @@
                                 <div class="profile-content tab-content">
                                     <div id="profile-feed" class="tab-pane fade active show">
                                         <div class="card-header d-flex justify-content-between">
-                                            <form action="{{ route('reports.stock.sales', $product->id) }}" method="GET">
+                                            <form action="{{ route('reports.stock.sales-returns', $product->id) }}" method="GET">
                                                 <div class="input-group search-input">
                                                     <span class="input-group-text d-inline" id="search-input">
                                                         <svg class="icon-18" width="18" viewBox="0 0 24 24"
@@ -102,7 +101,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($sales as $item)
+                                                        @foreach ($sales_return as $item)
                                                             <tr>
                                                                 <td>{{ $item['date'] }}</td>
                                                                 <td>{{ $item['Ref'] }}</td>
@@ -118,7 +117,7 @@
                                                 </table>
                                                 <div class="bd-example"
                                                     style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                                                    {{ $sale_details->links() }}
+                                                    {{ $Sale_Return_details->links() }}
                                                 </div>
                                             </div>
                                         </div>
