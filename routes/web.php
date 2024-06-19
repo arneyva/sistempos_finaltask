@@ -158,7 +158,7 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
         Route::get('sales-returns/{id}', [ReportsController::class, 'stockDetailSalesReturn'])->name('sales-returns');
         Route::get('adjustment/{id}', [ReportsController::class, 'customersDetailReturns'])->name('adjustment');
         Route::get('transfer/{id}', [ReportsController::class, 'customersDetailReturns'])->name('transfer');
-        Route::get('purchases/{id}', [ReportsController::class, 'customersDetailSales'])->name('purchases');
+        Route::get('purchases/{id}', [ReportsController::class, 'stockDetailPurchases'])->name('purchases');
         Route::get('purchases-returns/{id}', [ReportsController::class, 'customersDetailReturns'])->name('purchases-returns');
     });
     Route::get('stock/{id}', [ReportsController::class, 'stockDetail'])->name('stock-detail');

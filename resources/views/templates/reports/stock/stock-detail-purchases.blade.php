@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Stock Sales Returns ~ Reports</h1>
+    <h1>Stock Purchases ~ Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -14,6 +14,7 @@
                     <div class="card-body">
                         <div class="col-md-6 col-lg-12" style="margin-bottom: 30px">
                             <table class="table table-striped mb-0" role="grid">
+
                                 <thead>
                                     <tr>
                                         <th>Warehouse</th>
@@ -36,15 +37,15 @@
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active show" data-bs-toggle="tab" href="#profile-feed"
+                                            role="tab" aria-selected="false">Purchases</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('reports.stock.sales-returns', $product->id) }}"
                                             role="tab" aria-selected="false">Sales Return</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.sales', $product->id) }}"
                                             role="tab" aria-selected="false">Sales</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.stock.purchases', $product->id) }}"
-                                            role="tab" aria-selected="false">Purchases</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link"
@@ -65,7 +66,7 @@
                                 <div class="profile-content tab-content">
                                     <div id="profile-feed" class="tab-pane fade active show">
                                         <div class="card-header d-flex justify-content-between">
-                                            <form action="{{ route('reports.stock.sales-returns', $product->id) }}" method="GET">
+                                            <form action="{{ route('reports.stock.purchases', $product->id) }}" method="GET">
                                                 <div class="input-group search-input">
                                                     <span class="input-group-text d-inline" id="search-input">
                                                         <svg class="icon-18" width="18" viewBox="0 0 24 24"
@@ -94,19 +95,19 @@
                                                             <th>Date</th>
                                                             <th>Reference</th>
                                                             <th>Product Name</th>
-                                                            <th>Customer</th>
+                                                            <th>Supplier</th>
                                                             <th>Warehouse</th>
                                                             <th>Quantity</th>
                                                             <th>Subtotal</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($sales_return as $item)
+                                                        @foreach ($purchases as $item)
                                                             <tr>
                                                                 <td>{{ $item['date'] }}</td>
                                                                 <td>{{ $item['Ref'] }}</td>
                                                                 <td>{{ $item['product_name'] }}</td>
-                                                                <td>{{ $item['client_name'] }}</td>
+                                                                <td>{{ $item['provider_name'] }}</td>
                                                                 <td>{{ $item['warehouse_name'] }}</td>
                                                                 <td>{{ $item['quantity'] }}</td>
                                                                 <td>{{ 'Rp ' . number_format($item['total'], 2, ',', '.') }}
@@ -117,7 +118,7 @@
                                                 </table>
                                                 <div class="bd-example"
                                                     style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                                                    {{ $Sale_Return_details->links() }}
+                                                    {{ $purchase_details->links() }}
                                                 </div>
                                             </div>
                                         </div>
