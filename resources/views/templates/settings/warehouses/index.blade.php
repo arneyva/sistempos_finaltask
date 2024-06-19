@@ -80,6 +80,12 @@
                                             <input type="text" class="form-control" id="country" required
                                                 name="country" placeholder="input country">
                                         </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="google_maps">Google Maps Link *</label>
+                                            <input type="url" class="form-control mb-1" id="google_maps" required
+                                                name="google_maps" placeholder="input Link">
+                                                <p class="mx-3"> Use link from share feature in Google Maps<br>Link Example:<br><a href="#">https://maps.app.goo.gl/Bwz1W2ULp1xx3wWx5</a></p>
+                                        </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary"
@@ -212,7 +218,14 @@
                                                                         name="country" placeholder="input country"
                                                                         value="{{ $item->country }}">
                                                                 </div>
-
+                                                                <div class="col mb-3">
+                                                                    <label class="form-label" for="google_maps{{ $item->id }}">Google Maps Link *</label>
+                                                                    <input type="url" class="form-control mb-1"
+                                                                        id="google_maps{{ $item->id }}" required
+                                                                        name="google_maps" placeholder="input Link"
+                                                                        value="{{ $item->google_maps }}">
+                                                                        <p class="mx-3"> Use link from share feature in Google Maps<br>Link Example:<br><a href="#">https://maps.app.goo.gl/Bwz1W2ULp1xx3wWx5</a></p>
+                                                                </div>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"

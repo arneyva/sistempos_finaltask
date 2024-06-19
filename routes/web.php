@@ -6,6 +6,7 @@ use App\Http\Controllers\expense\ExpenseCategoryController;
 use App\Http\Controllers\expense\ExpenseController;
 use App\Http\Controllers\hrm\OfficeShiftController;
 use App\Http\Controllers\hrm\ClockController;
+use App\Http\Controllers\hrm\MyAttendanceController;
 use App\Http\Controllers\people\ClientController;
 use App\Http\Controllers\people\ProviderController;
 use App\Http\Controllers\Product\BrandController;
@@ -56,7 +57,8 @@ Route::get('/', [DashboardController::class, 'index'])->middleware(['auth', 'ver
 | Universal SmartClock has clock-in and clock-out functions 
 |--------------------------------------------------------------------------
 */
-Route::get('hrm/attendances/webclock', [ClockController::class, 'index']);
+Route::get('webclock', [ClockController::class, 'index']);
+Route::post('webclock/clocking', [ClockController::class, 'clocking'])->name('webclock.clocking');
 
 Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
@@ -258,6 +260,10 @@ Route::prefix('hrm')->middleware(['auth', 'verified'])->name('hrm.')->group(func
         Route::get('detail/{id}', [OfficeShiftController::class, 'show'])->name('show');
         Route::patch('update/{id}', [OfficeShiftController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [OfficeShiftController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('MyAttendances')->name('myattendances.')->group(function () {
+        Route::get('list', [MyAttendanceController::class, 'index'])->name('index');
+        Route::post('list', [MyAttendanceController::class, 'checkAttendance'])->name('check');
     });
 });
 Route::middleware('auth')->group(function () {

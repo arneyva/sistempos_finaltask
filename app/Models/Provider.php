@@ -60,6 +60,7 @@ class Provider extends Model
         'alamat_website',
         'lead_time',
         'nomor_kontak_person',
+        'avatar',
     ];
 
     public function purchase_returns()

@@ -95,6 +95,7 @@ class User extends Authenticatable
 
     protected $hidden = [
         'password',
+        'pin',
         'remember_token',
     ];
 
@@ -130,6 +131,7 @@ class User extends Authenticatable
         'leaving_date',
         'status',
         'remember_token',
+        'pin',
     ];
 
     public function scopeFilter($query, array $filters)

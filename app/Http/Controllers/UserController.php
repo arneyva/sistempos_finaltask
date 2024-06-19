@@ -252,16 +252,13 @@ class UserController extends Controller
 
         $validateData = $request->validate($rules, $message);
 
-        $current = $user->password;
-        if ($request->NewPassword != 'null') {
-            if ($request->NewPassword != $current) {
-                $pass = Hash::make($request->NewPassword);
-            } else {
-                $pass = $user->password;
-            }
+        $pass = $user->password;
+        if ($request->NewPassword) {
+            request()->validate([
+                'NewPassword' => 'min:6'
+            ]);
 
-        } else {
-            $pass = $current;
+            $pass = Hash::make($request->NewPassword);
         }
 
         $currentAvatar = $user->avatar;

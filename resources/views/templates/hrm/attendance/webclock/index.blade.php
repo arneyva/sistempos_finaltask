@@ -86,65 +86,75 @@
         @media (max-width: 576px) {
             /* Adjust the large (lg) screen breakpoint */
             .otp-Form h1 {
-                font-size:9vw; 
+                display: flex;
+                justify-content: center;
+                font-size:12vw; 
             }
             .otp-Form h2 {
-                font-size:3.1vw; 
+                font-size: 5.1vw; 
             }
             .otp-Form h6 {
-                font-size:2.4vw; 
+                font-size:4.4vw; 
                 font-weight:1; 
             }
 
             .ButtonContainer {
                 gap:2vw;
-                margin-top:4.5vw;
+                margin-top:4.2vw;
             }
 
             .otp-Form {
-                max-width: 70%; /* Set your desired minimum width for large screens (lg) */
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                max-width: 97%; /* Set your desired minimum width for large screens (lg) */
                 padding: 1rem 2rem 1rem 2rem;
             }
 
             .verifyButton {
-            width: 22vw;
-            height: 6vw;
-            font-size:2.4vw;
-            border: 1.7px solid;
-            border-radius: 3px;
+                width: 35vw;
+                height: 12vw;
+                font-size: 4.3vw;
+                border: 2.7px solid;
+                border-radius: 5px;
             }
             .password-input {
             -webkit-text-security: disc; /* Untuk Chrome/Safari */
             -moz-text-security: disc; /* Untuk Firefox */
-            width: 43vw;
-            height: 5vw;
+            width: 70vw;
+            height: 11vw;
             border-radius: 0.25vw;
             outline: none;
-            border: 0.4vw solid transparent;
-            border-bottom: 0.4vw solid #3f3f3f;
+            border: 0.6vw solid transparent;
+            border-bottom: 0.6vw solid #3f3f3f;
             caret-color: #3f3f3f;
             background-color: transparent;
             padding: 0px;
             transition: .5s linear;
-            letter-spacing: 0.7px;
+            letter-spacing: 0.9px;
             text-align:center;
         }
 
         .password-input:focus {
-        border: 0.4vw solid #fa4753;
+        border: 0.6vw solid #fa4753;
         color: #fa4753;
-        box-shadow: 0.29vw 0.29vw 0.7vw #6B6B6B;
+        box-shadow: 0.34vw 0.34vw 0.9vw #6B6B6B;
         }
         
         .password-input::placeholder {
-        font-size:2.3vw;
+        font-size:4vw;
         font-weight: 600;
         position: relative;
-        top: -3.1px;
+        top: -0.8px;
         transition: .5s linear;
         }
         .password-input:focus::placeholder {
         color: #fa4753;
+        }
+        #map {
+            height: 180px;
+            width: 100%;
+            margin-bottom:2.8vw;
         }
         }
         @media (min-width: 577px) {
@@ -164,7 +174,7 @@
             }
             .ButtonContainer {
                 gap:1vw;
-                margin-top:3.5vw;
+                margin-top:1.5vw;
             }
 
             .verifyButton {
@@ -206,6 +216,10 @@
         }
         .password-input:focus::placeholder {
         color: #fa4753;
+        }
+        #map {
+            height: 250px;
+            width: 90%;
         }
         }
         @media (min-width: 768px) {
@@ -264,8 +278,16 @@
         .password-input:focus::placeholder {
         color: #fa4753;
         }
+        #map {
+            height: 200px;
+            width: 100%;
+        }
         }
         @media (min-width: 1300px) {
+                #map {
+                height: 250px;
+                width: 90%;
+            }
             /* Adjust the large (lg) screen breakpoint */
             .otp-Form h1 {
                 font-size:5vw; 
@@ -290,41 +312,41 @@
             border: 0.25vw solid ;
             border-radius: 6px;
             }
-            .password-input {
-            -webkit-text-security: disc; /* Untuk Chrome/Safari */
-            -moz-text-security: disc; /* Untuk Firefox */
-            width: 25vw;
-            height: 3vw;
-            border-radius: 0.25vw;
-            outline: none;
-            border: 0.2vw solid transparent;
-            border-bottom: 0.2vw solid #3f3f3f;
-            caret-color: #3f3f3f;
-            background-color: transparent;
-            padding: 5px;
-            transition: .5s linear;
-            letter-spacing: 1px;
-            text-align:center;
-        }
+                .password-input {
+                -webkit-text-security: disc; /* Untuk Chrome/Safari */
+                -moz-text-security: disc; /* Untuk Firefox */
+                width: 25vw;
+                height: 3vw;
+                border-radius: 0.25vw;
+                outline: none;
+                border: 0.2vw solid transparent;
+                border-bottom: 0.2vw solid #3f3f3f;
+                caret-color: #3f3f3f;
+                background-color: transparent;
+                padding: 5px;
+                transition: .5s linear;
+                letter-spacing: 1px;
+                text-align:center;
+            }
 
-        .password-input:focus {
-        border: 0.22vw solid #fa4753;
-        color: #fa4753;
-        box-shadow: 0.28vw 0.28vw 0.6vw #6B6B6B;
-        }
-        
-        .password-input::placeholder {
-        font-size:1.2vw;
-        font-weight: 600;
-        transition: .5s linear;
-        }
-        .password-input:focus::placeholder {
-        color: #fa4753;
-        }
+            .password-input:focus {
+            border: 0.22vw solid #fa4753;
+            color: #fa4753;
+            box-shadow: 0.28vw 0.28vw 0.6vw #6B6B6B;
+            }
+            
+            .password-input::placeholder {
+            font-size:1.2vw;
+            font-weight: 600;
+            transition: .5s linear;
+            }
+            .password-input:focus::placeholder {
+            color: #fa4753;
+            }
         }
 
         .otp-Form h1 {
-            margin: 0 0 0.5em 0;
+            margin: 0 0 0.3em 0;
         }
 
         .otp-Form p {
@@ -398,7 +420,10 @@
         font-weight: 700;
         }
 
+
     </style>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
 
 </head>
@@ -408,12 +433,16 @@
         <form class="otp-Form" action="" method="get" autocomplete="off">
             <h2 class="">Fri, June 14, 2024</h2>
             <h1 class="">88:88:88</h1>
-<div  style="display:flex; justify-content:center; margin-bottom:2.2vw;">
-    <input type="tel" id="numeric-input" class="form-control password-input" style="caret-color: transparent;" placeholder="Enter your PIN here" name="pin" autocomplete="off">
-</div>
-            <div class="ButtonContainer" style="display:flex; justify-content: center;">
+            <div style="display:flex; justify-content:center; margin-bottom:2.2vw;">
+                <div class="" id="map"></div>
+            </div>
+            <div  style="display:flex; justify-content:center; margin-bottom:2.2vw;">
+                <input type="tel" id="numeric-input" class="form-control password-input" style="caret-color: transparent;" placeholder="Enter your PIN here" name="pin" autocomplete="off">
+            </div>
+            <div  style="display:flex; justify-content:center;" class="ButtonContainer">
                 <button id="btn-clockin" data-method="clockin" class="verifyButton" type="button">Clock-In</button>
                 <button id="btn-clockout" data-method="clockout" class="verifyButton out" type="button">Clock-Out</button>
+            </div>
             </div>
         </form>
     </div>
@@ -451,8 +480,123 @@
     <script src="{{ asset('hopeui/html/assets/js/hope-ui.js') }}" defer></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.6.0"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script>
+        var map = L.map('map').setView([-7.535912, 110.783188], 15); // Set view default map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var lang_clockin = "{{ __('Clock In at') }}";
+        var lang_clockout ="{{ __('Clock Out at') }}";
+        var userMarker, line; // Variabel untuk menyimpan marker dan garis pengguna
+
+        function updateLocationAndSendRequest(method, pin) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
+
+                    $.ajax({
+                        url: '/webclock/clocking',
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            type: method,
+                            pin: pin,
+                            latitude: userLatLng.lat,
+                            longitude: userLatLng.lng
+                        },
+                        headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
+                        success: function (response) {
+                            if (response.error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    html: '<ol style="text-align: start">' + response.error + '</ol>',
+                                });
+                            } else {
+                                function type(clocktype) {
+                                    if (clocktype == "clockin") {
+                                        return lang_clockin;
+                                    } else {
+                                        return lang_clockout;
+                                    }
+                                }
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: "success",
+                                    title: response.firstname + ' ' + response.lastname + ' success ' + type(response.type) + ' ' + response.time
+                                });
+                            }
+                            if (response.targetLat != null && response.targetLng != null) {
+                                // Hapus marker dan garis sebelumnya jika ada
+                                if (userMarker) {
+                                    map.removeLayer(userMarker);
+                                }
+                                if (line) {
+                                    map.removeLayer(line);
+                                }
+
+                                // Tambahkan marker untuk lokasi pengguna
+                                userMarker = L.marker(userLatLng).addTo(map).bindPopup("Lokasi Anda").openPopup();
+
+                                var targetLatLng = L.latLng(response.targetLat, response.targetLng);
+
+                                L.marker(targetLatLng).addTo(map).bindPopup("Lokasi Kerja").openPopup();
+
+                                line = L.polyline([targetLatLng, userLatLng], { color: 'blue' }).addTo(map);
+
+                                map.fitBounds(line.getBounds());
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                        // Log the error for debugging
+                        console.error('Error: ', error);
+                        console.error('Response: ', xhr.responseText);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Terjadi kesalahan saat mengirim data.'
+                            });
+                        }
+                    });
+
+                    $('input[name="pin"]').val("");
+                    $('input[name="pin"]').focus();
+
+                }, function (error) {
+                    alert("Gagal mendapatkan lokasi. Pastikan GPS aktif dan berikan izin akses lokasi.");
+                }, {
+                    enableHighAccuracy: true, // Pastikan menggunakan GPS untuk akurasi tinggi
+                    timeout: 10000, // Waktu tunggu maksimal
+                    maximumAge: 0 // Jangan menggunakan cache lokasi
+                });
+            } else {
+                alert("Browser Anda tidak mendukung geolokasi.");
+            }
+        }
+
+        $('#btn-clockin, #btn-clockout').on('click', function (event) {
+            event.preventDefault();
+            var method = $(this).data("method");
+            var pin = $('input[name="pin"]').val().toUpperCase(); // Pastikan pin diubah menjadi huruf besar
+            updateLocationAndSendRequest(method, pin);
+        });
+    </script>
 
     <script>
         $(document).ready(function() {
@@ -468,8 +612,9 @@
         });
     </script>
 
-<script>
-</script>
+    <script>
+
+    </script>
 
 </body>
 
