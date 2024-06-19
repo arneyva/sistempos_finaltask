@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdjustmentDetail;
 use App\Models\Client;
 use App\Models\Expense;
 use App\Models\Product;
@@ -583,6 +584,62 @@ class ReportsController extends Controller
         return response()->json([
 
             'purchases_return' => $data,
+        ]);
+    }
+    public function stockDetailAdjustment(request $request, $id)
+    {
+        $product = Product::where('deleted_at', '=', null)->findOrFail($id);
+        $adjustment_details_data = AdjustmentDetail::with('product', 'adjustment', 'adjustment.warehouse')
+            ->where('product_id', $id)
+            ->latest();
+
+        if ($request->filled('search')) {
+            $adjustment_details_data->where(function ($query) use ($request) {
+                $query->orWhereHas('adjustment.warehouse', function ($q) use ($request) {
+                    $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                })
+                    ->orWhereHas('adjustment', function ($q) use ($request) {
+                        $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
+                    })
+                    ->orWhereHas('product', function ($q) use ($request) {
+                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                    });
+            });
+        }
+
+        $adjustment_details = $adjustment_details_data->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $data = [];
+        foreach ($adjustment_details as $detail) {
+
+            if ($detail->product_variant_id) {
+                $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+                    ->where('id', $detail->product_variant_id)->first();
+
+                $product_name = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+            } else {
+                $product_name = $detail['product']['name'];
+            }
+
+            $item['date'] = $detail['adjustment']->date;
+            $item['Ref'] = $detail['adjustment']->Ref;
+            $item['warehouse_name'] = $detail['adjustment']['warehouse']->name;
+            $item['product_name'] = $product_name;
+
+            $data[] = $item;
+        }
+        $product_stock = ProductWarehouse::where('product_id', $id)->where('deleted_at', '=', null)->get();
+        $b = [];
+        foreach ($product_stock as $value) {
+            $a['warehouse'] = $value->warehouse->name;
+            $a['qty'] = $value->qty;
+            $a['unit'] = $value->product->unit->ShortName;
+            $b[] = $a;
+        }
+        return view('templates.reports.stock.stock-detail-adjustment', [
+            'adjustment' => $data,
+            'adjustment_details' => $adjustment_details,
+            'product' => $product,
+            'b' => $b
         ]);
     }
     //----------------- Customers Report -----------------------\\
