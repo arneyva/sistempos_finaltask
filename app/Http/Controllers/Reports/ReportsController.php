@@ -18,6 +18,7 @@ use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\SaleReturn;
 use App\Models\SaleReturnDetails;
+use App\Models\TransferDetail;
 use App\Models\Unit;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
@@ -638,6 +639,65 @@ class ReportsController extends Controller
         return view('templates.reports.stock.stock-detail-adjustment', [
             'adjustment' => $data,
             'adjustment_details' => $adjustment_details,
+            'product' => $product,
+            'b' => $b
+        ]);
+    }
+    public function stockDetailTransfer(request $request, $id)
+    {
+        $product = Product::where('deleted_at', '=', null)->findOrFail($id);
+        $transfer_details_data = TransferDetail::with('product', 'transfer', 'transfer.from_warehouse', 'transfer.to_warehouse')
+            ->where('product_id', $id)
+            ->latest();
+
+        if ($request->filled('search')) {
+            $transfer_details_data->where(function ($query) use ($request) {
+                $query->orWhereHas('transfer.from_warehouse', function ($q) use ($request) {
+                    $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                })
+                    ->orWhereHas('transfer.to_warehouse', function ($q) use ($request) {
+                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                    })
+                    ->orWhereHas('transfer', function ($q) use ($request) {
+                        $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
+                    })
+                    ->orWhereHas('product', function ($q) use ($request) {
+                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+                    });
+            });
+        }
+
+        $transfer_details = $transfer_details_data->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $data = [];
+        foreach ($transfer_details as $detail) {
+            if ($detail->product_variant_id) {
+                $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+                    ->where('id', $detail->product_variant_id)->first();
+
+                $product_name = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+            } else {
+                $product_name = $detail['product']['name'];
+            }
+
+            $item['date'] = $detail['transfer']->date;
+            $item['Ref'] = $detail['transfer']->Ref;
+            $item['from_warehouse'] = $detail['transfer']['from_warehouse']->name;
+            $item['to_warehouse'] = $detail['transfer']['to_warehouse']->name;
+            $item['product_name'] = $product_name;
+
+            $data[] = $item;
+        }
+        $product_stock = ProductWarehouse::where('product_id', $id)->where('deleted_at', '=', null)->get();
+        $b = [];
+        foreach ($product_stock as $value) {
+            $a['warehouse'] = $value->warehouse->name;
+            $a['qty'] = $value->qty;
+            $a['unit'] = $value->product->unit->ShortName;
+            $b[] = $a;
+        }
+        return view('templates.reports.stock.stock-detail-transfer', [
+            'transfer' => $data,
+            'transfer_details' => $transfer_details,
             'product' => $product,
             'b' => $b
         ]);
