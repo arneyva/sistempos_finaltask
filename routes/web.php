@@ -186,8 +186,8 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
         Route::get('payments/{id}', [ReportsController::class, 'Payments_Provider'])->name('payments');
         Route::get('payments/export/{id}', [ReportsController::class, 'providerDetailPaymentExport'])->name('payments-export');
     });
-    // Route::get('supplier/{id}', [ReportsController::class, 'supplierDetail'])->name('supplier-detail');
     Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
+    Route::get('top-selling-product/export', [ReportsController::class, 'topSellingProductExport'])->name('top-selling-product-export');
     Route::prefix('/warehouse')->name('warehouse.')->group(function () {
         Route::get('sales', [ReportsController::class, 'warehouseSales'])->name('sales');
         Route::get('expenses', [ReportsController::class, 'warehouseExpenses'])->name('expenses');

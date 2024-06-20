@@ -42,7 +42,8 @@
                     </div>
                 </form>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <a href="{{ route('reports.top-selling-product-export', ['search' => request('search')]) }}"
+                        class="btn btn-soft-danger">Excel</a>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -57,7 +58,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($products as $item)
+                            @foreach ($productDetail as $item)
                                 <tr>
                                     <td>{{ $item['code'] }}</td>
                                     <td>{{ $item['name'] }}</td>
@@ -68,7 +69,7 @@
                         </tbody>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-right: 10px; margin-top:10px">
-                        {{-- {{ $brands->links() }} --}}
+                        {{ $products->links() }}
                     </div>
                 </div>
             </div>
