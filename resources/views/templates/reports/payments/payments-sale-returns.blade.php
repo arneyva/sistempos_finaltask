@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Sales ~ Payments</h1>
+    <h1>Sales Retruns ~ Payments</h1>
     <p>look up your payments</p>
 @endsection
 
@@ -87,17 +87,20 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">Sales</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.payments.sales-returns') }}" role="tab" aria-selected="false">Sales
+                                        <a class="nav-link active show" role="tab" aria-selected="false">Sales
                                             Return</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.payments.purchases') }}" role="tab" aria-selected="false">Purchase</a>
+                                        <a class="nav-link" href="{{ route('reports.payments.sales') }}"
+                                            role="tab" aria-selected="false">Sales</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.payments.purchases-returns') }}" role="tab" aria-selected="false">Purchase
+                                        <a class="nav-link" href="{{ route('reports.payments.purchases') }}" role="tab"
+                                            aria-selected="false">Purchase</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('reports.payments.purchases-returns') }}"
+                                            role="tab" aria-selected="false">Purchase
                                             Return</a>
                                     </li>
                                 </ul>
@@ -106,7 +109,7 @@
                                 <div class="profile-content tab-content">
                                     <div id="profile-feed" class="tab-pane fade active show">
                                         <div class="card-header d-flex justify-content-between">
-                                            <form action="{{ route('reports.payments.sales') }}" method="GET">
+                                            <form action="{{ route('reports.payments.sales-returns') }}" method="GET">
                                                 <div class="input-group search-input">
                                                     <span class="input-group-text d-inline" id="search-input">
                                                         <svg class="icon-18" width="18" viewBox="0 0 24 24"
@@ -145,10 +148,10 @@
                                                             <tr>
                                                                 <td>{{ $item['date'] }}</td>
                                                                 <td>{{ $item['Payment_Ref'] }}</td>
-                                                                <td>{{ $item['Sale_Ref'] }}</td>
+                                                                <td>{{ $item['Sale_Return_Ref'] }}</td>
                                                                 <td>{{ $item['client_name'] }}</td>
                                                                 <td>
-                                                                    @if ($item['Reglement'] == 'Cash')
+                                                                    @if ($item['Reglement'] == 'cash')
                                                                         Cash
                                                                     @else
                                                                         Midtrans

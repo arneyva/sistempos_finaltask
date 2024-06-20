@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Sale;
 use App\Exports\SalesReturnExport;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\PaymentSaleReturns;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
@@ -35,7 +36,7 @@ class SaleReturnController extends Controller
             $salereturnQuery->whereDate('date', '=', $request->input('date'));
         }
         if ($request->filled('Ref')) {
-            $salereturnQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
+            $salereturnQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
         }
 
         if ($request->filled('warehouse_id')) {
@@ -113,7 +114,7 @@ class SaleReturnController extends Controller
                 $item_product ? $data['del'] = 0 : $data['del'] = 1;
                 $data['product_variant_id'] = $detail->product_variant_id;
                 $data['code'] = $productsVariants->code;
-                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
             } else {
                 $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('warehouse_id', $SaleReturn->warehouse_id)
@@ -190,11 +191,25 @@ class SaleReturnController extends Controller
             $item = $last->Ref;
             $nwMsg = explode('_', $item);
             $inMsg = $nwMsg[1] + 1;
-            $code = $nwMsg[0].'_'.$inMsg;
+            $code = $nwMsg[0] . '_' . $inMsg;
         } else {
             $code = 'RT_1111';
         }
 
+        return $code;
+    }
+    public function getNumberOrderPayement()
+    {
+        $last = DB::table('payment_sale_returns')->latest('id')->first();
+
+        if ($last) {
+            $item = $last->Ref;
+            $nwMsg = explode("_", $item);
+            $inMsg = $nwMsg[1] + 1;
+            $code = $nwMsg[0] . '_' . $inMsg;
+        } else {
+            $code = 'INV/RT_1111';
+        }
         return $code;
     }
 
@@ -278,12 +293,22 @@ class SaleReturnController extends Controller
                             $product_warehouse->save();
                         }
                     }
+                    // paymnents
+                    $transaction = PaymentSaleReturns::create([
+                        'user_id' => $order->user_id,
+                        'date' => $order->date,
+                        'Ref' => $this->getNumberOrderPayement(),
+                        'sale_return_id' => $order->id,
+                        'montant' => $order->GrandTotal,
+                        'change' =>  0,
+                        'Reglement' => 'cash',
+                    ]);
                 }
             }
             SaleReturnDetails::insert($orderDetails);
         }, 10);
 
-        return redirect()->route('sale.return_index')->with('success', 'Sale created successfully');
+        return redirect()->route('sale.return.index')->with('success', 'Sale created successfully');
     }
 
     public function show(Request $request, $id)
@@ -327,7 +352,6 @@ class SaleReturnController extends Controller
                     $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
                 }
                 $unit = null;
-
             }
 
             if ($detail->product_variant_id) {
@@ -336,7 +360,7 @@ class SaleReturnController extends Controller
                     ->where('id', $detail->product_variant_id)->first();
 
                 $data['code'] = $productsVariants->code;
-                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
             } else {
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
