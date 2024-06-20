@@ -158,7 +158,6 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     });
     Route::get('profit-loss', [ReportsController::class, 'profitLoss'])->name('profit-loss');
     Route::get('quantity-alerts', [ReportsController::class, 'quantityAlerts'])->name('quantity-alerts');
-    // Route::get('stock', [ReportsController::class, 'stock'])->name('stock');
     Route::prefix('/stock')->name('stock.')->group(function () {
         Route::get('list', [ReportsController::class, 'stock'])->name('index');
         Route::get('sales/{id}', [ReportsController::class, 'stockDetailSales'])->name('sales');
@@ -181,8 +180,11 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::prefix('/supplier')->name('supplier.')->group(function () {
         Route::get('list', [ReportsController::class, 'supplier'])->name('index');
         Route::get('purchases/{id}', [ReportsController::class, 'Purchases_Provider'])->name('purchases');
+        Route::get('purchases/export/{id}', [ReportsController::class, 'providerDetailPurchasesExport'])->name('purchases-export');
         Route::get('returns/{id}', [ReportsController::class, 'Returns_Provider'])->name('returns');
+        Route::get('returns/export/{id}', [ReportsController::class, 'providerDetailPurchasesReturnsExport'])->name('returns-export');
         Route::get('payments/{id}', [ReportsController::class, 'Payments_Provider'])->name('payments');
+        Route::get('payments/export/{id}', [ReportsController::class, 'providerDetailPaymentExport'])->name('payments-export');
     });
     // Route::get('supplier/{id}', [ReportsController::class, 'supplierDetail'])->name('supplier-detail');
     Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
