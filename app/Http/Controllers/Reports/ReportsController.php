@@ -28,9 +28,48 @@ use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {
-    public function payments()
+    public function payments(Request $request)
     {
-        return view('templates.reports.payments');
+        $paymentsQuery = DB::table('payment_sales')
+            ->where('payment_sales.deleted_at', '=', null)
+            ->join('sales', 'payment_sales.sale_id', '=', 'sales.id')
+            ->join('clients', 'sales.client_id', '=', 'clients.id')
+            ->latest('payment_sales.date');
+        if ($request->filled('search')) {
+            $paymentsQuery->where(function ($query) use ($request) {
+                $query->orWhere('payment_sales.Ref', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('clients.name', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('payment_sales.Reglement', 'LIKE', '%' . $request->input('search') . '%');
+            });
+        }
+        $payments = $paymentsQuery->select(
+            'payment_sales.date',
+            'payment_sales.Ref AS Payment_Ref',
+            'sales.Ref AS Sale_Ref',
+            'payment_sales.Reglement',
+            'payment_sales.montant',
+            'clients.name AS client_name'
+        )->paginate($request->input('limit', 10))->appends($request->except('page'));
+        // dd($payments);
+        $paymentDetails = [];
+        foreach ($payments as $payment) {
+            $item = [
+                'date' => $payment->date,
+                'Payment_Ref' => $payment->Payment_Ref,
+                'Sale_Ref' => $payment->Sale_Ref,
+                'Reglement' => $payment->Reglement,
+                'montant' => $payment->montant,
+                'client_name' => $payment->client_name,
+            ];
+
+            $paymentDetails[] = $item;
+        }
+        // dd($paymentDetails);
+        // return view('templates.reports.payments');
+        return view('templates.reports.payments.payments-sale', [
+            'payments' => $payments,
+            'paymentDetails' => $paymentDetails
+        ]);
     }
 
     public function profitLoss()
