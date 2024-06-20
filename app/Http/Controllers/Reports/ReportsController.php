@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Reports;
 
+use App\Exports\Report\Customer\ReportCustomerSalesExport;
+use App\Exports\Report\Customer\ReportCustomerSalesPaymentExport;
+use App\Exports\Report\Customer\ReportCustomerSalesReturnExport;
+use App\Exports\Report\Customer\SalesExport;
 use App\Http\Controllers\Controller;
 use App\Models\AdjustmentDetail;
 use App\Models\Client;
@@ -29,6 +33,7 @@ use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportsController extends Controller
 {
@@ -1532,6 +1537,13 @@ class ReportsController extends Controller
             'client' =>  $client,
         ]);
     }
+    public function customersDetailSalesExport(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-customer-sales_{$timestamp}.xlsx";
+        return Excel::download(new ReportCustomerSalesExport($request, $id), $filename);
+    }
+
     public function customersDetailReturns(Request $request, $id)
     {
         // Find the client or fail if not found
@@ -1590,6 +1602,12 @@ class ReportsController extends Controller
             'client' =>  $client,
         ]);
     }
+    public function customersDetailSalesReturnsExport(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-customer-sales-returns_{$timestamp}.xlsx";
+        return Excel::download(new ReportCustomerSalesReturnExport($request, $id), $filename);
+    }
     public function customersDetailPayments(Request $request, $id)
     {
         // Find the client or fail if not found
@@ -1638,6 +1656,12 @@ class ReportsController extends Controller
             'payments' => $payments,
             'client' =>  $client,
         ]);
+    }
+    public function customersDetailSalesPaymentExport(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-customer-sales-payment_{$timestamp}.xlsx";
+        return Excel::download(new ReportCustomerSalesPaymentExport($request, $id), $filename);
     }
     //----------------- Customers Report -----------------------\\
     public function supplier(request $request)
