@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\AdjustmentDetail;
 use App\Models\Client;
 use App\Models\Expense;
+use App\Models\PaymentPurchase;
+use App\Models\PaymentPurchaseReturns;
+use App\Models\PaymentSale;
+use App\Models\PaymentSaleReturns;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
@@ -207,11 +211,540 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function profitLoss()
+    // public function profitLoss()
+    // {
+    //     return view('templates.reports.profit-loss');
+    // }
+    public function profitLoss(request $request)
     {
-        return view('templates.reports.profit-loss');
-    }
+        $start_date = $request->from;
+        $end_date   =  $request->to;
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+            $array_warehouses_id = Warehouse::where('deleted_at', '=', null)->pluck('id')->toArray();
+        } else {
+            $array_warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $array_warehouses_id)->get(['id', 'name']);
+        }
+        if (empty($request->warehouse_id)) {
+            $warehouse_id = 0;
+        } else {
+            $warehouse_id = $request->warehouse_id;
+        }
 
+        $data = [];
+
+
+        //-------------Sale
+        $report_total_sales = Sale::where('deleted_at', '=', null)
+            ->where('statut', 'completed')
+            ->whereBetween('date', array($start_date, $end_date))
+
+            ->where(function ($query) use ($request, $warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->where('warehouse_id', $warehouse_id);
+                } else {
+                    return $query->whereIn('warehouse_id', $array_warehouses_id);
+                }
+            })
+
+            ->select(
+                DB::raw('SUM(GrandTotal) AS sum'),
+                DB::raw("count(*) as nmbr")
+            )->first();
+
+        // $item['sales_sum'] =   'Rp ' . number_format($report_total_sales->sum, 2, ',', '.');
+        $item['sales_sum'] =   'Rp ' . number_format($report_total_sales->sum, 2, ',', '.');
+
+        $item['sales_count'] =   $report_total_sales->nmbr;
+
+
+        //--------Purchase
+        $report_total_purchases =  Purchase::where('deleted_at', '=', null)
+            ->where('statut', 'received')
+            ->whereBetween('date', array($start_date, $end_date))
+
+            ->where(function ($query) use ($request, $warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->where('warehouse_id', $warehouse_id);
+                } else {
+                    return $query->whereIn('warehouse_id', $array_warehouses_id);
+                }
+            })
+            ->select(
+                DB::raw('SUM(GrandTotal) AS sum'),
+                DB::raw("count(*) as nmbr")
+            )->first();
+
+        $item['purchases_sum'] =   'Rp ' . number_format($report_total_purchases->sum, 2, ',', '.');
+        $item['purchases_count'] =  $report_total_purchases->nmbr;
+
+
+        //--------SaleReturn
+        $report_total_returns_sales = SaleReturn::where('deleted_at', '=', null)
+            ->where('statut', 'received')
+            ->whereBetween('date', array($start_date, $end_date))
+
+            ->where(function ($query) use ($request, $warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->where('warehouse_id', $warehouse_id);
+                } else {
+                    return $query->whereIn('warehouse_id', $array_warehouses_id);
+                }
+            })
+
+            ->select(
+                DB::raw('SUM(GrandTotal) AS sum'),
+                DB::raw("count(*) as nmbr")
+            )->first();
+
+        $item['returns_sales_sum'] =   'Rp ' . number_format($report_total_returns_sales->sum, 2, ',', '.');
+        $item['returns_sales_count'] =   $report_total_returns_sales->nmbr;
+
+
+
+        //--------returns_purchases
+        $report_total_returns_purchases = PurchaseReturn::where('deleted_at', '=', null)
+            ->where('statut', 'completed')
+            ->whereBetween('date', array($start_date, $end_date))
+
+            ->where(function ($query) use ($request, $warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->where('warehouse_id', $warehouse_id);
+                } else {
+                    return $query->whereIn('warehouse_id', $array_warehouses_id);
+                }
+            })
+
+            ->select(
+                DB::raw('SUM(GrandTotal) AS sum'),
+                DB::raw("count(*) as nmbr")
+            )->first();
+
+        $item['returns_purchases_sum'] =   'Rp ' . number_format($report_total_returns_purchases->sum, 2, ',', '.');
+        $item['returns_purchases_count'] =   $report_total_returns_purchases->nmbr;
+
+
+        //--------paiement_sales
+        $report_total_paiement_sales = PaymentSale::with('sale')
+            ->where('deleted_at', '=', null)
+            ->whereBetween('date', array($start_date, $end_date))
+
+            ->where(function ($query) use ($request, $warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->whereHas('sale', function ($q) use ($request, $array_warehouses_id, $warehouse_id) {
+                        $q->where('warehouse_id', $warehouse_id);
+                    });
+                } else {
+                    return $query->whereHas('sale', function ($q) use ($request, $array_warehouses_id, $warehouse_id) {
+                        $q->whereIn('warehouse_id', $array_warehouses_id);
+                    });
+                }
+            })
+
+            ->select(
+                DB::raw('SUM(montant) AS sum')
+            )->first();
+
+        $item['paiement_sales'] =   'Rp ' . number_format($report_total_paiement_sales->sum, 2, ',', '.');
+
+
+        //--------PaymentSaleReturns
+        $report_total_PaymentSaleReturns = PaymentSaleReturns::with('SaleReturn')
+            ->where('deleted_at', '=', null)
+            ->whereBetween('date', array($start_date, $end_date))
+
+            ->where(function ($query) use ($request, $warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->whereHas('SaleReturn', function ($q) use ($request, $array_warehouses_id, $warehouse_id) {
+                        $q->where('warehouse_id', $warehouse_id);
+                    });
+                } else {
+                    return $query->whereHas('SaleReturn', function ($q) use ($request, $array_warehouses_id, $warehouse_id) {
+                        $q->whereIn('warehouse_id', $array_warehouses_id);
+                    });
+                }
+            })
+
+            ->select(
+                DB::raw('SUM(montant) AS sum')
+            )->first();
+
+        $item['PaymentSaleReturns'] =   'Rp ' . number_format($report_total_PaymentSaleReturns->sum, 2, ',', '.');
+
+
+        //--------PaymentPurchaseReturns
+        $report_total_PaymentPurchaseReturns = PaymentPurchaseReturns::with('PurchaseReturn')
+            ->where('deleted_at', '=', null)
+            ->whereBetween('date', array($start_date, $end_date))
+
+            ->where(function ($query) use ($request, $warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->whereHas('PurchaseReturn', function ($q) use ($request, $array_warehouses_id, $warehouse_id) {
+                        $q->where('warehouse_id', $warehouse_id);
+                    });
+                } else {
+                    return $query->whereHas('PurchaseReturn', function ($q) use ($request, $array_warehouses_id, $warehouse_id) {
+                        $q->whereIn('warehouse_id', $array_warehouses_id);
+                    });
+                }
+            })
+
+            ->select(
+                DB::raw('SUM(montant) AS sum')
+            )->first();
+
+        $item['PaymentPurchaseReturns'] =   'Rp ' . number_format($report_total_PaymentPurchaseReturns->sum, 2, ',', '.');
+
+
+        //--------paiement_purchases
+        $report_total_paiement_purchases = PaymentPurchase::with('purchase')
+            ->where('deleted_at', '=', null)
+            ->whereBetween('date', array($start_date, $end_date))
+
+            ->where(function ($query) use ($request, $warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->whereHas('purchase', function ($q) use ($request, $array_warehouses_id, $warehouse_id) {
+                        $q->where('warehouse_id', $warehouse_id);
+                    });
+                } else {
+                    return $query->whereHas('purchase', function ($q) use ($request, $array_warehouses_id, $warehouse_id) {
+                        $q->whereIn('warehouse_id', $array_warehouses_id);
+                    });
+                }
+            })
+
+            ->select(
+                DB::raw('SUM(montant) AS sum')
+            )->first();
+
+        $item['paiement_purchases'] =   'Rp ' . number_format($report_total_paiement_purchases->sum, 2, ',', '.');
+
+
+        //--------expenses
+        $report_total_expenses = Expense::whereBetween('date', array($start_date, $end_date))
+            ->where('deleted_at', '=', null)
+
+            ->where(function ($query) use ($request, $warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->where('warehouse_id', $warehouse_id);
+                } else {
+                    return $query->whereIn('warehouse_id', $array_warehouses_id);
+                }
+            })
+
+            ->select(
+                DB::raw('SUM(amount) AS sum')
+            )->first();
+
+        $item['expenses_sum'] =   'Rp ' . number_format($report_total_expenses->sum, 2, ',', '.');
+
+        //calcule COGS and average cost
+        $cogs_average_data = $this->CalculeCogsAndAverageCost($start_date, $end_date, $warehouse_id, $array_warehouses_id);
+
+        $cogs = $cogs_average_data['total_cogs_products'];
+        $total_average_cost = $cogs_average_data['total_average_cost'];
+
+        $item['product_cost_fifo'] = 'Rp ' . number_format($cogs, 2, ',', '.');
+        $item['averagecost'] = 'Rp ' . number_format($total_average_cost, 2, ',', '.');
+
+        $item['profit_fifo'] = 'Rp ' . number_format($report_total_sales->sum - $cogs, 2, ',', '.');
+        $item['profit_average_cost'] = 'Rp ' . number_format($report_total_sales->sum - $total_average_cost, 2, ',', '.');
+
+        $item['payment_received'] = 'Rp ' . number_format($report_total_paiement_sales->sum  + $report_total_PaymentPurchaseReturns->sum, 2, ',', '.');
+        $item['payment_sent'] = 'Rp ' . number_format($report_total_paiement_purchases->sum + $report_total_PaymentSaleReturns->sum + $report_total_expenses->sum, 2, ',', '.');
+        $item['paiement_net'] = 'Rp ' . number_format(($report_total_paiement_sales->sum  + $report_total_PaymentPurchaseReturns->sum) - ($report_total_paiement_purchases->sum + $report_total_PaymentSaleReturns->sum + $report_total_expenses->sum), 2, ',', '.');
+        $item['total_revenue'] =   'Rp ' . number_format($report_total_sales->sum -  $report_total_returns_sales->sum, 2, ',', '.');
+
+
+        // return response()->json([
+        //     'data' => $item,
+        //     'warehouses' => $warehouses,
+        // ]);
+        return view('templates.reports.profit-loss', [
+            'data' => $item,
+            'warehouses' => $warehouses,
+        ]);
+    }
+    public function CalculeCogsAndAverageCost($start_date, $end_date, $warehouse_id, $array_warehouses_id)
+    {
+
+        // Initialize variable to store total COGS averageCost and for all products
+        $total_cogs_products = 0;
+        $total_average_cost = 0;
+
+        // Get all distinct product IDs for sales between start and end date
+        $productIds = SaleDetail::with('sale')
+            ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
+                        $q->where('warehouse_id', $warehouse_id)->where('statut', 'completed');
+                    });
+                } else {
+                    return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
+                        $q->whereIn('warehouse_id', $array_warehouses_id)->where('statut', 'completed');
+                    });
+                }
+            })->whereBetween('date', array($start_date, $end_date))
+            ->select('product_id', 'product_variant_id')
+            ->distinct()
+            ->get();
+
+        // Loop through each product
+        foreach ($productIds as $productId) {
+
+            // $productId = 1011;
+            $totalCogs = 0;
+            $average_cost = 0;
+            $tax_shipping = 0;
+
+            // Get the total cost and quantity for all adjustments of the product
+            $adjustments = AdjustmentDetail::with('adjustment')
+                ->where(function ($query) use ($warehouse_id, $array_warehouses_id, $end_date) {
+                    if ($warehouse_id !== 0) {
+                        return $query->whereHas('adjustment', function ($q) use ($array_warehouses_id, $warehouse_id, $end_date) {
+                            $q->where('warehouse_id', $warehouse_id)
+                                ->where('date', '<=', $end_date);
+                        });
+                    } else {
+                        return $query->whereHas('adjustment', function ($q) use ($array_warehouses_id, $warehouse_id, $end_date) {
+                            $q->whereIn('warehouse_id', $array_warehouses_id)
+                                ->where('date', '<=', $end_date);
+                        });
+                    }
+                })
+                ->where('product_id', $productId['product_id'])
+                ->where('product_variant_id', $productId['product_variant_id'])
+                ->get();
+
+            $adjustment_quantity = 0;
+            foreach ($adjustments as $adjustment) {
+                if ($adjustment->type == 'add') {
+                    $adjustment_quantity += $adjustment->quantity;
+                } else {
+                    $adjustment_quantity -= $adjustment->quantity;
+                }
+            }
+
+
+            // Get total quantity sold before start date
+            $totalQuantitySold = SaleDetail::with('sale')
+                ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
+                    if ($warehouse_id !== 0) {
+                        return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
+                            $q->where('warehouse_id', $warehouse_id)->where('statut', 'completed');
+                        });
+                    } else {
+                        return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
+                            $q->whereIn('warehouse_id', $array_warehouses_id)->where('statut', 'completed');
+                        });
+                    }
+                })->where('product_id', $productId['product_id'])
+                ->where('product_variant_id', $productId['product_variant_id'])
+                ->where('date', '<', $start_date)
+                ->orderBy('date', 'asc')
+                ->sum('quantity');
+
+
+            // Get purchase details for current product, ordered by date in ascending date
+            $purchases = PurchaseDetail::where('product_id',  $productId['product_id'])
+                ->where('product_variant_id', $productId['product_variant_id'])
+                ->join('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
+                ->where('purchases.statut', 'received')
+                ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
+                    if ($warehouse_id !== 0) {
+                        return  $query->where('purchases.warehouse_id', $warehouse_id)->where('purchases.statut', 'received');
+                    } else {
+                        return  $query->whereIn('purchases.warehouse_id', $array_warehouses_id)->where('purchases.statut', 'received');
+                    }
+                })
+                ->orderBy('purchases.date', 'asc')
+                ->select(
+                    'purchase_details.quantity as quantity',
+                    'purchase_details.cost as cost',
+                    'purchase_details.total as total',
+                    'purchases.GrandTotal as purchase_total',
+                    'purchase_details.purchase_id as purchase_id'
+                )
+                ->get();
+
+
+            if (count($purchases) > 0) {
+                $purchases_to_array = $purchases->toArray();
+                $purchases_sum_qty = array_sum(array_column($purchases_to_array, 'quantity'));
+            } else {
+                $purchases_sum_qty = 0;
+            }
+
+            // Get sale details for current product between start and end date, ordered by date in ascending order
+            $sales = SaleDetail::with('sale')
+                ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
+                    if ($warehouse_id !== 0) {
+                        return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
+                            $q->where('warehouse_id', $warehouse_id)->where('statut', 'completed');
+                        });
+                    } else {
+                        return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
+                            $q->whereIn('warehouse_id', $array_warehouses_id)->where('statut', 'completed');
+                        });
+                    }
+                })->where('product_id', $productId['product_id'])
+                ->where('product_variant_id', $productId['product_variant_id'])
+                ->whereBetween('date', array($start_date, $end_date))
+                ->orderBy('date', 'asc')
+                ->get();
+
+
+            $sales_to_array = $sales->toArray();
+            $sales_sum_qty = array_sum(array_column($sales_to_array, 'quantity'));
+
+            $total_sum_sales = $totalQuantitySold + $sales_sum_qty;
+
+
+            //calcule average Cost
+            $average_cost = $this->averageCost($productId['product_id'], $start_date, $end_date, $warehouse_id, $array_warehouses_id);
+
+            if ($total_sum_sales > $purchases_sum_qty) {
+                // Handle adjustments only case
+                $totalCogs += $sales_sum_qty * $average_cost;
+                $total_average_cost += $sales_sum_qty * $average_cost;
+            } else {
+
+                foreach ($sales as $sale) {
+
+                    $saleQuantity = $sale->quantity;
+                    $total_average_cost += $average_cost * $sale->quantity;
+
+                    while ($saleQuantity > 0) {
+                        $purchase = $purchases->first();
+                        if ($purchase->quantity > 0) {
+                            $totalQuantitySold += $saleQuantity;
+                            if ($purchase->quantity >= $totalQuantitySold) {
+                                $totalCogs += $saleQuantity * $purchase->cost;
+                                $purchase->quantity -= $totalQuantitySold;
+                                $saleQuantity = 0;
+                                $totalQuantitySold = 0;
+                                if ($purchase->quantity == 0) {
+                                    $purchase->quantity = 0;
+                                    $saleQuantity = 0;
+                                    $totalQuantitySold = 0;
+                                    $purchases->shift();
+                                }
+                            } else {
+
+
+                                $diff = round($totalQuantitySold - $saleQuantity, 4);
+                                if ($purchase->quantity > $diff) {
+
+                                    $rest = $purchase->quantity - $diff;
+                                    if ($rest <= $saleQuantity) {
+                                        $saleQuantity -= $rest;
+                                        $totalCogs += $rest * $purchase->cost;
+                                        $totalQuantitySold =  0;
+                                        $purchase->quantity = 0;
+                                        $purchases->shift();
+                                    } else {
+                                        $totalQuantitySold -=  $saleQuantity;
+                                        $purchase->quantity = $purchase->quantity - $totalQuantitySold;
+                                        $totalCogs += $purchase->quantity * $purchase->cost;
+                                        $saleQuantity -= $purchase->quantity;
+                                        $purchase->quantity = 0;
+                                        $purchases->shift();
+                                    }
+                                } else {
+                                    $totalQuantitySold -=  $saleQuantity;
+                                    $totalQuantitySold -= $purchase->quantity;
+                                    $purchase->quantity = 0;
+                                    $purchases->shift();
+                                }
+                            }
+                        } else {
+                            $purchases->shift();
+                        }
+                    }
+                }
+            }
+            $total_cogs_products += $totalCogs;
+        }
+
+        return [
+            'total_cogs_products' => $total_cogs_products,
+            'total_average_cost'  => $total_average_cost
+        ];
+    }
+    public function averageCost($product_id, $start_date, $end_date, $warehouse_id, $array_warehouses_id)
+    {
+        // Get the cost of the product from the products table
+        $product = Product::find($product_id);
+        $product_cost = $product->cost;
+
+        $purchases = PurchaseDetail::where('product_id', $product_id)
+            ->join('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
+            ->where('purchases.statut', 'received')
+            ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
+                if ($warehouse_id !== 0) {
+                    return  $query->where('purchases.warehouse_id', $warehouse_id)->where('purchases.statut', 'received');
+                } else {
+                    return  $query->whereIn('purchases.warehouse_id', $array_warehouses_id)->where('purchases.statut', 'received');
+                }
+            })
+            ->where('purchases.date', '<=', $end_date)
+            ->select(
+                'purchase_details.quantity as quantity',
+                'purchase_details.total as total',
+                'purchase_details.cost as cost',
+                'purchases.GrandTotal as purchase_total'
+            )
+            ->get();
+
+        $purchase_cost = 0;
+        $purchase_quantity = 0;
+        foreach ($purchases as $purchase) {
+            $purchase_cost += $purchase->quantity * $purchase->cost;
+            $purchase_quantity += $purchase->quantity;
+        }
+
+        // Get the total cost and quantity for all adjustments of the product
+        $adjustments = AdjustmentDetail::with('adjustment')
+            ->where(function ($query) use ($warehouse_id, $array_warehouses_id, $start_date, $end_date) {
+                if ($warehouse_id !== 0) {
+                    return $query->whereHas('adjustment', function ($q) use ($array_warehouses_id, $warehouse_id, $start_date, $end_date) {
+                        $q->where('warehouse_id', $warehouse_id)
+                            ->where('date', '<=', $end_date);
+                    });
+                } else {
+                    return $query->whereHas('adjustment', function ($q) use ($array_warehouses_id, $warehouse_id, $start_date, $end_date) {
+                        $q->whereIn('warehouse_id', $array_warehouses_id)
+                            ->where('date', '<=', $end_date);
+                    });
+                }
+            })
+            ->where('product_id', $product_id)->get();
+
+        $adjustment_cost = 0;
+        $adjustment_quantity = 0;
+        foreach ($adjustments as $adjustment) {
+            if ($adjustment->type == 'add') {
+                $adjustment_cost += $adjustment->quantity * $product_cost;
+                $adjustment_quantity += $adjustment->quantity;
+            } else {
+                $adjustment_cost -= $adjustment->quantity * $product_cost;
+                $adjustment_quantity -= $adjustment->quantity;
+            }
+        }
+
+        // Calculate the average cost
+        $total_cost = $purchase_cost + $adjustment_cost;
+        $total_quantity = $purchase_quantity + $adjustment_quantity;
+        if ($total_quantity === 0 || $total_quantity == 0 || $total_quantity == '0') {
+            $average_cost = $product_cost;
+        } else {
+            $average_cost = $total_cost / $total_quantity;
+        }
+
+        return $average_cost;
+    }
     public function quantityAlerts()
     {
         return view('templates.reports.quantity-alerts');
