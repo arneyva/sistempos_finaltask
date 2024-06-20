@@ -6,6 +6,9 @@ use App\Exports\Report\Customer\ReportCustomerSalesExport;
 use App\Exports\Report\Customer\ReportCustomerSalesPaymentExport;
 use App\Exports\Report\Customer\ReportCustomerSalesReturnExport;
 use App\Exports\Report\Customer\SalesExport;
+use App\Exports\Report\Provider\ReportProviderPurchasesExport;
+use App\Exports\Report\Provider\ReportProviderPurchasesPaymentExport;
+use App\Exports\Report\Provider\ReportProviderPurchasesReturnExport;
 use App\Http\Controllers\Controller;
 use App\Models\AdjustmentDetail;
 use App\Models\Client;
@@ -1795,6 +1798,12 @@ class ReportsController extends Controller
             'report' => $report,
         ]);
     }
+    public function providerDetailPurchasesExport(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-supplier-purchases_{$timestamp}.xlsx";
+        return Excel::download(new ReportProviderPurchasesExport($request, $id), $filename);
+    }
     public function Returns_Provider(request $request, $id)
     {
 
@@ -1848,18 +1857,18 @@ class ReportsController extends Controller
 
             $report[] = $item;
         }
-        // return response()->json([
-        //     'purchases_data' => $data,
-        //     'PurchaseReturn' => $PurchaseReturn,
-        //     'provider' => $provider,
-        //     'report' => $report,
-        // ]);
         return view('templates.reports.supplier.supplier-detail-returns', [
             'purchases_data' => $data,
             'PurchaseReturn' => $PurchaseReturn,
             'provider' => $provider,
             'report' => $report,
         ]);
+    }
+    public function providerDetailPurchasesReturnsExport(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-supplier-purchases-returns_{$timestamp}.xlsx";
+        return Excel::download(new ReportProviderPurchasesReturnExport($request, $id), $filename);
     }
     public function Payments_Provider(request $request, $id)
     {
@@ -1888,12 +1897,6 @@ class ReportsController extends Controller
             'payment_purchases.Reglement',
             'payment_purchases.montant'
         )->paginate($request->input('limit', 10))->appends($request->except('page'));
-
-
-        // $payments = $payments->offset($offSet)
-        //     ->limit($perPage)
-        //     ->orderBy('payment_purchases.id', 'desc')
-        //     ->get();
         $paymentDetails = [];
         foreach ($payments as $payment) {
             $item = [
@@ -1919,6 +1922,12 @@ class ReportsController extends Controller
         //     'paymentDetails' => $paymentDetails,
         //     'provider' => $provider,
         // ]);
+    }
+    public function providerDetailPaymentExport(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-supplier-purchases-payments_{$timestamp}.xlsx";
+        return Excel::download(new ReportProviderPurchasesPaymentExport($request, $id), $filename);
     }
     public function supplierDetail($id)
     {
