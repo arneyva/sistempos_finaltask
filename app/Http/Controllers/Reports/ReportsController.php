@@ -116,6 +116,96 @@ class ReportsController extends Controller
             'paymentDetails' => $paymentDetails
         ]);
     }
+    public function paymentPurchases(Request $request)
+    {
+        $paymentsQuery = DB::table('payment_purchases')
+            ->whereNull('payment_purchases.deleted_at')
+            ->join('purchases', 'payment_purchases.purchase_id', '=', 'purchases.id')
+            ->join('providers', 'purchases.provider_id', '=', 'providers.id')
+            ->latest('payment_purchases.date');
+
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->input('search') . '%';
+            $paymentsQuery->where(function ($query) use ($searchTerm) {
+                $query->orWhere('payment_purchases.Ref', 'LIKE', $searchTerm)
+                    ->orWhere('providers.name', 'LIKE', $searchTerm)
+                    ->orWhere('payment_purchases.Reglement', 'LIKE', $searchTerm);
+            });
+        }
+
+        $payments = $paymentsQuery->select(
+            'payment_purchases.date',
+            'payment_purchases.Ref AS Payment_Ref',
+            'purchases.Ref AS Purchase_Ref',
+            'payment_purchases.Reglement',
+            'payment_purchases.montant',
+            'providers.name AS provider_name'
+        )->paginate($request->input('limit', 10))->appends($request->except('page'));
+
+        $paymentDetails = [];
+        foreach ($payments as $payment) {
+            $item = [
+                'date' => $payment->date,
+                'Payment_Ref' => $payment->Payment_Ref,
+                'Purchase_Ref' => $payment->Purchase_Ref,
+                'Reglement' => $payment->Reglement,
+                'montant' => $payment->montant,
+                'provider_name' => $payment->provider_name,
+            ];
+
+            $paymentDetails[] = $item;
+        }
+
+        return view('templates.reports.payments.payments-purchase', [
+            'payments' => $payments,
+            'paymentDetails' => $paymentDetails
+        ]);
+    }
+    public function paymentPurchaseReturns(Request $request)
+    {
+        $paymentsQuery = DB::table('payment_purchase_returns')
+            ->whereNull('payment_purchase_returns.deleted_at')
+            ->join('purchase_returns', 'payment_purchase_returns.purchase_return_id', '=', 'purchase_returns.id')
+            ->join('providers', 'purchase_returns.provider_id', '=', 'providers.id')
+            ->latest('payment_purchase_returns.date');
+
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->input('search') . '%';
+            $paymentsQuery->where(function ($query) use ($searchTerm) {
+                $query->orWhere('payment_purchase_returns.Ref', 'LIKE', $searchTerm)
+                    ->orWhere('providers.name', 'LIKE', $searchTerm);
+                // ->orWhere('payment_purchase_returns.Reglement', 'LIKE', $searchTerm);
+            });
+        }
+
+        $payments = $paymentsQuery->select(
+            'payment_purchase_returns.date',
+            'payment_purchase_returns.Ref AS Payment_Ref',
+            'purchase_returns.Ref AS PurchaseReturn_Ref',
+            'payment_purchase_returns.Reglement',
+            'payment_purchase_returns.montant',
+            'providers.name AS provider_name'
+        )->paginate($request->input('limit', 10))->appends($request->except('page'));
+
+        $paymentDetails = [];
+        foreach ($payments as $payment) {
+            $item = [
+                'date' => $payment->date,
+                'Payment_Ref' => $payment->Payment_Ref,
+                'PurchaseReturn_Ref' => $payment->PurchaseReturn_Ref,
+                'Reglement' => $payment->Reglement,
+                'montant' => $payment->montant,
+                'provider_name' => $payment->provider_name,
+            ];
+
+            $paymentDetails[] = $item;
+        }
+
+        return view('templates.reports.payments.payments-purchase-returns', [
+            'payments' => $payments,
+            'paymentDetails' => $paymentDetails
+        ]);
+    }
 
     public function profitLoss()
     {
