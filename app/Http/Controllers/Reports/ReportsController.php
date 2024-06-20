@@ -210,15 +210,12 @@ class ReportsController extends Controller
             'paymentDetails' => $paymentDetails
         ]);
     }
-
-    // public function profitLoss()
-    // {
-    //     return view('templates.reports.profit-loss');
-    // }
     public function profitLoss(request $request)
     {
-        $start_date = $request->from;
-        $end_date   =  $request->to;
+        // Set default values
+        $start_date = $request->input('from', '2024-02-12'); // Default start date
+        $end_date = $request->input('to', now()->format('Y-m-d')); // Default end date (today)
+        $warehouse_id = $request->input('warehouse_id', 0); // Default warehouse_id
         $user_auth = auth()->user();
         if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
             $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
