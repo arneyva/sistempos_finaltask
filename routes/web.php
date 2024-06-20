@@ -172,8 +172,11 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::prefix('/customers')->name('customers.')->group(function () {
         Route::get('list', [ReportsController::class, 'customers'])->name('index');
         Route::get('sales/{id}', [ReportsController::class, 'customersDetailSales'])->name('sales');
+        Route::get('sales/export/{id}', [ReportsController::class, 'customersDetailSalesExport'])->name('sales-export');
         Route::get('returns/{id}', [ReportsController::class, 'customersDetailReturns'])->name('returns');
+        Route::get('returns/export/{id}', [ReportsController::class, 'customersDetailSalesReturnsExport'])->name('returns-export');
         Route::get('payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('payments');
+        Route::get('payments/export/{id}', [ReportsController::class, 'customersDetailSalesPaymentExport'])->name('payments-export');
     });
     Route::prefix('/supplier')->name('supplier.')->group(function () {
         Route::get('list', [ReportsController::class, 'supplier'])->name('index');

@@ -199,7 +199,8 @@
                                                 </div>
                                             </form>
                                             <div class="header-title">
-                                                <button type="button" class="btn btn-soft-danger">Excel</button>
+                                                <a href="{{ route('reports.customers.returns-export', ['search' => request('search'), 'id' => $client->id]) }}"
+                                                    class="btn btn-soft-danger">Excel</a>
                                             </div>
                                         </div>
                                         <div class="card-body p-0">

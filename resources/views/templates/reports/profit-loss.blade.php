@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Reports</h1>
+    <h1>Profit & Loss ~ Reports</h1>
     <p>look up your daily report</p>
 @endsection
 
@@ -18,110 +18,8 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Sale Report</h4>
+                    <h4 class="card-title">Profit & Loss Report</h4>
                 </div>
-                {{-- <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#createModal">Filter</button>
-                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
-                    </button></a>
-                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="{{ route('reports.sale') }}" method="GET" id="filterForm">
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="from_date">From Date *</label>
-                                            <input type="date" class="form-control" id="from_date" name="from_date"
-                                                value="{{ request()->input('from_date') }}">
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="to_date">To Date *</label>
-                                            <input type="date" class="form-control" id="to_date" name="to_date"
-                                                value="{{ request()->input('to_date') }}">
-                                        </div>
-                                        @role('superadmin|inventaris')
-                                            <div class="col mb-3">
-                                                <label class="form-label" for="warehouse_id">Warehouse/Outlet
-                                                    *</label>
-                                                <select class="form-select" id="warehouse_id" name="warehouse_id">
-                                                    <option selected disabled value="">Choose...</option>
-                                                    @foreach ($warehouses as $wh)
-                                                        <option value="{{ $wh->id }}"
-                                                            {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
-                                                            {{ $wh->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        @endrole
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
-                                        data-bs-dismiss="modal">Reset</button>
-                                    <button type="submit" class="btn btn-primary">Filter</button>
-                                </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
-                {{-- <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#createModal">Filter</button>
-                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
-                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="{{ route('reports.profit-loss') }}" method="GET" id="filterForm">
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="from_date">From Date *</label>
-                                            <input type="date" class="form-control" id="from_date" name="from"
-                                                value="{{ request()->input('from') }}">
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label class="form-label" for="to_date">To Date *</label>
-                                            <input type="date" class="form-control" id="to_date" name="to"
-                                                value="{{ request()->input('to') }}">
-                                        </div>
-                                        @role('superadmin|inventaris')
-                                            <div class="col mb-3">
-                                                <label class="form-label" for="warehouse_id">Warehouse/Outlet *</label>
-                                                <select class="form-select" id="warehouse_id" name="warehouse_id">
-                                                    <option selected disabled value="">Choose...</option>
-                                                    @foreach ($warehouses as $wh)
-                                                        <option value="{{ $wh->id }}"
-                                                            {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
-                                                            {{ $wh->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        @endrole
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
-                                        data-bs-dismiss="modal">Reset</button>
-                                    <button type="submit" class="btn btn-primary">Filter</button>
-                                </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
