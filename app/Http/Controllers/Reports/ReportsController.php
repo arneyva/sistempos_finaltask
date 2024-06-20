@@ -9,6 +9,7 @@ use App\Exports\Report\Customer\SalesExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesPaymentExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesReturnExport;
+use App\Exports\Report\TopSellingProductExport;
 use App\Http\Controllers\Controller;
 use App\Models\AdjustmentDetail;
 use App\Models\Client;
@@ -1915,13 +1916,6 @@ class ReportsController extends Controller
             'paymentDetails' => $paymentDetails,
             'provider' => $provider,
         ]);
-        // return response()->json([
-        //     'payments' => $payments,
-        //     'purchases_data' => $data,
-        //     'payments' => $payments,
-        //     'paymentDetails' => $paymentDetails,
-        //     'provider' => $provider,
-        // ]);
     }
     public function providerDetailPaymentExport(Request $request, $id)
     {
@@ -1933,18 +1927,19 @@ class ReportsController extends Controller
     {
         return view('templates.reports.supplier-detail');
     }
+
     public function topSellingProduct(Request $request)
     {
         $productsQuery = SaleDetail::join('sales', 'sale_details.sale_id', '=', 'sales.id')
             ->join('products', 'sale_details.product_id', '=', 'products.id')
             ->whereNull('sales.deleted_at');
 
-        // Filter berdasarkan tanggal jika `from_date` dan `to_date` diisi
+        // Filter berdasarkan tanggal jika from_date dan to_date diisi
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $productsQuery->whereBetween('sale_details.date', [$request->from_date, $request->to_date]);
         }
 
-        // Filter berdasarkan pencarian jika `search` diisi
+        // Filter berdasarkan pencarian jika search diisi
         if ($request->filled('search')) {
             $productsQuery->where(function ($query) use ($request) {
                 $query->where('products.name', 'LIKE', '%' . $request->input('search') . '%')
@@ -1952,23 +1947,37 @@ class ReportsController extends Controller
             });
         }
 
-        // Mengambil data produk yang dijual
-        $productsQuery->select(
+        // Hilangkan paginasi
+        $products = $productsQuery->select(
             DB::raw('products.name as name'),
             DB::raw('products.code as code'),
             DB::raw('count(*) as total_sales'),
             DB::raw('sum(sale_details.total) as total')
-        )->groupBy('products.name', 'products.code');
+        )->groupBy('products.name', 'products.code')->paginate($request->input('limit', 5))->appends($request->except('page')); // Menggunakan get() bukan paginate()
 
-        // Mengurutkan berdasarkan total penjualan
-        $products = $productsQuery->orderBy('total_sales', 'desc')->get();
+        $productDetail = [];
+        foreach ($products as $product) {
+            $item = [
+                'code' => $product->code,
+                'name' => $product->name,
+                'total_sales' => $product->total_sales,
+                'total' => $product->total,
+            ];
+
+            $productDetail[] = $item;
+        }
+
         return view('templates.reports.top-selling-product', [
             'products' => $products,
+            'productDetail' => $productDetail,
         ]);
-        // Mengembalikan data sebagai JSON response
-        // return response()->json([
-        //     'products' => $products,
-        // ]);
+    }
+
+    public function topSellingProductExport(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-top-selling-product_{$timestamp}.xlsx";
+        return Excel::download(new TopSellingProductExport($request), $filename);
     }
 
 

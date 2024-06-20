@@ -222,7 +222,7 @@
                                                                 <td>{{ $item['Payment_Ref'] }}</td>
                                                                 <td>{{ $item['Sale_Ref'] }}</td>
                                                                 <td>
-                                                                    @if ($item['Reglement'] == 'Cash')
+                                                                    @if ($item['Reglement'] == 'cash')
                                                                         Cash
                                                                     @else
                                                                         Midtrans
