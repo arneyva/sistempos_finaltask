@@ -150,7 +150,9 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
     });
 });
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {
-    Route::get('payments', [ReportsController::class, 'payments'])->name('payments');
+    Route::prefix('/payments')->name('payments.')->group(function () {
+        Route::get('sales', [ReportsController::class, 'payments'])->name('sales');
+    });
     Route::get('profit-loss', [ReportsController::class, 'profitLoss'])->name('profit-loss');
     Route::get('quantity-alerts', [ReportsController::class, 'quantityAlerts'])->name('quantity-alerts');
     // Route::get('stock', [ReportsController::class, 'stock'])->name('stock');
