@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div> --}}
-                <div class="header-title">
+                {{-- <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
                     <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
@@ -121,8 +121,57 @@
                             </div>
                         </div>
                     </div>
+                </div> --}}
+                <div class="header-title">
+                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                        data-bs-target="#createModal">Filter</button>
+                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('reports.profit-loss') }}" method="GET" id="filterForm">
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="from_date">From Date *</label>
+                                            <input type="date" class="form-control" id="from_date" name="from"
+                                                value="{{ request()->input('from', '2024-02-12') }}">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label class="form-label" for="to_date">To Date *</label>
+                                            <input type="date" class="form-control" id="to_date" name="to"
+                                                value="{{ request()->input('to', now()->format('Y-m-d')) }}">
+                                        </div>
+                                        @role('superadmin|inventaris')
+                                            <div class="col mb-3">
+                                                <label class="form-label" for="warehouse_id">Warehouse/Outlet *</label>
+                                                <select class="form-select" id="warehouse_id" name="warehouse_id">
+                                                    <option selected disabled value="">Choose...</option>
+                                                    @foreach ($warehouses as $wh)
+                                                        <option value="{{ $wh->id }}"
+                                                            {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                                            {{ $wh->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endrole
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
+                                        data-bs-dismiss="modal">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
                 <script>
                     function resetFilters() {
                         document.getElementById('filterForm').reset();
@@ -335,14 +384,4 @@
     </div>
 @endsection
 @push('script')
-    <script>
-        $(function() {
-            $('input[name="daterange"]').daterangepicker({
-                opens: 'left'
-            }, function(start, end, label) {
-                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end
-                    .format('YYYY-MM-DD'));
-            });
-        });
-    </script>
 @endpush
