@@ -71,6 +71,51 @@ class ReportsController extends Controller
             'paymentDetails' => $paymentDetails
         ]);
     }
+    public function paymentSaleReturns(Request $request)
+    {
+        $paymentsQuery = DB::table('payment_sale_returns')
+            ->where('payment_sale_returns.deleted_at', '=', null)
+            ->join('sale_returns', 'payment_sale_returns.sale_return_id', '=', 'sale_returns.id')
+            ->join('clients', 'sale_returns.client_id', '=', 'clients.id')
+            ->latest('payment_sale_returns.date');
+
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->input('search') . '%';
+            $paymentsQuery->where(function ($query) use ($searchTerm) {
+                $query->orWhere('payment_sale_returns.Ref', 'LIKE', $searchTerm)
+                    ->orWhere('clients.name', 'LIKE', $searchTerm);
+                // ->orWhere('payment_sale_returns.Reglement', 'LIKE', $searchTerm);
+            });
+        }
+
+        $payments = $paymentsQuery->select(
+            'payment_sale_returns.date',
+            'payment_sale_returns.Ref AS Payment_Ref',
+            'sale_returns.Ref AS Sale_Return_Ref',
+            'payment_sale_returns.Reglement',
+            'payment_sale_returns.montant',
+            'clients.name AS client_name'
+        )->paginate($request->input('limit', 10))->appends($request->except('page'));
+
+        $paymentDetails = [];
+        foreach ($payments as $payment) {
+            $item = [
+                'date' => $payment->date,
+                'Payment_Ref' => $payment->Payment_Ref,
+                'Sale_Return_Ref' => $payment->Sale_Return_Ref,
+                'Reglement' => $payment->Reglement,
+                'montant' => $payment->montant,
+                'client_name' => $payment->client_name,
+            ];
+
+            $paymentDetails[] = $item;
+        }
+
+        return view('templates.reports.payments.payments-sale-returns', [
+            'payments' => $payments,
+            'paymentDetails' => $paymentDetails
+        ]);
+    }
 
     public function profitLoss()
     {
