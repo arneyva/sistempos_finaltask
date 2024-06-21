@@ -1,5 +1,116 @@
 @extends('templates.main')
 @section('content')
+    <style>
+        .status-completed {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #c9f1c4;
+            color: #0f4c11;
+            border: 1px solid #0f4c11;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .status-ordered {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #eff1c4;
+            color: #4c4b0f;
+            border: 1px solid #4c4b0f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .status-pending {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #f1c4c4;
+            color: #4c0f0f;
+            border: 1px solid #4c0f0f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .payment-paid {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #c4d9f1;
+            color: #105e7f;
+            border: 1px solid #105e7f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .payment-unpaid {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #f0c4f1;
+            color: #7f107b;
+            border: 1px solid #7f107b;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .payment-partial {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #f1dcc4;
+            color: #7f6710;
+            border: 1px solid #7f6710;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .shipping-shipped {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #c4c8f1;
+            color: #33107f;
+            border: 1px solid #33107f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .shipping-delivered {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #c4f1d1;
+            color: #107f2c;
+            border: 1px solid #107f2c;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .shipping-packed {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #b19785;
+            color: #583606;
+            border: 1px solid #583606;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .shipping-cancelled {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #f1c4e1;
+            color: #7f104f;
+            border: 1px solid #7f104f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+    </style>
     {{-- slider content --}}
     <div class="col-md-12 col-lg-12">
         <div class="row row-cols-1">
@@ -580,61 +691,46 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Product</th>
-                                <th>Category</th>
-                                <th>Current Stock</th>
-                                <th>Actions</th>
+                                <th>Reference</th>
+                                <th>Customer</th>
+                                <th>Warehouse</th>
+                                <th>Status</th>
+                                <th>Grand Total</th>
+                                <th>Paid</th>
+                                <th>Due</th>
+                                <th>Payment Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                            </tr>
-                            <tr>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                            </tr>
-                            <tr>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                            </tr>
-                            <tr>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                                <td>cek</td>
-                            </tr>
-                            {{-- @foreach ($report as $item)
-                            <tr>
-                                <td>{{ $item['code'] }}</td>
-                                <td>{{ $item['name'] }}</td>
-                                <td>{{ $item['category'] }}</td>
-                                <td>{{ $item['quantity'] }}</td>
-                                <td>
-                                    <a href="{{ route('reports.stock.sales', $item['id']) }}" class="warehousedeleted"
-                                        style="margin-right: 10px">Report
-                                    </a>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach --}}
-
+                            @foreach ($recentsales as $item)
+                                <tr>
+                                    <td>{{ $item['Ref'] }}</td>
+                                    <td>{{ $item['client_name'] }}</td>
+                                    <td>{{ $item['warehouse_name'] }}</td>
+                                    <td>
+                                        @if ($item['statut'] == 'completed')
+                                            <span class="status-completed">completed</span>
+                                        @elseif($item['statut'] == 'ordered')
+                                            <span class="status-ordered">ordered</span>
+                                        @else
+                                            <span class="status-pending">pending</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}</td>
+                                    <td>{{ 'Rp ' . number_format($item['paid_amount'], 2, ',', '.') }} </td>
+                                    <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}</td>
+                                    <td>
+                                        @if ($item['payment_status'] == 'paid')
+                                            <span class="payment-paid">paid</span>
+                                        @else
+                                            <span class="payment-unpaid">unpaid</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-right: 10px; margin-top:10px">
-                        {{-- {{ $products->links() }} --}}
                     </div>
                 </div>
             </div>
