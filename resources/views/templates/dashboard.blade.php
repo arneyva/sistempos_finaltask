@@ -1,6 +1,6 @@
 @extends('templates.main')
 @section('content')
-    {{-- part 1 --}}
+    {{-- slider content --}}
     <div class="col-md-12 col-lg-12">
         <div class="row row-cols-1">
             <div class="overflow-hidden d-slider1 ">
@@ -119,15 +119,15 @@
             </div>
         </div>
     </div>
-    {{-- part 2  sisi kiri --}}
+    {{-- left section --}}
     <div class="col-md-12 col-lg-8">
         <div class="row">
             <div class="col-md-12">
+                {{-- chary table content  --}}
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
                             <h6 class="card-title">This Week Sales & Purchases</h6>
-                            {{-- <p class="mb-0">Gross Sales</p> --}}
                         </div>
                         <div class="d-flex align-items-center align-self-center">
                             <div class="d-flex align-items-center text-primary">
@@ -153,17 +153,6 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="dropdown">
-                            <a href="#" class="text-gray dropdown-toggle" id="dropdownMenuButton22"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                This Week
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton22">
-                                <li><a class="dropdown-item" href="#">This Week</a></li>
-                                <li><a class="dropdown-item" href="#">This Month</a></li>
-                                <li><a class="dropdown-item" href="#">This Year</a></li>
-                            </ul>
-                        </div> --}}
                     </div>
                     <div class="card-body">
                         <div id="d-main" class="d-main"></div>
@@ -174,53 +163,29 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="900">
                     <div class="flex-wrap card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Earnings</h4>
-                        </div>
-                        <div class="dropdown">
-                            <a href="#" class="text-gray dropdown-toggle" id="dropdownMenuButton1"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                This Week
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="#">This Week</a></li>
-                                <li><a class="dropdown-item" href="#">This Month</a></li>
-                                <li><a class="dropdown-item" href="#">This Year</a></li>
-                            </ul>
+                            <h4 class="card-title">Top Customers ~ {{ $currentMonth }}</h4>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="flex-wrap d-flex align-items-center justify-content-between">
-                            <div id="myChart" class="col-md-8 col-lg-8 myChart"></div>
+                            <div class="col-md-8 col-lg-8">
+                                <canvas id="myChart"></canvas>
+                            </div>
                             <div class="d-grid gap col-md-4 col-lg-4">
-                                <div class="d-flex align-items-start">
-                                    <svg class="mt-2 icon-14" xmlns="http://www.w3.org/2000/svg" width="14"
-                                        viewBox="0 0 24 24" fill="#3a57e8">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="#3a57e8"></circle>
-                                        </g>
-                                    </svg>
-                                    <div class="ms-3">
-                                        <span class="text-gray">Fashion</span>
-                                        <h6>251K</h6>
+                                @foreach ($topClients as $client)
+                                    <div class="d-flex align-items-start">
+                                        <div class="ms-3">
+                                            <span class="text-gray">{{ $client->name }}</span>
+                                            <h6>{{ $client->sales_count }}</h6>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="d-flex align-items-start">
-                                    <svg class="mt-2 icon-14" xmlns="http://www.w3.org/2000/svg" width="14"
-                                        viewBox="0 0 24 24" fill="#4bc7d2">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="#4bc7d2"></circle>
-                                        </g>
-                                    </svg>
-                                    <div class="ms-3">
-                                        <span class="text-gray">Accessories</span>
-                                        <h6>176K</h6>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {{-- conversions content --}}
             <div class="col-md-12 col-xl-6">
                 <div class="card" data-aos="fade-up" data-aos-delay="1000">
                     <div class="flex-wrap card-header d-flex justify-content-between">
@@ -244,6 +209,7 @@
                     </div>
                 </div>
             </div>
+            {{-- clients content --}}
             <div class="col-md-12 col-lg-12">
                 <div class="overflow-hidden card" data-aos="fade-up" data-aos-delay="600">
                     <div class="flex-wrap card-header d-flex justify-content-between">
@@ -599,5 +565,136 @@
             </div>
         </div>
     </div>
+    <div class="col-md-12 col-lg-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                    <h4 class="card-title">Recent Sales
+                    </h4>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive mt-4">
+                    <table id="basic-table" class="table table-striped mb-0" role="grid">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Current Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                            </tr>
+                            <tr>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                            </tr>
+                            <tr>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                            </tr>
+                            <tr>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                                <td>cek</td>
+                            </tr>
+                            {{-- @foreach ($report as $item)
+                            <tr>
+                                <td>{{ $item['code'] }}</td>
+                                <td>{{ $item['name'] }}</td>
+                                <td>{{ $item['category'] }}</td>
+                                <td>{{ $item['quantity'] }}</td>
+                                <td>
+                                    <a href="{{ route('reports.stock.sales', $item['id']) }}" class="warehousedeleted"
+                                        style="margin-right: 10px">Report
+                                    </a>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach --}}
+
+                        </tbody>
+                    </table>
+                    <div class="bd-example" style="margin-left: 10px; margin-right: 10px; margin-top:10px">
+                        {{-- {{ $products->links() }} --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- end --}}
 @endsection
+@push('script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const data = {
+                labels: @json($topClients->pluck('name')),
+                datasets: [{
+                    label: 'Sales Count',
+                    data: @json($topClients->pluck('sales_count')),
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                },
+            };
+
+            new Chart(ctx, config);
+        });
+    </script>
+@endpush
