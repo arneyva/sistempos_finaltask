@@ -235,7 +235,7 @@ class SaleReturnController extends Controller
             $order->shipping = $request->shipping;
             $order->GrandTotal = $request->GrandTotal;
             $order->statut = $request->statut;
-            $order->payment_statut = 'unpaid';
+            $order->payment_statut = 'paid';
             $order->notes = $request->notes;
             $order->user_id = Auth::user()->id;
 
