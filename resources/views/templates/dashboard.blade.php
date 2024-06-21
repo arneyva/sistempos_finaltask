@@ -185,27 +185,29 @@
                     </div>
                 </div>
             </div>
-            {{-- conversions content --}}
             <div class="col-md-12 col-xl-6">
-                <div class="card" data-aos="fade-up" data-aos-delay="1000">
+                <div class="card" data-aos="fade-up" data-aos-delay="900">
                     <div class="flex-wrap card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Conversions</h4>
-                        </div>
-                        <div class="dropdown">
-                            <a href="#" class="text-gray dropdown-toggle" id="dropdownMenuButton3"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                This Week
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton3">
-                                <li><a class="dropdown-item" href="#">This Week</a></li>
-                                <li><a class="dropdown-item" href="#">This Month</a></li>
-                                <li><a class="dropdown-item" href="#">This Year</a></li>
-                            </ul>
+                            <h4 class="card-title">Top Selling Products ~ {{ $currentMonth }}</h4>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div id="d-activity" class="d-activity"></div>
+                        <div class="flex-wrap d-flex align-items-center justify-content-between">
+                            <div class="col-md-8 col-lg-8">
+                                <canvas id="myProductChart"></canvas> <!-- ID canvas untuk chart produk -->
+                            </div>
+                            <div class="d-grid gap col-md-4 col-lg-4">
+                                @foreach ($products as $product)
+                                    <div class="d-flex align-items-start">
+                                        <div class="ms-3">
+                                            <span class="text-gray">{{ $product->name }}</span>
+                                            <h6>{{ $product->value }}</h6> <!-- Menampilkan jumlah penjualan produk -->
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -695,6 +697,62 @@
             };
 
             new Chart(ctx, config);
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('myProductChart').getContext('2d');
+            const data = {
+                labels: @json($products->pluck('name')), // Nama produk sebagai label
+                datasets: [{
+                    label: 'Sales Count', // Label untuk dataset
+                    data: @json($products->pluck('value')), // Jumlah penjualan produk
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)', // Warna latar belakang
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)', // Warna garis
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const config = {
+                type: 'doughnut', // Jenis chart
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                },
+            };
+
+            new Chart(ctx, config); // Membuat instance Chart
         });
     </script>
 @endpush
