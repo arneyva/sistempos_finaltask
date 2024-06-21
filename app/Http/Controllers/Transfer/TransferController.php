@@ -37,7 +37,7 @@ class TransferController extends Controller
             $transferQuery->whereDate('date', '=', $request->input('date'));
         }
         if ($request->filled('Ref')) {
-            $transferQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
+            $transferQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
         }
 
         if ($request->filled('from_warehouse_id')) {
@@ -84,7 +84,7 @@ class TransferController extends Controller
         }
 
         if ($request->has('Ref') && $request->filled('Ref')) {
-            $TransferQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
+            $TransferQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
         }
 
         if ($request->has('from_warehouse_id') && $request->filled('from_warehouse_id')) {
@@ -135,7 +135,7 @@ class TransferController extends Controller
             $item = $last->Ref;
             $nwMsg = explode('_', $item);
             $inMsg = $nwMsg[1] + 1;
-            $code = $nwMsg[0].'_'.$inMsg;
+            $code = $nwMsg[0] . '_' . $inMsg;
         } else {
             $code = 'TR_1';
         }
@@ -374,7 +374,7 @@ class TransferController extends Controller
                     ->where('id', $detail->product_variant_id)->first();
 
                 $item_product ? $data['del'] = 0 : $data['del'] = 1;
-                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
                 $data['code'] = $productsVariants->code;
 
                 $data['product_variant_id'] = $detail->product_variant_id;
@@ -475,16 +475,10 @@ class TransferController extends Controller
             $data = $request['details'];
             $Trans = $request->transfer;
             $length = count($data);
-
-            // Get Ids details
             $new_products_id = [];
-            // dd($new_products_id); adjustment juga kosong
             foreach ($data as $new_detail) {
                 $new_products_id[] = $new_detail['id'];
             }
-            // dd($new_products_id);
-            // dd($data);
-            // Init Data with old Parametre
             $old_products_id = [];
             foreach ($Old_Details as $key => $value) {
                 //check if detail has purchase_unit_id Or Null
@@ -594,7 +588,7 @@ class TransferController extends Controller
                     }
 
                     // Delete Detail
-                    if (! in_array($old_products_id[$key], $new_products_id)) {
+                    if (!in_array($old_products_id[$key], $new_products_id)) {
                         $TransferDetail = TransferDetail::findOrFail($value->id);
                         $TransferDetail->delete();
                     }
@@ -722,7 +716,7 @@ class TransferController extends Controller
                     // } else {
                     //     TransferDetail::where('id', $product_detail['id'])->update($TransDetail);
                     // }
-                    if (! isset($product_detail['id']) || ! in_array($product_detail['id'], $old_products_id)) {
+                    if (!isset($product_detail['id']) || !in_array($product_detail['id'], $old_products_id)) {
                         TransferDetail::create($TransDetail);
                     } else {
                         TransferDetail::where('id', $product_detail['id'])->update($TransDetail);
@@ -744,12 +738,53 @@ class TransferController extends Controller
                 'GrandTotal' => $request['GrandTotal'],
             ]);
         }, 10);
-
-        // dd($request->all());
-        // return response()->json(['success' => true]);
         return redirect()->route('transfer.index')->with('success', 'Transfer updated successfully');
     }
+    public function updateForStaff(Request $request, $id)
+    {
+        \DB::transaction(function () use ($request, $id) {
+            // Find the current transfer
+            $current_Transfer = Transfer::findOrFail($id);
+            // Check if the current status is "sent"
+            if ($current_Transfer->statut != 'sent') {
+                return redirect()->route('transfer.index')->with('error', 'Only sent transfers can be confirmed.');
+            }
+            // Get all details of the current transfer
+            $transferDetails = TransferDetail::where('transfer_id', $id)->get();
+            foreach ($transferDetails as $detail) {
+                // Find the purchase unit for the detail
+                if ($detail->purchase_unit_id !== null) {
+                    $unit = Unit::where('id', $detail->purchase_unit_id)->first();
+                } else {
+                    $product_unit_purchase_id = Product::with('unitPurchase')
+                        ->where('id', $detail->product_id)
+                        ->first();
+                    $unit = Unit::where('id', $product_unit_purchase_id->unitPurchase->id)->first();
+                }
+                // Update the stock in the to warehouse
+                $warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
+                    ->where('warehouse_id', $current_Transfer->to_warehouse_id)
+                    ->where('product_id', $detail->product_id);
 
+                if ($detail->product_variant_id !== null) {
+                    $warehouse_to->where('product_variant_id', $detail->product_variant_id);
+                }
+                $warehouse_to = $warehouse_to->first();
+                if ($unit && $warehouse_to) {
+                    if ($unit->operator == '/') {
+                        $warehouse_to->qty += $detail->quantity / $unit->operator_value;
+                    } else {
+                        $warehouse_to->qty += $detail->quantity * $unit->operator_value;
+                    }
+                    $warehouse_to->save();
+                }
+            }
+            // Update the transfer status to "completed"
+            $current_Transfer->update(['statut' => 'completed']);
+        }, 10);
+
+        return redirect()->route('transfer.index')->with('success', 'Transfer confirmed successfully');
+    }
     /**
      * Remove the specified resource from storage.
      */
