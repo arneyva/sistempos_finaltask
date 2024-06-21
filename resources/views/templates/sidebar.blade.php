@@ -432,7 +432,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="utilities-error" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/errors/error404.html">
+                            <a class="nav-link " href="{{ route('sale.return.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -442,35 +442,7 @@
                                         </g>
                                     </svg>
                                 </i>
-                                <span class="item-name">Error 404</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/errors/error500.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <span class="item-name">Error 500</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/errors/maintenance.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <span class="item-name">Maintenance</span>
+                                <span class="item-name">All Sales Return</span>
                             </a>
                         </li>
                     </ul>
@@ -575,21 +547,23 @@
                         </i>
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-maps" data-bs-parent="#sidebar-menu">
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/maps/google.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> G </i>
-                                <span class="item-name">Google</span>
-                            </a>
-                        </li>
+                        @role('superadmin')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('hrm.shifts.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> G </i>
+                                    <span class="item-name">Shifts</span>
+                                </a>
+                            </li>
+                        @endrole
                         <li class="nav-item">
                             <a class="nav-link " href="../dashboard/maps/vector.html">
                                 <i class="icon">
@@ -694,7 +668,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-table" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="{{route('expenses.index')}}">
+                            <a class="nav-link " href="{{ route('expenses.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -709,21 +683,21 @@
                             </a>
                         </li>
                         @role('superadmin')
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{route('expenses.categories.index')}}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Expense Category</span>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('expenses.categories.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">Expense Category</span>
+                                </a>
+                            </li>
                         @endrole
                     </ul>
                 </li>
@@ -832,36 +806,40 @@
                         </i>
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-settings" data-bs-parent="#sidebar-menu">
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('settings.warehouses.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Warehouse</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link "href="{{ route('settings.currency.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> C </i>
-                                <span class="item-name">Currency</span>
-                            </a>
-                        </li>
+                        @role('superadmin|inventaris')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('settings.warehouses.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> B </i>
+                                    <span class="item-name">Warehouse</span>
+                                </a>
+                            </li>
+                        @endrole
+                        @role('developer')
+                            <li class="nav-item">
+                                <a class="nav-link "href="{{ route('settings.currency.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> C </i>
+                                    <span class="item-name">Currency</span>
+                                </a>
+                            </li>
+                        @endrole
                         @role('superadmin')
                             <li class="nav-item">
                                 <a class="nav-link "href="{{ route('settings.membership.index') }}">
@@ -908,7 +886,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-icons" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.payments') }}">
+                            <a class="nav-link " href="{{ route('reports.payments.sales') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -953,7 +931,7 @@
                         </li>
                         {{--  --}}
                         <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.stock') }}">
+                            <a class="nav-link " href="{{ route('reports.stock.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -968,7 +946,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.customers') }}">
+                            <a class="nav-link " href="{{ route('reports.customers.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -983,7 +961,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.supplier') }}">
+                            <a class="nav-link " href="{{ route('reports.supplier.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -1028,7 +1006,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.warehouse') }}">
+                            <a class="nav-link " href="{{ route('reports.warehouse.sales') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">

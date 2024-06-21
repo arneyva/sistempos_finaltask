@@ -99,7 +99,7 @@
                                                         </div>
                                                     </td>
                                                     <td>{{ $data->Ref }}</td>
-                                                    <td>{{ $data->user->firstname }} {{ $data->user->lastname }}</td>
+                                                    <td>{{ $data->user->firstname ?? '' }} {{ $data->user->lastname ?? '' }}</td>
                                                 <td>{{ $data->date}}</td>
                                                 <td>{{ $data->warehouse->name }}</td>
                                                 <td>{{ $data->amount}}</td>
@@ -181,7 +181,7 @@
                                                         </div>
                                                     </td>
                                                     <td>{{ $data->Ref }}</td>
-                                                    <td>{{ $data->user->firstname }} {{ $data->user->lastname }}</td>
+                                                    <td>{{ $data->user->firstname ?? '' }} {{ $data->user->lastname ?? '' }}</td>
                                                 <td>{{ $data->date}}</td>
                                                 <td>{{ $data->warehouse->name }}</td>
                                                 <td>{{ $data->amount}}</td>
@@ -265,7 +265,7 @@
                                                         </div>
                                                     </td>
                                                     <td>{{ $data->Ref }}</td>
-                                                    <td>{{ $data->user->firstname }} {{ $data->user->lastname }}</td>
+                                                    <td>{{ $data->user->firstname ?? '' }} {{ $data->user->lastname ?? '' }}</td>
                                                 <td>{{ $data->date}}</td>
                                                 <td>{{ $data->warehouse->name }}</td>
                                                 <td>{{ $data->amount}}</td>
@@ -347,7 +347,7 @@
                                                         </div>
                                                     </td>
                                                     <td>{{ $data->Ref }}</td>
-                                                    <td>{{ $data->user->firstname }} {{ $data->user->lastname }}</td>
+                                                    <td>{{ $data->user->firstname ?? '' }} {{ $data->user->lastname ?? '' }}</td>
                                                 <td>{{ $data->date}}</td>
                                                 <td>{{ $data->warehouse->name }}</td>
                                                 <td>{{ $data->amount}}</td>

@@ -30,6 +30,9 @@
     <!-- RTL Css -->
     <link rel="stylesheet" href="{{ asset('hopeui/html/assets/css/rtl.min.css') }}">
 
+    <link rel="stylesheet" href="{{ asset('hopeui/html/assets/css/bootstrap-pincode-input.css') }}">
+
+
 
 </head>
 
@@ -69,16 +72,26 @@
                                         <h4 class="logo-title ms-3">Project TA</h4>
                                     </a>
                                     <h2 class="mb-2 text-center">Sign In</h2>
-                                    <p class="text-center">Login to stay connected.</p>
-                                    <form method="POST" action="{{ route('login') }}">
+                                    <!-- <p class="text-center">Login to stay connected.</p> -->
+                                    <p class="text-center my-3">Use your PIN</p>
+                                    <form method="POST" action="{{ route('login') }}" id="login">
                                         @csrf
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <input type="text" name="pin" class="form-control @error('pin') is-invalid @enderror" id="pin" placeholder="PIN">
+                                                @error('pin')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <p class="text-center mt-4">Or sign in with email and password</p>
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="form-group">
                                                     <label for="email" class="form-label">Email</label>
                                                     <input type="email" class="form-control" placeholder="Email"
                                                         aria-label="Email" aria-describedby="email-addon" name="email"
-                                                        :value="old('email')" required autofocus
+                                                        :value="old('email')" autofocus
                                                         autocomplete="username">
                                                 </div>
                                                 @error('email')
@@ -90,7 +103,7 @@
                                                     <label for="password" class="form-label">Password</label>
                                                     <input type="password" class="form-control" placeholder="Password"
                                                         aria-label="Password" aria-describedby="password-addon"
-                                                        name="password" required autocomplete="current-password">
+                                                        name="password" autocomplete="current-password">
                                                 </div>
                                                 @error('password')
                                                     <p class="text-danger">{{ $message }}</p>
@@ -113,21 +126,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="sign-bg">
-                        <svg width="280" height="230" viewBox="0 0 431 398" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <g opacity="0.05">
-                                <rect x="-157.085" y="193.773" width="543" height="77.5714" rx="38.7857"
-                                    transform="rotate(-45 -157.085 193.773)" fill="#3B8AFF" />
-                                <rect x="7.46875" y="358.327" width="543" height="77.5714" rx="38.7857"
-                                    transform="rotate(-45 7.46875 358.327)" fill="#3B8AFF" />
-                                <rect x="61.9355" y="138.545" width="310.286" height="77.5714" rx="38.7857"
-                                    transform="rotate(45 61.9355 138.545)" fill="#3B8AFF" />
-                                <rect x="62.3154" y="-190.173" width="543" height="77.5714" rx="38.7857"
-                                    transform="rotate(45 62.3154 -190.173)" fill="#3B8AFF" />
-                            </g>
-                        </svg>
                     </div>
                 </div>
                 <div class="col-md-6 d-md-block d-none bg-primary p-0 mt-n1 vh-100 overflow-hidden">
@@ -168,6 +166,25 @@
 
     <!-- App Script -->
     <script src="{{ asset('hopeui/html/assets/js/hope-ui.js') }}" defer></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script src="{{ asset('hopeui/html/assets/js/bootstrap-pincode-input.js') }}"></script>
+
+    <script>
+$(document).ready(function() {
+    $('#pin').pincodeInput({
+        inputs: 6,
+        complete: function(value, e, errorElement) {
+            // Check if Enter key is pressed
+            if (e.keyCode === 13) {
+                // Submit the form
+                $('#login').submit();
+            }
+        }
+    });
+});
+</script>
 
 </body>
 

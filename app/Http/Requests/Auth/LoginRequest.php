@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -27,8 +28,9 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'email' => ['required_without:pin', 'string', 'email', 'nullable'],
+            'password' => ['required_without:pin', 'string', 'nullable'],
+            'pin' => ['required_without_all:email,password', 'numeric', 'min_digits:6', 'max_digits:6', 'nullable'],
         ];
     }
 
@@ -40,6 +42,23 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+
+        // Cek jika PIN diinputkan
+        if ($this->filled('pin')) {
+            $user = User::where('pin', $this->pin)->first();
+
+            if (! $user) {
+                RateLimiter::hit($this->throttleKey());
+
+                throw ValidationException::withMessages([
+                    'pin' => trans('auth.failed'),
+                ]);
+            }
+
+            Auth::login($user, $this->boolean('remember'));
+
+            return;
+        }
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());

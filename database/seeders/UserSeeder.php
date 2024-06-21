@@ -15,22 +15,25 @@ class UserSeeder extends Seeder
     {
 
         User::firstOrCreate([
-            'firstname' => 'user',
+            'firstname' => 'Staff',
             'lastname' => 'biasa',
             'username' => 'user',
             'email' => 'user@gmail.com',
             'password' => bcrypt('password'),
+            'pin' => $this->getPin(),
             'phone' => '089655443322',
             'gender' => 'Laki-laki',
             'status' => 1,
             'avatar' => 'no_avatar.png',
-        ])->assignRole('staff');
+        ])->assignRole('staff')
+            ->warehouses()->attach(2);
         User::firstOrCreate([
-            'firstname' => 'user',
-            'lastname' => 'utama',
+            'firstname' => 'Inventaris',
+            'lastname' => 'Biasa',
             'username' => 'userutama',
-            'email' => 'user2@gmail.com',
+            'email' => 'inventaris@gmail.com',
             'password' => bcrypt('password'),
+            'pin' => $this->getPin(),
             'phone' => '089655443322',
             'gender' => 'Laki-laki',
             'status' => 1,
@@ -43,6 +46,7 @@ class UserSeeder extends Seeder
             'username' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
+            'pin' => $this->getPin(),
             'phone' => '089655443321',
             'gender' => 'Perempuan',
             'status' => 1,
@@ -73,5 +77,27 @@ class UserSeeder extends Seeder
             // Menetapkan peran superadmin
             $staff->assignRole('staff');
         });
+    }
+
+    public function getPin()
+    {
+        $isUnique = false;
+        $uniqueCode = '';
+
+        while (! $isUnique) {
+            // Generate a random number between 0 and 999999, then pad it with zeros to ensure it is 6 digits
+            $randomCode = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
+
+            // Check if the code is unique (assuming 'code' is the column where the unique codes are stored)
+            $codeExists = User::where('pin', $randomCode)->exists();
+
+            if (! $codeExists) {
+                $isUnique = true;
+                $uniqueCode = $randomCode;
+            }
+        }
+
+        // Here, you have a unique $uniqueCode which is a 6-digit number, including leading zeros
+        return $uniqueCode;
     }
 }

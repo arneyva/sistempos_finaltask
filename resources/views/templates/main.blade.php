@@ -34,7 +34,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     {{-- bootsrap css --}}
 
-    {{-- date range picke --}}
+    {{-- date range picker --}}
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- PWA  -->
     <meta name="theme-color" content="#6777ef" />
@@ -477,6 +477,22 @@
                 title: 'Oops...',
                 html: errorList,
                 
+            });
+        @endif
+        @if(session('warning'))
+            let error = '{{ session('warning') }}';
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
+            });
+        @endif
+        @if(session('error'))
+            let error = '{{ session('error') }}';
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
             });
         @endif
     </script>

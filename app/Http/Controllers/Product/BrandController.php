@@ -13,10 +13,17 @@ class BrandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $brand = Brand::get
-        $brands = Brand::query()->latest()->paginate(5);
+        $brandQuery = Brand::query()->where('deleted_at', '=', null)->latest();
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $brandQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%');
+            });
+        }
+        $brands = $brandQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
 
         return view('templates.product.brand.index', [
             'brands' => $brands,

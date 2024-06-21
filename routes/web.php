@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\Adjustment\AdjustmentController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\expense\ExpenseCategoryController;
+use App\Http\Controllers\expense\ExpenseController;
+use App\Http\Controllers\hrm\OfficeShiftController;
+use App\Http\Controllers\hrm\ClockController;
+use App\Http\Controllers\hrm\MyAttendanceController;
 use App\Http\Controllers\people\ClientController;
 use App\Http\Controllers\people\ProviderController;
 use App\Http\Controllers\Product\BrandController;
@@ -11,12 +16,12 @@ use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Reports\ReportsController;
 use App\Http\Controllers\Sale\SaleController;
+use App\Http\Controllers\Sale\SaleReturnController;
+use App\Http\Controllers\Sale\ShipmentController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
-use App\Http\Controllers\expense\ExpenseController;
-use App\Http\Controllers\expense\ExpenseCategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +51,15 @@ use Illuminate\Support\Facades\Route;
 //     // return view('auth.login');
 // });
 Route::get('/', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| Universal SmartClock has clock-in and clock-out functions 
+|--------------------------------------------------------------------------
+*/
+Route::get('webclock', [ClockController::class, 'index']);
+Route::post('webclock/clocking', [ClockController::class, 'clocking'])->name('webclock.clocking');
+
 Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
     Route::get('/detail/{id}', [ProductController::class, 'show'])->name('show');
@@ -103,12 +117,15 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
     Route::post('store', [TransferController::class, 'store'])->name('store');
     Route::get('edit/{id}', [TransferController::class, 'edit'])->name('edit');
     Route::patch('update/{id}', [TransferController::class, 'update'])->name('update');
+    Route::patch('confirm/{id}', [TransferController::class, 'updateForStaff'])->name('confirm');
     Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
+    Route::get('export', [TransferController::class, 'export'])->name('export');
+    Route::get('pdf', [TransferController::class, 'exportToPDF'])->name('pdf');
 });
 Route::get('/sale/payment/success/{transaction}', [SaleController::class, 'success'])->name('sale.payment.success');
 Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(function () {
     Route::get('list', [SaleController::class, 'index'])->name('index');
-    Route::get('shipments', [SaleController::class, 'shipments'])->name('shipments');
+    Route::get('shipments', [ShipmentController::class, 'index'])->name('shipments');
     Route::get('detail/{id}', [SaleController::class, 'show'])->name('show');
     Route::get('create', [SaleController::class, 'create'])->name('create');
     Route::post('store', [SaleController::class, 'store'])->name('store');
@@ -118,19 +135,67 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
     //
     Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
     Route::get('show_product_data/{id}/{variant_id}/{warehouse_id}', [AdjustmentController::class, 'show_product_data']);
+    Route::get('get_payments_by_sale/{id}', [SaleController::class, 'Payments_Sale'])->name('get_payments_by_sale');
+    Route::get('export', [SaleController::class, 'export'])->name('export');
+    Route::get('pdf', [SaleController::class, 'exportToPDF'])->name('pdf');
+    //
+    Route::prefix('/shipment')->name('shipment.')->group(function () {
+        Route::post('store', [ShipmentController::class, 'store'])->name('store');
+    });
+    Route::prefix('/return')->name('return.')->group(function () {
+        Route::get('list', [SaleReturnController::class, 'index'])->name('index');
+        Route::get('create/{id}', [SaleReturnController::class, 'create_sell_return'])->name('create');
+        Route::post('store', [SaleReturnController::class, 'store'])->name('store');
+        Route::get('export', [SaleReturnController::class, 'export'])->name('export');
+        Route::get('detail/{id}', [SaleReturnController::class, 'show'])->name('show');
+    });
 });
 Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->group(function () {
-    Route::get('payments', [ReportsController::class, 'payments'])->name('payments');
+    Route::prefix('/payments')->name('payments.')->group(function () {
+        Route::get('sales', [ReportsController::class, 'payments'])->name('sales');
+        Route::get('sales-returns', [ReportsController::class, 'paymentSaleReturns'])->name('sales-returns');
+        Route::get('purchases', [ReportsController::class, 'paymentPurchases'])->name('purchases');
+        Route::get('purchases-returns', [ReportsController::class, 'paymentPurchaseReturns'])->name('purchases-returns');
+    });
     Route::get('profit-loss', [ReportsController::class, 'profitLoss'])->name('profit-loss');
     Route::get('quantity-alerts', [ReportsController::class, 'quantityAlerts'])->name('quantity-alerts');
-    Route::get('stock', [ReportsController::class, 'stock'])->name('stock');
+    Route::prefix('/stock')->name('stock.')->group(function () {
+        Route::get('list', [ReportsController::class, 'stock'])->name('index');
+        Route::get('sales/{id}', [ReportsController::class, 'stockDetailSales'])->name('sales');
+        Route::get('sales-returns/{id}', [ReportsController::class, 'stockDetailSalesReturn'])->name('sales-returns');
+        Route::get('adjustment/{id}', [ReportsController::class, 'stockDetailAdjustment'])->name('adjustment');
+        Route::get('transfer/{id}', [ReportsController::class, 'stockDetailTransfer'])->name('transfer');
+        Route::get('purchases/{id}', [ReportsController::class, 'stockDetailPurchases'])->name('purchases');
+        Route::get('purchases-returns/{id}', [ReportsController::class, 'stockDetailPurchasesReturn'])->name('purchases-returns');
+    });
     Route::get('stock/{id}', [ReportsController::class, 'stockDetail'])->name('stock-detail');
-    Route::get('customers', [ReportsController::class, 'customers'])->name('customers');
-    Route::get('customers/{id}', [ReportsController::class, 'customersDetail'])->name('customers-detail');
-    Route::get('supplier', [ReportsController::class, 'supplier'])->name('supplier');
-    Route::get('supplier/{id}', [ReportsController::class, 'supplierDetail'])->name('supplier-detail');
+    Route::prefix('/customers')->name('customers.')->group(function () {
+        Route::get('list', [ReportsController::class, 'customers'])->name('index');
+        Route::get('sales/{id}', [ReportsController::class, 'customersDetailSales'])->name('sales');
+        Route::get('sales/export/{id}', [ReportsController::class, 'customersDetailSalesExport'])->name('sales-export');
+        Route::get('returns/{id}', [ReportsController::class, 'customersDetailReturns'])->name('returns');
+        Route::get('returns/export/{id}', [ReportsController::class, 'customersDetailSalesReturnsExport'])->name('returns-export');
+        Route::get('payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('payments');
+        Route::get('payments/export/{id}', [ReportsController::class, 'customersDetailSalesPaymentExport'])->name('payments-export');
+    });
+    Route::prefix('/supplier')->name('supplier.')->group(function () {
+        Route::get('list', [ReportsController::class, 'supplier'])->name('index');
+        Route::get('purchases/{id}', [ReportsController::class, 'Purchases_Provider'])->name('purchases');
+        Route::get('purchases/export/{id}', [ReportsController::class, 'providerDetailPurchasesExport'])->name('purchases-export');
+        Route::get('returns/{id}', [ReportsController::class, 'Returns_Provider'])->name('returns');
+        Route::get('returns/export/{id}', [ReportsController::class, 'providerDetailPurchasesReturnsExport'])->name('returns-export');
+        Route::get('payments/{id}', [ReportsController::class, 'Payments_Provider'])->name('payments');
+        Route::get('payments/export/{id}', [ReportsController::class, 'providerDetailPaymentExport'])->name('payments-export');
+    });
     Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
-    Route::get('warehouse', [ReportsController::class, 'warehouse'])->name('warehouse');
+    Route::get('top-selling-product/export', [ReportsController::class, 'topSellingProductExport'])->name('top-selling-product-export');
+    Route::prefix('/warehouse')->name('warehouse.')->group(function () {
+        Route::get('sales', [ReportsController::class, 'warehouseSales'])->name('sales');
+        Route::get('expenses', [ReportsController::class, 'warehouseExpenses'])->name('expenses');
+        Route::get('sales-returns', [ReportsController::class, 'warehouseSalesReturns'])->name('sales-returns');
+        Route::get('purchase', [ReportsController::class, 'warehousePurchase'])->name('purchase');
+        Route::get('purchase-returns', [ReportsController::class, 'warehousePurchaseReturns'])->name('purchase-returns');
+    });
     Route::get('sale', [ReportsController::class, 'sale'])->name('sale');
     Route::get('purchase', [ReportsController::class, 'purchase'])->name('purchase');
 });
@@ -197,6 +262,20 @@ Route::prefix('expenses')->middleware(['auth', 'verified'])->name('expenses.')->
     Route::patch('update/{id}', [ExpenseController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [ExpenseController::class, 'destroy'])->name('destroy');
     Route::get('file/download/{id}', [ExpenseController::class, 'download'])->name('file');
+});
+Route::prefix('hrm')->middleware(['auth', 'verified'])->name('hrm.')->group(function () {
+    Route::prefix('shifts')->name('shifts.')->group(function () {
+        Route::get('list', [OfficeShiftController::class, 'index'])->name('index');
+        Route::get('create', [OfficeShiftController::class, 'create'])->name('create');
+        Route::post('store', [OfficeShiftController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [OfficeShiftController::class, 'show'])->name('show');
+        Route::patch('update/{id}', [OfficeShiftController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [OfficeShiftController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('MyAttendances')->name('myattendances.')->group(function () {
+        Route::get('list', [MyAttendanceController::class, 'index'])->name('index');
+        Route::post('list', [MyAttendanceController::class, 'checkAttendance'])->name('check');
+    });
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

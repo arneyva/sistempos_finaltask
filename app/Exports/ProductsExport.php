@@ -26,12 +26,11 @@ class ProductsExport implements FromQuery, WithHeadings, WithMapping
 
         // Terapkan filter berdasarkan parameter yang diterima dari request
 
-
         if ($this->request->has('code') && $this->request->filled('code')) {
-            $productsQuery->where('code', 'like', '%' . $this->request->input('code') . '%');
+            $productsQuery->where('code', 'like', '%'.$this->request->input('code').'%');
         }
         if ($this->request->has('name') && $this->request->filled('name')) {
-            $productsQuery->where('name', 'like', '%' . $this->request->input('name') . '%');
+            $productsQuery->where('name', 'like', '%'.$this->request->input('name').'%');
         }
         if ($this->request->has('category_id') && $this->request->filled('category_id')) {
             $productsQuery->where('category_id', '=', $this->request->input('category_id'));
@@ -50,7 +49,7 @@ class ProductsExport implements FromQuery, WithHeadings, WithMapping
         // Lakukan pencarian jika diperlukan
         if ($this->request->has('search') && $this->request->filled('search')) {
             $search = $this->request->input('search');
-            $productsQuery->where('Ref', 'like', '%' . $search . '%');
+            $productsQuery->where('Ref', 'like', '%'.$search.'%');
         }
 
         return $productsQuery;

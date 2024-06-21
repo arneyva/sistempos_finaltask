@@ -168,7 +168,6 @@
                                                 data-placeholder="Select a Brand">
                                                 <option value="completed" selected>Completed</option>
                                                 <option value="pending">Pending</option>
-                                                <option value="ordered">Ordered</option>
                                             </select>
                                             @error('brand_id')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -252,17 +251,17 @@
                                                 </div>
                                             @enderror
                                         </div>
+
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label" for="validationDefault05">Description</label>
+                                        <input type="text" class="form-control" id="validationDefault05"
+                                            name="notes" placeholder="a few words...">
                                     </div>
                                 </div>
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="validationDefault05">Description</label>
-                                    <input type="text" class="form-control" id="validationDefault05" name="notes"
-                                        placeholder="a few words...">
+                                <div class="form-group mt-2">
+                                    <button class="btn btn-primary" type="submit">Submit form</button>
                                 </div>
-                            </div>
-                            <div class="form-group mt-2">
-                                <button class="btn btn-primary" type="submit">Submit form</button>
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -274,38 +273,53 @@
 @push('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            var statusDropdown = document.getElementById('typeStatus');
             var paymentMethod = document.getElementById('payment_method');
-            var receivedAmount = document.getElementById('received_amount');
-            var payingAmount = document.getElementById('paying_amount');
-            var changeReturn = document.getElementById('change_return');
+            var paymentMethodContainer = document.getElementById('paymentMethod');
+            var receivedAmount = document.getElementById('receivedAmount');
+            var payingAmount = document.getElementById('payingAmount');
+            var changeReturn = document.getElementById('changeReturn');
 
             function updateVisibility() {
+                var selectedStatus = statusDropdown.value;
                 var selectedPaymentMethod = paymentMethod.value;
-                if (selectedPaymentMethod == 'cash') {
-                    document.getElementById('receivedAmount').style.display = 'block';
-                    document.getElementById('payingAmount').style.display = 'block';
-                    document.getElementById('changeReturn').style.display = 'block';
+
+                if (selectedStatus === 'completed') {
+                    paymentMethodContainer.style.display = 'block';
+
+                    if (selectedPaymentMethod === 'cash') {
+                        receivedAmount.style.display = 'block';
+                        payingAmount.style.display = 'block';
+                        changeReturn.style.display = 'block';
+                    } else {
+                        receivedAmount.style.display = 'none';
+                        payingAmount.style.display = 'none';
+                        changeReturn.style.display = 'none';
+                    }
                 } else {
-                    document.getElementById('receivedAmount').style.display = 'none';
-                    document.getElementById('payingAmount').style.display = 'none';
-                    document.getElementById('changeReturn').style.display = 'none';
+                    paymentMethodContainer.style.display = 'none';
+                    receivedAmount.style.display = 'none';
+                    payingAmount.style.display = 'none';
+                    changeReturn.style.display = 'none';
                 }
             }
 
             function calculateChange() {
-                var received = parseFloat(receivedAmount.value) || 0;
-                var paying = parseFloat(payingAmount.value) || 0;
+                var received = parseFloat(document.getElementById('received_amount').value) || 0;
+                var paying = parseFloat(document.getElementById('paying_amount').value) || 0;
                 var change = received - paying;
-                changeReturn.value = change >= 0 ? change : 0;
+                document.getElementById('change_return').value = change >= 0 ? change : 0;
             }
 
+            statusDropdown.addEventListener('change', updateVisibility);
             paymentMethod.addEventListener('change', updateVisibility);
-            receivedAmount.addEventListener('input', calculateChange);
-            payingAmount.addEventListener('input', calculateChange);
+            document.getElementById('received_amount').addEventListener('input', calculateChange);
+            document.getElementById('paying_amount').addEventListener('input', calculateChange);
 
             updateVisibility(); // Initial call to set the correct visibility on page load
         });
     </script>
+
     <script>
         $(document).ready(function() {
             // Initial update on page load
@@ -361,7 +375,7 @@
                                 '<td><input type="number" class="form-control item-quantity" name="details[' +
                                 data.id + '_' + variantId +
                                 '][quantity]" value="0" min="0"></td>'; // quantity
-                            row += '<td class="item-discount">0</td>';
+                            row += '<td class="item-discount">Rp 0</td>';
                             row += '<td>' + 'Rp ' + data.tax_price + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
                             row +=

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Purchase
- * 
+ *
  * @property int $id
  * @property int $user_id
  * @property string $Ref
@@ -32,78 +32,76 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
- * 
  * @property Provider $provider
  * @property User $user
  * @property Warehouse $warehouse
  * @property Collection|PaymentPurchase[] $payment_purchases
  * @property Collection|PurchaseDetail[] $purchase_details
  * @property Collection|PurchaseReturn[] $purchase_returns
- *
- * @package App\Models
  */
 class Purchase extends Model
 {
-	use SoftDeletes;
-	protected $table = 'purchases';
+    use SoftDeletes;
 
-	protected $casts = [
-		'user_id' => 'int',
-		'date' => 'datetime',
-		'provider_id' => 'int',
-		'warehouse_id' => 'int',
-		'tax_rate' => 'float',
-		'TaxNet' => 'float',
-		'discount' => 'float',
-		'shipping' => 'float',
-		'GrandTotal' => 'float',
-		'paid_amount' => 'float'
-	];
+    protected $table = 'purchases';
 
-	protected $fillable = [
-		'user_id',
-		'Ref',
-		'date',
-		'provider_id',
-		'warehouse_id',
-		'tax_rate',
-		'TaxNet',
-		'discount',
-		'shipping',
-		'GrandTotal',
-		'paid_amount',
-		'statut',
-		'payment_statut',
-		'notes'
-	];
+    protected $casts = [
+        'user_id' => 'int',
+        'date' => 'datetime',
+        'provider_id' => 'int',
+        'warehouse_id' => 'int',
+        'tax_rate' => 'float',
+        'TaxNet' => 'float',
+        'discount' => 'float',
+        'shipping' => 'float',
+        'GrandTotal' => 'float',
+        'paid_amount' => 'float',
+    ];
 
-	public function provider()
-	{
-		return $this->belongsTo(Provider::class);
-	}
+    protected $fillable = [
+        'user_id',
+        'Ref',
+        'date',
+        'provider_id',
+        'warehouse_id',
+        'tax_rate',
+        'TaxNet',
+        'discount',
+        'shipping',
+        'GrandTotal',
+        'paid_amount',
+        'statut',
+        'payment_statut',
+        'notes',
+    ];
 
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
+    public function provider()
+    {
+        return $this->belongsTo(Provider::class);
+    }
 
-	public function warehouse()
-	{
-		return $this->belongsTo(Warehouse::class);
-	}
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-	public function payment_purchases()
-	{
-		return $this->hasMany(PaymentPurchase::class);
-	}
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
 
-	public function purchase_details()
-	{
-		return $this->hasMany(PurchaseDetail::class);
-	}
+    public function payment_purchases()
+    {
+        return $this->hasMany(PaymentPurchase::class);
+    }
 
-	public function purchase_returns()
-	{
-		return $this->hasMany(PurchaseReturn::class);
-	}
+    public function purchase_details()
+    {
+        return $this->hasMany(PurchaseDetail::class);
+    }
+
+    public function purchase_returns()
+    {
+        return $this->hasMany(PurchaseReturn::class);
+    }
 }

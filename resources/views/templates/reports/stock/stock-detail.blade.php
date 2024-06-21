@@ -12,26 +12,8 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <h4 class="card-title" style="align-self:center;margin-top:20px;">Ultramik Chocolate</h4>
                     <div class="card-body">
-                        <div class="col-md-6 col-lg-6">
+                        <div class="col-md-6 col-lg-12" style="margin-bottom: 30px">
                             <table class="table table-striped mb-0" role="grid">
-                                {{-- @if ($data[0]['is_variant'] == 'Yes')
-                                    <thead>
-                                        <tr>
-                                            <th>Warehouse</th>
-                                            <th>Variant</th>
-                                            <th>Qty</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($data[0]['CountQTY_variants'] as $variant)
-                                            <tr>
-                                                <td>{{ $variant['mag'] }} </td>
-                                                <td>{{ $variant['variant'] }}</td>
-                                                <th>{{ $variant['qte'] }}</th>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                @else --}}
                                 <thead>
                                     <tr>
                                         <th>Warehouse</th>
@@ -47,17 +29,9 @@
                                         <td>Warehouse 1</td>
                                         <td>9</td>
                                     </tr>
-                                    {{-- @foreach ($data[0]['CountQTY'] as $qty)
-                                        <tr>
-                                            <td>{{ $qty['mag'] }}</td>
-                                            <th>{{ $qty['qty'] }}</th>
-                                        </tr>
-                                    @endforeach --}}
                                 </tbody>
-                                {{-- @endif --}}
                             </table>
                         </div>
-                        {{--  --}}
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
                             <div class="card-body" style="background-color:bisque">
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"

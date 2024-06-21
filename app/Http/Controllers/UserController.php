@@ -84,7 +84,6 @@ class UserController extends Controller
         $role = Role::find($request['role']);
         if ($role->name === 'superadmin') {
             $rules = [
-                'username' => 'required|min:3|unique:users',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
                 'firstname' => 'required|max:12',
@@ -107,7 +106,6 @@ class UserController extends Controller
             ];
         } else {
             $rules = [
-                'username' => 'required|min:3|unique:users',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
                 'firstname' => 'required|max:12',
@@ -155,11 +153,11 @@ class UserController extends Controller
         $user = new User;
         $user->firstname = $request['firstname'];
         $user->lastname = $request['lastname'];
-        $user->username = $request['username'];
         $user->email = $request['email'];
         $user->phone = $request['phone'];
         $user->gender = $request['gender'];
         $user->password = Hash::make($request['password']);
+        $user->pin = $this->getPin();
         $user->avatar = $filename;
         $user->status = 1;
         $user->save();
@@ -206,8 +204,6 @@ class UserController extends Controller
         $role = Role::find($request['role']);
         if ($role->name === 'superadmin') {
             $rules = [
-                'username' => 'required|min:3|unique:users',
-                'username' => Rule::unique('users')->ignore($id),
                 'email' => 'required|email|unique:users',
                 'email' => Rule::unique('users')->ignore($id),
                 'firstname' => 'required|max:12',
@@ -230,8 +226,6 @@ class UserController extends Controller
             ];
         } else {
             $rules = [
-                'username' => 'required|min:3|unique:users',
-                'username' => Rule::unique('users')->ignore($id),
                 'email' => 'required|email|unique:users',
                 'email' => Rule::unique('users')->ignore($id),
                 'firstname' => 'required|max:12',
@@ -258,16 +252,13 @@ class UserController extends Controller
 
         $validateData = $request->validate($rules, $message);
 
-        $current = $user->password;
-        if ($request->NewPassword != 'null') {
-            if ($request->NewPassword != $current) {
-                $pass = Hash::make($request->NewPassword);
-            } else {
-                $pass = $user->password;
-            }
+        $pass = $user->password;
+        if ($request->NewPassword) {
+            request()->validate([
+                'NewPassword' => 'min:6'
+            ]);
 
-        } else {
-            $pass = $current;
+            $pass = Hash::make($request->NewPassword);
         }
 
         $currentAvatar = $user->avatar;
@@ -300,7 +291,6 @@ class UserController extends Controller
         User::whereId($id)->update([
             'firstname' => $request['firstname'],
             'lastname' => $request['lastname'],
-            'username' => $request['username'],
             'email' => $request['email'],
             'phone' => $request['phone'],
             'gender' => $request['gender'],
@@ -352,5 +342,27 @@ class UserController extends Controller
         $user->delete();
 
         return back()->with('success', 'User berhasil dihapus');
+    }
+
+    public function getPin()
+    {
+        $isUnique = false;
+        $uniqueCode = '';
+
+        while (! $isUnique) {
+            // Generate a random number between 0 and 999999, then pad it with zeros to ensure it is 6 digits
+            $randomCode = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
+
+            // Check if the code is unique (assuming 'pin' is the column where the unique codes are stored)
+            $codeExists = User::where('pin', $randomCode)->exists();
+
+            if (! $codeExists) {
+                $isUnique = true;
+                $uniqueCode = $randomCode;
+            }
+        }
+
+        // Here, you have a unique $uniqueCode which is a 6-digit number, including leading zeros
+        return $uniqueCode;
     }
 }

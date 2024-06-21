@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property Collection|User[] $users
+ * @property Collection|Warehouse[] $warehouses
  */
 class OfficeShift extends Model
 {
@@ -62,6 +63,13 @@ class OfficeShift extends Model
     public function users()
     {
         return $this->belongsToMany(User::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
+    public function warehouses()
+    {
+        return $this->belongsToMany(Warehouse::class)
             ->withPivot('id')
             ->withTimestamps();
     }

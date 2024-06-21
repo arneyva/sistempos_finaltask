@@ -1,4 +1,24 @@
 @extends('templates.main')
+@section('pages_title')
+    <h1>Stock ~ Reports</h1>
+    <p>look up your daily report</p>
+@endsection
+
+<style>
+    .warehousedeleted {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #eff8ff;
+        color: #377b9d;
+    }
+
+    .pdfstyle {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #ffeff1;
+        color: #9d3798;
+    }
+</style>
 <style>
     .warehousedeleted {
         padding: 7px;
@@ -21,14 +41,16 @@
             </div>
             <div class="card-header d-flex justify-content-between">
                 <div class="col-md-4 mb-3">
-                    {{-- <label class="form-label" for="selectWarehouse">Warehouse/Outlet *</label> --}}
-                    <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
-                        <option selected disabled value="">Warehouse/Outlet</option>
-                        <option value="">Warehouse 1</option>
-                        {{-- @foreach ($warehouse as $wh)
-                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
-                        @endforeach --}}
-                    </select>
+                    <form action="{{ route('reports.stock.index') }}" method="GET">
+                        <select class="form-select" id="selectWarehouse" name="warehouse_id">
+                            <option value="">All Warehouse/Outlet</option>
+                            @foreach ($warehouses as $wh)
+                                <option value="{{ $wh->id }}"
+                                    {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                    {{ $wh->name }}
+                                </option>
+                            @endforeach
+                        </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <div class="input-group search-input">
@@ -41,9 +63,11 @@
                                     stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </span>
-                        <input type="search" class="form-control" placeholder="Search...">
+                        <input type="search" class="form-control" name="search" value="{{ request()->input('search') }}"
+                            placeholder="Search...">
                     </div>
                 </div>
+                </form>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
@@ -63,13 +87,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>70171027</td>
-                                <td>Banana</td>
-                                <td>Warehouse 1</td>
-                                <td>19</td>
-                                <td>
-                                    <a href="#" class="warehousedeleted">Report
+                            @foreach ($report as $item)
+                                <tr>
+                                    <td>{{ $item['code'] }}</td>
+                                    <td>{{ $item['name'] }}</td>
+                                    <td>{{ $item['category'] }}</td>
+                                    <td>{{ $item['quantity'] }}</td>
+                                    <td>
+                                        <a href="{{ route('reports.stock.sales', $item['id']) }}"
+                                            class="warehousedeleted" style="margin-right: 10px">Report
+                                        </a>
                                         {{-- <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
@@ -84,13 +111,15 @@
                                             <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5" fill="white">
                                             </circle>
                                         </svg> --}}
-                                    </a>
-                                </td>
-                            </tr>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+
                         </tbody>
                     </table>
                     <div class="bd-example" style="margin-left: 10px; margin-right: 10px; margin-top:10px">
-                        {{-- {{ $brands->links() }} --}}
+                        {{ $products->links() }}
                     </div>
                 </div>
             </div>
@@ -99,25 +128,13 @@
 @endsection
 @push('script')
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const searchInput = document.querySelector('.search-input input');
-            const rows = document.querySelectorAll('#basic-table tbody tr');
+        // Mendapatkan elemen dropdown
+        const selectWarehouse = document.getElementById('selectWarehouse');
 
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.trim().toLowerCase();
-
-                rows.forEach(row => {
-                    const nameColumn = row.querySelector('td:first-child').textContent.trim()
-                        .toLowerCase();
-
-
-                    if (nameColumn.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
+        // Menambahkan event listener untuk perubahan nilai dropdown
+        selectWarehouse.addEventListener('change', function() {
+            // Menyubmit formulir secara otomatis saat nilai dropdown berubah
+            this.form.submit();
         });
     </script>
 @endpush

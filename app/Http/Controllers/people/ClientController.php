@@ -102,29 +102,24 @@ class ClientController extends Controller
 
         $rules = [
             'name' => 'required|max:12',
-            'email' => 'required|email|unique:clients',
-            'email' => Rule::unique('clients')->ignore($id),
-            'phone' => 'required|numeric|min_digits:12|max_digits:12',
+            'email' => ['required', 'email', Rule::unique('clients')->ignore($id)],
+            'phone' => 'required|numeric|digits:12',
         ];
-        $message = [
+
+        $messages = [
             'required' => 'Tidak boleh kosong!',
             'email' => 'Alamat email tidak valid!',
-            'min' => 'Minimal :min karakter',
-            'min_digits' => 'Nomor terdiri dari :min angka',
-            'max' => 'Maksimal :max karakter',
-            'max_digits' => 'Nomor terdiri dari :max angka',
+            'digits' => 'Nomor telepon harus terdiri dari :digits digit.',
             'unique' => ':attribute sudah terdaftar',
         ];
 
-        $validateData = $request->validate($rules, $message);
+        $validateData = $request->validate($rules, $messages);
 
-        Client::whereId($id)->update([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'phone' => $request['phone'],
-        ]);
+        $client->update($validateData);
 
-        return back()->with('success', 'Client berhasil diedit');
+        session()->flash('success', 'Client berhasil diedit');
+
+        return response()->json(['message' => 'Client berhasil diedit'], 200);
     }
 
     /**

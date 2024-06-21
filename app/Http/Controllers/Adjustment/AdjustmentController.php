@@ -21,9 +21,14 @@ class AdjustmentController extends Controller
 {
     public function index(Request $request)
     {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
         // Inisialisasi query dengan menggunakan model Adjustment
-        $adjustmentQuery = Adjustment::with('warehouse')->where('deleted_at', '=', null);
-
+        if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $adjustmentQuery = Adjustment::with('warehouse')->where('deleted_at', '=', null)->latest();
+        } else {
+            $adjustmentQuery = Adjustment::with('warehouse')->where('deleted_at', '=', null)->whereIn('warehouse_id', $warehouses_id)->latest();
+        }
         // Terapkan filter berdasarkan parameter yang diterima dari request
         if ($request->filled('date')) {
             $adjustmentQuery->whereDate('date', '=', $request->input('date'));

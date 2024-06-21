@@ -40,6 +40,7 @@ class Attendance extends Model
 
     protected $casts = [
         'user_id' => 'int',
+        'admin_id' => 'int',
         'date' => 'datetime',
         'clock_in_out' => 'bool',
     ];
@@ -58,10 +59,18 @@ class Attendance extends Model
         'total_work',
         'total_rest',
         'status',
+        'late_in',
+        'late_out',
+        'admin_id',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id');
     }
 }

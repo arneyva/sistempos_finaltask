@@ -13,9 +13,17 @@ class UnitController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $unit = Unit::query()->latest()->paginate(5);
+        $unitQuery = Unit::query()->where('deleted_at', '=', null)->latest();
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $unitQuery->where(function ($query) use ($search) {
+                $query->where('ShortName', 'like', '%'.$search.'%')
+                    ->orWhere('name', 'like', '%'.$search.'%');
+            });
+        }
+        $unit = $unitQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
 
         return view('templates.product.unit.index', [
             'unit' => $unit,

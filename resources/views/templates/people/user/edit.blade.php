@@ -91,25 +91,18 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label" for="username">Username:</label>
-                <input type="text" class="form-control bg-transparent @error('username') is-invalid @enderror" id="username" name="username" value="{{ old('username', $user->username) }}"  placeholder="Username" required>
-                <small class=" text-danger font-italic">
-                            @error('username')
-                                {{ $message }}
-                            @enderror
-                    </small>
+                <label class="form-label" for="email">PIN:</label>
+                <input type="tel" class="form-control" value="{{ htmlspecialchars($user->pin) }}" placeholder="PIN" disabled>
             </div>
             <div class="form-group">
-    <label class="form-label" for="email">Email:</label>
-    <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $user->email) }}" placeholder="Email" required>
-    <small class=" text-danger font-italic">
-                            @error('email')
-                                {{ $message }}
-                            @enderror
-                    </small>
-</div>
-
-
+                <label class="form-label" for="email">Email:</label>
+                <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $user->email) }}" placeholder="Email" required>
+                <small class=" text-danger font-italic">
+                    @error('email')
+                        {{ $message }}
+                    @enderror
+                </small>
+            </div>
 <div class="form-group">
     <label class="form-label" for="password">Password:</label>
     <input type="password" class="form-control bg-transparent @error('password') is-invalid @enderror" id="password" name="NewPassword"  placeholder="New Password" >
