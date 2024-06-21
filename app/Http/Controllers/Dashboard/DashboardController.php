@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
 use App\Models\Expense;
 use App\Models\PaymentPurchase;
 use App\Models\PaymentPurchaseReturns;
@@ -336,6 +337,30 @@ class DashboardController extends Controller
         $payment_received = $dates->pluck('payment_received')->toArray();
         $payment_sent = $dates->pluck('payment_sent')->toArray();
         $days = $dates->keys()->toArray();
+
+        // Hrm
+        $today = Carbon::today()->toDateString();
+        $attendanceQuery = Attendance::with('user.warehouses')
+            ->where('deleted_at', null)
+            ->whereDate('date', '2024-06-19')
+            ->get();
+
+        $attendance = [];
+        foreach ($attendanceQuery as $jadwal) {
+            $warehouseNames = $jadwal->user->warehouses->pluck('name')->toArray();
+            $warehouseNamesString = implode(' ~ ', $warehouseNames);
+            $item = [
+                'id' => $jadwal->id,
+                'employee_name' => $jadwal->user->username,
+                'employee_image' => $jadwal->user->image,
+                'warehouse_name' => $warehouseNamesString,
+                'status' => $jadwal->status,
+                'clock_in' => $jadwal->clock_in,
+                'clock_out' => $jadwal->clock_out,
+            ];
+
+            $attendance[] = $item;
+        }
         return view('templates.dashboard', [
             'topClients' => $topClients,
             'products' => $products,
@@ -345,127 +370,10 @@ class DashboardController extends Controller
             'payment_sent' => $payment_sent,
             'payment_received' => $payment_received,
             'days' => $days,
+            'attendance' => $attendance,
+            'today' => $today,
         ]);
     }
-    // public function Payment_chart($warehouse_id, $array_warehouses_id)
-    // {
-    //     // Build an array of the dates we want to show, oldest first
-    //     $dates = collect();
-    //     foreach (range(-6, 0) as $i) {
-    //         $date = Carbon::now()->addDays($i)->format('Y-m-d');
-    //         $dates->put($date, 0);
-    //     }
-
-    //     $date_range = \Carbon\Carbon::today()->subDays(6);
-    //     // Get the sales counts
-    //     $Payment_Sale = PaymentSale::with('sale')->where('date', '>=', $date_range)
-    //         ->when($warehouse_id != 0, function ($query) use ($warehouse_id) {
-    //             return $query->whereHas('sale', function ($q) use ($warehouse_id) {
-    //                 $q->where('warehouse_id', $warehouse_id);
-    //             });
-    //         }, function ($query) use ($array_warehouses_id) {
-    //             return $query->whereHas('sale', function ($q) use ($array_warehouses_id) {
-    //                 $q->whereIn('warehouse_id', $array_warehouses_id);
-    //             });
-    //         })
-    //         ->groupBy(DB::raw("DATE_FORMAT(date,'%Y-%m-%d')"))
-    //         ->orderBy('date', 'asc')
-    //         ->get([
-    //             DB::raw(DB::raw("DATE_FORMAT(date,'%Y-%m-%d') as date")),
-    //             DB::raw('SUM(montant) AS count'),
-    //         ])
-    //         ->pluck('count', 'date');
-
-    //     $Payment_Sale_Returns = PaymentSaleReturns::with('SaleReturn')->where('date', '>=', $date_range)
-    //         ->when($warehouse_id != 0, function ($query) use ($warehouse_id) {
-    //             return $query->whereHas('SaleReturn', function ($q) use ($warehouse_id) {
-    //                 $q->where('warehouse_id', $warehouse_id);
-    //             });
-    //         }, function ($query) use ($array_warehouses_id) {
-    //             return $query->whereHas('SaleReturn', function ($q) use ($array_warehouses_id) {
-    //                 $q->whereIn('warehouse_id', $array_warehouses_id);
-    //             });
-    //         })
-    //         ->groupBy(DB::raw("DATE_FORMAT(date,'%Y-%m-%d')"))
-    //         ->orderBy('date', 'asc')
-    //         ->get([
-    //             DB::raw(DB::raw("DATE_FORMAT(date,'%Y-%m-%d') as date")),
-    //             DB::raw('SUM(montant) AS count'),
-    //         ])
-    //         ->pluck('count', 'date');
-
-    //     $Payment_Purchases = PaymentPurchase::with('purchase')->where('date', '>=', $date_range)
-    //         ->when($warehouse_id != 0, function ($query) use ($warehouse_id) {
-    //             return $query->whereHas('purchase', function ($q) use ($warehouse_id) {
-    //                 $q->where('warehouse_id', $warehouse_id);
-    //             });
-    //         }, function ($query) use ($array_warehouses_id) {
-    //             return $query->whereHas('purchase', function ($q) use ($array_warehouses_id) {
-    //                 $q->whereIn('warehouse_id', $array_warehouses_id);
-    //             });
-    //         })
-    //         ->groupBy(DB::raw("DATE_FORMAT(date,'%Y-%m-%d')"))
-    //         ->orderBy('date', 'asc')
-    //         ->get([
-    //             DB::raw(DB::raw("DATE_FORMAT(date,'%Y-%m-%d') as date")),
-    //             DB::raw('SUM(montant) AS count'),
-    //         ])
-    //         ->pluck('count', 'date');
-
-    //     $Payment_Purchase_Returns = PaymentPurchaseReturns::with('PurchaseReturn')->where('date', '>=', $date_range)
-    //         ->when($warehouse_id != 0, function ($query) use ($warehouse_id) {
-    //             return $query->whereHas('PurchaseReturn', function ($q) use ($warehouse_id) {
-    //                 $q->where('warehouse_id', $warehouse_id);
-    //             });
-    //         }, function ($query) use ($array_warehouses_id) {
-    //             return $query->whereHas('PurchaseReturn', function ($q) use ($array_warehouses_id) {
-    //                 $q->whereIn('warehouse_id', $array_warehouses_id);
-    //             });
-    //         })
-    //         ->groupBy(DB::raw("DATE_FORMAT(date,'%Y-%m-%d')"))
-    //         ->orderBy('date', 'asc')
-    //         ->get([
-    //             DB::raw(DB::raw("DATE_FORMAT(date,'%Y-%m-%d') as date")),
-    //             DB::raw('SUM(montant) AS count'),
-    //         ])
-    //         ->pluck('count', 'date');
-
-    //     $Payment_Expense = Expense::where('date', '>=', $date_range)
-    //         ->when($warehouse_id != 0, function ($query) use ($warehouse_id) {
-    //             return $query->where('warehouse_id', $warehouse_id);
-    //         })
-    //         ->groupBy(DB::raw("DATE_FORMAT(date,'%Y-%m-%d')"))
-    //         ->orderBy('date', 'asc')
-    //         ->get([
-    //             DB::raw(DB::raw("DATE_FORMAT(date,'%Y-%m-%d') as date")),
-    //             DB::raw('SUM(amount) AS count'),
-    //         ])
-    //         ->pluck('count', 'date');
-
-    //     $paymen_recieved = $this->array_merge_numeric_values($Payment_Sale, $Payment_Purchase_Returns);
-    //     $payment_sent = $this->array_merge_numeric_values($Payment_Purchases, $Payment_Sale_Returns, $Payment_Expense);
-
-    //     $dates_recieved = $dates->merge($paymen_recieved);
-    //     $dates_sent = $dates->merge($payment_sent);
-
-    //     $data_recieved = [];
-    //     $data_sent = [];
-    //     $days = [];
-    //     foreach ($dates_recieved as $key => $value) {
-    //         $data_recieved[] = $value;
-    //         $days[] = $key;
-    //     }
-
-    //     foreach ($dates_sent as $key => $value) {
-    //         $data_sent[] = $value;
-    //     }
-
-    //     return response()->json([
-    //         'payment_sent' => $data_sent,
-    //         'payment_received' => $data_recieved,
-    //         'days' => $days,
-    //     ]);
-    // }
     public function array_merge_numeric_values()
     {
         $arrays = func_get_args();
