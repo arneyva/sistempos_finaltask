@@ -126,7 +126,7 @@
                                     <td>{{ $item['from_warehouse']['name'] }}</td>
                                     <td>{{ $item['to_warehouse']['name'] }}</td>
                                     <td>{{ $item['items'] }} Items</td>
-                                    <td>Rp {{ $item['GrandTotal'] }}</td>
+                                    <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}</td>
                                     <td>{{ $item['statut'] }}</td>
                                     <td>
                                         <div class="inline">
@@ -179,7 +179,7 @@
                                                                             </tr>
                                                                             <tr>
                                                                                 <td>{{ __('Grand Total') }}</td>
-                                                                                <th>Rp. {{ $item['GrandTotal'] }}
+                                                                                <th>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}
                                                                                 </th>
                                                                             </tr>
                                                                             <tr>
@@ -214,7 +214,8 @@
                                                                                         <td>{{ $detail->product->code }}
                                                                                         </td>
                                                                                         <td>{{ $detail->quantity }}</td>
-                                                                                        <td>Rp {{ $detail->cost }}</td>
+                                                                                        <td>{{ 'Rp ' . number_format($detail->cost, 2, ',', '.') }}
+                                                                                        </td>
                                                                                     </tr>
                                                                                 @endforeach
                                                                             </tbody>
@@ -228,8 +229,10 @@
                                                 </div>
                                             </div>
                                             @role('superadmin|inventaris')
-                                                <a href="{{ route('transfer.edit', $item['id']) }}">
-                                                    <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                <a href="{{ $item['statut'] !== 'completed' ? route('transfer.edit', $item['id']) : '#' }}"
+                                                    class="{{ $item['statut'] === 'completed' ? 'disabled' : '' }}">
+                                                    <svg class="icon-32 {{ $item['statut'] === 'completed' ? 'text-danger' : '' }}"
+                                                        width="32" viewBox="0 0 24 24" fill="none"
                                                         xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
                                                             stroke-width="1.5" stroke-linecap="round"
@@ -245,6 +248,24 @@
                                                         </path>
                                                     </svg>
                                                 </a>
+
+                                                {{-- <a href="{{ route('transfer.edit', $item['id']) }}">
+                                                    <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
+                                                            stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                        </path>
+                                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                                            d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
+                                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round"></path>
+                                                        <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
+                                                            stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                        </path>
+                                                    </svg>
+                                                </a> --}}
                                                 <a href="{{ route('transfer.destroy', $item['id']) }}">
                                                     <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                         xmlns="http://www.w3.org/2000/svg">
@@ -268,23 +289,6 @@
                                                 </a>
                                             @endrole
                                             @role('staff')
-                                                {{-- <a href="{{ route('transfer.confirm', $item['id']) }}">
-                                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                    </path>
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                        d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
-                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                    </path>
-                                                </svg>
-                                            </a> --}}
                                                 <form id="confirm-form-{{ $item['id'] }}"
                                                     action="{{ route('transfer.confirm', $item['id']) }}" method="POST"
                                                     style="display: none;">
