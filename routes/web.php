@@ -117,6 +117,7 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
     Route::post('store', [TransferController::class, 'store'])->name('store');
     Route::get('edit/{id}', [TransferController::class, 'edit'])->name('edit');
     Route::patch('update/{id}', [TransferController::class, 'update'])->name('update');
+    Route::patch('confirm/{id}', [TransferController::class, 'updateForStaff'])->name('confirm');
     Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
     Route::get('export', [TransferController::class, 'export'])->name('export');
     Route::get('pdf', [TransferController::class, 'exportToPDF'])->name('pdf');
