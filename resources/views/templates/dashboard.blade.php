@@ -183,39 +183,15 @@
     <div class="col-md-12 col-lg-8">
         <div class="row">
             <div class="col-md-12">
-                {{-- chary table content  --}}
+
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h6 class="card-title">This Week Sales & Purchases</h6>
-                        </div>
-                        <div class="d-flex align-items-center align-self-center">
-                            <div class="d-flex align-items-center text-primary">
-                                <svg class="icon-12" xmlns="http://www.w3.org/2000/svg" width="12" viewBox="0 0 24 24"
-                                    fill="currentColor">
-                                    <g>
-                                        <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
-                                    </g>
-                                </svg>
-                                <div class="ms-2">
-                                    <span class="text-gray">Sales</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center ms-3 text-info">
-                                <svg class="icon-12" xmlns="http://www.w3.org/2000/svg" width="12" viewBox="0 0 24 24"
-                                    fill="currentColor">
-                                    <g>
-                                        <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
-                                    </g>
-                                </svg>
-                                <div class="ms-2">
-                                    <span class="text-gray">Cost</span>
-                                </div>
-                            </div>
+                            <h6 class="card-title">This Week Payment Sent & Received</h6>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div id="d-main" class="d-main"></div>
+                        <canvas id="lineChart" style="height: 400px;"></canvas>
                     </div>
                 </div>
             </div>
@@ -798,6 +774,63 @@
             };
 
             new Chart(ctx, config); // Membuat instance Chart
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data dari controller
+            const payment_sent = @json($payment_sent);
+            const payment_received = @json($payment_received);
+            const days = @json($days);
+
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            const myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Payment Sent',
+                        data: payment_sent,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: false,
+                    }, {
+                        label: 'Payment Received',
+                        data: payment_received,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        fill: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Days',
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Amount',
+                            }
+                        }
+                    }
+                }
+            });
         });
     </script>
 @endpush
