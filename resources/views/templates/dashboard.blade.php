@@ -252,13 +252,14 @@
                 <div class="overflow-hidden card" data-aos="fade-up" data-aos-delay="600">
                     <div class="flex-wrap card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="mb-2 card-title">Enterprise Clients</h4>
+                            <h4 class="mb-2 card-title">Daily Employee Attendance Report</h4>
                             <p class="mb-0">
-                                <svg class ="me-2 text-primary icon-24" width="24" viewBox="0 0 24 24">
-                                    <path fill="currentColor"
-                                        d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
+                                    viewBox="0 0 2048 2048">
+                                    <path fill="#7d6bd6"
+                                        d="M1792 993q60 41 107 93t81 114t50 131t18 141q0 119-45 224t-124 183t-183 123t-224 46q-91 0-176-27t-156-78t-126-122t-85-157H128V128h256V0h128v128h896V0h128v128h256zM256 256v256h1408V256h-128v128h-128V256H512v128H384V256zm643 1280q-3-31-3-64q0-86 24-167t73-153h-97v-128h128v86q41-51 91-90t108-67t121-42t128-15q100 0 192 33V640H256v896zm573 384q93 0 174-35t142-96t96-142t36-175q0-93-35-174t-96-142t-142-96t-175-36q-93 0-174 35t-142 96t-96 142t-36 175q0 93 35 174t96 142t142 96t175 36m64-512h192v128h-320v-384h128zM384 1024h128v128H384zm256 0h128v128H640zm0-256h128v128H640zm-256 512h128v128H384zm256 0h128v128H640zm384-384H896V768h128zm256 0h-128V768h128zm256 0h-128V768h128z" />
                                 </svg>
-                                15 new acquired this month
+                                {{ $today }}
                             </p>
                         </div>
                     </div>
@@ -267,174 +268,39 @@
                             <table id="basic-table" class="table mb-0 table-striped" role="grid">
                                 <thead>
                                     <tr>
-                                        <th>COMPANIES</th>
-                                        <th>CONTACTS</th>
-                                        <th>ORDER</th>
-                                        <th>COMPLETION</th>
+                                        <th>Employee Name</th>
+                                        <th>Warehouse Name</th>
+                                        <th>Clock In</th>
+                                        <th>Clock Out</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img class="rounded bg-soft-primary img-fluid avatar-40 me-3"
-                                                    src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}"
-                                                    alt="profile">
-                                                <h6>Addidis Sportwear</h6>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="iq-media-group iq-media-group-1">
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">SP</div>
-                                                </a>
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">PP</div>
-                                                </a>
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">MM</div>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>$14,000</td>
-                                        <td>
-                                            <div class="mb-2 d-flex align-items-center">
-                                                <h6>60%</h6>
-                                            </div>
-                                            <div class="shadow-none progress bg-soft-primary w-100" style="height: 4px">
-                                                <div class="progress-bar bg-primary" data-toggle="progress-bar"
-                                                    role="progressbar" aria-valuenow="60" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img class="rounded bg-soft-primary img-fluid avatar-40 me-3"
-                                                    src="{{ asset('hopeui/html/assets/images/shapes/05.png') }}"
-                                                    alt="profile">
-                                                <h6>Netflixer Platforms</h6>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="iq-media-group iq-media-group-1">
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">SP</div>
-                                                </a>
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">PP</div>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>$30,000</td>
-                                        <td>
-                                            <div class="mb-2 d-flex align-items-center">
-                                                <h6>25%</h6>
-                                            </div>
-                                            <div class="shadow-none progress bg-soft-primary w-100" style="height: 4px">
-                                                <div class="progress-bar bg-primary" data-toggle="progress-bar"
-                                                    role="progressbar" aria-valuenow="25" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img class="rounded bg-soft-primary img-fluid avatar-40 me-3"
-                                                    src="{{ asset('hopeui/html/assets/images/shapes/02.png') }}"
-                                                    alt="profile">
-                                                <h6>Shopifi Stores</h6>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="iq-media-group iq-media-group-1">
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">PP</div>
-                                                </a>
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">TP</div>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>$8,500</td>
-                                        <td>
-                                            <div class="mb-2 d-flex align-items-center">
-                                                <h6>100%</h6>
-                                            </div>
-                                            <div class="shadow-none progress bg-soft-success w-100" style="height: 4px">
-                                                <div class="progress-bar bg-success" data-toggle="progress-bar"
-                                                    role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img class="rounded bg-soft-primary img-fluid avatar-40 me-3"
-                                                    src="{{ asset('hopeui/html/assets/images/shapes/03.png') }}"
-                                                    alt="profile">
-                                                <h6>Bootstrap Technologies</h6>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="iq-media-group iq-media-group-1">
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">SP</div>
-                                                </a>
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">PP</div>
-                                                </a>
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">MM</div>
-                                                </a>
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">TP</div>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>$20,500</td>
-                                        <td>
-                                            <div class="mb-2 d-flex align-items-center">
-                                                <h6>100%</h6>
-                                            </div>
-                                            <div class="shadow-none progress bg-soft-success w-100" style="height: 4px">
-                                                <div class="progress-bar bg-success" data-toggle="progress-bar"
-                                                    role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img class="rounded bg-soft-primary img-fluid avatar-40 me-3"
-                                                    src="{{ asset('hopeui/html/assets/images/shapes/04.png') }}"
-                                                    alt="profile">
-                                                <h6>Community First</h6>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="iq-media-group iq-media-group-1">
-                                                <a href="#" class="iq-media-1">
-                                                    <div class="icon iq-icon-box-3 rounded-pill">MM</div>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>$9,800</td>
-                                        <td>
-                                            <div class="mb-2 d-flex align-items-center">
-                                                <h6>75%</h6>
-                                            </div>
-                                            <div class="shadow-none progress bg-soft-primary w-100" style="height: 4px">
-                                                <div class="progress-bar bg-primary" data-toggle="progress-bar"
-                                                    role="progressbar" aria-valuenow="75" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @foreach ($attendance as $item)
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if ($item['employee_image'] == null)
+                                                        <img class="rounded bg-soft-primary img-fluid avatar-40 me-3"
+                                                            src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}"
+                                                            alt="profile">
+                                                    @else
+                                                        <img class="rounded bg-soft-primary img-fluid avatar-40 me-3"
+                                                            src="" alt="profile-ada">
+                                                    @endif
+                                                    <h6>{{ $item['employee_name'] }}</h6>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {{ $item['warehouse_name'] }}
+                                            </td>
+                                            <td>{{ $item['clock_in'] }}</td>
+                                            <td>
+                                                {{ $item['clock_out'] }}
+                                            </td>
+                                            <td>{{ $item['status'] }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
