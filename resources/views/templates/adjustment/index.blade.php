@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>All Adjustment</h1>
-<p>Do Something with all your adjustment</p>
+    <h1>All Adjustment</h1>
+    <p>Do Something with all your adjustment</p>
 @endsection
 
 <style>
@@ -22,20 +22,6 @@
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
                     <h4 class="card-title">All Adjustment</h4>
-                </div>
-            </div>
-            <div class="card-header d-flex justify-content-between">
-                <div class="input-group search-input" style="width: 30%">
-                    <span class="input-group-text d-inline" id="search-input">
-                        <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></circle>
-                            <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    </span>
-                    <input type="search" class="form-control" placeholder="Search...">
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
@@ -89,6 +75,8 @@
                     </div>
                 </div>
             </div>
+
+            {{-- </div> --}}
             <div class="card-body p-0">
                 <div class="table-responsive mt-4">
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
@@ -222,20 +210,10 @@
                                                                 </div>
                                                             </div>
                                                             <hr>
-                                                            {{-- @if ($adjustment->note)
-                                                                <div class="row mt-4">
-                                                                    <div class="col-md-12">
-                                                                        <p>{{ $adjustment->note }}</p>
-                                                                    </div>
-                                                                </div>
-                                                            @endif --}}
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            {{--  --}}
                                             <a href="{{ route('adjustment.edit', $item['id']) }}">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -253,22 +231,22 @@
                                                     </path>
                                                 </svg>
                                             </a>
-                                            <a href="hapus.html">
+                                            <a href="hapus.html" style="pointer-events: none;">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
-                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke="red" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
                                                     <path
                                                         d="M14.4736 2.75024V5.65924C14.4736 7.07924 15.6216 8.23024 17.0416 8.23424H19.7966"
-                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke="red" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
-                                                    <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
+                                                    <path d="M13.5759 14.6481L10.1099 11.1821" stroke="red"
                                                         stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round">
                                                     </path>
-                                                    <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
+                                                    <path d="M10.1108 14.6481L13.5768 11.1821" stroke="red"
                                                         stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round">
                                                     </path>

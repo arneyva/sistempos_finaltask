@@ -673,15 +673,7 @@ class SaleController extends Controller
                 $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
                 $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
             }
-
             $clients = Client::where('deleted_at', '=', null)->get(['id', 'name']);
-
-            // return response()->json([
-            //     'details' => $details,
-            //     'sale' => $sale,
-            //     'clients' => $clients,
-            //     'warehouses' => $warehouses,
-            // ]);
             return view('templates.sale.edit', [
                 'details' => $details,
                 'sale' => $sale,
