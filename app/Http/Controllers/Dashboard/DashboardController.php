@@ -15,124 +15,30 @@ use App\Models\PurchaseReturn;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\SaleReturn;
+use App\Models\UserWarehouse;
+use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index1(Request $request)
-    {
-        // Inisialisasi tanggal-tanggal yang akan digunakan
-        $dates = collect();
-        for ($i = -6; $i <= 0; $i++) {
-            $date = Carbon::now()->addDays($i)->format('Y-m-d');
-            $dates->put($date, 0); // Inisialisasi dengan nilai 0
-        }
-
-        // Batasi rentang tanggal berdasarkan 6 hari terakhir dari hari ini
-        $date_range = Carbon::today()->subDays(6);
-
-        // Query untuk Payment_Sale
-        $Payment_Sale = PaymentSale::where('date', '>=', $date_range)
-            ->when($request->warehouse_id != 0, function ($query) use ($request) {
-                $query->whereHas('sale', function ($q) use ($request) {
-                    $q->where('warehouse_id', $request->warehouse_id);
-                });
-            })
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get([
-                'date',
-                \DB::raw('SUM(montant) AS count'),
-            ])
-            ->pluck('count', 'date');
-
-        // Query untuk Payment_Sale_Returns
-        $Payment_Sale_Returns = PaymentSaleReturns::where('date', '>=', $date_range)
-            ->when($request->warehouse_id != 0, function ($query) use ($request) {
-                $query->whereHas('SaleReturn', function ($q) use ($request) {
-                    $q->where('warehouse_id', $request->warehouse_id);
-                });
-            })
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get([
-                'date',
-                \DB::raw('SUM(montant) AS count'),
-            ])
-            ->pluck('count', 'date');
-
-        // Query untuk Payment_Purchases
-        $Payment_Purchases = PaymentPurchase::where('date', '>=', $date_range)
-            ->when($request->warehouse_id != 0, function ($query) use ($request) {
-                $query->whereHas('purchase', function ($q) use ($request) {
-                    $q->where('warehouse_id', $request->warehouse_id);
-                });
-            })
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get([
-                'date',
-                \DB::raw('SUM(montant) AS count'),
-            ])
-            ->pluck('count', 'date');
-
-        // Query untuk Payment_Purchase_Returns
-        $Payment_Purchase_Returns = PaymentPurchaseReturns::where('date', '>=', $date_range)
-            ->when($request->warehouse_id != 0, function ($query) use ($request) {
-                $query->whereHas('PurchaseReturn', function ($q) use ($request) {
-                    $q->where('warehouse_id', $request->warehouse_id);
-                });
-            })
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get([
-                'date',
-                \DB::raw('SUM(montant) AS count'),
-            ])
-            ->pluck('count', 'date');
-
-        // Query untuk Payment_Expense
-        $Payment_Expense = Expense::where('date', '>=', $date_range)
-            ->when($request->warehouse_id != 0, function ($query) use ($request) {
-                $query->where('warehouse_id', $request->warehouse_id);
-            })
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get([
-                'date',
-                \DB::raw('SUM(amount) AS count'),
-            ])
-            ->pluck('count', 'date');
-
-        // Gabungkan hasil dari semua query untuk membangun data yang diperlukan
-        $dates->transform(function ($value, $date) use ($Payment_Sale, $Payment_Sale_Returns, $Payment_Purchases, $Payment_Purchase_Returns, $Payment_Expense) {
-            return [
-                'payment_received' => $Payment_Sale->get($date, 0) + $Payment_Purchase_Returns->get($date, 0),
-                'payment_sent' => $Payment_Purchases->get($date, 0) + $Payment_Sale_Returns->get($date, 0) + $Payment_Expense->get($date, 0),
-            ];
-        });
-
-        // Mendapatkan array data yang sesuai format yang diinginkan
-        $payment_received = $dates->pluck('payment_received')->toArray();
-        $payment_sent = $dates->pluck('payment_sent')->toArray();
-        $days = $dates->keys()->toArray();
-
-        // Mengembalikan response JSON
-        return response()->json([
-            'payment_sent' => $payment_sent,
-            'payment_received' => $payment_received,
-            'days' => $days,
-        ]);
-    }
     public function index(Request $request)
     {
-        // Mengambil warehouse_id dari request atau menggunakan nilai default 0 untuk semua warehouse
-        $warehouse_id = $request->input('warehouse_id', 0);
+        $user_auth = auth()->user();
+        $warehouse_id = $request->input('warehouse_id', 0); // default all warehouse
+
+        // filtering data untuk staff berdasarkan warehouse_id nya
+        if ($user_auth->hasAnyRole(['staff'])) {
+            $staff_warehouse_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->first();
+            if ($staff_warehouse_id) {
+                $warehouse_id = $staff_warehouse_id;
+            }
+        }
+        $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         $currentMonth = Carbon::now()->format('F Y');
 
-        // Query untuk mendapatkan top 5 pelanggan berdasarkan jumlah penjualan
+        // Logika pengolahan data Top Customer di bulan ini
         $topClientsQuery = Sale::whereBetween('date', [
             Carbon::now()->startOfMonth(),
             Carbon::now()->endOfMonth(),
@@ -143,14 +49,12 @@ class DashboardController extends Controller
             ->groupBy('clients.name')
             ->orderByDesc('sales_count')
             ->take(5);
-
-        // Jika warehouse_id tidak 0, tambahkan kondisi filter berdasarkan warehouse_id
         if ($warehouse_id != 0) {
             $topClientsQuery->where('sales.warehouse_id', $warehouse_id);
         }
         $topClients = $topClientsQuery->get();
 
-        // Query untuk mendapatkan top 5 produk berdasarkan jumlah penjualannya
+        // Logika pengolahan data Top Selling Product di bulan ini
         $productsQuery = SaleDetail::join('sales', 'sale_details.sale_id', '=', 'sales.id')
             ->join('products', 'sale_details.product_id', '=', 'products.id')
             ->whereBetween('sale_details.date', [
@@ -174,11 +78,11 @@ class DashboardController extends Controller
         }
         $products = $productsQuery->get();
 
-        // Recent sales
+        // Logika pengolahan data Recent sales 
         $saleQuery = Sale::select('sales.*')
             ->with('facture', 'client', 'warehouse')
             ->join('clients', 'sales.client_id', '=', 'clients.id')
-            ->where('sales.deleted_at', '=', null)->latest()->take(5);
+            ->where('sales.deleted_at', '=', null)->latest()->take(5); //hanya mengamnil 5 data
         if ($warehouse_id != 0) {
             $saleQuery->where('warehouse_id', '=', $warehouse_id);
         }
@@ -206,52 +110,46 @@ class DashboardController extends Controller
 
             $sales_data[] = $item;
         }
-        //  Today Sales
+        // Logika pengolahan data Today Sales di konten slider
         $data['today_sales'] = Sale::where('deleted_at', null)
             ->whereDate('date', Carbon::today())
             ->when($warehouse_id != 0, function ($query) use ($warehouse_id) {
                 return $query->where('warehouse_id', $warehouse_id);
             })
             ->sum('GrandTotal');
-        $data['today_sales'] = 'Rp ' . number_format($data['today_sales'], 2, ',', '.');
-        //Roday Sales Returns
+        $data['today_sales'] = 'Rp ' . number_format($data['today_sales'], 2, ',', '.'); // format Rupiah
+        // Logika pengolahan data Today Sales Return di konten slider
         $data['return_sales'] = SaleReturn::where('deleted_at', '=', null)
             ->where('date', \Carbon\Carbon::today())
             ->when($warehouse_id != 0, function ($query) use ($warehouse_id) {
                 return $query->where('warehouse_id', $warehouse_id);
             })
             ->sum('GrandTotal');
-
         $data['return_sales'] = 'Rp ' . number_format($data['return_sales'], 2, ',', '.');
-        //Roday Sales Returns
+        // Logika pengolahan data Today Purchases di konten slider
         $data['today_purchases'] = Purchase::where('deleted_at', '=', null)
             ->where('date', \Carbon\Carbon::today())
             ->when($warehouse_id != 0, function ($query) use ($warehouse_id) {
                 return $query->where('warehouse_id', $warehouse_id);
             })
             ->sum('GrandTotal');
-
         $data['today_purchases'] = 'Rp ' . number_format($data['today_purchases'], 2, ',', '.');
-        //Roday Sales Returns
+        // Logika pengolahan data Today Purchases Return di konten slider
         $data['return_purchases'] = PurchaseReturn::where('deleted_at', '=', null)
             ->where('date', \Carbon\Carbon::today())
             ->when($warehouse_id != 0, function ($query) use ($warehouse_id) {
                 return $query->where('warehouse_id', $warehouse_id);
             })
             ->sum('GrandTotal');
-
         $data['return_purchases'] = 'Rp ' . number_format($data['return_purchases'], 2, ',', '.');
-        // ===============================================
-        // Inisialisasi tanggal-tanggal yang akan digunakan
+        // Logika pengolahan data di This Week Payment Sent & Received
+        // Batasi rentang tanggal berdasarkan 6 hari terakhir dari hari ini
         $dates = collect();
         for ($i = -6; $i <= 0; $i++) {
             $date = Carbon::now()->addDays($i)->format('Y-m-d');
             $dates->put($date, 0); // Inisialisasi dengan nilai 0
         }
-
-        // Batasi rentang tanggal berdasarkan 6 hari terakhir dari hari ini
         $date_range = Carbon::today()->subDays(6);
-
         // Query untuk Payment_Sale
         $Payment_Sale = PaymentSale::where('date', '>=', $date_range)
             ->when($request->warehouse_id != 0, function ($query) use ($request) {
@@ -266,7 +164,6 @@ class DashboardController extends Controller
                 \DB::raw('SUM(montant) AS count'),
             ])
             ->pluck('count', 'date');
-
         // Query untuk Payment_Sale_Returns
         $Payment_Sale_Returns = PaymentSaleReturns::where('date', '>=', $date_range)
             ->when($request->warehouse_id != 0, function ($query) use ($request) {
@@ -281,7 +178,6 @@ class DashboardController extends Controller
                 \DB::raw('SUM(montant) AS count'),
             ])
             ->pluck('count', 'date');
-
         // Query untuk Payment_Purchases
         $Payment_Purchases = PaymentPurchase::where('date', '>=', $date_range)
             ->when($request->warehouse_id != 0, function ($query) use ($request) {
@@ -296,7 +192,6 @@ class DashboardController extends Controller
                 \DB::raw('SUM(montant) AS count'),
             ])
             ->pluck('count', 'date');
-
         // Query untuk Payment_Purchase_Returns
         $Payment_Purchase_Returns = PaymentPurchaseReturns::where('date', '>=', $date_range)
             ->when($request->warehouse_id != 0, function ($query) use ($request) {
@@ -311,7 +206,6 @@ class DashboardController extends Controller
                 \DB::raw('SUM(montant) AS count'),
             ])
             ->pluck('count', 'date');
-
         // Query untuk Payment_Expense
         $Payment_Expense = Expense::where('date', '>=', $date_range)
             ->when($request->warehouse_id != 0, function ($query) use ($request) {
@@ -324,7 +218,6 @@ class DashboardController extends Controller
                 \DB::raw('SUM(amount) AS count'),
             ])
             ->pluck('count', 'date');
-
         // Gabungkan hasil dari semua query untuk membangun data yang diperlukan
         $dates->transform(function ($value, $date) use ($Payment_Sale, $Payment_Sale_Returns, $Payment_Purchases, $Payment_Purchase_Returns, $Payment_Expense) {
             return [
@@ -332,19 +225,17 @@ class DashboardController extends Controller
                 'payment_sent' => $Payment_Purchases->get($date, 0) + $Payment_Sale_Returns->get($date, 0) + $Payment_Expense->get($date, 0),
             ];
         });
-
         // Mendapatkan array data yang sesuai format yang diinginkan
         $payment_received = $dates->pluck('payment_received')->toArray();
         $payment_sent = $dates->pluck('payment_sent')->toArray();
         $days = $dates->keys()->toArray();
 
-        // Hrm
+        // Logika pengolahan data di Report Attendance
         $today = Carbon::today()->toDateString();
         $attendanceQuery = Attendance::with('user.warehouses')
             ->where('deleted_at', null)
-            ->whereDate('date', '2024-06-19')
+            ->whereDate('date', Carbon::today())
             ->get();
-
         $attendance = [];
         foreach ($attendanceQuery as $jadwal) {
             $warehouseNames = $jadwal->user->warehouses->pluck('name')->toArray();
@@ -358,10 +249,9 @@ class DashboardController extends Controller
                 'clock_in' => $jadwal->clock_in,
                 'clock_out' => $jadwal->clock_out,
             ];
-
             $attendance[] = $item;
         }
-        // alert stock
+        // Logika pengolahan data Stock Alert
         $alertStockQuery = ProductWarehouse::with('product', 'warehouse')->where('deleted_at', '=', null)->where('qty', '<=', 'stock_alert')->take(2);
         if ($warehouse_id != 0) {
             $alertStockQuery->where('warehouse_id', '=', $warehouse_id);
@@ -377,7 +267,7 @@ class DashboardController extends Controller
                 'warehouse_name' => $item->warehouse->name,
             ];
         }
-        // dd($alertStockQuery);
+        // pengiriman data ke frontend
         return view('templates.dashboard', [
             'topClients' => $topClients,
             'products' => $products,
@@ -389,25 +279,8 @@ class DashboardController extends Controller
             'days' => $days,
             'attendance' => $attendance,
             'today' => $today,
-            'stock' => $stock_data
+            'stock' => $stock_data,
+            'warehouses' => $warehouses,
         ]);
-    }
-    public function array_merge_numeric_values()
-    {
-        $arrays = func_get_args();
-        $merged = array();
-        foreach ($arrays as $array) {
-            foreach ($array as $key => $value) {
-                if (!is_numeric($value)) {
-                    continue;
-                }
-                if (!isset($merged[$key])) {
-                    $merged[$key] = $value;
-                } else {
-                    $merged[$key] += $value;
-                }
-            }
-        }
-        return $merged;
     }
 }
