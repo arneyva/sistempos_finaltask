@@ -23,8 +23,7 @@ class UnitController extends Controller
                     ->orWhere('name', 'like', '%'.$search.'%');
             });
         }
-        $unit = $unitQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
-
+        $unit = $unitQuery->paginate($request->input('limit', 5))->appends($request->except('page')); //default limit 5,mempertahankan query
         return view('templates.product.unit.index', [
             'unit' => $unit,
         ]);
