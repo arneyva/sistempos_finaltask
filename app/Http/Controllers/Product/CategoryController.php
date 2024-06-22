@@ -19,8 +19,8 @@ class CategoryController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $categoryQuery->where(function ($query) use ($search) {
-                $query->where('code', 'like', '%'.$search.'%')
-                    ->orWhere('name', 'like', '%'.$search.'%');
+                $query->where('code', 'like', '%' . $search . '%')
+                    ->orWhere('name', 'like', '%' . $search . '%');
             });
         }
         $category = $categoryQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
@@ -111,13 +111,18 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        if (auth()->user()->hasAnyRole(['superadmin', 'inventaris'])) {
-            $category = Category::where('id', $id);
-            $category->delete();
+        if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+            $category = Category::where('id', $id)->first();
 
+            // Cek apakah unit sudah digunakan di produk
+            if ($category->products()->exists()) {
+                return redirect()->back()->with('error', 'Category cannot be deleted because it is already used in a product.');
+            }
+
+            $category->delete();
             return redirect()->route('product.category.index')->with('success', 'Category deleted successfully');
         } else {
-            return redirect()->back()->with('errorzz', 'You are not authorized to delete Category product');
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk melakukan tindakan ini');
         }
     }
 }

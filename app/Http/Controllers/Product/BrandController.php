@@ -19,8 +19,8 @@ class BrandController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $brandQuery->where(function ($query) use ($search) {
-                $query->where('name', 'like', '%'.$search.'%')
-                    ->orWhere('description', 'like', '%'.$search.'%');
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
         $brands = $brandQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
@@ -53,7 +53,7 @@ class BrandController extends Controller
         ]);
         $file = $request->file('image');
         if ($file) {
-            $fileName = time().'.'.$request->image->extension();
+            $fileName = time() . '.' . $request->image->extension();
             $path = $file->storeAs('images/brand', $fileName, 'public');
         } else {
             $path = null;
@@ -117,11 +117,16 @@ class BrandController extends Controller
     {
         if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
             $brands = Brand::where('id', $id)->first();
-            $brands->delete();
 
+            // Cek apakah unit sudah digunakan di produk
+            if ($brands->products()->exists()) {
+                return redirect()->back()->with('error', 'Brand cannot be deleted because it is already used in a product.');
+            }
+
+            $brands->delete();
             return redirect()->route('product.brand.index')->with('success', 'Brand deleted successfully');
         } else {
-            return redirect()->back()->with('errorzz', 'You are not authorized to delete Brand product');
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk melakukan tindakan ini');
         }
     }
 }
