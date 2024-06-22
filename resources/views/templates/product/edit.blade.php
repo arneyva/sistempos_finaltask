@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Edit Product</h1>
-<p>Do Something with product's data</p>
+    <h1>Edit Product</h1>
+    <p>Do Something with product's data</p>
 @endsection
 
 <style>
@@ -41,16 +41,13 @@
     }
 </style>
 @section('content')
-    {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">
         <div class="mt-3" style="justify-content-center">
             <!-- @include('templates.alert') -->
         </div>
     </div>
-    {{-- part 2  sisi kiri --}}
     <div class="col-md-12 col-lg-10">
         <div class="row">
-            {{-- part --}}
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
@@ -58,7 +55,6 @@
                             <h4 class="card-title">Update Product</h4>
                         </div>
                     </div>
-                    {{--  --}}
                     <form method="POST" action="{{ route('product.update', $product['id']) }}"
                         enctype="multipart/form-data" onsubmit="saveVariantData()">
                         @method('PATCH')
@@ -307,7 +303,7 @@
                                                         @endforeach
                                                     </tbody>
                                                     <tbody id="variantTableBody">
-                                                        {{-- Table rows will be dynamically added here --}}
+                                                        {{-- variant baru --}}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -316,7 +312,6 @@
                                 </div>
                             @else
                             @endif
-
                             <div class="col-md-6 mb-3">
                                 <div class="form-check mb-3">
                                     <input type="checkbox" class="form-check-input" id="is_imei" name="is_imei">
@@ -340,8 +335,8 @@
             </div>
         </div>
     </div>
-    {{-- part 3 sisi kanan --}}
-    {{-- <div class="col-md-12 col-lg-2">
+    {{-- Handle Image --}}
+    <div class="col-md-12 col-lg-4">
         <div class="row">
             <div class="col-md-12 col-lg-12">
                 <div class="card credit-card-widget" data-aos="fade-up" data-aos-delay="900">
@@ -360,15 +355,24 @@
                                 <div id="afterLogoUpload" style="max-height: 100%;max-width: 100%;"
                                     class="d-none justify-content-center align-items-center after-upload-logo">
                                     <div class="logo-wrapper d-flex justify-content-center align-items-center">
-                                        <img style="max-height: 100%;max-width: 100%;; object-fit: contain; object-position: center;"
+                                        <img style="max-height: 100%;max-width: 100%; object-fit: contain; object-position: center;"
                                             id="previewLogo">
                                         <div class="logo-action">
-                                            <img id="viewLogoIcon" src="{{ asset('template/assets/img/icon-view.svg') }}"
-                                                alt="" srcset="" data-bs-toggle="modal"
-                                                data-bs-target="#viewLogoModal">
-                                            <img id="deleteLogoIcon"
-                                                src="{{ asset('template/assets/img/icon-delete.svg') }}" alt=""
-                                                srcset="">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
+                                                viewBox="0 0 24 24" id="viewLogoIcon" alt="View"
+                                                data-bs-toggle="modal" data-bs-target="#viewLogoModal">
+                                                <g fill="none" stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="1.5" color="currentColor">
+                                                    <path
+                                                        d="M21.544 11.045c.304.426.456.64.456.955c0 .316-.152.529-.456.955C20.178 14.871 16.689 19 12 19c-4.69 0-8.178-4.13-9.544-6.045C2.152 12.529 2 12.315 2 12c0-.316.152-.529.456-.955C3.822 9.129 7.311 5 12 5c4.69 0 8.178 4.13 9.544 6.045" />
+                                                    <path d="M15 12a3 3 0 1 0-6 0a3 3 0 0 0 6 0" />
+                                                </g>
+                                            </svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
+                                                viewBox="0 0 24 24" id="deleteLogoIcon" alt="Delete">
+                                                <path fill="currentColor"
+                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
+                                            </svg>
                                         </div>
                                     </div>
                                 </div>
@@ -378,12 +382,20 @@
                 </div>
             </div>
         </div>
-    </div> --}}
     </div>
-    <div class="modal fade" id="viewLogoModal" tabindex="-1" aria-labelledby="logoModalLabel" aria-hidden="true">
+    <!-- Error message container -->
+    <div id="error-message" class="text-danger mt-2"></div>
+    <!-- Modal for viewing logo -->
+    <div class="modal fade" id="viewLogoModal" tabindex="-1" aria-labelledby="viewLogoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <img id="logoExtend" alt="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewLogoModalLabel">Logo Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="logoExtend" src="" alt="Logo Preview" style="max-width: 100%; height: auto;">
+                </div>
             </div>
         </div>
     </div>
@@ -399,41 +411,53 @@
             var preview = $('#previewLogo');
             var previewExtend = $('#logoExtend');
             var deleteLogoIcon = $('#deleteLogoIcon');
-
+            var viewLogoIcon = $('#viewLogoIcon');
+            var errorMessage = $('#error-message');
 
             openLogoUpload.click(function() {
                 logoUpload.click();
             });
 
             logoUpload.change(function() {
-                var file = logoUpload[0].files[0];
+                var file = this.files[0];
                 if (file) {
                     // Check file size
-                    if (file.size > 15728640) { // 1 MB in bytes
-                        $('#error-message').text('File size exceeds 15 MB.');
-                        logoUpload.value = ''; // Clear the file input
+                    if (file.size > 15728640) { // 15 MB in bytes
+                        errorMessage.text('File size exceeds 15 MB.');
+                        this.value = ''; // Clear the file input
                         return;
                     }
 
-                    // Create an image element to check the aspect ratio
                     var img = new Image();
                     img.src = URL.createObjectURL(file);
 
                     img.onload = function() {
-                        $('#error-message').text(''); // Clear any error messages
+                        errorMessage.text(''); // Clear any error messages
                         openLogoUpload.removeClass('d-flex').addClass('d-none');
                         afterLogoUpload.removeClass('d-none').addClass('d-flex');
                         preview.attr('src', URL.createObjectURL(file));
                         previewExtend.attr('src', URL.createObjectURL(file));
-                        // }
+                    };
+
+                    img.onerror = function() {
+                        errorMessage.text('Error loading image. Please try again.');
+                        logoUpload.val('');
                     };
                 }
             });
+
             deleteLogoIcon.click(function() {
                 afterLogoUpload.removeClass('d-flex').addClass('d-none');
                 openLogoUpload.removeClass('d-none').addClass('d-flex');
-                logoUpload.value = '';
-            })
+                logoUpload.val('');
+                preview.attr('src', '');
+                previewExtend.attr('src', '');
+                errorMessage.text('');
+            });
+
+            viewLogoIcon.click(function() {
+                $('#viewLogoModal').modal('show');
+            });
         });
     </script>
     <script>

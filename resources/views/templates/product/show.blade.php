@@ -120,14 +120,16 @@
                                         <td>Brand</td>
                                         <th>{{ $data[0]['brand'] }}</th>
                                     </tr>
-                                    <tr>
-                                        <td>Product Cost</td>
-                                        <th>{{ $data[0]['cost'] }}</th>
-                                    </tr>
-                                    <tr>
-                                        <td>Product Price</td>
-                                        <th>{{ $data[0]['price'] }}</th>
-                                    </tr>
+                                    @if ($data[0]['type'] == 'is_single')
+                                        <tr>
+                                            <td>Product Cost</td>
+                                            <th>{{ $data[0]['cost'] }}</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Product Price</td>
+                                            <th>{{ $data[0]['price'] }}</th>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <td>Unit</td>
                                         <th>{{ $data[0]['unit'] }}</th>
