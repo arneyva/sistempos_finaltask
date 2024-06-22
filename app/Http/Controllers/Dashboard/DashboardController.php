@@ -361,6 +361,23 @@ class DashboardController extends Controller
 
             $attendance[] = $item;
         }
+        // alert stock
+        $alertStockQuery = ProductWarehouse::with('product', 'warehouse')->where('deleted_at', '=', null)->where('qty', '<=', 'stock_alert')->take(2);
+        if ($warehouse_id != 0) {
+            $alertStockQuery->where('warehouse_id', '=', $warehouse_id);
+        }
+        $stock = $alertStockQuery->get();
+        $stock_data = [];
+        foreach ($stock as $item) {
+            $stock_data[] = [
+                'id' => $item->id,
+                'product_name' => $item->product->name,
+                'stock' => $item->qty,
+                'alert' => $item->stock_alert,
+                'warehouse_name' => $item->warehouse->name,
+            ];
+        }
+        // dd($alertStockQuery);
         return view('templates.dashboard', [
             'topClients' => $topClients,
             'products' => $products,
@@ -372,6 +389,7 @@ class DashboardController extends Controller
             'days' => $days,
             'attendance' => $attendance,
             'today' => $today,
+            'stock' => $stock_data
         ]);
     }
     public function array_merge_numeric_values()
