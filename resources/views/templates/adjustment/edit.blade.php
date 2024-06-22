@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Edit Adjustment</h1>
-<p>Do Something with all your adjustment</p>
+    <h1>Edit Adjustment</h1>
+    <p>Do Something with all your adjustment</p>
 @endsection
 
 @section('content')
@@ -28,9 +28,13 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="selectWarehouse">Warehouse/Outlet *</label>
-                                    <input type="text" class="form-control" id="selectWarehouse" name="warehouse_id"
-                                        value="{{ $adjustment['warehouse_id'] }}" readonly>
+                                    <input type="text" class="form-control" id="selectWarehouseName"
+                                        value="{{ $warehouses->firstWhere('id', $adjustment['warehouse_id'])->name }}"
+                                        readonly>
+                                    <input type="hidden" id="selectWarehouse" name="warehouse_id"
+                                        value="{{ $adjustment['warehouse_id'] }}">
                                 </div>
+
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="exampleInputdate">Date *</label>
                                     <input type="date" class="form-control" id="exampleInputdate" name="date"
@@ -53,7 +57,8 @@
                                                     <th>#</th>
                                                     <th>Code</th>
                                                     <th>Name</th>
-                                                    <th>Stock</th>
+                                                    <th>Initial Stock</th>
+                                                    <th>Current Stock</th>
                                                     <th>Quantity</th>
                                                     <th>Type</th>
                                                     <th></th>
@@ -66,7 +71,8 @@
                                                         <td>#</td>
                                                         <td>{{ $detail['code'] }}</td>
                                                         <td>{{ $detail['name'] }}</td>
-                                                        <td>{{ $detail['current'] }}</td>
+                                                        <td>{{ $detail['ex'] }} {{ $detail['unit'] }}</td>
+                                                        <td>{{ $detail['current'] }} {{ $detail['unit'] }}</td>
                                                         <td>
                                                             <input type="number" class="form-control"
                                                                 name="details[{{ $loop->index }}][quantity]"
@@ -125,91 +131,6 @@
 @endsection
 
 @push('script')
-    {{-- <script>
-        $(document).ready(function() {
-            $('#product-table-body').on('click', '.delete-row', function() {
-                $(this).closest('tr').remove();
-            });
-
-            $('#selectWarehouse').on('change', function() {
-                var warehouseId = $(this).val();
-                if (warehouseId) {
-                    // Mengirimkan nilai warehouse_id ke server
-                    $('input[name="warehouse_id"]').val(warehouseId);
-                    loadProductsByWarehouse(warehouseId);
-                } else {
-                    $('#selectProduct').empty().prop('disabled', true);
-                }
-            });
-
-
-            $('#selectProduct').on('change', function() {
-                var productId = $(this).val();
-                var warehouseId = $('#selectWarehouse').val();
-                var variantId = $(this).find(':selected').data('variant-id') || null;
-
-                if (productId && warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
-                            warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            var row = '<tr>';
-                            row += '<td>#</td>';
-                            row += '<td>' + data.code + '</td>';
-                            row += '<td>' + data.name + '</td>';
-                            row += '<td>' + data.qty + '</td>';
-                            row +=
-                                '<td><input type="number" class="form-control" name="details[' +
-                                data.id + '][quantity]" value="0" min="0"></td>';
-                            row += '<td><select class="form-select" name="details[' + data.id +
-                                '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id +
-                                '][product_variant_id]" value="' + (variantId || '') +
-                                '"></td>';
-                            row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-                            row += '</tr>';
-
-                            $('#product-table-body').append(row);
-                        }
-                    });
-                }
-            });
-
-            function loadProductsByWarehouse(warehouseId) {
-                if (warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            $('#selectProduct').empty().append(
-                                '<option selected disabled value="">Choose...</option>');
-                            $.each(data, function(key, value) {
-                                $('#selectProduct').append('<option value="' + value.id +
-                                    '" data-variant-id="' + value.product_variant_id +
-                                    '">' + value.name + '</option>');
-                            });
-                            $('#selectProduct').prop('disabled', false);
-                        }
-                    });
-                } else {
-                    $('#selectProduct').empty().prop('disabled', true);
-                }
-            }
-
-            var initialWarehouseId = $('#selectWarehouse').val();
-            if (initialWarehouseId) {
-                loadProductsByWarehouse(initialWarehouseId);
-            }
-        });
-    </script> --}}
     <script>
         $(document).ready(function() {
             let newIndex = 0;
@@ -245,6 +166,7 @@
                             row += '<td>#</td>';
                             row += '<td>' + data.code + '</td>';
                             row += '<td>' + data.name + '</td>';
+                            row += '<td>' + 'New Data' + '</td>';
                             row += '<td>' + data.qty + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control" name="details[new-' +

@@ -33,9 +33,8 @@ class AdjustmentController extends Controller
         if ($request->filled('date')) {
             $adjustmentQuery->whereDate('date', '=', $request->input('date'));
         }
-
         if ($request->filled('Ref')) {
-            $adjustmentQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
+            $adjustmentQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
         }
 
         if ($request->filled('warehouse_id')) {
@@ -52,7 +51,7 @@ class AdjustmentController extends Controller
         // Lakukan pencarian jika diperlukan
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $adjustmentQuery->where('Ref', 'like', '%'.$search.'%');
+            $adjustmentQuery->where('Ref', 'like', '%' . $search . '%');
         }
 
         // Ambil data dengan membatasi jumlah per halaman
@@ -125,7 +124,7 @@ class AdjustmentController extends Controller
         }
 
         if ($request->has('Ref') && $request->filled('Ref')) {
-            $adjustmentQuery->where('Ref', 'like', '%'.$request->input('Ref').'%');
+            $adjustmentQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
         }
 
         if ($request->has('warehouse_id') && $request->filled('warehouse_id')) {
@@ -142,7 +141,7 @@ class AdjustmentController extends Controller
         // Lakukan pencarian jika diperlukan
         if ($request->has('search') && $request->filled('search')) {
             $search = $request->input('search');
-            $adjustmentQuery->where('Ref', 'like', '%'.$search.'%');
+            $adjustmentQuery->where('Ref', 'like', '%' . $search . '%');
         }
 
         $adjustments = $adjustmentQuery->get();
@@ -161,9 +160,12 @@ class AdjustmentController extends Controller
     public function create()
     {
         $user_auth = auth()->user();
-        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
-        $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
-
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
         return view('templates.adjustment.create', ['warehouse' => $warehouses]);
     }
 
@@ -180,7 +182,7 @@ class AdjustmentController extends Controller
             //array ke2 di tambah 1
             $inMsg = $nwMsg[1] + 1;
             // array item pertama ditambah dengan array item kedua
-            $code = $nwMsg[0].'_'.$inMsg;
+            $code = $nwMsg[0] . '_' . $inMsg;
         } else {
             $code = 'AD_1'; // AD=pertama 1=kedua
         }
@@ -218,8 +220,8 @@ class AdjustmentController extends Controller
             if ($product_warehouse->product_variant_id) { //jika memiliki data product_variant_id
                 $item['product_variant_id'] = $product_warehouse->product_variant_id;
                 $item['code'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
-                $item['Variant'] = '['.$product_warehouse['productVariant']->name.']'.$product_warehouse['product']->name; //code ngambil dari relasi productVariant
-                $item['name'] = '['.$product_warehouse['productVariant']->name.']'.$product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['Variant'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['name'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
                 $item['barcode'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
 
                 $product_price = $product_warehouse['productVariant']->price; //code ngambil dari relasi productVariant
@@ -289,21 +291,19 @@ class AdjustmentController extends Controller
 
     public function show_product_data($id, $variant_id, $warehouse_id)
     {
-
+        // mengambil data produk berdasarkan id
         $Product_data = Product::with('unit')
             ->where('id', $id)
             ->where('deleted_at', '=', null)
             ->first();
-        //ngambil dari relasi productWarehouse (id)
-
         $data = [];
-        $item['id'] = $Product_data['id']; //id product
+        $item['id'] = $Product_data['id'];
         $item['image'] = $Product_data['image'];
-        $item['product_type'] = $Product_data['type']; //type product
+        $item['product_type'] = $Product_data['type'];
         $item['Type_barcode'] = $Product_data['Type_barcode'];
 
-        $item['unit_id'] = $Product_data['unit'] ? $Product_data['unit']->id : ''; //ngambil dari relasi unit
-        $item['unit'] = $Product_data['unit'] ? $Product_data['unit']->ShortName : ''; //ngambil dari relasi unit
+        $item['unit_id'] = $Product_data['unit'] ? $Product_data['unit']->id : ''; 
+        $item['unit'] = $Product_data['unit'] ? $Product_data['unit']->ShortName : ''; 
 
         $item['purchase_unit_id'] = $Product_data['unitPurchase'] ? $Product_data['unitPurchase']->id : '';
         $item['unitPurchase'] = $Product_data['unitPurchase'] ? $Product_data['unitPurchase']->ShortName : '';
@@ -339,7 +339,7 @@ class AdjustmentController extends Controller
             $product_cost = $product_variant_data['cost'];
             $item['qty'] = $stock->qty;
             $item['code'] = $product_variant_data['code'];
-            $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
+            $item['name'] = '[' . $product_variant_data['name'] . ']' . $Product_data['name'];
             $item['product_variant_id'] = $variant_id;
 
             //product is_service
@@ -522,10 +522,11 @@ class AdjustmentController extends Controller
      */
     public function edit(string $id)
     {
+        // mendaptakan data adjustment berdasarkan id
         $Adjustment_data = Adjustment::with('details.product')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
-        // dd($Adjustment_data->warehouse_id);
+        // proses penampungan data di variable $detail dengan tipe array
         $details = [];
         if ($Adjustment_data->warehouse_id) {
             if (Warehouse::where('id', $Adjustment_data->warehouse_id)->where('deleted_at', '=', null)->first()) {
@@ -533,7 +534,6 @@ class AdjustmentController extends Controller
             } else {
                 $adjustment['warehouse_id'] = '';
             }
-            // dd($adjustment['warehouse_id']);
         } else {
             $adjustment['warehouse_id'] = '';
         }
@@ -542,14 +542,12 @@ class AdjustmentController extends Controller
         $adjustment['date'] = $Adjustment_data->updated_at;
         $detail_id = 0;
         foreach ($Adjustment_data['details'] as $detail) {
-
             if ($detail->product_variant_id) {
                 $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('deleted_at', '=', null)
                     ->where('product_variant_id', $detail->product_variant_id)
                     ->where('warehouse_id', $Adjustment_data->warehouse_id)
                     ->first();
-
                 $productsVariants = ProductVariant::where('product_id', $detail->product_id)
                     ->where('id', $detail->product_variant_id)->first();
 
@@ -559,9 +557,16 @@ class AdjustmentController extends Controller
                 $data['product_id'] = $detail->product_id;
                 $data['product_variant_id'] = $detail->product_variant_id;
                 $data['code'] = $productsVariants->code;
-                $data['name'] = '['.$productsVariants->name.']'.$detail['product']['name'];
+                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
                 $data['current'] = $item_product ? $item_product->qty : 0;
                 $data['type'] = $detail->type;
+                if ($data['type'] == 'add') {
+                    $data['ex'] = $item_product ? $item_product->qty - $detail->quantity : 0;
+                } elseif ($data['type'] == 'sub') {
+                    $data['ex'] = $item_product ? $item_product->qty + $detail->quantity : 0;
+                } else {
+                    $data['ex'] = $item_product ? $item_product->qty : 0; // Jika tipe tidak diketahui, tetapkan nilai current
+                }
                 $data['unit'] = $detail['product']['unit']->ShortName;
                 $item_product ? $data['del'] = 0 : $data['del'] = 1;
             } else {
@@ -580,6 +585,13 @@ class AdjustmentController extends Controller
                 $data['name'] = $detail['product']['name'];
                 $data['current'] = $item_product ? $item_product->qty : 0;
                 $data['type'] = $detail->type;
+                if ($data['type'] == 'add') {
+                    $data['ex'] = $item_product ? $item_product->qty - $detail->quantity : 0;
+                } elseif ($data['type'] == 'sub') {
+                    $data['ex'] = $item_product ? $item_product->qty + $detail->quantity : 0;
+                } else {
+                    $data['ex'] = $item_product ? $item_product->qty : 0; // Jika tipe tidak diketahui, tetapkan nilai current
+                }
                 $data['unit'] = $detail['product']['unit']->ShortName;
                 $item_product ? $data['del'] = 0 : $data['del'] = 1;
             }
@@ -587,14 +599,14 @@ class AdjustmentController extends Controller
             $details[] = $data;
         }
         $user_auth = auth()->user();
-        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
-        $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
-
-        // dd($details);
-        // dd($adjustment);
-        //dd($warehouses);
-        // dd($adjustment['date']);
-        return view('templates.adjustment.edit', ['adjustment' => $adjustment, 'details' => $details, 'warehouse' => $warehouses]);
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        // return response()->json(['adjustment' => $adjustment, 'details' => $details, 'warehouses' => $warehouses]);
+        return view('templates.adjustment.edit', ['adjustment' => $adjustment, 'details' => $details, 'warehouses' => $warehouses]);
     }
 
     /**
@@ -670,7 +682,7 @@ class AdjustmentController extends Controller
                 }
 
                 // Delete Detail
-                if (! in_array($old_products_id[$key], $new_products_id)) {
+                if (!in_array($old_products_id[$key], $new_products_id)) {
                     $AdjustmentDetail = AdjustmentDetail::findOrFail($value->id);
                     $AdjustmentDetail->delete();
                 }
@@ -733,7 +745,7 @@ class AdjustmentController extends Controller
                 $orderDetails['product_variant_id'] = $product_detail['product_variant_id'];
                 $orderDetails['type'] = $product_detail['type'];
 
-                if (! in_array($product_detail['id'], $old_products_id)) {
+                if (!in_array($product_detail['id'], $old_products_id)) {
                     AdjustmentDetail::Create($orderDetails);
                 } else {
                     AdjustmentDetail::where('id', $product_detail['id'])->update($orderDetails);
