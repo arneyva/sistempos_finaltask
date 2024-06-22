@@ -103,16 +103,14 @@
                                             <div class="row mb-3">
                                                 <label class="col-sm-4 col-form-label" for="name">Name</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm"
-                                                        disabled>This
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
                                                         Field is required</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-sm-4 col-form-label" for="codeProduct">Code Product</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm"
-                                                        disabled>This
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
                                                         Field is required</button>
                                                     <button style="margin-top: 5px" type="button"
                                                         class="btn btn-outline-danger btn-sm" disabled>Code
@@ -122,24 +120,21 @@
                                             <div class="row mb-3">
                                                 <label class="col-sm-4 col-form-label" for="category">Category</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm"
-                                                        disabled>This
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
                                                         Field is required</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-sm-4 col-form-label" for="productCost">Product Cost</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm"
-                                                        disabled>This
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
                                                         Field is required</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-sm-4 col-form-label" for="productUnit">Product Unit</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm"
-                                                        disabled>This
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
                                                         Field is required</button>
                                                     <button style="margin-top: 5px" type="button"
                                                         class="btn btn-outline-danger btn-sm" disabled>This
@@ -200,8 +195,8 @@
                                     <th>Actions</th>
                                 @endrole
                                 @role('staff')
-                                    <th>Tax</th>
                                     <th>Stock Alert!</th>
+                                    <th>Tax</th>
                                 @endrole
                             </tr>
                         </thead>
@@ -232,10 +227,10 @@
                                         <div class="d-flex flex-column">
                                             @if ($item['type'] === 'Variant Product')
                                                 @foreach ($item['cost'] as $cost)
-                                                    <h6 style="margin-top:10px"> Rp. {{ $cost }}</h6>
+                                                    <h6 style="margin-top:10px">{{ 'Rp ' . number_format($cost, 2, ',', '.') }} </h6>
                                                 @endforeach
                                             @else
-                                                Rp. {{ $item['cost'] }}
+                                                {{ $item['cost'] }}
                                             @endif
                                         </div>
                                     </td>
@@ -243,15 +238,18 @@
                                         <div class="d-flex flex-column">
                                             @if ($item['type'] === 'Variant Product')
                                                 @foreach ($item['price'] as $price)
-                                                    <h6 style="margin-top:10px"> Rp. {{ $price }}</h6>
+                                                    <h6 style="margin-top:10px">{{ 'Rp ' . number_format($price, 2, ',', '.') }} </h6>
                                                 @endforeach
                                             @else
-                                                Rp. {{ $item['price'] }}
+                                                {{ $item['price'] }}
                                             @endif
                                         </div>
                                     </td>
                                     <td>{{ $item['unit'] }}</td>
                                     <td>{{ $item['quantity'] }}</td>
+                                    @role('staff')
+                                        <td style="color:#d06565">{{ $item['stock_alert'] }}</td>
+                                    @endrole
                                     @role('superadmin|inventaris')
                                         <td>
                                             <div class="inline">
@@ -291,9 +289,14 @@
                                                         </path>
                                                     </svg>
                                                 </a>
-                                                <a href="hapus.html">
-                                                    <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
+                                                <form id="delete-form-{{ $item['id'] }}"
+                                                    action="{{ route('product.destroy', $item['id']) }}" method="POST"
+                                                    style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <svg class="icon-32 delete-icon" width="32" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg"
+                                                        data-id="{{ $item['id'] }}">
                                                         <path fill-rule="evenodd" clip-rule="evenodd"
                                                             d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
                                                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
@@ -311,7 +314,7 @@
                                                             stroke-linejoin="round">
                                                         </path>
                                                     </svg>
-                                                </a>
+                                                </form>
                                             </div>
                                         </td>
                                     @endrole
@@ -330,6 +333,16 @@
         </div>
     </div>
 @endsection
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.delete-icon').forEach(function(element) {
+            element.addEventListener('click', function() {
+                var formId = 'delete-form-' + this.getAttribute('data-id');
+                document.getElementById(formId).submit();
+            });
+        });
+    });
+</script>
 <script>
     function resetFilters() {
         // Reset nilai-nilai input dari formulir
