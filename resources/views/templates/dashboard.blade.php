@@ -212,12 +212,24 @@
                                         <th>Product</th>
                                         <th>Warehouse</th>
                                         <th>Current Stock</th>
-                                        <th>Stock Alert</th>
+                                        <th style="color: red">Stock Alert</th>
 
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @foreach ($stock as $item)
+                                        <tr>
+                                            <td>{{ $item['product_name'] }}</td>
+                                            <td>{{ $item['warehouse_name'] }}</td>
+                                            <td>{{ $item['stock'] }}</td>
+                                            <td>{{ $item['alert'] }} ~ <a href="{{ route('adjustment.create') }}"><svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
+                                                        viewBox="0 0 24 24">
+                                                        <path fill="#7d6bd6"
+                                                            d="M20 17H6q-.825 0-1.412-.587T4 15V5H3q-.425 0-.712-.288T2 4t.288-.712T3 3h1q.825 0 1.413.588T6 5v10h14q.425 0 .713.288T21 16t-.288.713T20 17M6 22q-.825 0-1.412-.587T4 20t.588-1.412T6 18t1.413.588T8 20t-.587 1.413T6 22m2-8q-.425 0-.712-.288T7 13V9q0-.425.288-.712T8 8h4q.425 0 .713.288T13 9v4q0 .425-.288.713T12 14zm7 0q-.425 0-.712-.288T14 13V9q0-.425.288-.712T15 8h4q.425 0 .713.288T20 9v4q0 .425-.288.713T19 14zm4 8q-.825 0-1.412-.587T17 20t.588-1.412T19 18t1.413.588T21 20t-.587 1.413T19 22" />
+                                                    </svg></a></td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                             <div class="bd-example" style="margin-left: 10px; margin-right: 10px; margin-top:10px">
