@@ -39,11 +39,11 @@ class ProductController extends Controller
         // dd($categories);
 
         if ($request->filled('code')) {
-            $productsQuery->where('code', 'like', '%'.$request->input('code').'%');
+            $productsQuery->where('code', 'like', '%' . $request->input('code') . '%');
         }
 
         if ($request->filled('name')) {
-            $productsQuery->where('name', 'like', '%'.$request->input('name').'%');
+            $productsQuery->where('name', 'like', '%' . $request->input('name') . '%');
         }
 
         if ($request->filled('category_id')) {
@@ -70,10 +70,10 @@ class ProductController extends Controller
                 // handle jumlah barang
                 if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
                     $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                    $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
                 } else {
                     $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->sum('qty');
-                    $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
                 }
             } elseif ($product->type == 'is_variant') {
                 //untuk product variant
@@ -96,10 +96,10 @@ class ProductController extends Controller
                 // handle jumlah barang
                 if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
                     $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
-                    $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
                 } else {
                     $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->sum('qty');
-                    $item['quantity'] = $product_warehouse_total_qty.' '.$product['unit']->ShortName;
+                    $item['quantity'] = $product_warehouse_total_qty . ' ' . $product['unit']->ShortName;
                 }
             }
             $items[] = $item;
@@ -120,11 +120,11 @@ class ProductController extends Controller
         //ambil data
 
         if ($request->filled('code')) {
-            $productsQuery->where('code', 'like', '%'.$request->input('code').'%');
+            $productsQuery->where('code', 'like', '%' . $request->input('code') . '%');
         }
 
         if ($request->filled('name')) {
-            $productsQuery->where('name', 'like', '%'.$request->input('name').'%');
+            $productsQuery->where('name', 'like', '%' . $request->input('name') . '%');
         }
 
         if ($request->filled('category_id')) {
@@ -162,7 +162,7 @@ class ProductController extends Controller
 
     private function generateUniqueCategoryCode()
     {
-        return 'CAT-IMPORT-'.Str::random(4);
+        return 'CAT-IMPORT-' . Str::random(4);
     }
 
     public function import_products(Request $request)
@@ -402,7 +402,7 @@ class ProductController extends Controller
 
                 foreach ($variants as $variant) {
                     if (ProductVariant::where('code', $variant->code)->exists()) {
-                        $errors[] = 'The code '.$variant->code.' has already been taken.';
+                        $errors[] = 'The code ' . $variant->code . ' has already been taken.';
                     } else {
                         $Product_variants_data[] = [
                             'product_id' => $productValue->id,
@@ -414,7 +414,7 @@ class ProductController extends Controller
                     }
                 }
 
-                if (! empty($errors)) {
+                if (!empty($errors)) {
                     return redirect()->back()->withErrors(['variants' => $errors])->withInput();
                 }
 
@@ -458,6 +458,80 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
+    // public function show(string $id)
+    // {
+    //     $product = Product::where('deleted_at', '=', null)->findOrFail($id);
+    //     $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+    //     $item['id'] = $product->id;
+    //     $item['type'] = $product->type;
+    //     $item['code'] = $product->code;
+    //     $item['Type_barcode'] = $product->Type_barcode;
+    //     $item['name'] = $product->name;
+    //     $item['cost'] = $product->cost;
+    //     $item['tax'] = $product->TaxNet;
+    //     $item['price'] = $product->price;
+    //     $item['cateogry'] = $product['category']->name;
+    //     $item['brand'] = $product['brand']->name ?? 'N/D';
+    //     $item['unit'] = $product['unit']->ShortName;
+    //     // type
+    //     if ($product->type == 'is_single') {
+    //         $item['type_name'] = 'Single';
+    //         $item['unit'] = $product['unit']->ShortName;
+    //     } else {
+    //         $item['type_name'] = 'Variant';
+    //         $item['unit'] = $product['unit']->ShortName;
+    //     }
+    //     // is variant
+    //     if ($product->is_variant) {
+    //         $item['is_variant'] = 'Yes';
+    //         $productVariants = ProductVariant::where('product_id', $product->id)->where('deleted_at', '=', null)->get();
+    //         foreach ($productVariants as $variant) {
+    //             $ProductVariant['code'] = $variant->code;
+    //             $ProductVariant['name'] = $variant->name;
+    //             $ProductVariant['cost'] = $variant->cost;
+    //             $ProductVariant['price'] = $variant->price;
+
+    //             // hitung kuantitas produk
+    //             $item['products_variants_data'][] = $ProductVariant;
+    //             foreach ($warehouses as $warehouse) {
+    //                 $product_warehouse = DB::table('product_warehouse')
+    //                     ->where('product_id', $id)
+    //                     ->where('deleted_at', '=', null)
+    //                     ->where('warehouse_id', $warehouse->id)
+    //                     ->where('product_variant_id', $variant->id)
+    //                     ->select(DB::raw('SUM(product_warehouse.qty) AS sum'))
+    //                     ->first();
+
+    //                 $war_var['mag'] = $warehouse->name;
+    //                 $war_var['variant'] = $variant->name;
+    //                 $war_var['qte'] = $product_warehouse->sum;
+    //                 $item['CountQTY_variants'][] = $war_var;
+    //             }
+    //         }
+    //     } else {
+    //         $item['is_variant'] = 'No';
+    //         $item['CountQTY_variants'] = [];
+    //     }
+    //     foreach ($warehouses as $warehouse) {
+    //         $product_warehouse_data = DB::table('product_warehouse')
+    //             ->where('product_id', $id)
+    //             ->where('deleted_at', '=', null)
+    //             ->where('warehouse_id', $warehouse->id)
+    //             ->select(DB::raw('SUM(product_warehouse.qty) AS sum, stock_alert'))
+    //             ->first();
+
+    //         $war['mag'] = $warehouse->name;
+    //         $war['qty'] = $product_warehouse_data->sum;
+    //         $war['stock_alert'] = $product_warehouse_data->stock_alert; // Tambahkan stock_alert
+    //         $item['CountQTY'][] = $war;
+    //     }
+
+    //     $data[] = $item;
+    //     return response()->json($data);
+    //     return view('templates.product.show', [
+    //         'data' => $data,
+    //     ]);
+    // }
     public function show(string $id)
     {
         $product = Product::where('deleted_at', '=', null)->findOrFail($id);
@@ -473,6 +547,7 @@ class ProductController extends Controller
         $item['cateogry'] = $product['category']->name;
         $item['brand'] = $product['brand']->name ?? 'N/D';
         $item['unit'] = $product['unit']->ShortName;
+
         // type
         if ($product->type == 'is_single') {
             $item['type_name'] = 'Single';
@@ -481,6 +556,7 @@ class ProductController extends Controller
             $item['type_name'] = 'Variant';
             $item['unit'] = $product['unit']->ShortName;
         }
+
         // is variant
         if ($product->is_variant) {
             $item['is_variant'] = 'Yes';
@@ -499,12 +575,13 @@ class ProductController extends Controller
                         ->where('deleted_at', '=', null)
                         ->where('warehouse_id', $warehouse->id)
                         ->where('product_variant_id', $variant->id)
-                        ->select(DB::raw('SUM(product_warehouse.qty) AS sum'))
+                        ->select(DB::raw('SUM(product_warehouse.qty) AS sum, stock_alert'))
                         ->first();
 
                     $war_var['mag'] = $warehouse->name;
                     $war_var['variant'] = $variant->name;
                     $war_var['qte'] = $product_warehouse->sum;
+                    $war_var['stock_alert'] = $product_warehouse->stock_alert; // Tambahkan stock_alert
                     $item['CountQTY_variants'][] = $war_var;
                 }
             }
@@ -512,24 +589,71 @@ class ProductController extends Controller
             $item['is_variant'] = 'No';
             $item['CountQTY_variants'] = [];
         }
+
+        // Non-variant quantities and stock alerts
         foreach ($warehouses as $warehouse) {
             $product_warehouse_data = DB::table('product_warehouse')
                 ->where('product_id', $id)
                 ->where('deleted_at', '=', null)
                 ->where('warehouse_id', $warehouse->id)
-                ->select(DB::raw('SUM(product_warehouse.qty) AS sum'))
+                ->select(DB::raw('SUM(product_warehouse.qty) AS sum, stock_alert'))
                 ->first();
 
             $war['mag'] = $warehouse->name;
             $war['qty'] = $product_warehouse_data->sum;
+            $war['stock_alert'] = $product_warehouse_data->stock_alert; // Tambahkan stock_alert
             $item['CountQTY'][] = $war;
         }
+
         $data[] = $item;
 
         return view('templates.product.show', [
             'data' => $data,
         ]);
     }
+
+    public function updateAlertStock(Request $request)
+    {
+        $product_id = $request->input('product_id');
+        $stock_alerts = $request->input('stock_alert');
+
+        // Mengambil informasi produk
+        $product = Product::findOrFail($product_id);
+
+        // Jika produk adalah tipe variant
+        if ($product->is_variant) {
+            foreach ($stock_alerts as $variant_name => $warehouses) {
+                foreach ($warehouses as $warehouse_name => $stock_alert) {
+                    $variant = ProductVariant::where('name', $variant_name)->first();
+                    $warehouseModel = Warehouse::where('name', $warehouse_name)->first();
+
+                    if ($variant && $warehouseModel) {
+                        DB::table('product_warehouse')
+                            ->where('product_id', $product_id)
+                            ->where('product_variant_id', $variant->id)
+                            ->where('warehouse_id', $warehouseModel->id)
+                            ->update(['stock_alert' => $stock_alert]);
+                    }
+                }
+            }
+        } else {
+            // Jika produk bukan tipe variant
+            foreach ($stock_alerts as $warehouse_name => $stock_alert) {
+                $warehouseModel = Warehouse::where('name', $warehouse_name)->first();
+
+                if ($warehouseModel) {
+                    DB::table('product_warehouse')
+                        ->where('product_id', $product_id)
+                        ->whereNull('product_variant_id') // Untuk produk bukan variant, product_variant_id = NULL
+                        ->where('warehouse_id', $warehouseModel->id)
+                        ->update(['stock_alert' => $stock_alert]);
+                }
+            }
+        }
+
+        return redirect()->route('product.index')->with('success', 'Stock alert updated successfully.');
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -611,12 +735,12 @@ class ProductController extends Controller
         $item['images'] = [];
         if ($Product->image != '' && $Product->image != 'no-image.png') {
             foreach (explode(',', $Product->image) as $img) {
-                $path = public_path().'/images/products/'.$img;
+                $path = public_path() . '/images/products/' . $img;
                 if (file_exists($path)) {
                     $itemImg['name'] = $img;
                     $type = pathinfo($path, PATHINFO_EXTENSION);
                     $data = file_get_contents($path);
-                    $itemImg['path'] = 'data:image/'.$type.';base64,'.base64_encode($data);
+                    $itemImg['path'] = 'data:image/' . $type . ';base64,' . base64_encode($data);
 
                     $item['images'][] = $itemImg;
                 }
@@ -832,7 +956,7 @@ class ProductController extends Controller
                         }
                         ProductWarehouse::insert($product_warehouse);
                     }
-                    if (! empty($errors)) {
+                    if (!empty($errors)) {
                         return redirect()->back()->withErrors($errors)->withInput();
                     }
                 } else {
@@ -842,7 +966,7 @@ class ProductController extends Controller
                 if ($request['images'] === null) {
                     if ($Product->image !== null) {
                         foreach (explode(',', $Product->image) as $img) {
-                            $pathIMG = public_path().'/images/products/'.$img;
+                            $pathIMG = public_path() . '/images/products/' . $img;
                             if (file_exists($pathIMG)) {
                                 if ($img != 'no-image.png') {
                                     @unlink($pathIMG);

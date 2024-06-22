@@ -1,59 +1,90 @@
 @extends('templates.main')
-
+@push('style')
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+@endpush
 @section('pages_title')
-<h1>{{ $data[0]['brand'] }} {{$data[0]['name']}} Detail</h1>
-<p>Do Something with all your measurement</p>
+    <h1>{{ $data[0]['brand'] }} {{ $data[0]['name'] }} Detail</h1>
+    <p>Do Something with all your measurement</p>
 @endsection
+<style>
+    .swiper-button-next,
+    .swiper-button-prev {
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 50% !important;
+        color: rgb(80, 104, 209) !important;
+        width: 15px !important;
+        height: 15px !important;
+        background: none;
+    }
 
+    .swiper-button-next:after,
+    .swiper-button-prev:after {
+        font-size: 15px !important;
+    }
+
+    .swiper-container {
+        padding: 0 40px;
+    }
+</style>
 @section('content')
-    {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">
-        <div class="row row-cols-1">
-            <div class="overflow-hidden d-slider1 ">
-                <ul class="p-0 m-0 mb-2 swiper-wrapper list-inline">
+        <form action="{{ route('updateAlertStock') }}" method="POST">
+            @csrf
+            <input type="hidden" name="product_id" value="{{ $data[0]['id'] }}">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
                     @if ($data[0]['is_variant'] == 'Yes')
                         @foreach ($data[0]['CountQTY_variants'] as $variant)
-                            <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="700">
-                                <div class="card-body">
-                                    <div class="progress-widget">
-                                        <div class="progress-detail">
-                                            <p class="mb-2">{{ $variant['mag'] }}</p>
-                                            <p class="mb-2">{{ $variant['variant'] }}</p>
-                                            <span class="mb-2"
-                                                style="padding: 7px;
-                                            border-radius: 7px;
-                                            background-color: #ffefef;
-                                            color: #F24D4D;">
-                                                Stock Alert : 15</span>
+                            <div class="swiper-slide">
+                                <div class="card card-slide" data-aos="fade-up" data-aos-delay="700">
+                                    <div class="card-body">
+                                        <div class="progress-widget">
+                                            <div class="progress-detail">
+                                                <p class="mb-2">Stock Alert</p>
+                                                <p class="mb-2">{{ $variant['mag'] }} ~ {{ $variant['variant'] }}</p>
+                                                <div class="form-group">
+                                                    <input type="number"
+                                                        name="stock_alert[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
+                                                        id="stock_alert_variant_{{ $variant['variant'] }}_{{ $variant['mag'] }}"
+                                                        class="form-control"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
+                                                        value="{{ $variant['stock_alert'] ?? 0 }}" min="0">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </li>
+                            </div>
                         @endforeach
                     @else
                         @foreach ($data[0]['CountQTY'] as $qty)
-                            <li class="swiper-slide card card-slide" data-aos="fade-up" data-aos-delay="700">
-                                <div class="card-body">
-                                    <div class="progress-widget">
-                                        <div class="progress-detail">
-                                            <p class="mb-2">{{ $qty['mag'] }}</p>
-                                            <span class="mb-2"
-                                                style="padding: 7px;
-                                        border-radius: 7px;
-                                        background-color: #ffefef;
-                                        color: #F24D4D;">
-                                                Stock Alert : 15</span>
+                            <div class="swiper-slide">
+                                <div class="card card-slide" data-aos="fade-up" data-aos-delay="700">
+                                    <div class="card-body">
+                                        <div class="progress-widget">
+                                            <div class="progress-detail">
+                                                <p class="mb-2">Stock Alert</p>
+                                                <p class="mb-2">{{ $qty['mag'] }}</p>
+                                                <div class="form-group">
+                                                    <input type="number" name="stock_alert[{{ $qty['mag'] }}]"
+                                                        id="stock_alert_qty_{{ $qty['mag'] }}" class="form-control"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
+                                                        value="{{ $qty['stock_alert'] ?? 0 }}">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </li>
+                            </div>
                         @endforeach
                     @endif
-                </ul>
-                <div class="swiper-button swiper-button-next"></div>
-                <div class="swiper-button swiper-button-prev"></div>
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <button type="submit" class="btn btn-primary mt-3" style="display: none">Simpan</button>
             </div>
-        </div>
+        </form>
     </div>
     <div class="col-md-12 col-lg-8">
         <div class="row">
@@ -153,42 +184,94 @@
                 </div>
             </div>
             <div class="col-md-12 col-lg-12">
-                <table class="table table-striped mb-0" role="grid">
-                    @if ($data[0]['is_variant'] == 'Yes')
-                        <thead>
-                            <tr>
-                                <th>Warehouse</th>
-                                <th>Variant</th>
-                                <th>Qty</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($data[0]['CountQTY_variants'] as $variant)
+                <div class="card">
+                    <table class="table table-striped mb-0" role="grid">
+                        @if ($data[0]['is_variant'] == 'Yes')
+                            <thead>
                                 <tr>
-                                    <td>{{ $variant['mag'] }} </td>
-                                    <td>{{ $variant['variant'] }}</td>
-                                    <th>{{ $variant['qte'] }}</th>
+                                    <th>Warehouse</th>
+                                    <th>Variant</th>
+                                    <th>Qty</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    @else
-                        <thead>
-                            <tr>
-                                <th>Warehouse</th>
-                                <th>Qty</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($data[0]['CountQTY'] as $qty)
+                            </thead>
+                            <tbody>
+                                @foreach ($data[0]['CountQTY_variants'] as $variant)
+                                    <tr>
+                                        <td>{{ $variant['mag'] }} </td>
+                                        <td>{{ $variant['variant'] }}</td>
+                                        <th>{{ $variant['qte'] }}</th>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        @else
+                            <thead>
                                 <tr>
-                                    <td>{{ $qty['mag'] }}</td>
-                                    <th>{{ $qty['qty'] }}</th>
+                                    <th>Warehouse</th>
+                                    <th>Qty</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    @endif
-                </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($data[0]['CountQTY'] as $qty)
+                                    <tr>
+                                        <td>{{ $qty['mag'] }}</td>
+                                        <th>{{ $qty['qty'] }}</th>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        @endif
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const swiper = new Swiper('.swiper-container', {
+                slidesPerView: 'auto',
+                spaceBetween: 20,
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                watchOverflow: true,
+                slidesOffsetBefore: 0,
+                slidesOffsetAfter: 0,
+                breakpoints: {
+                    320: {
+                        slidesPerView: 1,
+                    },
+                    480: {
+                        slidesPerView: 2,
+                    },
+                    768: {
+                        slidesPerView: 3,
+                    },
+                    1024: {
+                        slidesPerView: 4,
+                    }
+                }
+            });
+
+            // Sembunyikan tombol navigasi jika tidak diperlukan
+            function updateNavigationVisibility() {
+                const totalSlides = swiper.slides.length;
+                const visibleSlides = swiper.params.slidesPerView;
+                const nextButton = document.querySelector('.swiper-button-next');
+                const prevButton = document.querySelector('.swiper-button-prev');
+
+                if (totalSlides <= visibleSlides) {
+                    nextButton.style.display = 'none';
+                    prevButton.style.display = 'none';
+                } else {
+                    nextButton.style.display = '';
+                    prevButton.style.display = '';
+                }
+            }
+
+            updateNavigationVisibility();
+            window.addEventListener('resize', updateNavigationVisibility);
+        });
+    </script>
+@endpush

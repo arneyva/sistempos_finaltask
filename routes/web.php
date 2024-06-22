@@ -59,6 +59,7 @@ Route::get('/', [DashboardController::class, 'index'])->middleware(['auth', 'ver
 */
 Route::get('webclock', [ClockController::class, 'index']);
 Route::post('webclock/clocking', [ClockController::class, 'clocking'])->name('webclock.clocking');
+Route::post('/update-alert-stock', [ProductController::class, 'updateAlertStock'])->name('updateAlertStock');
 
 Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
