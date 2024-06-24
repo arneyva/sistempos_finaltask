@@ -47,44 +47,15 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="mb-2 navbar-nav ms-auto align-items-center navbar-list mb-lg-0">
                 <li class="nav-item dropdown">
-                    <a href="#" class="search-toggle nav-link" id="dropdownMenuButton2" data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <img src="{{ asset('hopeui/html/assets/images/Flag/flag001.png') }}"
-                            class="img-fluid rounded-circle" alt="user"
-                            style="height: 30px; min-width: 30px; width: 30px;">
-                        <span class="bg-primary"></span>
-                    </a>
-                    <div class="p-0 sub-drop dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton2">
-                        <div class="m-0 border-0 shadow-none card">
-                            <div class="p-0 ">
-                                <ul class="p-0 list-group list-group-flush">
-                                    <li class="iq-sub-card list-group-item"><a class="p-0" href="#"><img
-                                                src="{{ asset('hopeui/html/assets/images/Flag/flag-03.png') }}"
-                                                alt="img-flaf" class="img-fluid me-2"
-                                                style="width: 15px;height: 15px;min-width: 15px;" />Spanish</a>
-                                    </li>
-                                    <li class="iq-sub-card list-group-item"><a class="p-0" href="#"><img
-                                                src="{{ asset('hopeui/html/assets/images/Flag/flag-04.png') }}"
-                                                alt="img-flaf" class="img-fluid me-2"
-                                                style="width: 15px;height: 15px;min-width: 15px;" />Italian</a>
-                                    </li>
-                                    <li class="iq-sub-card list-group-item"><a class="p-0" href="#"><img
-                                                src="{{ asset('hopeui/html/assets/images/Flag/flag-02.png') }}"
-                                                alt="img-flaf" class="img-fluid me-2"
-                                                style="width: 15px;height: 15px;min-width: 15px;" />French</a>
-                                    </li>
-                                    <li class="iq-sub-card list-group-item"><a class="p-0" href="#"><img
-                                                src="{{ asset('hopeui/html/assets/images/Flag/flag-05.png') }}"
-                                                alt="img-flaf" class="img-fluid me-2"
-                                                style="width: 15px;height: 15px;min-width: 15px;" />German</a>
-                                    </li>
-                                    <li class="iq-sub-card list-group-item"><a class="p-0" href="#"><img
-                                                src="{{ asset('hopeui/html/assets/images/Flag/flag-06.png') }}"
-                                                alt="img-flaf" class="img-fluid me-2"
-                                                style="width: 15px;height: 15px;min-width: 15px;" />Japanese</a>
-                                    </li>
-                                </ul>
-                            </div>
+                    <div class="nav-dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="nav1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="text-secondary fas fa-globe"></i><span class="text-with-icon text-responsive text-uppercase">{{ env('APP_LOCALE', 'en') }}</span>
+                        </a>
+                        <div class="p-0 sub-drop dropdown-menu dropdown-menu-end nav-link-menu" aria-labelledby="nav1">
+                            <ul class="nav-list">
+                                <li><a href="{{ url('lang/en') }}" class="dropdown-item"><i class="fi fi-us mr-2"></i> English</a></li>
+                                <li><a href="{{ url('lang/id') }}" class="dropdown-item"><i class="fi fi-id mr-2"></i> Indonesia</a></li>
+                            </ul>
                         </div>
                     </div>
                 </li>

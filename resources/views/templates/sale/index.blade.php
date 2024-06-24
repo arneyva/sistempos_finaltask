@@ -153,7 +153,7 @@
                                 <tr>
                                     <td>{{ $item->created_at }}</td>
                                     <td>{{ $item->Ref }}</td>
-                                    <td>{{ $item->user->username }}</td>
+                                    <td>{{ $item->user->firstname }} {{ $item->user->lastname }}</td>
                                     <td>{{ $item->client->name }}</td>
                                     <td>{{ $item->warehouse->name }}</td>
                                     <td>{{ $item->statut }}</td>

@@ -342,14 +342,14 @@ document.querySelectorAll('.editBtn').forEach(button => {
 <script>
     function confirmDelete(id) {
         Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data yang dihapus tidak dapat dikembalikan!",
+            title: '{{ __("Are you sure?") }}',
+            text: "{{ __('This action cannot be undone!') }}",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
+            confirmButtonText: '{{ __("Yes, delete it!") }}',
+            cancelButtonText: '{{ __("Cancel") }}'
         }).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById(`delete-form-${id}`).submit();
