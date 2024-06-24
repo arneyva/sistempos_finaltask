@@ -82,7 +82,7 @@
                                         @csrf
                                         <div class="row">
                                             <div class="col-lg-12">
-                                                <input type="tel" name="pin" class="form-control password-input @error('pin') is-invalid @enderror" id="pin" placeholder="{{ __("PIN") }}">
+                                                <input type="tel" name="pin" class="form-control password-input @error('pin') is-invalid @enderror" id="pin" placeholder="{{ __("PIN") }}" autocomplete="off">
                                                 @error('pin')
                                                     <p class="text-danger">{{ $message }}</p>
                                                 @enderror

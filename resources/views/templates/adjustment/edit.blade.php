@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Edit Adjustment</h1>
-    <p>Do Something with all your adjustment</p>
+    <h1>{{ __("Edit Adjustment") }}</h1>
+    <p>{{ __("Do Something with all your adjustment") }}</p>
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Create Adjustment</h4>
+                            <h4 class="card-title">{{ __("Create Adjustment") }}</h4>
                         </div>
                     </div>
                     {{--  --}}
@@ -27,7 +27,7 @@
                             @method('PATCH')
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="selectWarehouse">Warehouse/Outlet *</label>
+                                    <label class="form-label" for="selectWarehouse">{{ __("Warehouse/Outlet") }} *</label>
                                     <input type="text" class="form-control" id="selectWarehouseName"
                                         value="{{ $warehouses->firstWhere('id', $adjustment['warehouse_id'])->name }}"
                                         readonly>
@@ -36,15 +36,15 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Date *</label>
+                                    <label class="form-label" for="exampleInputdate">{{ __("Date") }} *</label>
                                     <input type="date" class="form-control" id="exampleInputdate" name="date"
                                         value="{{ $adjustment['date']->format('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="selectProduct">Product *</label>
+                                    <label class="form-label" for="selectProduct">{{ __("Product") }} *</label>
                                     {{-- <select class="form-select" id="selectProduct" disabled required> --}}
                                     <select class="form-select" id="selectProduct">
-                                        <option selected disabled value="">Choose warehouse first...</option>
+                                        <option selected disabled value="">{{ __("Choose warehouse first...") }}</option>
                                     </select>
                                 </div>
                                 <!-- Tambahkan bagian untuk menampilkan tabel produk -->
@@ -55,12 +55,12 @@
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>Code</th>
-                                                    <th>Name</th>
-                                                    <th>Initial Stock</th>
-                                                    <th>Current Stock</th>
-                                                    <th>Quantity</th>
-                                                    <th>Type</th>
+                                                    <th>{{ __("Code") }}</th>
+                                                    <th>{{ __("Name") }}</th>
+                                                    <th>{{ __("Initial Stock") }}</th>
+                                                    <th>{{ __("Current Stock") }}</th>
+                                                    <th>{{ __("Quantity") }}</th>
+                                                    <th>{{ __("Type") }}</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -68,45 +68,32 @@
                                                 <!-- Isi dari tbody akan diisi secara dinamis menggunakan JavaScript -->
                                                 @foreach ($details as $detail)
                                                     <tr>
-                                                        <td>#</td>
-                                                        <td>{{ $detail['code'] }}</td>
-                                                        <td>{{ $detail['name'] }}</td>
-                                                        <td>{{ $detail['ex'] }} {{ $detail['unit'] }}</td>
-                                                        <td>{{ $detail['current'] }} {{ $detail['unit'] }}</td>
-                                                        <td>
-                                                            <input type="number" class="form-control"
-                                                                name="details[{{ $loop->index }}][quantity]"
-                                                                value="{{ $detail['quantity'] }}" min="0">
-                                                        </td>
-                                                        <td>
-                                                            <select class="form-select"
-                                                                name="details[{{ $loop->index }}][type]">
-                                                                <option value="add"
-                                                                    @if ($detail['type'] === 'add') selected @endif>Add
-                                                                </option>
-                                                                <option value="sub"
-                                                                    @if ($detail['type'] === 'sub') selected @endif>
-                                                                    Subtract</option>
-                                                            </select>
-                                                        </td>
-                                                        <td>
-                                                            <input type="hidden" name="details[{{ $loop->index }}][id]"
-                                                                value="{{ $detail['id'] }}">
-                                                        </td>
-                                                        <td>
-                                                            <input type="hidden"
-                                                                name="details[{{ $loop->index }}][product_id]"
-                                                                value="{{ $detail['product_id'] }}">
-                                                        </td>
-                                                        <td>
-                                                            <input type="hidden"
-                                                                name="details[{{ $loop->index }}][product_variant_id]"
-                                                                value="{{ $detail['product_variant_id'] }}">
-                                                        </td>
-                                                        <td>
-                                                            <button type="button"
-                                                                class="btn btn-danger btn-sm delete-row">Delete</button>
-                                                        </td>
+                                                    <td>{{ __("#") }}</td>
+                                                    <td>{{ $detail['code'] }}</td>
+                                                    <td>{{ $detail['name'] }}</td>
+                                                    <td>{{ $detail['ex'] }} {{ $detail['unit'] }}</td>
+                                                    <td>{{ $detail['current'] }} {{ $detail['unit'] }}</td>
+                                                    <td>
+                                                        <input type="number" class="form-control" name="details[{{ $loop->index }}][quantity]" value="{{ $detail['quantity'] }}" min="0">
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-select" name="details[{{ $loop->index }}][type]">
+                                                            <option value="add" @if ($detail['type'] === 'add') selected @endif>{{ __("Add") }}</option>
+                                                            <option value="sub" @if ($detail['type'] === 'sub') selected @endif>{{ __("Subtract") }}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="hidden" name="details[{{ $loop->index }}][id]" value="{{ $detail['id'] }}">
+                                                    </td>
+                                                    <td>
+                                                        <input type="hidden" name="details[{{ $loop->index }}][product_id]" value="{{ $detail['product_id'] }}">
+                                                    </td>
+                                                    <td>
+                                                        <input type="hidden" name="details[{{ $loop->index }}][product_variant_id]" value="{{ $detail['product_variant_id'] }}">
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-danger btn-sm delete-row">{{ __("Delete") }}</button>
+                                                    </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -114,14 +101,12 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="validationDefault05">Description</label>
-                                    <input type="text" class="form-control" id="validationDefault05" name="notes"
-                                        required value="{{ $adjustment['notes'] }}">
+                                    <label class="form-label" for="validationDefault05">{{ __("Description") }}</label>
+                                    <input type="text" class="form-control" id="validationDefault05" name="notes" required value="{{ $adjustment['notes'] }}">
                                 </div>
-                            </div>
-                            <div class="form-group mt-2">
-                                <button class="btn btn-primary" type="submit">Update Adjustment</button>
-                            </div>
+                                <div class="form-group mt-2">
+                                    <button class="btn btn-primary" type="submit">{{ __("Update Adjustment") }}</button>
+                                </div>
                         </form>
                     </div>
                 </div>
