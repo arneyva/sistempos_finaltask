@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>All Expense Category</h1>
-<p>Do Something with all your expense category</p>
+<h1>{{ __("All Expense Category") }}</h1>
+<p>{{ __("Do Something with all your expense category") }}</p>
 @endsection
 
 @section('content')
@@ -29,18 +29,18 @@
             <div class="header-title">
             </div>
             <div class="header-title">
-            <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">Filter</button>
-                <button type="button" class="btn btn-soft-success">Excel</button>
-                <button type="button" class="btn btn-soft-danger">PDF</button>
-                <button type="button" class="btn btn-soft-gray">Import Category</button>
+            <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">{{ __("Filter") }}</button>
+                <button type="button" class="btn btn-soft-success">{{ __("Excel") }}</button>
+                <button type="button" class="btn btn-soft-danger">{{ __("PDF") }}</button>
+                <button type="button" class="btn btn-soft-gray">{{ __("Import Category") }}</button>
                 <a href="#" style="margin-left: 30px;">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#createCategory" class="btn btn-soft-primary">Create +</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#createCategory" class="btn btn-soft-primary">{{ __("Create +") }}</button>
                 </a>
             </div>
         </div>
         <div class="card-body p-0">
         <div class="collapse p-4 pt-3 " id="filter">
-    Some placeholder content for the collapse component. This panel is hidden by default but revealed when the client activates the relevant trigger.
+    {{ __("Some placeholder content for the collapse component. This panel is hidden by default but revealed when the client activates the relevant trigger.") }}
 </div>
         </div>
         <div class="card-body p-0">
@@ -48,10 +48,10 @@
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Created By</th>
-                            <th>Actions</th>
+                            <th>{{ __("Name") }}</th>
+                            <th>{{ __("Description") }}</th>
+                            <th>{{ __("Created By") }}</th>
+                            <th>{{ __("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,84 +68,84 @@
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                    </path>
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                        d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
-                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                    </path>
-                                                </svg>
-                                            </a>
-                                            <button type="button" onclick="confirmDelete({{ $data['id'] }})" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  style="background-color: transparent; border: none; display: inline-block;">
-                                            <a href="#">
-                                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                        d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
-                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path
-                                                        d="M14.4736 2.75024V5.65924C14.4736 7.07924 15.6216 8.23024 17.0416 8.23424H19.7966"
-                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                    </path>
-                                                    <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                    </path>
-                                                </svg>
-                                            </a>
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        </path>
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round"></path>
+                                        <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        </path>
+                                        </svg>
+                                        </a>
+                                        <button type="button" onclick="confirmDelete({{ $data['id'] }})" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="background-color: transparent; border: none; display: inline-block;">
+                                        <a href="#">
+                                            <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                    d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
+                                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round"></path>
+                                                <path
+                                                    d="M14.4736 2.75024V5.65924C14.4736 7.07924 15.6216 8.23024 17.0416 8.23424H19.7966"
+                                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round"></path>
+                                                <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                </path>
+                                                <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
+                                                    stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                </path>
+                                            </svg>
+                                        </a>
                                         </button>
-                                        <form id="delete-form-{{  $data['id'] }}" action="{{ route('expenses.categories.destroy',  $data['id']) }}" method="POST" style="display: none;">
+                                        <form id="delete-form-{{ $data['id'] }}" action="{{ route('expenses.categories.destroy', $data['id']) }}" method="POST" style="display: none;">
                                             @csrf
                                             @method('DELETE')
                                         </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- modal edit -->
-                            <div class="modal fade" id="editCategory" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="background">
-                                    <div class="modal-dialog modal-dialog-centered modal-lg overlay">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="staticBackdropLabel">Edit Expense Category</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form action="{{ route('expenses.categories.update', $data['id']) }}" enctype="multipart/form-data" novalidate>
-                                                @csrf
-                                                @method('PATCH')
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="name">Name:</label>
-                                                        <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
-                                                            id="name" name="name" placeholder="name" value="{{ old('name', $data->name) }}" required>
-                                                        <small class=" text-danger font-italic">
-                                                            @error('name')
-                                                                {{ $message }}
-                                                            @enderror
-                                                        </small>
+                                        </div>
+                                        </td>
+                                        </tr>
+                                        <!-- modal edit -->
+                                        <div class="modal fade" id="editCategory" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                        <div class="background">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg overlay">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">{{ __("Edit Expense Category") }}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="email">Description:</label>
-                                                        <input type="text" class="form-control bg-transparent @error('email') is-invalid @enderror"
-                                                            id="description" name="description" placeholder="Description" value="{{ old('description', $data->description) }}" required>
-                                                        <small class=" text-danger font-italic">
-                                                            @error('description')
-                                                                {{ $message }}
-                                                            @enderror
-                                                        </small>
-                                                    </div>
-                                            </div>
-                                            <div id="formErrors"></div>
-                                            <div class="modal-footer">
-                                                    <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-soft-success">Save</button>
+                                                    <div class="modal-body">
+                                                        <form action="{{ route('expenses.categories.update', $data['id']) }}" enctype="multipart/form-data" novalidate>
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="name">{{ __("Name:") }}</label>
+                                                            <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
+                                                                id="name" name="name" placeholder="{{ __('name') }}" value="{{ old('name', $data->name) }}" required>
+                                                            <small class="text-danger font-italic">
+                                                                @error('name')
+                                                                    {{ $message }}
+                                                                @enderror
+                                                            </small>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="email">{{ __("Description:") }}</label>
+                                                            <input type="text" class="form-control bg-transparent @error('email') is-invalid @enderror"
+                                                                id="description" name="description" placeholder="{{ __('Description') }}" value="{{ old('description', $data->description) }}" required>
+                                                            <small class="text-danger font-italic">
+                                                                @error('description')
+                                                                    {{ $message }}
+                                                                @enderror
+                                                            </small>
+                                                        </div>
+                                                        <div id="formErrors"></div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">{{ __("Close") }}</button>
+                                                            <button type="submit" class="btn btn-soft-success">{{ __("Save") }}</button>
+                                                        </div>
                                                 </form>
                                             </div>
                                         </div>
@@ -168,16 +168,16 @@
         <div class="modal-dialog modal-dialog-centered modal-lg overlay">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Create Expense Category</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="staticBackdropLabel">{{ __("Create Expense Category") }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('Close') }}"></button>
                 </div>
                 <div class="modal-body">
                     <form class="needs-validation" action="{{ route('expenses.categories.store') }}" method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
                         <div class="form-group">
-                            <label class="form-label" for="name">Name:</label>
+                            <label class="form-label" for="name">{{ __("Name:") }}</label>
                             <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
-                                id="name" name="name_create" placeholder="name" value="{{ old('name_create')}}" required>
+                                id="name" name="name_create" placeholder="{{ __('name') }}" value="{{ old('name_create')}}" required>
                             <small class=" text-danger font-italic">
                                 @error('name_create')
                                     {{ $message }}
@@ -185,9 +185,9 @@
                             </small>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="email">Description:</label>
+                            <label class="form-label" for="email">{{ __("Description:") }}</label>
                             <input type="text" class="form-control bg-transparent @error('email') is-invalid @enderror"
-                                id="description_create" name="description_create" placeholder="Description" value="{{ old('description_create')}}" required>
+                                id="description_create" name="description_create" placeholder="{{ __('Description') }}" value="{{ old('description_create')}}" required>
                             <small class=" text-danger font-italic">
                                 @error('description_create')
                                     {{ $message }}
@@ -196,8 +196,8 @@
                         </div>
                 </div>
                 <div class="modal-footer">
-                        <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" id="submit_create" class="btn btn-soft-success">Save</button>
+                        <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">{{ __("Close") }}</button>
+                        <button type="submit" id="submit_create" class="btn btn-soft-success">{{ __("Save") }}</button>
                     </form>
                 </div>
             </div>
@@ -246,17 +246,19 @@
             body: JSON.stringify({name: name, description: email})
             })
             .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Network response was not ok');
+                    });
+                }
+                return response.json();
             })
             .then(data => {
-            console.log(data);
-            location.replace(location.href);
+                console.log(data);
+                location.reload();
             })
             .catch(error => {
-            console.error('Error:', error);
+                Swal.showValidationMessage(`Request failed: ${error}`);
             });
         }
         });
@@ -286,14 +288,14 @@
 <script>
     function confirmDelete(id) {
         Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data yang dihapus tidak dapat dikembalikan!",
+            title: '{{ __("Are you sure?") }}',
+            text: "{{ __('This action cannot be undone!') }}",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
+            confirmButtonText: '{{ __("Yes, delete it!") }}',
+            cancelButtonText: '{{ __("Cancel") }}'
         }).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById(`delete-form-${id}`).submit();
@@ -301,8 +303,6 @@
         });
     }
 </script>
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

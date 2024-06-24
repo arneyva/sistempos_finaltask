@@ -27,6 +27,9 @@
 
     <!-- Customizer Css -->
     <link rel="stylesheet" href="{{ asset('hopeui/html/assets/css/customizer.min.css') }}">
+    
+    <!-- Customizer Css -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('hopeui/html/assets/vendor/flag-icon-css/css/flag-icons.min.css') }}">
 
     <!-- RTL Css -->
     <link rel="stylesheet" href="{{ asset('hopeui/html/assets/css/rtl.min.css') }}">

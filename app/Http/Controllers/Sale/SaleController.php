@@ -336,10 +336,14 @@ class SaleController extends Controller
                 if ($client_sale) {
                     //hitung harga bersih barang
                     if ($detail_sale) {
+                        //awali total belanja dari nol 
                         $total_spend = 0;
+                        //setiap barang dikurangkan taxnya
                         foreach ($detail_sale->details as $detail) {
-                            $total_spend += $detail->total - $detail->TaxNet;
+                            $total_spend += $detail->total - ($detail->price * ($detail->TaxNet/100));
                         }
+                        //kurangkan total belanja dengan diskon dari sale
+                        $total_spend -= $sale->discount;
                     }
 
                     //ambil settingan membershgip
