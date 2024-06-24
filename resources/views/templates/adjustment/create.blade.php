@@ -1,3 +1,6 @@
+@extends('templates.main')
+
+@section('pages_title')
 <h1>{{ __("Add Adjustment") }}</h1>
 <p>{{ __("Do Something with all your adjustment") }}</p>
 @endsection
