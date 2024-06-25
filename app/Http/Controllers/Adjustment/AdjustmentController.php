@@ -356,6 +356,24 @@ class AdjustmentController extends Controller
             $product_price = $product_variant_data['price'];
             $product_cost = $product_variant_data['cost'];
             $item['qty'] = $stock->qty;
+            if ($Product_data['unitSale']) {
+                if ($Product_data['unitSale']->operator == '/') {
+                    $item['qty_product_sale'] = floor($stock->qty * $Product_data['unitSale']->operator_value);
+                } else {
+                    $item['qty_product_sale'] = floor($stock->qty / $Product_data['unitSale']->operator_value);
+                }
+            } else {
+                $item['qty_product_sale'] = floor($stock->qty);
+            }
+            if ($Product_data['unitPurchase']) {
+                if ($Product_data['unitPurchase']->operator == '/') {
+                    $item['qty_product_purchase'] = floor($stock->qty * $Product_data['unitPurchase']->operator_value);
+                } else {
+                    $item['qty_product_purchase'] = floor($stock->qty / $Product_data['unitPurchase']->operator_value);
+                }
+            } else {
+                $item['qty_product_purchase'] = floor($stock->qty);
+            }
             $item['code'] = $product_variant_data['code'];
             $item['name'] = '[' . $product_variant_data['name'] . ']' . $Product_data['name'];
             $item['product_variant_id'] = $variant_id;
@@ -392,7 +410,7 @@ class AdjustmentController extends Controller
             $cost = 0;
         }
 
-        $item['Unit_cost'] = $cost; 
+        $item['Unit_cost'] = $cost;
         $item['fix_cost'] = $product_cost; //harga sek diinput di form produk
         $item['Unit_price'] = $price;
         $item['fix_price'] = $product_price; //harga sek diinput di form produk
