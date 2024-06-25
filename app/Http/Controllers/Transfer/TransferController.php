@@ -349,9 +349,10 @@ class TransferController extends Controller
         $transfer['discount'] = $Transfer_data->discount;
         $transfer['shipping'] = $Transfer_data->shipping;
 
+        $details = [];
         $detail_id = 0;
         foreach ($Transfer_data['details'] as $detail) {
-            //-------check if detail has purchase_unit_id Or Null
+            // Check if detail has purchase_unit_id or Null
             if ($detail->purchase_unit_id !== null) {
                 $unit = Unit::where('id', $detail->purchase_unit_id)->first();
                 $data['no_unit'] = 1;
@@ -363,6 +364,7 @@ class TransferController extends Controller
                 $data['no_unit'] = 0;
             }
 
+            // Fetch item_product based on product_variant_id
             if ($detail->product_variant_id) {
                 $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('deleted_at', '=', null)
@@ -371,41 +373,52 @@ class TransferController extends Controller
                     ->first();
 
                 $productsVariants = ProductVariant::where('product_id', $detail->product_id)
-                    ->where('id', $detail->product_variant_id)->first();
+                    ->where('id', $detail->product_variant_id)
+                    ->first();
 
-                $item_product ? $data['del'] = 0 : $data['del'] = 1;
                 $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
                 $data['code'] = $productsVariants->code;
-
                 $data['product_variant_id'] = $detail->product_variant_id;
-
-                if ($unit && $unit->operator == '/') {
-                    $data['stock'] = $item_product ? $item_product->qty * $unit->operator_value : 0;
-                } elseif ($unit && $unit->operator == '*') {
-                    $data['stock'] = $item_product ? $item_product->qty / $unit->operator_value : 0;
-                } else {
-                    $data['stock'] = 0;
-                }
-                $data['unitPurchase'] = $detail['product']['unitPurchase']->ShortName;
             } else {
                 $item_product = ProductWarehouse::where('product_id', $detail->product_id)
-                    ->where('deleted_at', '=', null)->where('warehouse_id', $Transfer_data->from_warehouse_id)
-                    ->where('product_variant_id', '=', null)->first();
+                    ->where('deleted_at', '=', null)
+                    ->where('warehouse_id', $Transfer_data->from_warehouse_id)
+                    ->where('product_variant_id', '=', null)
+                    ->first();
 
-                $item_product ? $data['del'] = 0 : $data['del'] = 1;
                 $data['product_variant_id'] = null;
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
-
-                if ($unit && $unit->operator == '/') {
-                    $data['stock'] = $item_product ? $item_product->qty * $unit->operator_value : 0;
-                } elseif ($unit && $unit->operator == '*') {
-                    $data['stock'] = $item_product ? $item_product->qty / $unit->operator_value : 0;
-                } else {
-                    $data['stock'] = 0;
-                }
             }
 
+            // Calculate stock based on unit operator
+            if ($unit && $unit->operator == '/') {
+                $data['stock'] = $item_product ? $item_product->qty * $unit->operator_value : 0;
+            } elseif ($unit && $unit->operator == '*') {
+                $data['stock'] = $item_product ? $item_product->qty / $unit->operator_value : 0;
+            } else {
+                $data['stock'] = 0;
+            }
+
+            // Calculate initial stock in purchase unit by reversing the transfer quantity operation
+            if ($unit && $unit->operator == '/') {
+                $initial_stock_in_base_unit = ($data['stock'] + $detail->quantity) / $unit->operator_value;
+            } elseif ($unit && $unit->operator == '*') {
+                $initial_stock_in_base_unit = ($data['stock'] + $detail->quantity) * $unit->operator_value;
+            } else {
+                $initial_stock_in_base_unit = $data['stock'] + $detail->quantity;
+            }
+
+            // Convert initial stock from base unit to purchase unit
+            if ($unit->operator == '*') {
+                $data['initial_stock'] = $initial_stock_in_base_unit / $unit->operator_value;
+            } elseif ($unit->operator == '/') {
+                $data['initial_stock'] = $initial_stock_in_base_unit * $unit->operator_value;
+            } else {
+                $data['initial_stock'] = $initial_stock_in_base_unit;
+            }
+
+            // Assigning other data fields
             $data['id'] = $detail->id;
             $data['detail_id'] = $detail_id += 1;
             $data['quantity'] = $detail->quantity;
@@ -415,6 +428,7 @@ class TransferController extends Controller
             $data['unitPurchase'] = $unit->ShortName;
             $data['purchase_unit_id'] = $unit->id;
 
+            // Calculate discount and tax
             if ($detail->discount_method == '2') {
                 $data['DiscountNet'] = $detail->discount;
             } else {
@@ -427,6 +441,7 @@ class TransferController extends Controller
             $data['discount'] = $detail->discount;
             $data['discount_Method'] = $detail->discount_method;
 
+            // Calculate net cost and subtotal based on tax method
             if ($detail->tax_method == '1') {
                 $data['Net_cost'] = $detail->cost - $data['DiscountNet'];
                 $data['taxe'] = $tax_cost;
@@ -436,24 +451,20 @@ class TransferController extends Controller
                 $data['taxe'] = $detail->cost - $data['Net_cost'] - $data['DiscountNet'];
                 $data['subtotal'] = ($data['Net_cost'] * $data['quantity']) + ($tax_cost * $data['quantity']);
             }
+
             $details[] = $data;
         }
 
-        //get warehouses assigned to user
-        $user_auth = auth()->user();
-        // if ($user_auth->is_all_warehouses) {
-        //     $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
-        // } else {
-        // }
-        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
-        // $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
-        $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
 
-        // return response()->json([
-        //     'details' => $details,
-        //     'transfer' => $transfer,
-        //     'warehouses' => $warehouses,
-        // ]);
+
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        
         return view('templates.transfer.edit', ['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses]);
     }
 
