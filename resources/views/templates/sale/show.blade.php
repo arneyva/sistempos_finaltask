@@ -11,20 +11,19 @@
                 <div class="card">
                     <div class="card-body">
                         <div>
-                            <div class="row">
+                            <div class="row"style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); padding: 15px;">
                                 <div class="col-md-4">
                                     <h6 class="card-title">Customer Info</h6>
-                                    <p class="mb-0">{{ $sale['client_name'] }}</p>
-                                    <p class="mb-0">{{ $sale['client_phone'] }}</p>
-                                    <p class="mb-0">{{ $sale['client_adr'] ?? 'Default' }}</p>
-                                    <p class="mb-0">{{ $sale['client_email'] }}</p>
+                                    <p class="mb-0">Name : {{ $sale['client_name'] }}</p>
+                                    <p class="mb-0">Phone : {{ $sale['client_phone'] }}</p>
+                                    <p class="mb-0">Email : {{ $sale['client_email'] }}</p>
                                 </div>
                                 <div class="col-md-4">
                                     <h6 class="card-title">Company Info</h6>
-                                    <p class="mb-0">{{ $company['CompanyName'] }}</p>
-                                    <p class="mb-0">{{ $company['email'] }}</p>
-                                    <p class="mb-0">{{ $company['CompanyPhone'] }}</p>
-                                    <p class="mb-0">{{ $company['CompanyAdress'] }}</p>
+                                    <p class="mb-0">Name : {{ $company['CompanyName'] }}</p>
+                                    <p class="mb-0">Email :{{ $company['email'] }}</p>
+                                    <p class="mb-0">Phone :{{ $company['CompanyPhone'] }}</p>
+                                    <p class="mb-0">Addres :{{ $company['CompanyAdress'] }}</p>
                                 </div>
                                 <div class="col-md-4">
                                     <h6 class="card-title">Invoice Info</h6>

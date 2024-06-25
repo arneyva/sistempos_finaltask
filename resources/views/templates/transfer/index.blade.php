@@ -248,7 +248,9 @@
                                                         </path>
                                                     </svg>
                                                 </a>
-                                                <a href="{{ route('transfer.destroy', $item['id']) }}">
+                                                @if ($item['statut'] !== 'completed')
+                                                @endif
+                                                <a href="#" style="pointer-events: none; color: red; cursor: default;">
                                                     <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                         xmlns="http://www.w3.org/2000/svg">
                                                         <path fill-rule="evenodd" clip-rule="evenodd"
