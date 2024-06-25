@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Edit Transfer</h1>
-<p>Look All your transfer</p>
+    <h1>Edit Transfer</h1>
+    <p>Look All your transfer</p>
 @endsection
 
 @section('content')
@@ -27,16 +27,12 @@
                             @method('PATCH')
                             <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="selectWarehouse">From Warehouse/Outlet *</label>
-                                    {{-- <select class="form-select" id="selectWarehouse" name="transfer[from_warehouse]"
-                                        required>
-                                        <option selected disabled value="">Choose...</option>
-                                        @foreach ($warehouse as $wh)
-                                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
-                                        @endforeach
-                                    </select> --}}
-                                    <input type="text" class="form-control" name="transfer[from_warehouse]"
-                                        id="selectWarehouse" value="{{ $transfer['from_warehouse'] }}" readonly>
+                                    <label class="form-label" for="selectWarehouse">{{ __('Warehouse/Outlet') }} *</label>
+                                    <input type="text" class="form-control" id="selectWarehouseName"
+                                        value="{{ $warehouse->firstWhere('id', $transfer['from_warehouse'])->name }}"
+                                        readonly>
+                                    <input type="hidden" id="selectWarehouse" name="transfer[from_warehouse]"
+                                        value="{{ $transfer['from_warehouse'] }}">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="selectToWarehouse">To Warehouse/Outlet *</label>
@@ -68,6 +64,7 @@
                                                     <th>#</th>
                                                     <th>Product</th>
                                                     <th>Net Unit Cost</th>
+                                                    <th>Initial Stock</th>
                                                     <th>Stock</th>
                                                     <th>Quantity</th>
                                                     <th>Discount</th>
@@ -80,16 +77,19 @@
                                                 @foreach ($details as $detail)
                                                     <tr>
                                                         <td>#</td>
-                                                        <td>{{ $detail['name'] }}</td>
+                                                        <td>{{ $detail['code'] }} {{ $detail['name'] }}</td>
                                                         <td>{{ $detail['Net_cost'] }}</td>
-                                                        <td>{{ $detail['stock'] }}</td>
+                                                        <td>{{ $detail['initial_stock'] }} {{ $detail['unitPurchase'] }}
+                                                        </td>
+                                                        <td>{{ $detail['stock'] }} {{ $detail['unitPurchase'] }}</td>
                                                         <td>
                                                             <input type="number" class="form-control item-quantity"
                                                                 name="details[{{ $loop->index }}][quantity]"
                                                                 value="{{ $detail['quantity'] }}" min="0"
                                                                 data-unit-cost="{{ $detail['Net_cost'] }}"
                                                                 data-tax-percent="{{ $detail['tax_percent'] }}"
-                                                                data-tax-method="{{ $detail['tax_method'] }}">
+                                                                data-tax-method="{{ $detail['tax_method'] }}"
+                                                                max="{{ $detail['initial_stock'] }}">
                                                         </td>
                                                         <td>Rp. {{ $detail['DiscountNet'] }}</td>
                                                         <td>Rp. {{ $detail['taxe'] }}</td>
@@ -308,14 +308,17 @@
                             row += '<td>#</td>';
                             row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
                             row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
-                            row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
+                            row += '<td>' + 'New Data' + '</td>';
+                            row += '<td>' + data.qty_product_purchase + ' ' + data
+                                .unitPurchase + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control item-quantity" name="details[new-' +
                                 newIndex +
                                 '][quantity]" value="0" min="0" data-unit-cost="' + data
                                 .Unit_cost + '" data-tax-percent="' + data.tax_percent +
-                                '" data-tax-method="' + data.tax_method + '"></td>'; //quantity
-                            row += '<td class="item-discount">0</td>';
+                                '" data-tax-method="' + data.tax_method +
+                                '" max="' + data.qty_product_purchase + '"></td>'; //quantity
+                            row += '<td class="item-discount">Rp 0</td>';
                             row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
                             row += '<td><input type="hidden" name="details[new-' + newIndex +
@@ -385,6 +388,7 @@
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
                 var quantity = parseFloat($(this).val()) || 0;
+
                 var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
                 var taxCost = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
                 var totalCost = (unitCost + taxCost) * quantity;

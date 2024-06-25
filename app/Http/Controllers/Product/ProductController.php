@@ -345,7 +345,7 @@ class ProductController extends Controller
                     Rule::exists(Brand::class, 'id'),
                 ],
                 'unit_id' => 'required',
-                'unit_sale_id' => 'required',
+                // 'unit_sale_id' => 'required',
                 'unit_purchase_id' => 'required',
                 'TaxNet' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg',
@@ -373,7 +373,7 @@ class ProductController extends Controller
             $productValue->brand_id = $request['brand_id'];
             $productValue->unit_id = $request['unit_id'];
             $productValue->unit_purchase_id = $request['unit_purchase_id'];
-            $productValue->unit_sale_id = $request['unit_sale_id'];
+            $productValue->unit_sale_id = $request['unit_id'];
             $productValue->TaxNet = $request['TaxNet'];
             $productValue->note = $request['note'];
             $productValue->is_imei = $request->has('is_imei') ? 1 : 0;

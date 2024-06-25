@@ -76,5 +76,39 @@ class BrandSeeder extends Seeder
             'description' => 'Produsen mobil mewah asal Jerman',
             'image' => 'image.png',
         ]);
+        Brand::firstOrCreate([
+            'name' => 'Unilever',
+            'description' => 'Perusahaan multinasional yang memproduksi berbagai produk konsumen.',
+            'image' => 'unilever.png',
+        ]);
+        Brand::firstOrCreate([
+            'name' => 'Indofood',
+            'description' => 'Perusahaan makanan terbesar di Indonesia yang terkenal dengan produk mi instannya.',
+            'image' => 'indofood.png',
+        ]);
+
+        Brand::firstOrCreate([
+            'name' => 'GarudaFood',
+            'description' => 'Perusahaan makanan dan minuman yang berbasis di Indonesia.',
+            'image' => 'garudafood.png',
+        ]);
+
+        Brand::firstOrCreate([
+            'name' => 'Danone',
+            'description' => 'Perusahaan multinasional yang berfokus pada produk air minum dan makanan bayi.',
+            'image' => 'danone.png',
+        ]);
+
+        Brand::firstOrCreate([
+            'name' => 'Ultra Jaya',
+            'description' => 'Perusahaan yang terkenal dengan produk susu dan minuman kemasannya.',
+            'image' => 'ultra_jaya.png',
+        ]);
+
+        Brand::firstOrCreate([
+            'name' => 'ABC',
+            'description' => 'Perusahaan yang memproduksi berbagai produk makanan dan minuman, termasuk saus sambal dan kecap.',
+            'image' => 'abc.png',
+        ]);
     }
 }

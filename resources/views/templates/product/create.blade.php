@@ -211,7 +211,7 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="productunit" class="form-label">Product Unit</label>
+                                <label for="productunit" class="form-label">Product Unit & Sale Unit</label>
                                 <select class="form-select select2" id="productunit" required name="unit_id"
                                     data-placeholder="Select a Product Unit">
                                     <option selected disabled value="">Choose...</option>
@@ -221,14 +221,14 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <label for="saleunit" class="form-label">Sale Unit</label>
                                 <select class="form-select select2" id="saleunit" required name="unit_sale_id"
                                     data-placeholder="Select a Sale Unit">
                                     <option selected disabled value="">Choose...</option>
                                     <option>...</option>
                                 </select>
-                            </div>
+                            </div> --}}
                             <div class="col-md-6 mb-3">
                                 <label for="purchaseunit" class="form-label">Purchase Unit</label>
                                 <select class="form-select select2" id="purchaseunit" required name="unit_purchase_id"
