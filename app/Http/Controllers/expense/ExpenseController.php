@@ -33,6 +33,7 @@ class ExpenseController extends Controller
 
         // Jika Anda hanya ingin menampilkan atau menggunakan role pertama
         $roleName = $roles->first();
+        
         if ($roleName === 'staff' || $roleName === 'inventaris') {
             $expenses = Expense::filter(['search'])->orderBy($orderBy, $order)->where('user_id', $userId)
                 ->orWhereIn('warehouse_id', $warehouseIds)->paginate($show)->withQueryString();

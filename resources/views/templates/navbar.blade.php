@@ -52,9 +52,9 @@
                             <i class="text-secondary fas fa-globe"></i><span class="text-with-icon text-responsive text-uppercase">{{ env('APP_LOCALE', 'en') }}</span>
                         </a>
                         <div class="p-0 sub-drop dropdown-menu dropdown-menu-end nav-link-menu" aria-labelledby="nav1">
-                            <ul class="nav-list">
+                            <ul class="nav-list p-0" style="list-style: none;">
                                 <li><a href="{{ url('lang/en') }}" class="dropdown-item"><i class="fi fi-us mr-2"></i> English</a></li>
-                                <li><a href="{{ url('lang/id') }}" class="dropdown-item"><i class="fi fi-id mr-2"></i> Indonesia</a></li>
+                                <li> <a href="{{ url('lang/id') }}" class="dropdown-item"><i class="fi fi-id mr-2"></i> Indonesia</a></li>
                             </ul>
                         </div>
                     </div>

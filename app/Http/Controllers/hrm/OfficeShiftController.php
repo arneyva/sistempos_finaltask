@@ -235,6 +235,7 @@ class OfficeShiftController extends Controller
         $shift->save();
         $shift->warehouses()->attach($request['location']);
 
+        return redirect()->route('hrm.shifts.index')->with(['success' => 'Permintaan berhasil diproses']);
     }
 
     /**
@@ -483,12 +484,12 @@ class OfficeShiftController extends Controller
             $shift->sunday_in = null;
             $shift->sunday_out = null;
         }
-        dd($request->input('users'));
+
         if ($request->input('users') != null) {
             // Ambil array ID user dari request
             $usersToInput = json_decode($request->input('users'), true);
             $usersToInput = User::whereIn('id', $usersToInput)->get();
-            dd($usersToInput);
+
     
             foreach ($usersToInput as $user) {
                 $user->office_shifts()->sync($id);
