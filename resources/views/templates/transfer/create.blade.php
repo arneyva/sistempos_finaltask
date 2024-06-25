@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Add Transfer</h1>
-<p>Look All your transfer</p>
+    <h1>Add Transfer</h1>
+    <p>Look All your transfer</p>
 @endsection
 
 @section('content')
@@ -266,12 +266,14 @@
                             var row = '<tr>';
                             row += '<td>#</td>';
                             row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-                            row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
-                            row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
+                            row += '<td>' + data.Unit_cost + '</td>';
+                            row += '<td>' + data.qty_product_purchase + ' ' + data
+                                .unitPurchase + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control item-quantity" name="details[' +
                                 data.id + '_' + variantId +
-                                '][quantity]" value="0" min="0"></td>';
+                                '][quantity]" value="0" min="0" data-max-quantity="' + data
+                                .qty_product_purchase + '"></td>';
                             row += '<td class="item-discount">0</td>';
                             row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
@@ -309,6 +311,14 @@
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
                 var quantity = parseFloat($(this).val()) || 0;
+                var maxQuantity = parseFloat($(this).data('max-quantity')) || 0;
+
+                if (quantity > maxQuantity) {
+                    alert('The quantity cannot exceed the available stock.');
+                    $(this).val(maxQuantity);
+                    quantity = maxQuantity;
+                }
+
                 var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
                 var taxCost = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
                 var totalCost = (unitCost + taxCost) * quantity;

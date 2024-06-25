@@ -14,8 +14,7 @@ class SettingSeeder extends Seeder
     {
         Setting::firstOrCreate([
             'email' => 'projectTA@example.com',
-            'currency_id' => 2,
-            'client_id' => 1,
+            'currency_id' => 1,
             'sms_gateway' => 1,
             'is_invoice_footer' => 0,
             'invoice_footer' => null,
