@@ -26,10 +26,18 @@
                             @csrf
                             @method('PATCH')
                             <div class="row">
-                                <div class="col-md-4 mb-3">
+                                {{-- <div class="col-md-4 mb-3">
                                     <label class="form-label" for="selectWarehouse">From Warehouse/Outlet *</label>
                                     <input type="text" class="form-control" name="warehouse_id" id="selectWarehouse"
                                         value="{{ $sale['warehouse_id'] }}" readonly>
+                                </div> --}}
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="selectWarehouse">{{ __('From Warehouse/Outlet') }}
+                                        *</label>
+                                    <input type="text" class="form-control" id="selectWarehouseName"
+                                        value="{{ $warehouse->firstWhere('id', $sale['warehouse_id'])->name }}" readonly>
+                                    <input type="hidden" id="selectWarehouse" name="warehouse_id"
+                                        value="{{ $sale['warehouse_id'] }}">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="customer">Customer *</label>
@@ -231,7 +239,8 @@
                                                 <option value="cash"
                                                     {{ $sale['payment_method'] == 'cash' ? 'selected' : '' }}>Cash</option>
                                                 <option value="midtrans"
-                                                    {{ $sale['payment_method'] == 'midtrans' ? 'selected' : '' }}>Other</option>
+                                                    {{ $sale['payment_method'] == 'midtrans' ? 'selected' : '' }}>Other
+                                                </option>
                                             </select>
                                             @error('payment_method')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
