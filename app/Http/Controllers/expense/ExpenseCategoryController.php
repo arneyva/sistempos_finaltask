@@ -65,7 +65,9 @@ class ExpenseCategoryController extends Controller
         $expensecat->description = $request['description_create'];
         $expensecat->save();
 
-        return redirect()->route('expenses.categories.index')->with(['success' => 'Permintaan berhasil diproses']);
+        session()->flash('success', 'Expense Category berhasil diedit');
+
+        return response()->json(['message' => 'Expense Category berhasil diedit'], 200);
     }
 
     /**

@@ -59,7 +59,7 @@
                             <tr>
                                 <td>{{ $data->name }}</td>
                                 <td>{{ $data->description }}</td>
-                                <td>{{ $data->user->firstname }} {{ $data->user->lastname }}</td>
+                                <td>{{ $data->user->firstname ?? '-' }} {{ $data->user->lastname ?? '' }}</td>
                                 <td>
                                     <div class="inline">
                                         <button class="editBtn" data-id="{{$data['id']}}" data-name="{{$data->name}}" data-desc="{{$data->description}}" style="background-color: transparent; border: none; display: inline-block;">

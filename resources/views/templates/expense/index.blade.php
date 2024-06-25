@@ -93,13 +93,13 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <div class="d-flex flex-column">
-                                                                <h6>{{ $data->expense_category->name ?? '' }}</h6>
+                                                                <h6>{{ $data->expense_category->name ?? '-' }}</h6>
                                                             </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>{{ $data->Ref }}</td>
-                                                    <td>{{ $data->user->firstname ?? '' }} {{ $data->user->lastname ?? '' }}</td>
+                                                    <td>{{ $data->user->firstname ?? '-' }} {{ $data->user->lastname ?? '' }}</td>
                                                 <td>{{ $data->date}}</td>
                                                 <td>{{ $data->warehouse->name }}</td>
                                                 <td>{{ $data->amount}}</td>
@@ -175,18 +175,18 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <div class="d-flex flex-column">
-                                                                <h6>{{ $data->expense_category->name ?? '' }}</h6>
+                                                                <h6>{{ $data->expense_category->name ?? '-' }}</h6>
                                                             </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>{{ $data->Ref }}</td>
-                                                    <td>{{ $data->user->firstname ?? '' }} {{ $data->user->lastname ?? '' }}</td>
+                                                    <td>{{ $data->user->firstname ?? '-' }} {{ $data->user->lastname ?? '' }}</td>
                                                 <td>{{ $data->date}}</td>
                                                 <td>{{ $data->warehouse->name }}</td>
                                                 <td>{{ $data->amount}}</td>
                                                 <td><span class="badge bg-success">Agreed</span></td>
-                                                <td>{{ $data->admin->firstname ?? '' }} {{ $data->admin->lastname ?? '' }}</td>
+                                                <td>{{ $data->admin->firstname ?? '-' }} {{ $data->admin->lastname ?? '' }}</td>
                                                 <td>
                                                     <div class="flex align-items-center list-user-action">
                                                         <a class="btn btn-sm btn-icon btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" href="{{ route('expenses.show', $data['id']) }}">
@@ -259,18 +259,18 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <div class="d-flex flex-column">
-                                                                <h6>{{ $data->expense_category->name ?? '' }}</h6>
+                                                                <h6>{{ $data->expense_category->name ?? '-' }}</h6>
                                                             </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>{{ $data->Ref }}</td>
-                                                    <td>{{ $data->user->firstname ?? '' }} {{ $data->user->lastname ?? '' }}</td>
+                                                    <td>{{ $data->user->firstname ?? '-' }} {{ $data->user->lastname ?? '' }}</td>
                                                 <td>{{ $data->date}}</td>
                                                 <td>{{ $data->warehouse->name }}</td>
                                                 <td>{{ $data->amount}}</td>
                                                 <td><span class="badge bg-danger">Canceled</span></td>
-                                                <td>{{ $data->admin->firstname ?? '' }} {{ $data->admin->lastname ?? '' }}</td>
+                                                <td>{{ $data->admin->firstname ?? '-' }} {{ $data->admin->lastname ?? '' }}</td>
                                                 <td>
                                                     <div class="flex align-items-center list-user-action">
                                                         <a class="btn btn-sm btn-icon btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" href="{{ route('expenses.show', $data['id']) }}">
@@ -341,13 +341,13 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <div class="d-flex flex-column">
-                                                                <h6>{{ $data->expense_category->name ?? '' }}</h6>
+                                                                <h6>{{ $data->expense_category->name ?? '-' }}</h6>
                                                             </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>{{ $data->Ref }}</td>
-                                                    <td>{{ $data->user->firstname ?? '' }} {{ $data->user->lastname ?? '' }}</td>
+                                                    <td>{{ $data->user->firstname ?? '-' }} {{ $data->user->lastname ?? '' }}</td>
                                                 <td>{{ $data->date}}</td>
                                                 <td>{{ $data->warehouse->name }}</td>
                                                 <td>{{ $data->amount}}</td>
