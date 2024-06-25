@@ -251,7 +251,6 @@
                                                 </div>
                                             @enderror
                                         </div>
-
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label" for="validationDefault05">Description</label>
@@ -319,17 +318,18 @@
             updateVisibility(); // Initial call to set the correct visibility on page load
         });
     </script>
-
     <script>
         $(document).ready(function() {
-            // Initial update on page load
+            // Update grand total on page load
             updateGrandTotal();
 
+            // Delete row event handler
             $('#product-table-body').on('click', '.delete-row', function() {
                 $(this).closest('tr').remove();
                 updateGrandTotal();
             });
 
+            // Select warehouse event handler
             $('#selectWarehouse').on('change', function() {
                 var warehouseId = $(this).val();
                 if (warehouseId) {
@@ -342,9 +342,9 @@
                                 '<option selected disabled value="">Choose...</option>');
                             $.each(data, function(key, value) {
                                 $('#selectProduct').append('<option value="' + value
-                                    .id + '" data-variant-id="' + value
-                                    .product_variant_id + '">' + value.name +
-                                    '</option>');
+                                    .id + '" data-variant-id="' + (value
+                                        .product_variant_id || '') + '">' + value
+                                    .name + '</option>');
                             });
                             $('#selectProduct').prop('disabled', false);
                         }
@@ -354,6 +354,7 @@
                 }
             });
 
+            // Select product event handler
             $('#selectProduct').on('change', function() {
                 var productId = $(this).val();
                 var warehouseId = $('#selectWarehouse').val();
@@ -374,7 +375,8 @@
                             row +=
                                 '<td><input type="number" class="form-control item-quantity" name="details[' +
                                 data.id + '_' + variantId +
-                                '][quantity]" value="0" min="0"></td>'; // quantity
+                                '][quantity]" value="0" min="0" data-max-quantity="' + data
+                                .qty + '"></td>'; // quantity
                             row += '<td class="item-discount">Rp 0</td>';
                             row += '<td>' + 'Rp ' + data.tax_price + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
@@ -387,8 +389,8 @@
                                 variantId + '][product_variant_id]" value="' + (variantId ||
                                     '') + '"></td>'; // product_variant_id
                             row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][sale_unit_id]" value="' + data
-                                .sale_unit_id + '"></td>'; // sale_unit_id
+                                variantId + '][sale_unit_id]" value="' + data.sale_unit_id +
+                                '"></td>'; // sale_unit_id
                             row += '<td><input type="hidden" name="details[' + data.id + '_' +
                                 variantId + '][Unit_price]" value="' + data.Unit_price +
                                 '"></td>'; // Unit_price
@@ -402,6 +404,14 @@
                                 '<td><input type="hidden" class="item-subtotal" name="details[' +
                                 data.id + '_' + variantId +
                                 '][subtotal]" value="0"></td>'; // subtotal
+                            row +=
+                                '<td><input type="hidden"class="item-subdiscount" name="details[' +
+                                data.id + '_' +
+                                variantId + '][discount]" value="0"></td>'; // discount
+                            row +=
+                                '<td><input type="hidden"class="item-subdiscountmethod" name="details[' +
+                                data.id + '_' +
+                                variantId + '][discount_method]" value="0"></td>'; // discount
                             row += '</tr>';
 
                             $('#product-table-body').append(row);
@@ -411,24 +421,50 @@
                 }
             });
 
+            // Item quantity change event handler
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
                 var quantity = parseFloat($(this).val()) || 0;
+                var maxQuantity = parseFloat($(this).data('max-quantity')) || 0;
+
+                if (quantity > maxQuantity) {
+                    alert('The quantity cannot exceed the available stock.');
+                    $(this).val(maxQuantity);
+                    quantity = maxQuantity;
+                }
+
                 var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
                 var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-                var totalPrice = (unitPrice + taxPrice) * quantity;
+
+                var discount = 0;
+                if (quantity > 10) {
+                    discount = unitPrice * 0.05 * quantity; // 5% discount for quantity > 10
+                    row.find('.item-discount').text('Rp ' + discount.toFixed(2));
+                    row.find('.item-subdiscount').val(discount.toFixed(2));
+                    row.find('.item-subdiscountmethod').val('discount');
+                } else {
+                    row.find('.item-discount').text('Rp 0');
+                    row.find('.item-subdiscount').val(discount.toFixed(2));
+                    row.find('.item-subdiscountmethod').val('nodiscount');
+                }
+
+                var totalPrice = (unitPrice + taxPrice) * quantity - discount;
 
                 row.find('.item-total').text('Rp ' + totalPrice.toFixed(2));
                 row.find('.item-subtotal').val(totalPrice.toFixed(2));
                 updateGrandTotal();
             });
 
+            // Tax rate, discount, shipping change event handler
             $('#tax_rate, #discount, #shipping').on('input', function() {
                 updateGrandTotal();
             });
 
+            // Function to update grand total
             function updateGrandTotal() {
                 var grandTotal = 0;
+
+                // Iterate through each row in the product table
                 $('#product-table-body tr').each(function() {
                     var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) || 0;
                     if (!isNaN(total)) {
@@ -436,22 +472,27 @@
                     }
                 });
 
+                // Get values of tax rate, discount, shipping
                 var discount = parseFloat($('#discount').val()) || 0;
                 var shipping = parseFloat($('#shipping').val()) || 0;
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
-                var taxNet = (taxRate / 100) * grandTotal;
 
+                // Calculate tax amount
+                var taxNet = (taxRate / 100) * grandTotal;
                 $('#tax_net').val(taxNet.toFixed(2));
+
+                // Calculate grand total
                 grandTotal = grandTotal - discount + shipping + taxNet;
 
-                $('#grandTotal').val(grandTotal.toFixed(2));
-                $('#paying_amount').val(grandTotal.toFixed(2));
-
-                // Update the displayed values in the table
+                // Update displayed values in the summary table
                 $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNet.toFixed(2)); // Order Tax
                 $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
                 $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
                 $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
+
+                // Update hidden fields for backend submission
+                $('#grandTotal').val(grandTotal.toFixed(2));
+                $('#paying_amount').val(grandTotal.toFixed(2));
             }
         });
     </script>

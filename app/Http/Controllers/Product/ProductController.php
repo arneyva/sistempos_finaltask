@@ -763,69 +763,70 @@ class ProductController extends Controller
                 $Product->is_imei = $request['is_imei'] == 'true' ? 1 : 0;
                 $Product->not_selling = $request['not_selling'] == 'true' ? 1 : 0;
                 $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
-                // Update data varian 
-                if ($request->variants) {
-                    // Update data varian lama
-                    foreach ($request->variants as $variantId => $variantData) {
-                        $productVariant = ProductVariant::findOrFail($variantId);
-                        $productVariant->name = $variantData['name'];
-                        $productVariant->code = $variantData['code'];
-                        $productVariant->cost = $variantData['cost'];
-                        $productVariant->price = $variantData['price'];
-                        $productVariant->save();
-                    }
-                    $existingVariantIds = collect($request->variants)->keys();
-                    // jika variant lama ada yang dihapus
-                    $oldVariants = ProductVariant::where('product_id', $Product->id)
-                        ->whereNotIn('id', $existingVariantIds)
-                        ->get();
-                    foreach ($oldVariants as $oldVariant) {
-                        ProductWarehouse::where('product_variant_id', $oldVariant->id)->delete();
-                        $oldVariant->delete();
-                    }
-                }
-                // Array untuk handle eror
-                $errors = [];
-                // Menambah data varian baru
-                if ($request->new_variants) {
-                    $newVariants = json_decode($request->new_variants, true);
-                    $existingVariants = ProductVariant::where('product_id', $Product->id)->get();
-                    foreach ($newVariants as $variantData) {
-                        // cek apakah ada duplikat nama atau code
-                        $duplicate = $existingVariants->first(function ($variant) use ($variantData) {
-                            return $variant->name == $variantData['name'] || $variant->code == $variantData['code'];
-                        });
-                        if ($duplicate) {
-                            $errors[] = "Duplicate variant found: Name '{$variantData['name']}' or Code '{$variantData['code']}' already exists."; //pesan eror
-                            continue; // Skip saving this variant
+                if ($Product->type == 'is_variant') {
+                    // Update data varian 
+                    if ($request->variants) {
+                        // Update data varian lama
+                        foreach ($request->variants as $variantId => $variantData) {
+                            $productVariant = ProductVariant::findOrFail($variantId);
+                            $productVariant->name = $variantData['name'];
+                            $productVariant->code = $variantData['code'];
+                            $productVariant->cost = $variantData['cost'];
+                            $productVariant->price = $variantData['price'];
+                            $productVariant->save();
                         }
+                        $existingVariantIds = collect($request->variants)->keys();
+                        // jika variant lama ada yang dihapus
+                        $oldVariants = ProductVariant::where('product_id', $Product->id)
+                            ->whereNotIn('id', $existingVariantIds)
+                            ->get();
+                        foreach ($oldVariants as $oldVariant) {
+                            ProductWarehouse::where('product_variant_id', $oldVariant->id)->delete();
+                            $oldVariant->delete();
+                        }
+                    }
+                    // Array untuk handle eror
+                    $errors = [];
+                    // Menambah data varian baru
+                    if ($request->new_variants) {
+                        $newVariants = json_decode($request->new_variants, true);
+                        $existingVariants = ProductVariant::where('product_id', $Product->id)->get();
+                        foreach ($newVariants as $variantData) {
+                            // cek apakah ada duplikat nama atau code
+                            $duplicate = $existingVariants->first(function ($variant) use ($variantData) {
+                                return $variant->name == $variantData['name'] || $variant->code == $variantData['code'];
+                            });
+                            if ($duplicate) {
+                                $errors[] = "Duplicate variant found: Name '{$variantData['name']}' or Code '{$variantData['code']}' already exists."; //pesan eror
+                                continue; // Skip saving this variant
+                            }
 
-                        // save varian baru jika tidak ada eror
-                        $newVariant = ProductVariant::create([
-                            'product_id' => $Product->id,
-                            'name' => $variantData['name'],
-                            'code' => $variantData['code'],
-                            'cost' => $variantData['cost'],
-                            'price' => $variantData['price'],
-                        ]);
-                        $product_warehouse = []; //menyimpan data di warehouse
-                        foreach ($warehouses as $warehouse) {
-                            $product_warehouse[] = [
+                            // save varian baru jika tidak ada eror
+                            $newVariant = ProductVariant::create([
                                 'product_id' => $Product->id,
-                                'warehouse_id' => $warehouse,
-                                'product_variant_id' => $newVariant->id,
-                                'manage_stock' => 1,
-                            ];
+                                'name' => $variantData['name'],
+                                'code' => $variantData['code'],
+                                'cost' => $variantData['cost'],
+                                'price' => $variantData['price'],
+                            ]);
+                            $product_warehouse = []; //menyimpan data di warehouse
+                            foreach ($warehouses as $warehouse) {
+                                $product_warehouse[] = [
+                                    'product_id' => $Product->id,
+                                    'warehouse_id' => $warehouse,
+                                    'product_variant_id' => $newVariant->id,
+                                    'manage_stock' => 1,
+                                ];
+                            }
+                            ProductWarehouse::insert($product_warehouse);
                         }
-                        ProductWarehouse::insert($product_warehouse);
+                        if (!empty($errors)) {
+                            return redirect()->back()->withErrors($errors)->withInput();
+                        }
+                    } else {
+                        return redirect()->route('product.edit', $id)->with('error', 'No new variants provided');
                     }
-                    if (!empty($errors)) {
-                        return redirect()->back()->withErrors($errors)->withInput();
-                    }
-                } else {
-                    return redirect()->route('product.edit', $id)->with('error', 'No new variants provided');
                 }
-
                 if ($request['images'] === null) {
                     if ($Product->image !== null) {
                         foreach (explode(',', $Product->image) as $img) {

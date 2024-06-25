@@ -22,43 +22,34 @@ class UnitSeeder extends Seeder
             'name' => 'Kilogram',
             'ShortName' => 'kg',
             'base_unit' => 1,
-            'operator' => '/',
+            'operator' => '*',
             'operator_value' => 1000,
         ]);
         Unit::firstOrCreate([
-            'name' => 'Hektogram',
-            'ShortName' => 'hg',
-            'base_unit' => 1,
-            'operator' => '/',
-            'operator_value' => 100,
-        ]);
-        Unit::firstOrCreate([
-            'name' => 'Dekagram',
-            'ShortName' => 'dag',
-            'base_unit' => 1,
-            'operator' => '/',
-            'operator_value' => 10,
-        ]);
-
-        Unit::firstOrCreate([
-            'name' => 'Kilogram',
-            'ShortName' => 'kg',
-            'base_unit' => 1,
-            'operator' => '/',
-            'operator_value' => 1000,
-        ]);
-        Unit::firstOrCreate([
-            'name' => 'liter',
-            'ShortName' => 'l',
+            'name' => 'Biji',
+            'ShortName' => 'Bj',
             'operator' => '*',
             'operator_value' => 1,
         ]);
         Unit::firstOrCreate([
-            'name' => 'Mililiter',
-            'ShortName' => 'ml',
+            'name' => 'Lusin',
+            'ShortName' => 'Ls',
             'base_unit' => 3,
             'operator' => '*',
-            'operator_value' => 1000,
+            'operator_value' => 12,
+        ]);
+        Unit::firstOrCreate([
+            'name' => 'Kodi',
+            'ShortName' => 'Kd',
+            'base_unit' => 3,
+            'operator' => '*',
+            'operator_value' => 20,
+        ]);
+        Unit::firstOrCreate([
+            'name' => 'Milililiter',
+            'ShortName' => 'Ml',
+            'operator' => '*',
+            'operator_value' => 1,
         ]);
     }
 }

@@ -302,8 +302,8 @@ class AdjustmentController extends Controller
         $item['product_type'] = $Product_data['type'];
         $item['Type_barcode'] = $Product_data['Type_barcode'];
 
-        $item['unit_id'] = $Product_data['unit'] ? $Product_data['unit']->id : ''; 
-        $item['unit'] = $Product_data['unit'] ? $Product_data['unit']->ShortName : ''; 
+        $item['unit_id'] = $Product_data['unit'] ? $Product_data['unit']->id : '';
+        $item['unit'] = $Product_data['unit'] ? $Product_data['unit']->ShortName : '';
 
         $item['purchase_unit_id'] = $Product_data['unitPurchase'] ? $Product_data['unitPurchase']->id : '';
         $item['unitPurchase'] = $Product_data['unitPurchase'] ? $Product_data['unitPurchase']->ShortName : '';
@@ -324,6 +324,24 @@ class AdjustmentController extends Controller
             $product_price = $Product_data['price'];
             $product_cost = $Product_data['cost'];
             $item['qty'] = $stock->qty;
+            if ($Product_data['unitSale']) {
+                if ($Product_data['unitSale']->operator == '/') {
+                    $item['qty_product_sale'] = floor($stock->qty * $Product_data['unitSale']->operator_value);
+                } else {
+                    $item['qty_product_sale'] = floor($stock->qty / $Product_data['unitSale']->operator_value);
+                }
+            } else {
+                $item['qty_product_sale'] = floor($stock->qty);
+            }
+            if ($Product_data['unitPurchase']) {
+                if ($Product_data['unitPurchase']->operator == '/') {
+                    $item['qty_product_purchase'] = floor($stock->qty * $Product_data['unitPurchase']->operator_value);
+                } else {
+                    $item['qty_product_purchase'] = floor($stock->qty / $Product_data['unitPurchase']->operator_value);
+                }
+            } else {
+                $item['qty_product_purchase'] = floor($stock->qty);
+            }
             $item['code'] = $Product_data['code'];
             $item['name'] = $Product_data['name'];
             $item['product_variant_id'] = null;
@@ -338,6 +356,24 @@ class AdjustmentController extends Controller
             $product_price = $product_variant_data['price'];
             $product_cost = $product_variant_data['cost'];
             $item['qty'] = $stock->qty;
+            if ($Product_data['unitSale']) {
+                if ($Product_data['unitSale']->operator == '/') {
+                    $item['qty_product_sale'] = floor($stock->qty * $Product_data['unitSale']->operator_value);
+                } else {
+                    $item['qty_product_sale'] = floor($stock->qty / $Product_data['unitSale']->operator_value);
+                }
+            } else {
+                $item['qty_product_sale'] = floor($stock->qty);
+            }
+            if ($Product_data['unitPurchase']) {
+                if ($Product_data['unitPurchase']->operator == '/') {
+                    $item['qty_product_purchase'] = floor($stock->qty * $Product_data['unitPurchase']->operator_value);
+                } else {
+                    $item['qty_product_purchase'] = floor($stock->qty / $Product_data['unitPurchase']->operator_value);
+                }
+            } else {
+                $item['qty_product_purchase'] = floor($stock->qty);
+            }
             $item['code'] = $product_variant_data['code'];
             $item['name'] = '[' . $product_variant_data['name'] . ']' . $Product_data['name'];
             $item['product_variant_id'] = $variant_id;
@@ -352,9 +388,8 @@ class AdjustmentController extends Controller
             $item['name'] = $Product_data['name'];
         }
 
-        //check if product has Unit sale
+        //check if product has Unit sale (Sale)
         if ($Product_data['unitSale']) {
-
             if ($Product_data['unitSale']->operator == '/') {
                 $price = $product_price / $Product_data['unitSale']->operator_value;
             } else {
@@ -364,10 +399,8 @@ class AdjustmentController extends Controller
             $price = $product_price;
         }
 
-        //check if product has Unit Purchase
-
+        //check if product has Unit Purchase (Transfer)
         if ($Product_data['unitPurchase']) {
-
             if ($Product_data['unitPurchase']->operator == '/') {
                 $cost = $product_cost / $Product_data['unitPurchase']->operator_value;
             } else {
@@ -377,10 +410,10 @@ class AdjustmentController extends Controller
             $cost = 0;
         }
 
-        $item['Unit_cost'] = $cost; //harga sek diinput di form produk
-        $item['fix_cost'] = $product_cost;
+        $item['Unit_cost'] = $cost;
+        $item['fix_cost'] = $product_cost; //harga sek diinput di form produk
         $item['Unit_price'] = $price;
-        $item['fix_price'] = $product_price;
+        $item['fix_price'] = $product_price; //harga sek diinput di form produk
 
         if ($Product_data->TaxNet !== 0.0) {
             //Exclusive
@@ -392,10 +425,9 @@ class AdjustmentController extends Controller
                 $item['Total_price'] = $price + $tax_price;
                 $item['Net_cost'] = $cost;
                 $item['Net_price'] = $price;
-                $item['tax_price'] = $tax_price;
-                $item['tax_cost'] = $tax_cost;
-
-                // Inxclusive
+                $item['tax_price'] = $tax_price; //besar tax untuk (sale)
+                $item['tax_cost'] = $tax_cost; //besar tax untuk (purchase,transfer)
+                // Inclusive
             } else {
                 $item['Total_cost'] = $cost;
                 $item['Total_price'] = $price;

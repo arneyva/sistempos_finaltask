@@ -18,54 +18,36 @@ class CategorySeeder extends Seeder
         ]);
         Category::firstOrCreate([
             'code' => 'FOOD-02',
-            'name' => 'Produk Segar',
-        ]);
-        Category::firstOrCreate([
-            'code' => 'Selfcare-01',
-            'name' => 'Skincare',
-        ]);
-        Category::firstOrCreate([
-            'code' => 'Selfcare-02',
-            'name' => 'Alat Mandi',
-        ]);
-        Category::firstOrCreate([
-            'code' => 'FOOD-03',
-            'name' => 'Minuman',
+            'name' => 'Makanan Berat',
         ]);
 
         Category::firstOrCreate([
-            'code' => 'FOOD-04',
-            'name' => 'Makanan Instan',
+            'code' => 'DRINK-01',
+            'name' => 'Minuman Ringan',
         ]);
 
         Category::firstOrCreate([
-            'code' => 'FOOD-05',
-            'name' => 'Buah-buahan',
+            'code' => 'DRINK-02',
+            'name' => 'Minuman Berat',
         ]);
 
         Category::firstOrCreate([
-            'code' => 'FOOD-06',
-            'name' => 'Daging dan Ayam',
+            'code' => 'SNACK-01',
+            'name' => 'Snack Asin',
         ]);
 
         Category::firstOrCreate([
-            'code' => 'FOOD-07',
-            'name' => 'Ikan dan Produk Laut',
+            'code' => 'SNACK-02',
+            'name' => 'Snack Manis',
         ]);
 
         Category::firstOrCreate([
-            'code' => 'FOOD-08',
-            'name' => 'Sayuran',
+            'code' => 'FRUIT-01',
+            'name' => 'Buah Segar',
         ]);
-
         Category::firstOrCreate([
-            'code' => 'FOOD-09',
-            'name' => 'Produk Susu',
-        ]);
-
-        Category::firstOrCreate([
-            'code' => 'FOOD-10',
-            'name' => 'Produk Organik',
+            'code' => 'VEG-01',
+            'name' => 'Sayuran Segar',
         ]);
     }
 }

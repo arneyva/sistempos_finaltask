@@ -28,5 +28,13 @@ class WarehouseSeeder extends Seeder
             'email' => 'outletsatu@gmail.com',
             'country' => 'Indonesia',
         ]);
+        Warehouse::firstOrCreate([
+            'name' => 'Outlet 2',
+            'city' => 'Surakarta',
+            'mobile' => '089655443324',
+            'zip' => '56434',
+            'email' => 'outletdua@gmail.com',
+            'country' => 'Indonesia',
+        ]);
     }
 }

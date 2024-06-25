@@ -15,7 +15,7 @@ class ExpenseSeeder extends Seeder
         Expense::firstOrCreate([
             'date' => '2022-11-11 19:12:55',
             'Ref' => 'EXP_001',
-            'user_id' => 181,
+            'user_id' => 1,
             'expense_category_id' => 1,
             'warehouse_id' => 1,
             'details' => 'Apapun itu',

@@ -13,11 +13,6 @@ class CurrencySeeder extends Seeder
     public function run(): void
     {
         Currency::firstOrCreate([
-            'code' => 'USD',
-            'name' => 'US Dolar',
-            'symbol' => '$',
-        ]);
-        Currency::firstOrCreate([
             'code' => 'IDR',
             'name' => 'Rupiah Indonesia',
             'symbol' => 'Rp. ',
