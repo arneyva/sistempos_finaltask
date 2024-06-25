@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Add Adjustment</h1>
-<p>Do Something with all your adjustment</p>
+<h1>{{ __("Add Adjustment") }}</h1>
+<p>{{ __("Do Something with all your adjustment") }}</p>
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Create Adjustment</h4>
+                            <h4 class="card-title">{{ __("Create Adjustment") }}</h4>
                         </div>
                     </div>
                     {{--  --}}
@@ -26,23 +26,23 @@
                             @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="selectWarehouse">Warehouse/Outlet *</label>
+                                    <label class="form-label" for="selectWarehouse">{{ __("Warehouse/Outlet") }} *</label>
                                     <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
-                                        <option selected disabled value="">Choose...</option>
+                                        <option selected disabled value="">{{ __("Choose...") }}</option>
                                         @foreach ($warehouse as $wh)
                                             <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Date *</label>
+                                    <label class="form-label" for="exampleInputdate">{{ __("Date") }} *</label>
                                     <input type="date" class="form-control" id="exampleInputdate" name="date"
                                         value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="selectProduct">Product *</label>
+                                    <label class="form-label" for="selectProduct">{{ __("Product") }} *</label>
                                     <select class="form-select" id="selectProduct" disabled required>
-                                        <option selected disabled value="">Choose warehouse first...</option>
+                                        <option selected disabled value="">{{ __("Choose warehouse first...") }}</option>
                                     </select>
                                 </div>
                                 <!-- Tambahkan bagian untuk menampilkan tabel produk -->
@@ -53,11 +53,11 @@
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>Code</th>
-                                                    <th>Name</th>
-                                                    <th>Stock</th>
-                                                    <th>Quantity</th>
-                                                    <th>Type</th>
+                                                    <th>{{ __("Code") }}</th>
+                                                    <th>{{ __("Name") }}</th>
+                                                    <th>{{ __("Stock") }}</th>
+                                                    <th>{{ __("Quantity") }}</th>
+                                                    <th>{{ __("Type") }}</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -68,13 +68,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="validationDefault05">Description</label>
+                                    <label class="form-label" for="validationDefault05">{{ __("Description") }}</label>
                                     <input type="text" class="form-control" id="validationDefault05" name="notes"
-                                        required placeholder="a few words...">
+                                        required placeholder="{{ __("a few words...") }}">
                                 </div>
                             </div>
                             <div class="form-group mt-2">
-                                <button class="btn btn-primary" type="submit">Submit form</button>
+                                <button class="btn btn-primary" type="submit">{{ __("Submit form") }}</button>
                             </div>
                         </form>
                     </div>
