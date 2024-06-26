@@ -160,6 +160,7 @@ class AdjustmentController extends Controller
     public function create()
     {
         $user_auth = auth()->user();
+        // mengambil data warehouse berdasarkan hak akses yang dimiliki
         if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
             $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         } else {
@@ -459,9 +460,9 @@ class AdjustmentController extends Controller
             // rules adjustment
             $adjustmentRules = $request->validate([
                 'warehouse_id' => 'required',
-
             ]);
             DB::beginTransaction();
+            //menyimpan data adjustment
             $adjustmentValue = new Adjustment();
             $adjustmentValue->date = $request->date;
             $adjustmentValue->Ref = $this->getNumberOrder();
@@ -470,9 +471,9 @@ class AdjustmentController extends Controller
             $adjustmentValue->items = count($request['details'] ?? []); // Menggunakan null coalescing operator untuk menangani nilai null
             $adjustmentValue->user_id = auth()->user()->id;
             $adjustmentValue->save();
-
-            $data = $request->details; // Decode JSON dari details
-            foreach ($data as $value) { //milik adjustemnt detail
+            $data = $request->details;
+            // proses penyimpanan data adjustment detail
+            foreach ($data as $value) {
                 $orderDetails[] = [
                     'adjustment_id' => $adjustmentValue->id,
                     'quantity' => $value['quantity'],
@@ -480,20 +481,22 @@ class AdjustmentController extends Controller
                     'product_variant_id' => $value['product_variant_id'],
                     'type' => $value['type'],
                 ];
-
-                if ($value['type'] == 'add') { //milik adjustemnt detail
-                    if ($value['product_variant_id'] !== null) { //milik adjustemnt detail
-                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null) //mulai peoduct warehouse
+                // membedakan logik stock berdasarkan type adjustment yang dipilih
+                if ($value['type'] == 'add') {
+                    // mendapatkan stock product yang bertipe variant
+                    if ($value['product_variant_id'] !== null) {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $adjustmentValue->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->where('product_variant_id', $value['product_variant_id'])
                             ->first();
-
+                        //logik perubah stock
                         if ($product_warehouse) {
                             $product_warehouse->qty += $value['quantity'];
                             $product_warehouse->save();
                         }
                     } else {
+                        // mendapatkan stock product yang bertipe single
                         $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $adjustmentValue->warehouse_id)
                             ->where('product_id', $value['product_id'])
@@ -505,8 +508,8 @@ class AdjustmentController extends Controller
                         }
                     }
                 } else {
-                    if ($value['product_variant_id'] !== null) { //milik adjustemnt detail
-                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null) //mulai peoduct warehouse
+                    if ($value['product_variant_id'] !== null) {
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $adjustmentValue->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->where('product_variant_id', $value['product_variant_id'])
@@ -529,7 +532,7 @@ class AdjustmentController extends Controller
                     }
                 }
             }
-            // dd($data);
+            // menyimpan data adjustment detail ke database
             AdjustmentDetail::insert($orderDetails);
             DB::commit();
 
@@ -647,19 +650,15 @@ class AdjustmentController extends Controller
     public function update(Request $request, string $id)
     {
         $current_adjustment = Adjustment::findOrFail($id);
-        // dd($request->all());
         \DB::transaction(function () use ($request, $id, $current_adjustment) {
-
             $old_adjustment_details = AdjustmentDetail::where('adjustment_id', $id)->get();
             $new_adjustment_details = $request['details'];
             $length = count($new_adjustment_details);
-
             // Get Ids for new Details
             $new_products_id = [];
             foreach ($new_adjustment_details as $new_detail) {
                 $new_products_id[] = $new_detail['id'];
             }
-            // dd($new_products_id);
             $old_products_id = [];
             // Init Data with old Parametre
             foreach ($old_adjustment_details as $key => $value) {
@@ -783,7 +782,6 @@ class AdjustmentController extends Controller
                     AdjustmentDetail::where('id', $product_detail['id'])->update($orderDetails);
                 }
             }
-            // dd($request->all());
             $current_adjustment->update([
                 'warehouse_id' => $request['warehouse_id'],
                 'notes' => $request['notes'],
@@ -791,7 +789,6 @@ class AdjustmentController extends Controller
                 'items' => $length,
             ]);
         }, 10);
-
         // return response()->json(['success' => true]);
         return redirect()->route('adjustment.index')->with('success', 'Adjustment updated successfully');
     }
