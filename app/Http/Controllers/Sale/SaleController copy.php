@@ -486,6 +486,27 @@ class SaleController extends Controller
                 $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
                 $data['taxe_total'] = $taxe_total;
             }
+            // Menghitung pajak berdasarkan harga asli
+            // $tax_price = $detail->TaxNet * ($detail->price / 100);
+            // // dd($tax_price);
+            // $data['Unit_price'] = $detail->price;
+            // $data['discount'] = $detail->discount;
+
+            // if ($detail->tax_method == 'Exclusive') {
+            //     // Jika metode pajak 'Exclusive', tambahkan pajak ke harga asli
+            //     $price_with_tax = $detail->price + $tax_price;
+            //     // Kurangi diskon dari harga dengan pajak untuk mendapatkan harga bersih
+            //     $data['Net_price'] = $price_with_tax - $data['DiscountNet'];
+            //     $data['taxe'] = $tax_price;
+            // } else {
+            //     // Jika metode pajak 'Inclusive', hitung harga bersih setelah pajak
+            //     $price_without_tax = $detail->price / (($detail->TaxNet / 100) + 1);
+            //     // Kurangi diskon dari harga tanpa pajak untuk mendapatkan harga bersih
+            //     $data['Net_price'] = $price_without_tax - $data['DiscountNet'];
+            //     // Hitung pajak berdasarkan harga bersih tanpa diskon
+            //     $data['taxe'] = $price_without_tax * ($detail->TaxNet / 100);
+            // }
+
             $data['is_imei'] = $detail['product']['is_imei'];
             $data['imei_number'] = $detail->imei_number;
 
@@ -696,12 +717,12 @@ class SaleController extends Controller
                     $data['DiscountNet'] = $detail->price * $detail->discount / 100;
                 }
 
-                $tax_price = $detail->TaxNet * ($detail->price / 100);
-                $data['Unit_price'] = $detail->price; //sesuai di database
+                $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
+                $data['Unit_price'] = $detail->price;
                 $data['tax_percent'] = $detail->TaxNet;
                 $data['tax_method'] = $detail->tax_method;
                 $data['discount'] = $detail->discount;
-                $data['discount_method'] = $detail->discount_method;
+                $data['discount_Method'] = $detail->discount_method;
 
                 // Menghitung subtotal berdasarkan metode pajak
                 if ($detail->tax_method == 'Exclusive') {
@@ -728,7 +749,7 @@ class SaleController extends Controller
                 $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
             }
             $clients = Client::where('deleted_at', '=', null)->get(['id', 'name']);
-            // return response()->json(['details' => $details, 'sale' => $sale, 'client' => $clients, 'warehouse' => $warehouses]);
+            return response()->json(['details' => $details, 'sale' => $sale, 'client' => $clients, 'warehouse' => $warehouses]);
             return view('templates.sale.edit', [
                 'details' => $details,
                 'sale' => $sale,

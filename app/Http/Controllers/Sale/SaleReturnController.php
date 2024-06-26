@@ -65,6 +65,10 @@ class SaleReturnController extends Controller
 
     public function create_sell_return(Request $request, $id)
     {
+        $cek = SaleReturn::where('sale_id', $id)->first();
+        if ($cek) {
+            return redirect()->back()->with('error', 'Sale Return Already Created');
+        };
         $SaleReturn = Sale::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
@@ -74,12 +78,12 @@ class SaleReturnController extends Controller
         $Return_detail['warehouse_id'] = $SaleReturn->warehouse_id;
         $Return_detail['sale_id'] = $SaleReturn->id;
         $Return_detail['sale_ref'] = $SaleReturn->Ref;
-        $Return_detail['tax_rate'] = 0;
-        $Return_detail['TaxNet'] = 0;
-        $Return_detail['discount'] = 0;
-        $Return_detail['shipping'] = 0;
+        $Return_detail['tax_rate'] = $SaleReturn->tax_rate;
+        $Return_detail['TaxNet'] = $SaleReturn->TaxNet;
+        $Return_detail['discount'] = $SaleReturn->discount;
+        $Return_detail['shipping'] = $SaleReturn->shipping;
         $Return_detail['statut'] = 'received';
-        $Return_detail['notes'] = '';
+        $Return_detail['notes'] = $SaleReturn->notes;
 
         $detail_id = 0;
         foreach ($SaleReturn['details'] as $detail) {
