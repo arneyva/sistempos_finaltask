@@ -870,8 +870,10 @@ class SaleController extends Controller
                         $orderDetails['sale_unit_id'] = $prod_detail['sale_unit_id'];
                         $orderDetails['TaxNet'] = $prod_detail['tax_percent'];
                         $orderDetails['tax_method'] = 'Exclusive';
-                        $orderDetails['discount'] = 0;
-                        $orderDetails['discount_method'] = 'nodiscount';
+                        $orderDetails['discount'] =  $prod_detail['discount'] ?  $prod_detail['discount'] : 0;
+                        $orderDetails['discount_method'] =  $prod_detail['discount_method'];
+                        // 'discount' => $value['discount'] ? $value['discount'] : 0,
+                        // 'discount_method' => $value['discount_method'],
                         $orderDetails['quantity'] = $prod_detail['quantity'];
                         $orderDetails['product_id'] = $prod_detail['product_id'];
                         $orderDetails['product_variant_id'] = $prod_detail['product_variant_id'];
