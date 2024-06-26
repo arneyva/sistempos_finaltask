@@ -12,15 +12,13 @@
     {{-- part 2  sisi kiri --}}
     <div class="col-md-12">
         <div class="row">
-            {{-- part --}}
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">{{ __("Create Adjustment") }}</h4>
+                            <h4 class="card-title">{{ __("Edit Adjustment") }}</h4>
                         </div>
                     </div>
-                    {{--  --}}
                     <div class="card-body">
                         <form action="{{ route('adjustment.update', ['id' => $adjustment['id']]) }}" method="POST">
                             @csrf
@@ -42,13 +40,10 @@
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="selectProduct">{{ __("Product") }} *</label>
-                                    {{-- <select class="form-select" id="selectProduct" disabled required> --}}
                                     <select class="form-select" id="selectProduct">
                                         <option selected disabled value="">{{ __("Choose warehouse first...") }}</option>
                                     </select>
                                 </div>
-                                <!-- Tambahkan bagian untuk menampilkan tabel produk -->
-                                <!-- Dalam contoh ini, tabel produk akan ditampilkan di bawah dropdown produk -->
                                 <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
                                         <table id="product-table" class="table table-striped mb-0" role="grid">

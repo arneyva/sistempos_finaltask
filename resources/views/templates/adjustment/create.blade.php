@@ -46,8 +46,6 @@
                                         </option>
                                     </select>
                                 </div>
-                                <!-- Tambahkan bagian untuk menampilkan tabel produk -->
-                                <!-- Dalam contoh ini, tabel produk akan ditampilkan di bawah dropdown produk -->
                                 <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
                                         <table id="product-table" class="table table-striped mb-0" role="grid">

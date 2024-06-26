@@ -6,13 +6,10 @@
 @endsection
 
 @section('content')
-    {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">
     </div>
-    {{-- part 2  sisi kiri --}}
     <div class="col-md-12">
         <div class="row">
-            {{-- part --}}
             <div class="col-md-12">
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
@@ -20,7 +17,6 @@
                             <h4 class="card-title">Create Transfer</h4>
                         </div>
                     </div>
-                    {{--  --}}
                     <div class="card-body">
                         <form action="{{ route('transfer.store') }}" method="POST">
                             @csrf

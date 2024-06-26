@@ -33,6 +33,7 @@ class TransferController extends Controller
         } else {
             $transferQuery = Transfer::query()->with(['from_warehouse', 'to_warehouse', 'details'])->where('deleted_at', '=', null)->where('to_warehouse_id', $warehouses_id)->latest();
         }
+        // proses filter data
         if ($request->filled('date')) {
             $transferQuery->whereDate('date', '=', $request->input('date'));
         }
@@ -49,9 +50,9 @@ class TransferController extends Controller
         if ($request->filled('statut')) {
             $transferQuery->where('statut', '=', $request->input('statut'));
         }
-        // dd($transferQuery);
+        // menampilkan data sesuai filter dan dipaginasi
         $transfer = $transferQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
-
+        // mendapatkan warehouse berdasarkan hak akses user 
         if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
             $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         } else {
@@ -148,6 +149,7 @@ class TransferController extends Controller
      */
     public function store(Request $request)
     {
+        // rules untuk validasi transfer
         request()->validate([
             'transfer.from_warehouse' => 'required',
             'transfer.to_warehouse' => 'required',
@@ -155,13 +157,14 @@ class TransferController extends Controller
             'transfer.from_warehouse.required' => 'Gudang asal harus dipilih.',
             'transfer.to_warehouse.required' => 'Gudang tujuan harus dipilih.',
         ]);
+        // proses transaksi transfer
         \DB::transaction(function () use ($request) {
             $order = new Transfer;
             $order->date = $request->transfer['date'];
             $order->Ref = $this->getNumbertransferValue();
             $order->from_warehouse_id = $request->transfer['from_warehouse'];
             $order->to_warehouse_id = $request->transfer['to_warehouse'];
-            $order->items = count($request['details']);
+            $order->items = count($request['details']); // mengetahui jumlahnya berapa dari data detail transfer
             $order->tax_rate = $request->transfer['tax_rate'] ? $request->transfer['tax_rate'] : 0;
             $order->TaxNet = $request->transfer['TaxNet'] ? $request->transfer['TaxNet'] : 0;
             $order->discount = $request->transfer['discount'] ? $request->transfer['discount'] : 0;
@@ -171,23 +174,18 @@ class TransferController extends Controller
             $order->GrandTotal = $request['GrandTotal'];
             $order->user_id = Auth::user()->id;
             $order->save();
-
+            // proses penyimpanan detail transfer
             $data = $request['details'];
-
             foreach ($data as $key => $value) {
-
                 $unit = Unit::where('id', $value['purchase_unit_id'])->first();
-
                 if ($request->transfer['statut'] == 'completed') {
                     if ($value['product_variant_id'] !== null) {
-
-                        //--------- eliminate the quantity ''from_warehouse''--------------\\
+                        //--------- menghapus quantity ''from_warehouse''--------------\\
                         $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->transfer['from_warehouse'])
                             ->where('product_id', $value['product_id'])
                             ->where('product_variant_id', $value['product_variant_id'])
                             ->first();
-
                         if ($unit && $product_warehouse_from) {
                             if ($unit->operator == '/') {
                                 $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
@@ -196,14 +194,12 @@ class TransferController extends Controller
                             }
                             $product_warehouse_from->save();
                         }
-
-                        //--------- ADD the quantity ''TO_warehouse''------------------\\
+                        //--------- menambah quantity ''TO_warehouse''------------------\\
                         $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->transfer['to_warehouse'])
                             ->where('product_id', $value['product_id'])
                             ->where('product_variant_id', $value['product_variant_id'])
                             ->first();
-
                         if ($unit && $product_warehouse_to) {
                             if ($unit->operator == '/') {
                                 $product_warehouse_to->qty += $value['quantity'] / $unit->operator_value;
@@ -213,12 +209,10 @@ class TransferController extends Controller
                             $product_warehouse_to->save();
                         }
                     } else {
-
-                        //--------- eliminate the quantity ''from_warehouse''--------------\\
+                        //---------menghapus quantity ''from_warehouse''--------------\\
                         $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->transfer['from_warehouse'])
                             ->where('product_id', $value['product_id'])->first();
-
                         if ($unit && $product_warehouse_from) {
                             if ($unit->operator == '/') {
                                 $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
@@ -228,7 +222,7 @@ class TransferController extends Controller
                             $product_warehouse_from->save();
                         }
 
-                        //--------- ADD the quantity ''TO_warehouse''------------------\\
+                        //--------- menambah quantity ''TO_warehouse''------------------\\
                         $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->transfer['to_warehouse'])
                             ->where('product_id', $value['product_id'])->first();
@@ -284,13 +278,10 @@ class TransferController extends Controller
                 $orderDetails['product_variant_id'] = $value['product_variant_id'];
                 $orderDetails['cost'] = $value['Unit_cost'];
                 $orderDetails['TaxNet'] = $value['tax_percent'];
-                // $orderDetails['tax_method'] = $value['tax_method'];
-                // $orderDetails['discount'] = $value['discount'];
-                // $orderDetails['tax_method'] = $value['tax_method'];
                 $orderDetails['discount'] = 0;
                 $orderDetails['discount_method'] = 'nodiscount';
                 $orderDetails['total'] = $value['subtotal'];
-
+                // memasukan data ke database
                 TransferDetail::insert($orderDetails);
             }
         }, 10);
@@ -464,7 +455,7 @@ class TransferController extends Controller
             $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
-        
+
         return view('templates.transfer.edit', ['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses]);
     }
 
