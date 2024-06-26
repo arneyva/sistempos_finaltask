@@ -43,6 +43,7 @@
                                         <th>Product</th>
                                         <th>Net Unit Price</th>
                                         <th>Quantity</th>
+                                        <th>Discount</th>
                                         <th>Tax</th>
                                         <th>Subtotal</th>
                                     </tr>
@@ -53,6 +54,7 @@
                                             <td>{{ $item['name'] }}</td>
                                             <th>Rp. {{ number_format($item['Unit_price'], 2, ',', '.') }}</th>
                                             <td>{{ $item['quantity'] }}</td>
+                                            <th>Rp. {{ number_format($item['DiscountNet'], 2, ',', '.') }}</th>
                                             <th>Rp. {{ number_format($item['taxe'], 2, ',', '.') }}</th>
                                             <th>Rp. {{ number_format($item['total'], 2, ',', '.') }}</th>
                                         </tr>

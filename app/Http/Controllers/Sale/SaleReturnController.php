@@ -142,21 +142,37 @@ class SaleReturnController extends Controller
             $data['is_imei'] = $detail['product']['is_imei'];
             $data['imei_number'] = $detail->imei_number;
 
-            if ($detail->discount_method == 'nodiscount') {
+            // if ($detail->discount_method == 'nodiscount') {
+            //     $data['DiscountNet'] = $detail->discount;
+            // } else {
+            //     $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+            // }
+            if ($detail->discount_method == 'discount') {
                 $data['DiscountNet'] = $detail->discount;
             } else {
                 $data['DiscountNet'] = $detail->price * $detail->discount / 100;
             }
-
-            $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
+            // $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
+            $tax_price = $detail->TaxNet * ($detail->price / 100);
             $data['Unit_price'] = $detail->price;
             $data['tax_percent'] = $detail->TaxNet;
             $data['tax_method'] = $detail->tax_method;
             $data['discount'] = $detail->discount;
-            $data['discount_Method'] = $detail->discount_method;
+            $data['discount_method'] = $detail->discount_method;
 
+            // if ($detail->tax_method == 'Exclusive') {
+
+            //     $data['Net_price'] = $detail->price - $data['DiscountNet'];
+            //     $data['taxe'] = $tax_price;
+            //     $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
+            // } else {
+            //     $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
+            //     $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
+            //     $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
+            // }
+
+            // $details[] = $data;
             if ($detail->tax_method == 'Exclusive') {
-
                 $data['Net_price'] = $detail->price - $data['DiscountNet'];
                 $data['taxe'] = $tax_price;
                 $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
@@ -166,6 +182,7 @@ class SaleReturnController extends Controller
                 $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
             }
 
+            // Memasukkan $data ke dalam array $details
             $details[] = $data;
         }
 
@@ -256,8 +273,8 @@ class SaleReturnController extends Controller
                     'sale_unit_id' => $value['sale_unit_id'],
                     'TaxNet' => $value['tax_percent'],
                     'tax_method' => 'Exclusive',
-                    'discount' => 0,
-                    'discount_method' => 'nodiscount',
+                    'discount' => $value['discount'] ? $value['discount'] : 0,
+                    'discount_method' => $value['discount_method'],
                     'product_id' => $value['product_id'],
                     'product_variant_id' => $value['product_variant_id'],
                     'total' => $value['subtotal'],
@@ -375,7 +392,7 @@ class SaleReturnController extends Controller
             $data['price'] = $detail->price;
             $data['unit_sale'] = $unit ? $unit->ShortName : '';
 
-            if ($detail->discount_method == '2') {
+            if ($detail->discount_method == 'discount') {
                 $data['DiscountNet'] = $detail->discount;
             } else {
                 $data['DiscountNet'] = $detail->price * $detail->discount / 100;

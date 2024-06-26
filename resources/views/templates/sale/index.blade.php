@@ -219,8 +219,10 @@
                                                                         <tr>
                                                                             <td>{{ $item->paymentSales->date }}</td>
                                                                             <td>{{ $item->paymentSales->Ref }}</td>
-                                                                            <td>{{ $item->paymentSales->montant }}</td>
-                                                                            <td>{{ $item->paymentSales->change }}</td>
+                                                                            <td>{{ 'Rp ' . number_format($item->paymentSales->montant, 2, ',', '.') }}
+                                                                            </td>
+                                                                            <td>{{ 'Rp ' . number_format($item->paymentSales->change, 2, ',', '.') }}
+                                                                            </td>
                                                                             <td>{{ $item->paymentSales->status }}</td>
                                                                             <td></td>
                                                                         </tr>
@@ -446,23 +448,17 @@
                                                         @endif
 
                                                         <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
-                                                            data-bs-target="#staticBackdrop{{ $item->id }}">
+                                                            data-bs-target="#staticBackdrop{{ $item->id }}"
+                                                            style="color: #546DEB;">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
                                                                 height="1.5em" viewBox="0 0 256 256">
                                                                 <path fill="#546DEB"
                                                                     d="M128 88a40 40 0 1 0 40 40a40 40 0 0 0-40-40m0 64a24 24 0 1 1 24-24a24 24 0 0 1-24 24m112-96H16a8 8 0 0 0-8 8v128a8 8 0 0 0 8 8h224a8 8 0 0 0 8-8V64a8 8 0 0 0-8-8m-46.35 128H62.35A56.78 56.78 0 0 0 24 145.65v-35.3A56.78 56.78 0 0 0 62.35 72h131.3A56.78 56.78 0 0 0 232 110.35v35.3A56.78 56.78 0 0 0 193.65 184M232 93.37A40.8 40.8 0 0 1 210.63 72H232ZM45.37 72A40.8 40.8 0 0 1 24 93.37V72ZM24 162.63A40.8 40.8 0 0 1 45.37 184H24ZM210.63 184A40.8 40.8 0 0 1 232 162.63V184Z" />
                                                             </svg> Show Payment
                                                         </li>
-                                                        {{-- <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
-                                                            data-bs-target="#shippingmodal{{ $item->id }}">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                height="1.5em" viewBox="0 0 32 32">
-                                                                <path fill="currentColor"
-                                                                    d="M0 6v2h19v15h-6.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H4v-5H2v7h3.156c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3h8.312c.446 1.719 1.992 3 3.844 3c1.852 0 3.398-1.281 3.844-3H32v-8.156l-.063-.157l-2-6L29.72 10H21V6zm1 4v2h9v-2zm20 2h7.281L30 17.125V23h-1.156c-.446-1.719-1.992-3-3.844-3c-1.852 0-3.398 1.281-3.844 3H21zM2 14v2h6v-2zm7 8c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2m16 0c1.117 0 2 .883 2 2s-.883 2-2 2s-2-.883-2-2s.883-2 2-2" />
-                                                            </svg> Shipping
-                                                        </li> --}}
                                                         <li class="iq-sub-card list-group-item {{ $item->shipping ? '' : 'text-danger text-decoration-line-through' }}"
-                                                            {{ $item->shipping ? 'data-bs-toggle=modal data-bs-target=#shippingmodal' . $item->id : '' }}>
+                                                            {{ $item->shipping ? 'data-bs-toggle=modal data-bs-target=#shippingmodal' . $item->id : '' }}
+                                                            style="color: #546DEB;">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
                                                                 height="1.5em" viewBox="0 0 32 32">
                                                                 <path fill="currentColor"

@@ -37,12 +37,12 @@
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="exampleInputdate">Sale Ref *</label>
                                     <input type="text" class="form-control" id="exampleInputdate"
-                                        value="{{ $sale_return['sale_ref'] }}" readonly>
+                                        value="{{ $sale_return['sale_ref'] }}">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="exampleInputdate">Status *</label>
                                     <input type="text" class="form-control" id="exampleInputdate" name="statut"
-                                        value="{{ $sale_return['statut'] }}" readonly>
+                                        value="{{ $sale_return['statut'] }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
@@ -73,13 +73,24 @@
                                                                 value="{{ $detail['quantity'] }}" min="0"
                                                                 data-unit-price="{{ $detail['Net_price'] }}"
                                                                 data-tax-percent="{{ $detail['tax_percent'] }}"
-                                                                data-tax-method="{{ $detail['tax_method'] }}" max="{{ $detail['sale_quantity'] }}"></td>
-                                                        <td>Rp. {{ $detail['DiscountNet'] }}</td>
+                                                                data-tax-method="{{ $detail['tax_method'] }}"
+                                                                max="{{ $detail['sale_quantity'] }}"></td>
+                                                        <td class="item-discount">Rp. {{ $detail['DiscountNet'] }}</td>
                                                         <td>{{ $detail['taxe'] }}</td>
                                                         <td class="item-total">Rp {{ $detail['subtotal'] }}</td>
                                                         <input type="hidden" class="item-subtotal"
                                                             name="details[{{ $loop->index }}][subtotal]"
                                                             value="{{ $detail['subtotal'] }}">
+                                                        <td>
+                                                            <input type="hidden" class="item-subdiscount"
+                                                                name="details[{{ $loop->index }}][discount]"
+                                                                value="{{ $detail['discount'] }}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="hidden" class="item-subdiscountmethod"
+                                                                name="details[{{ $loop->index }}][discount_method]"
+                                                                value="{{ $detail['discount_method'] }}">
+                                                        </td>
                                                         <input type="hidden" name="details[{{ $loop->index }}][id]"
                                                             value="{{ $detail['id'] }}">
                                                         <input type="hidden" name="details[{{ $loop->index }}][no_unit]"
@@ -187,97 +198,6 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        {{--  --}}
-                                        {{-- <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="brand">Status</label>
-                                            <select class="form-select select2" id="typeStatus" required name="statut"
-                                                data-placeholder="Select a Brand">
-                                                <option value="completed" selected>Completed</option>
-                                                <option value="pending">Pending</option>
-                                            </select>
-                                            @error('brand_id')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 mb-3" id="paymentMethod">
-                                            <label class="form-label" for="payment_method">Payment Method</label>
-                                            <select class="form-select select2" name="payment_method" id="payment_method"
-                                                data-placeholder="Select a payment_method">
-                                                <option value="cash">Cash</option>
-                                                <option value="midtrans">Other</option>
-                                            </select>
-                                            @error('payment_method')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 mb-3" id="receivedAmount">
-                                            <label class="form-label" for="received_amount">Received Amount *</label>
-                                            <div class="form-group input-group">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
-                                                <input type="text" class="form-control"
-                                                    placeholder="input received amount" id="received_amount"
-                                                    name="received_amount" value="{{ Session::get('received_amount') }}">
-                                            </div>
-                                            @error('received_amount')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 mb-3" id="payingAmount">
-                                            <label class="form-label" for="paying_amount">Paying Amount *</label>
-                                            <div class="form-group input-group">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
-                                                <input type="text" class="form-control"
-                                                    placeholder="input paying amount" id="paying_amount"
-                                                    name="paying_amount" value="{{ Session::get('paying_amount') }}">
-                                            </div>
-                                            @error('paying_amount')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 mb-3" id="changeReturn">
-                                            <label class="form-label" for="change_return">Change Return *</label>
-                                            <div class="form-group input-group">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
-                                                <input type="text" class="form-control"
-                                                    placeholder="input change return" id="change_return"
-                                                    name="change_return" value="{{ Session::get('change_return') }}"
-                                                    readonly>
-                                            </div>
-                                            @error('change_return')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div> --}}
-
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label" for="validationDefault05">Description</label>
@@ -437,24 +357,92 @@
                 }
             });
 
+            // $('#product-table-body').on('input', '.item-quantity', function() {
+            //     var row = $(this).closest('tr');
+            //     var quantity = parseFloat($(this).val()) || 0;
+            //     var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
+            //     var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
+            //     var totalPrice = (unitPrice + taxPrice) * quantity;
+
+            //     row.find('.item-total').text('Rp ' + totalPrice.toFixed(2));
+            //     row.find('.item-subtotal').val(totalPrice.toFixed(2));
+            //     updateGrandTotal();
+            // });
+
+            // $('#tax_rate, #discount, #shipping').on('input', function() {
+            //     updateGrandTotal();
+            // });
+
+            // function updateGrandTotal() {
+            //     var grandTotal = 0;
+            //     $('#product-table-body tr').each(function() {
+            //         var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) || 0;
+            //         if (!isNaN(total)) {
+            //             grandTotal += total;
+            //         }
+            //     });
+
+            //     var discount = parseFloat($('#discount').val()) || 0;
+            //     var shipping = parseFloat($('#shipping').val()) || 0;
+            //     var taxRate = parseFloat($('#tax_rate').val()) || 0;
+            //     var taxNet = (taxRate / 100) * grandTotal;
+
+            //     $('#tax_net').val(taxNet.toFixed(2));
+            //     grandTotal = grandTotal - discount + shipping + taxNet;
+
+            //     $('#grandTotal').val(grandTotal.toFixed(2));
+            //     $('#paying_amount').val(grandTotal.toFixed(2));
+
+            //     // Update the displayed values in the table
+            //     $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNet.toFixed(2)); // Order Tax
+            //     $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
+            //     $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
+            //     $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
+            // }
+            // Item quantity change event handler
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
                 var quantity = parseFloat($(this).val()) || 0;
+                // var maxQuantity = parseFloat($(this).data('max-quantity')) || 0;
+
+                // if (quantity > maxQuantity) {
+                //     alert('The quantity cannot exceed the available stock.');
+                //     $(this).val(maxQuantity);
+                //     quantity = maxQuantity;
+                // }
+
                 var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
                 var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-                var totalPrice = (unitPrice + taxPrice) * quantity;
+
+                var discount = 0;
+                if (quantity > 10) {
+                    discount = unitPrice * 0.05 * quantity; // 5% discount for quantity > 10
+                    row.find('.item-discount').text('Rp ' + discount.toFixed(2));
+                    row.find('.item-subdiscount').val(discount.toFixed(2));
+                    row.find('.item-subdiscountmethod').val('discount');
+                } else {
+                    row.find('.item-discount').text('Rp 0');
+                    row.find('.item-subdiscount').val(discount.toFixed(2));
+                    row.find('.item-subdiscountmethod').val('nodiscount');
+                }
+
+                var totalPrice = (unitPrice + taxPrice) * quantity - discount;
 
                 row.find('.item-total').text('Rp ' + totalPrice.toFixed(2));
                 row.find('.item-subtotal').val(totalPrice.toFixed(2));
                 updateGrandTotal();
             });
 
+            // Tax rate, discount, shipping change event handler
             $('#tax_rate, #discount, #shipping').on('input', function() {
                 updateGrandTotal();
             });
 
+            // Function to update grand total
             function updateGrandTotal() {
                 var grandTotal = 0;
+
+                // Iterate through each row in the product table
                 $('#product-table-body tr').each(function() {
                     var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) || 0;
                     if (!isNaN(total)) {
@@ -462,22 +450,27 @@
                     }
                 });
 
+                // Get values of tax rate, discount, shipping
                 var discount = parseFloat($('#discount').val()) || 0;
                 var shipping = parseFloat($('#shipping').val()) || 0;
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
-                var taxNet = (taxRate / 100) * grandTotal;
 
+                // Calculate tax amount
+                var taxNet = (taxRate / 100) * grandTotal;
                 $('#tax_net').val(taxNet.toFixed(2));
+
+                // Calculate grand total
                 grandTotal = grandTotal - discount + shipping + taxNet;
 
-                $('#grandTotal').val(grandTotal.toFixed(2));
-                $('#paying_amount').val(grandTotal.toFixed(2));
-
-                // Update the displayed values in the table
+                // Update displayed values in the summary table
                 $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNet.toFixed(2)); // Order Tax
                 $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
                 $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
                 $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
+
+                // Update hidden fields for backend submission
+                $('#grandTotal').val(grandTotal.toFixed(2));
+                $('#paying_amount').val(grandTotal.toFixed(2));
             }
         });
     </script>
