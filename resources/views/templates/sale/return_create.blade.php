@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Add Sales</h1>
+    <h1>Create Sale Return</h1>
     <p>Look All your sales</p>
 @endsection
 
@@ -17,7 +17,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Create Sale</h4>
+                            <h4 class="card-title">Create Sale Return</h4>
                         </div>
                     </div>
                     {{--  --}}
@@ -37,12 +37,12 @@
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="exampleInputdate">Sale Ref *</label>
                                     <input type="text" class="form-control" id="exampleInputdate"
-                                        value="{{ $sale_return['sale_ref'] }}">
+                                        value="{{ $sale_return['sale_ref'] }}" readonly>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="exampleInputdate">Status *</label>
                                     <input type="text" class="form-control" id="exampleInputdate" name="statut"
-                                        value="{{ $sale_return['statut'] }}">
+                                        value="{{ $sale_return['statut'] }}" readonly>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
@@ -73,7 +73,7 @@
                                                                 value="{{ $detail['quantity'] }}" min="0"
                                                                 data-unit-price="{{ $detail['Net_price'] }}"
                                                                 data-tax-percent="{{ $detail['tax_percent'] }}"
-                                                                data-tax-method="{{ $detail['tax_method'] }}"></td>
+                                                                data-tax-method="{{ $detail['tax_method'] }}" max="{{ $detail['sale_quantity'] }}"></td>
                                                         <td>Rp. {{ $detail['DiscountNet'] }}</td>
                                                         <td>{{ $detail['taxe'] }}</td>
                                                         <td class="item-total">Rp {{ $detail['subtotal'] }}</td>
@@ -135,7 +135,7 @@
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="tax_rate"
                                                     placeholder="input tax" name="tax_rate"
-                                                    value="{{ old('sale.tax_rate') }}">
+                                                    value="{{ $sale_return['tax_rate'] }}">
                                                 <span class="input-group-text" id="basic-addon1">%</span>
                                             </div>
                                             @error('sale.tax_rate')
@@ -156,7 +156,7 @@
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="discount"
                                                     placeholder="input discount" name="discount"
-                                                    value="{{ old('sale.discount') }}">
+                                                    value="{{ $sale_return['discount'] }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
                                             @error('sale.discount')
@@ -174,7 +174,7 @@
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="shipping"
                                                     placeholder="input shipping" name="shipping"
-                                                    value="{{ old('sale.shipping') }}">
+                                                    value="{{ $sale_return['shipping'] }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
                                             @error('sale.shipping')

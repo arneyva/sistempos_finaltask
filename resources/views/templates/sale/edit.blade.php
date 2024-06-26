@@ -26,11 +26,6 @@
                             @csrf
                             @method('PATCH')
                             <div class="row">
-                                {{-- <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="selectWarehouse">From Warehouse/Outlet *</label>
-                                    <input type="text" class="form-control" name="warehouse_id" id="selectWarehouse"
-                                        value="{{ $sale['warehouse_id'] }}" readonly>
-                                </div> --}}
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="selectWarehouse">{{ __('From Warehouse/Outlet') }}
                                         *</label>
@@ -68,6 +63,7 @@
                                                     <th>#</th>
                                                     <th>Product</th>
                                                     <th>Net Unit price</th>
+                                                    <th>Initial Stock</th>
                                                     <th>Stock</th>
                                                     <th>Quantity</th>
                                                     <th>Discount</th>
@@ -81,23 +77,35 @@
                                                     <tr>
                                                         <td>#</td>
                                                         <td>{{ $detail['code'] }} ~ {{ $detail['name'] }}</td>
-                                                        <td>Rp {{ $detail['Net_price'] }}</td>
+                                                        <td>Rp {{ $detail['Unit_price'] }}</td>
+                                                        <td>{{ $detail['initial_stock'] }} {{ $detail['unitSale'] }}</td>
                                                         <td>{{ $detail['stock'] }} {{ $detail['unitSale'] }}</td>
                                                         <td>
                                                             <input type="number" class="form-control item-quantity"
                                                                 name="details[{{ $loop->index }}][quantity]"
                                                                 value="{{ $detail['quantity'] }}" min="0"
-                                                                data-unit-price="{{ $detail['Net_price'] }}"
+                                                                data-unit-price="{{ $detail['Unit_price'] }}"
                                                                 data-tax-percent="{{ $detail['tax_percent'] }}"
-                                                                data-tax-method="{{ $detail['tax_method'] }}">
+                                                                data-tax-method="{{ $detail['tax_method'] }}"
+                                                                max="{{ $detail['initial_stock'] }}">
                                                         </td>
-                                                        <td>Rp {{ $detail['DiscountNet'] }}</td>
+                                                        <td class="item-discount">Rp {{ $detail['DiscountNet'] }}</td>
                                                         <td>Rp {{ $detail['taxe'] }}</td>
-                                                        <td class="item-total">Rp {{ $detail['subtotal'] }}</td>
+                                                        <td class="item-total">Rp {{ $detail['total'] }}</td>
                                                         <td>
                                                             <input type="hidden" class="item-subtotal"
                                                                 name="details[{{ $loop->index }}][subtotal]"
-                                                                value="{{ $detail['subtotal'] }}">
+                                                                value="{{ $detail['total'] }}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="hidden" class="item-subdiscount"
+                                                                name="details[{{ $loop->index }}][discount]"
+                                                                value="{{ $detail['discount'] }}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="hidden" class="item-subdiscountmethod"
+                                                                name="details[{{ $loop->index }}][discount_method]"
+                                                                value="{{ $detail['discount_method'] }}">
                                                         </td>
                                                         <input type="hidden" name="details[{{ $loop->index }}][id]"
                                                             value="{{ $detail['id'] }}">
@@ -411,20 +419,22 @@
                             row += '<td>#</td>';
                             row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
                             row += '<td>' + 'Rp ' + data.Unit_price + '</td>';
+                            row += '<td>' + 'New Data' + '</td>';
                             row += '<td>' + data.qty + ' ' + data.unitSale + '</td>';
                             row +=
                                 '<td><input type="number" class="form-control item-quantity" name="details[new-' +
                                 newIndex +
                                 '][quantity]" value="0" min="0" data-unit-price="' + data
                                 .Unit_price + '" data-tax-percent="' + data.tax_percent +
-                                '" data-tax-method="' + data.tax_method + '"></td>'; //quantity
+                                '" data-tax-method="' + data.tax_method + '"  max="' + data
+                                .qty + '"></td>'; //quantity
                             row += '<td class="item-discount">Rp 0</td>';
                             row += '<td>' + 'Rp ' + data.tax_price + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
                             row += '<td><input type="hidden" name="details[new-' + newIndex +
-                                '][id]" value="new"></td>'; //ini id coy
+                                '][id]" value="new"></td>'; // id
                             row += '<td><input type="hidden" name="details[new-' + newIndex +
-                                '][no_unit]" value="1"></td>'; //ini id coy
+                                '][no_unit]" value="1"></td>'; //no unit
                             row +=
                                 '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
                             row += '<td><input type="hidden" name="details[new-' + newIndex +
@@ -448,6 +458,12 @@
                             row +=
                                 '<td><input type="hidden" class="item-subtotal" name="details[new-' +
                                 newIndex + '][subtotal]" value="0"></td>';
+                            row +=
+                                '<td><input type="hidden" class="item-subdiscount" name="details[new-' +
+                                newIndex + '][discount]" value="0"></td>';
+                            row +=
+                                '<td><input type="hidden" class="item-subdiscountmethod" name="details[new-' +
+                                newIndex + '][discount_method]" value="0"></td>';
                             row += '</tr>';
 
                             $('#product-table-body').append(row);
@@ -487,10 +503,23 @@
             }
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
-                var quantity = parseFloat($(this).val()) || 0;
+                var quantity = parseFloat($(this).val()) || 0; //dapat quantity
                 var unitprice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
                 var taxprice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-                var totalprice = (unitprice + taxprice) * quantity;
+                // Menghitung sub-discount
+                var discount = 0;
+                if (quantity > 10) {
+                    discount = unitprice * 0.05 * quantity; // 5% discount for quantity > 10
+                    row.find('.item-discount').text('Rp ' + discount.toFixed(2));
+                    row.find('.item-subdiscount').val(discount.toFixed(2));
+                    row.find('.item-subdiscountmethod').val('discount');
+                } else {
+                    row.find('.item-discount').text('Rp 0');
+                    row.find('.item-subdiscount').val(discount.toFixed(2));
+                    row.find('.item-subdiscountmethod').val('nodiscount');
+                }
+
+                var totalprice = (unitprice + taxprice) * quantity - discount; //ini belum kepake
 
                 row.find('.item-total').text('Rp ' + totalprice.toFixed(2));
                 row.find('.item-subtotal').val(totalprice.toFixed(2));
@@ -504,28 +533,33 @@
             function updateGrandTotal() {
                 var grandTotal = 0;
                 var taxNet = 0;
+
                 $('#product-table-body tr').each(function() {
                     var row = $(this);
                     var quantity = parseFloat(row.find('.item-quantity').val()) || 0;
                     var unitprice = parseFloat(row.find('.item-quantity').data('unit-price')) || 0;
-                    var taxPercent = parseFloat(row.find('.item-quantity').data('tax-percent')) || 0;
-                    var taxMethod = row.find('.item-quantity').data('tax-method');
-                    var total = quantity * unitprice;
-                    var tax = 0;
+                    var discount = parseFloat(row.find('.item-subdiscount').val()) || 0;
 
-                    if (taxMethod === 'inclusive') {
-                        tax = (total * taxPercent) / (100 + taxPercent);
-                    } else {
-                        tax = (total * taxPercent) / 100;
-                    }
+                    // Calculate tax as 10% of unit price
+                    var taxPercent = 10; // assuming tax is 10%
+                    var tax = (unitprice * taxPercent / 100) * quantity;
 
-                    var subtotal = total + tax;
+                    // Calculate total before tax and discount
+                    var totalBeforeTaxAndDiscount = unitprice * quantity;
+
+                    // Calculate subtotal
+                    var subtotal = totalBeforeTaxAndDiscount + tax - discount;
+
+                    // Update the displayed values in the table
                     row.find('.item-total').text('Rp ' + subtotal.toFixed(2));
                     row.find('.item-subtotal').val(subtotal.toFixed(2));
+
+                    // Accumulate values for grand total and tax net
                     grandTotal += subtotal;
                     taxNet += tax;
                 });
 
+                // Update other parts of the UI based on grand total, tax, discount, shipping, etc.
                 var discount = parseFloat($('#discount').val()) || 0;
                 var shipping = parseFloat($('#shipping').val()) || 0;
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
@@ -536,12 +570,15 @@
                 $('#tax_net').val(taxNet.toFixed(2));
                 $('#grandTotal').val(grandTotal.toFixed(2));
                 $('#paying_amount').val(grandTotal.toFixed(2));
-                // Update the displayed values in the table
-                $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNetFromRate.toFixed(2)); // Order Tax
+
+                // Update the displayed values in the table for tax, discount, shipping, and grand total
+                $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNetFromRate.toFixed(2)); // Tax
                 $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
                 $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
                 $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
             }
+
+
         });
     </script>
 @endpush
