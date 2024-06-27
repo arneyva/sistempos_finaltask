@@ -1,7 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>All Sales Return</h1>
+    <h1>
+        All Sales Return</h1>
     <p>Look All your sales return</p>
 @endsection
 
@@ -143,9 +144,21 @@
                                     <td>{{ $item->sale->Ref ?? '?' }}</td>
                                     <td>{{ $item->client->name }}</td>
                                     <td>{{ $item->warehouse->name }}</td>
-                                    <td>{{ $item->statut }}</td>
+                                    <td>
+                                        @if ($item->statut == 'received')
+                                            <span class="status-completed">received</span>
+                                        @else
+                                            <span class="status-ordered">ordered</span>
+                                        @endif
+                                    </td>
                                     <td>Rp. {{ number_format($item->GrandTotal, 2, ',', '.') }}</td>
-                                    <td>{{ $item->payment_statut }}</td>
+                                    <td>
+                                        @if ($item->payment_statut == 'paid')
+                                            <span class="payment-paid">paid</span>
+                                        @else
+                                            <span class="payment-unpaid">unpaid</span>
+                                        @endif
+                                    </td>
                                     <td> <svg xmlns="http://www.w3.org/2000/svg" width="4em" height="4em"
                                             viewBox="0 0 24 24" class="dropdown-toggle"
                                             id="dropdownMenuButton{{ $item->id }}" data-bs-toggle="dropdown"

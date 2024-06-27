@@ -4,8 +4,117 @@
     <h1>All Sales</h1>
     <p>Look All your sales</p>
 @endsection
-
 <style>
+    .status-completed {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #c9f1c4;
+        color: #0f4c11;
+        border: 1px solid #0f4c11;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
+    .status-ordered {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #eff1c4;
+        color: #4c4b0f;
+        border: 1px solid #4c4b0f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
+    .status-pending {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #f1c4c4;
+        color: #4c0f0f;
+        border: 1px solid #4c0f0f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
+    .payment-paid {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #c4d9f1;
+        color: #105e7f;
+        border: 1px solid #105e7f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
+    .payment-unpaid {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #f0c4f1;
+        color: #7f107b;
+        border: 1px solid #7f107b;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
+    .payment-partial {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #f1dcc4;
+        color: #7f6710;
+        border: 1px solid #7f6710;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
+    .shipping-shipped {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #c4c8f1;
+        color: #33107f;
+        border: 1px solid #33107f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
+    .shipping-delivered {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #c4f1d1;
+        color: #107f2c;
+        border: 1px solid #107f2c;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
+    .shipping-packed {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #b19785;
+        color: #583606;
+        border: 1px solid #583606;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
+    .shipping-cancelled {
+        padding: 7px;
+        border-radius: 7px;
+        background-color: #f1c4e1;
+        color: #7f104f;
+        border: 1px solid #7f104f;
+        /* Outline color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        /* Shadow */
+    }
+
     .warehousedeleted {
         padding: 7px;
         border-radius: 7px;
@@ -156,9 +265,23 @@
                                     <td>{{ $item->user->firstname }} {{ $item->user->lastname }}</td>
                                     <td>{{ $item->client->name }}</td>
                                     <td>{{ $item->warehouse->name }}</td>
-                                    <td>{{ $item->statut }}</td>
+                                    <td>
+                                        @if ($item->statut == 'completed')
+                                            <span class="status-completed">completed</span>
+                                        @elseif($item->statut == 'pending')
+                                            <span class="status-pending">pending</span>
+                                        @else
+                                            <span class="status-ordered">ordered</span>
+                                        @endif
+                                    </td>
                                     <td>{{ 'Rp ' . number_format($item->GrandTotal, 2, ',', '.') }}</td>
-                                    <td>{{ $item->payment_statut }}</td>
+                                    <td>
+                                        @if ($item->payment_statut == 'paid')
+                                            <span class="payment-paid">paid</span>
+                                        @else
+                                            <span class="payment-unpaid">unpaid</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         @if ($item->shipping_status == 'shipped' && $item->shipping != null)
                                             <span class="btn btn-outline-success btn-sm">Shipped</span>
