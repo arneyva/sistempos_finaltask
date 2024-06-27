@@ -17,7 +17,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Create Transfer</h4>
+                            <h4 class="card-title">Edit Transfer</h4>
                         </div>
                     </div>
                     {{--  --}}
@@ -444,63 +444,5 @@
                 $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
             }
         });
-    </script>
-    <script>
-        // $('#selectProduct').on('change', function() {
-        //     var productId = $(this).val();
-        //     var warehouseId = $('#selectWarehouse').val();
-        //     var variantId = $(this).find(':selected').data('variant-id') || null;
-
-        //     if (productId && warehouseId) {
-        //         $.ajax({
-        //             url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
-        //                 warehouseId,
-        //             type: "GET",
-        //             dataType: "json",
-        //             success: function(data) {
-        //                 var row = '<tr>';
-        //                 row += '<td>#</td>';
-        //                 row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-        //                 row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
-        //                 row += '<td>' + data.qty + ' ' + data.unitPurchase + '</td>';
-        //                 row +=
-        //                     '<td><input type="number" class="form-control item-quantity" name="details[' +
-        //                     data.id + '_' + variantId +
-        //                     '][quantity]" value="0" min="0" data-unit-cost="' + data
-        //                     .Unit_cost + '" data-tax-percent="' + data.tax_percent +
-        //                     '" data-tax-method="' + data.tax_method + '"></td>';
-        //                 row += '<td class="item-discount">0</td>';
-        //                 row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
-        //                 row += '<td class="item-total">Rp 0</td>';
-        //                 row +=
-        //                     '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][product_id]" value="' + data.id + '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][product_variant_id]" value="' + (variantId ||
-        //                         '') + '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][purchase_unit_id]" value="' + data
-        //                     .purchase_unit_id + '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][Unit_cost]" value="' + data.Unit_cost +
-        //                     '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][tax_percent]" value="' + data.tax_percent +
-        //                     '"></td>';
-        //                 row += '<td><input type="hidden" name="details[' + data.id + '_' +
-        //                     variantId + '][tax_method]" value="' + data.tax_method +
-        //                     '"></td>';
-        //                 row +=
-        //                     '<td><input type="hidden" class="item-subtotal" name="details[' +
-        //                     data.id + '_' + variantId + '][subtotal]" value="0"></td>';
-        //                 row += '</tr>';
-
-        //                 $('#product-table-body').append(row);
-        //                 updateGrandTotal();
-        //             }
-        //         });
-        //     }
-        // });
     </script>
 @endpush

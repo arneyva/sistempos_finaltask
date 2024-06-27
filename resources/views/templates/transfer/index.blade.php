@@ -280,7 +280,8 @@
                                                     @method('PATCH')
                                                 </form>
                                                 <a href="#"
-                                                    onclick="event.preventDefault(); document.getElementById('confirm-form-{{ $item['id'] }}').submit();" style="color: #F24D4D">
+                                                    style="{{ $item['statut'] == 'completed' ? 'color: red;' : '' }}"
+                                                    onclick="event.preventDefault(); document.getElementById('confirm-form-{{ $item['id'] }}').submit();">
                                                     <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                         xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M13.7476 20.4428H21.0002" stroke="currentColor"

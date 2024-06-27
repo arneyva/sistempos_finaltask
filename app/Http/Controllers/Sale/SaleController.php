@@ -33,11 +33,13 @@ class SaleController extends Controller
     {
         $user_auth = auth()->user();
         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        //  berdasarkan role user yang login
         if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
             $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales', 'shipment'])->where('deleted_at', '=', null)->latest();
         } else {
             $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales', 'shipment'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
         }
+        // filtring
         if ($request->filled('date')) {
             $saleQuery->whereDate('date', '=', $request->input('date'));
         }
@@ -60,14 +62,17 @@ class SaleController extends Controller
         if ($request->filled('shipping_status')) {
             $saleQuery->where('shipping_status', '=', $request->input('shipping_status'));
         }
+        // menampilkan data hasil filtering dan dipaginasi
         $sale = $saleQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        // mendapatkan data warehouse berdasarkan role user yang login
         if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
             $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         } else {
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
+        // mendapatkan data clinet berdasarkan role user yang login
         $client = Client::where('deleted_at', '=', null)->get(['id', 'name']);
-
+        // mengirim data ke client
         return view('templates.sale.index', [
             'sale' => $sale,
             'warehouse' => $warehouses,
@@ -135,12 +140,6 @@ class SaleController extends Controller
 
         return $pdf->download("sales_{$timestamp}.pdf");
     }
-
-    // public function shipments()
-    // {
-    //     return view('templates.sale.shipments');
-    // }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -401,11 +400,13 @@ class SaleController extends Controller
      */
     public function show(Request $request, $id)
     {
+        // mendpaatkan data berdasarkan id
         $sale_data = Sale::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
 
-        $details = [];
+        $details = []; //menyimpan data detail sale
+        // proses mendapatkan data detail sale
         $sale_details['Ref'] = $sale_data->Ref;
         $sale_details['date'] = $sale_data->date;
         $sale_details['note'] = $sale_data->notes;
@@ -424,7 +425,7 @@ class SaleController extends Controller
         $sale_details['paid_amount'] = number_format($sale_data->paid_amount, 2, '.', '');
         $sale_details['due'] = number_format($sale_details['GrandTotal'] - $sale_details['paid_amount'], 2, '.', '');
         $sale_details['payment_status'] = $sale_data->payment_statut;
-
+        // pengecekan apakah ada data sale return berdasarkan id sale
         if (SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->exists()) {
             $sellReturn = SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->first();
             $sale_details['salereturn_id'] = $sellReturn->id;
@@ -491,14 +492,7 @@ class SaleController extends Controller
 
             $details[] = $data;
         }
-
-        $company = Setting::where('deleted_at', '=', null)->first();
-
-        // return response()->json([
-        //     'details' => $details,
-        //     'sale' => $sale_details,
-        //     'company' => $company,
-        // ]);
+        $company = Setting::where('deleted_at', '=', null)->first(); //mengambil data setting company
         return view(
             'templates.sale.show',
             [

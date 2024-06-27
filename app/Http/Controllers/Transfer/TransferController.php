@@ -708,16 +708,7 @@ class TransferController extends Controller
                     $TransDetail['product_variant_id'] = $product_detail['product_variant_id'];
                     $TransDetail['cost'] = $product_detail['Unit_cost'];
                     $TransDetail['TaxNet'] = $product_detail['tax_percent'];
-                    // $TransDetail['tax_method'] = $product_detail['tax_method'];
-                    // $TransDetail['discount'] = $product_detail['discount'];
-                    // $TransDetail['discount_method'] = $product_detail['discount_Method'];
                     $TransDetail['total'] = $product_detail['subtotal'];
-
-                    // if (!in_array($product_detail['id'], $old_products_id)) {
-                    //     TransferDetail::Create($TransDetail);
-                    // } else {
-                    //     TransferDetail::where('id', $product_detail['id'])->update($TransDetail);
-                    // }
                     if (!isset($product_detail['id']) || !in_array($product_detail['id'], $old_products_id)) {
                         TransferDetail::create($TransDetail);
                     } else {

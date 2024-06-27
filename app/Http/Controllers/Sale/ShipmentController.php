@@ -14,8 +14,6 @@ class ShipmentController extends Controller
 {
     public function store(Request $request)
     {
-        // $this->authorizeForUser($request->user('api'), 'create', Shipment::class);
-
         request()->validate([
             'status' => 'required',
         ]);

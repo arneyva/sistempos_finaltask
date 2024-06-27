@@ -27,9 +27,10 @@
 
     <!-- Customizer Css -->
     <link rel="stylesheet" href="{{ asset('hopeui/html/assets/css/customizer.min.css') }}">
-    
+
     <!-- Customizer Css -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('hopeui/html/assets/vendor/flag-icon-css/css/flag-icons.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+        href="{{ asset('hopeui/html/assets/vendor/flag-icon-css/css/flag-icons.min.css') }}">
 
     <!-- RTL Css -->
     <link rel="stylesheet" href="{{ asset('hopeui/html/assets/css/rtl.min.css') }}">
@@ -44,9 +45,127 @@
     <link rel="apple-touch-icon" href="{{ asset('logo.PNG') }}">
     <link rel="manifest" href="{{ asset('/manifest.json') }}">
     <style>
-    .my-custom-swal {
-      margin-top: 60px; /* Atau gunakan persentase, misalnya 10% */
-    }
+        .my-custom-swal {
+            margin-top: 60px;
+            /* Atau gunakan persentase, misalnya 10% */
+        }
+
+        .status-completed {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #c9f1c4;
+            color: #0f4c11;
+            border: 1px solid #0f4c11;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .status-ordered {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #eff1c4;
+            color: #4c4b0f;
+            border: 1px solid #4c4b0f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .status-pending {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #f1c4c4;
+            color: #4c0f0f;
+            border: 1px solid #4c0f0f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .payment-paid {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #c4d9f1;
+            color: #105e7f;
+            border: 1px solid #105e7f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .payment-unpaid {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #f0c4f1;
+            color: #7f107b;
+            border: 1px solid #7f107b;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .payment-partial {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #f1dcc4;
+            color: #7f6710;
+            border: 1px solid #7f6710;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .shipping-shipped {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #c4c8f1;
+            color: #33107f;
+            border: 1px solid #33107f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .shipping-delivered {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #c4f1d1;
+            color: #107f2c;
+            border: 1px solid #107f2c;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .shipping-packed {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #b19785;
+            color: #583606;
+            border: 1px solid #583606;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .shipping-cancelled {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #f1c4e1;
+            color: #7f104f;
+            border: 1px solid #7f104f;
+            /* Outline color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            /* Shadow */
+        }
+
+        .warehousedeleted {
+            padding: 7px;
+            border-radius: 7px;
+            background-color: #ffefef;
+            color: #F24D4D;
+        }
     </style>
     @stack('style')
 
@@ -438,38 +557,38 @@
         } else {
             console.error("Service workers are not supported.");
         }
-        </script>
+    </script>
     <script>
         $("document").ready(function() {
             setTimeout(function() {
                 $("div.alert1").remove();
             }, 1500); // secs
         });
-        </script>
+    </script>
     {{-- sweetalert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        @if(session('success'))
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            customClass: {
-                popup: 'my-custom-swal' 
-            },
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
+        @if (session('success'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'my-custom-swal'
+                },
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
             });
             Toast.fire({
-            icon: "success",
-            title: "{{ session('success') }}"
+                icon: "success",
+                title: "{{ session('success') }}"
             });
         @endif
-        @if($errors->any())
+        @if ($errors->any())
             let errors = {!! json_encode($errors->all()) !!};
             let errorList = '<ol>' + errors.map(function(error) {
                 return '<li style="text-align: start">' + error + '</li>';
@@ -479,10 +598,10 @@
                 icon: 'error',
                 title: 'Oops...',
                 html: errorList,
-                
+
             });
         @endif
-        @if(session('warning'))
+        @if (session('warning'))
             let error = '{{ session('warning') }}';
             Swal.fire({
                 icon: 'error',
@@ -490,7 +609,7 @@
                 text: error,
             });
         @endif
-        @if(session('error'))
+        @if (session('error'))
             let error = '{{ session('error') }}';
             Swal.fire({
                 icon: 'error',
