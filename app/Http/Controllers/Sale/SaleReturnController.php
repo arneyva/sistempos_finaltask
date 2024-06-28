@@ -27,11 +27,13 @@ class SaleReturnController extends Controller
     {
         $user_auth = auth()->user();
         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+        //  berdasarkan role user yang login
         if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
             $salereturnQuery = SaleReturn::query()->with(['sale', 'facture', 'client', 'warehouse'])->where('deleted_at', '=', null)->latest();
         } else {
             $salereturnQuery = SaleReturn::query()->with(['sale', 'facture', 'client', 'warehouse'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
         }
+        // filtering
         if ($request->filled('date')) {
             $salereturnQuery->whereDate('date', '=', $request->input('date'));
         }
@@ -48,14 +50,17 @@ class SaleReturnController extends Controller
         if ($request->filled('statut')) {
             $salereturnQuery->where('statut', '=', $request->input('statut'));
         }
+        // menampilkan data hasil filtering dan dipaginasi
         $salereturn = $salereturnQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        // mendapatkan data warehouse berdasarkan role user yang login
         if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
             $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         } else {
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
+        // mendapatkan data clinet berdasarkan role user yang login
         $client = Client::where('deleted_at', '=', null)->get(['id', 'name']);
-
+        // mengirim data ke frontend
         return view('templates.sale.return_index', [
             'salereturn' => $salereturn,
             'warehouse' => $warehouses,
@@ -141,37 +146,18 @@ class SaleReturnController extends Controller
             $data['sale_unit_id'] = $unit ? $unit->id : '';
             $data['is_imei'] = $detail['product']['is_imei'];
             $data['imei_number'] = $detail->imei_number;
-
-            // if ($detail->discount_method == 'nodiscount') {
-            //     $data['DiscountNet'] = $detail->discount;
-            // } else {
-            //     $data['DiscountNet'] = $detail->price * $detail->discount / 100;
-            // }
             if ($detail->discount_method == 'discount') {
                 $data['DiscountNet'] = $detail->discount;
             } else {
                 $data['DiscountNet'] = $detail->price * $detail->discount / 100;
             }
-            // $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
+
             $tax_price = $detail->TaxNet * ($detail->price / 100);
             $data['Unit_price'] = $detail->price;
             $data['tax_percent'] = $detail->TaxNet;
             $data['tax_method'] = $detail->tax_method;
             $data['discount'] = $detail->discount;
             $data['discount_method'] = $detail->discount_method;
-
-            // if ($detail->tax_method == 'Exclusive') {
-
-            //     $data['Net_price'] = $detail->price - $data['DiscountNet'];
-            //     $data['taxe'] = $tax_price;
-            //     $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
-            // } else {
-            //     $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
-            //     $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
-            //     $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
-            // }
-
-            // $details[] = $data;
             if ($detail->tax_method == 'Exclusive') {
                 $data['Net_price'] = $detail->price - $data['DiscountNet'];
                 $data['taxe'] = $tax_price;

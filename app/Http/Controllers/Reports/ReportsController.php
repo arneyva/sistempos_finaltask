@@ -43,11 +43,13 @@ class ReportsController extends Controller
 {
     public function payments(Request $request)
     {
+        // mendapatkan data payment
         $paymentsQuery = DB::table('payment_sales')
             ->where('payment_sales.deleted_at', '=', null)
             ->join('sales', 'payment_sales.sale_id', '=', 'sales.id')
             ->join('clients', 'sales.client_id', '=', 'clients.id')
             ->latest('payment_sales.date');
+        // proses filtering
         if ($request->filled('search')) {
             $paymentsQuery->where(function ($query) use ($request) {
                 $query->orWhere('payment_sales.Ref', 'LIKE', '%' . $request->input('search') . '%')
@@ -55,6 +57,7 @@ class ReportsController extends Controller
                     ->orWhere('payment_sales.Reglement', 'LIKE', '%' . $request->input('search') . '%');
             });
         }
+        // mengambil data yang sudah difilter dan dipaginasi
         $payments = $paymentsQuery->select(
             'payment_sales.date',
             'payment_sales.Ref AS Payment_Ref',
@@ -63,8 +66,8 @@ class ReportsController extends Controller
             'payment_sales.montant',
             'clients.name AS client_name'
         )->paginate($request->input('limit', 10))->appends($request->except('page'));
-        // dd($payments);
         $paymentDetails = [];
+        // proses menampilkan data
         foreach ($payments as $payment) {
             $item = [
                 'date' => $payment->date,
@@ -77,8 +80,7 @@ class ReportsController extends Controller
 
             $paymentDetails[] = $item;
         }
-        // dd($paymentDetails);
-        // return view('templates.reports.payments');
+        //mengirim data ke frontend
         return view('templates.reports.payments.payments-sale', [
             'payments' => $payments,
             'paymentDetails' => $paymentDetails
@@ -755,81 +757,6 @@ class ReportsController extends Controller
     {
         return view('templates.reports.quantity-alerts');
     }
-
-    // public function stock()
-    // {
-    //     return view('templates.reports.stock');
-    // }
-    // public function stock(request $request)
-    // {
-    //     $data = array();
-    //     //get warehouses assigned to user
-    //     $user_auth = auth()->user();
-    //     if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
-    //         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
-    //     } else {
-    //         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
-    //         $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
-    //     }
-    //     $products_dataQuery = Product::with('unit', 'category', 'brand')
-    //         ->where('deleted_at', '=', null)->latest();
-    //     if ($request->filled('search')) {
-    //         $products_dataQuery->where(function ($query) use ($request) {
-    //             $query->where('products.name', 'LIKE', '%' . $request->input('search') . '%')
-    //                 ->orWhere('products.code', 'LIKE', '%' . $request->input('search') . '%')
-    //                 ->orWhere(function ($query) use ($request) {
-    //                     $query->whereHas('category', function ($q) use ($request) {
-    //                         $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
-    //                     });
-    //                 });
-    //         });
-    //     }
-    //     $products =  $products_dataQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
-
-    //     foreach ($products as $product) {
-    //         if ($product->type != 'is_service') {
-
-    //             $item['id'] = $product->id;
-    //             $item['code'] = $product->code;
-    //             $item['name'] = $product->name;
-    //             $item['category'] = $product['category']->name;
-
-    //             $current_stock = ProductWarehouse::where('product_id', $product->id)
-    //                 ->where('deleted_at', '=', null)
-    //                 ->whereIn('warehouse_id', $warehouses_id)
-    //                 ->where(function ($query) use ($request) {
-    //                     return $query->when($request->filled('warehouse_id'), function ($query) use ($request) {
-    //                         return $query->where('warehouse_id', $request->warehouse_id);
-    //                     });
-    //                 })
-    //                 ->sum('qty');
-
-    //             $item['quantity'] = $current_stock . ' ' . $product['unit']->ShortName;
-
-    //             $data[] = $item;
-    //         } else {
-
-    //             $item['id'] = $product->id;
-    //             $item['code'] = $product->code;
-    //             $item['name'] = $product->name;
-    //             $item['category'] = $product['category']->name;
-    //             $item['quantity'] = '---';
-
-    //             $data[] = $item;
-    //         }
-    //     }
-    //     return view('templates.reports.stock', [
-    //         'report' => $data,
-    //         'products' => $products,
-    //         'warehouses' => $warehouses,
-    //     ]);
-    //     return view('templates.reports.stock');
-    //     return response()->json([
-    //         'report' => $data,
-    //         'products' => $products,
-    //         'warehouses' => $warehouses,
-    //     ]);
-    // }
     public function stockDetail($id)
     {
         return view('templates.reports.stock.stock-detail');
@@ -896,93 +823,7 @@ class ReportsController extends Controller
             'products' => $products,
             'warehouses' => $warehouses,
         ]);
-        return response()->json([
-            'report' => $data,
-            'products' => $products,
-            'warehouses' => $warehouses,
-        ]);
     }
-    // public function stockDetailSales(request $request, $id)
-    // {
-    //     $sale_details_dataQuery = SaleDetail::with('product', 'sale', 'sale.client', 'sale.warehouse')
-    //         ->where('product_id', $id)->latest();
-    //     // dd($sale_details_dataQuery);
-    //     if ($request->filled('search')) {
-    //         $sale_details_dataQuery->where(function ($query) use ($request) {
-    //             $query->orWhereHas('sale.client', function ($q) use ($request) {
-    //                 $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
-    //             })
-    //                 ->orWhereHas('sale.warehouse', function ($q) use ($request) {
-    //                     $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
-    //                 })
-    //                 ->orWhereHas('sale', function ($q) use ($request) {
-    //                     $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%')
-    //                         ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
-    //                         ->orWhere('payment_statut', 'LIKE', '%' . $request->input('search') . '%')
-    //                         ->orWhere('payment_method', 'LIKE', '%' . $request->input('search') . '%')
-    //                         ->orWhere('shipping_status', 'LIKE', '%' . $request->input('search') . '%');
-    //                 })
-    //                 ->orWhereHas('product', function ($q) use ($request) {
-    //                     $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
-    //                 });
-    //         });
-    //     }
-    //     $sale_details =  $sale_details_dataQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
-    //     $data = [];
-    //     foreach ($sale_details as $detail) {
-    //         //check if detail has sale_unit_id Or Null
-    //         if ($detail->sale_unit_id !== null) {
-    //             $unit = Unit::where('id', $detail->sale_unit_id)->first();
-    //         } else {
-    //             $product_unit_sale_id = Product::with('unitSale')
-    //                 ->where('id', $detail->product_id)
-    //                 ->first();
-
-    //             if ($product_unit_sale_id['unitSale']) {
-    //                 $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
-    //             } {
-    //                 $unit = NULL;
-    //             }
-    //         }
-
-    //         if ($detail->product_variant_id) {
-    //             $productsVariants = ProductVariant::where('product_id', $detail->product_id)
-    //                 ->where('id', $detail->product_variant_id)->first();
-
-    //             $product_name = '[' . $productsVariants->name . ']' . $detail['product']['name'];
-    //         } else {
-    //             $product_name = $detail['product']['name'];
-    //         }
-
-    //         $item['date'] = $detail->date;
-    //         $item['Ref'] = $detail['sale']->Ref;
-    //         $item['sale_id'] = $detail['sale']->id;
-    //         $item['client_name'] = $detail['sale']['client']->name;
-    //         $item['unit_sale'] = $unit ? $unit->ShortName : '';
-    //         $item['warehouse_name'] = $detail['sale']['warehouse']->name;
-    //         $item['quantity'] = $detail->quantity . ' ' . $item['unit_sale'];
-    //         $item['total'] = $detail->total;
-    //         $item['product_name'] = $product_name;
-
-    //         $data[] = $item;
-    //     }
-    // $current_stock = ProductWarehouse::where('product_id', $id)
-    //     ->where('deleted_at', '=', null)
-    //     ->where(function ($query) use ($request) {
-    //         return $query->when($request->filled('warehouse_id'), function ($query) use ($request) {
-    //             return $query->where('warehouse_id', $request->warehouse_id);
-    //         });
-    //     })
-    //     ->sum('qty');
-    //     return view('templates.reports.stock.stock-detail-sales', [
-    //         'sales' => $data,
-    //         'sale_details' => $sale_details,
-    //     ]);
-    //     return response()->json([
-    //         'sales' => $data,
-    //         'sale_details' => $sale_details,
-    //     ]);
-    // }
     public function stockDetailSales(Request $request, $id)
     {
         $product = Product::where('deleted_at', '=', null)->findOrFail($id);
@@ -1062,14 +903,12 @@ class ReportsController extends Controller
             $a['unit'] = $value->product->unit->ShortName;
             $b[] = $a;
         }
-        // dd($b);
         return view('templates.reports.stock.stock-detail-sales', [
             'sales' => $data,
             'sale_details' => $sale_details,
             'product' => $product,
             'b' => $b
         ]);
-        return response()->json($data);
     }
     public function stockDetailSalesReturn(request $request, $id)
     {
@@ -2492,12 +2331,6 @@ class ReportsController extends Controller
             $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
-        // return response()->json([
-        //     'totalRows' => $totalRows,
-        //     'purchases' => $data,
-        //     'suppliers' => $suppliers,
-        //     'warehouses' => $warehouses,
-        // ]);
         return view('templates.reports.purchase', [
             'purchases' => $Purchases,
             'purchases_data' => $Purchases_data,

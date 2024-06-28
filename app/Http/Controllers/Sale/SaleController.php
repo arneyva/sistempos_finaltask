@@ -39,7 +39,7 @@ class SaleController extends Controller
         } else {
             $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales', 'shipment'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
         }
-        // filtring
+        // filtering
         if ($request->filled('date')) {
             $saleQuery->whereDate('date', '=', $request->input('date'));
         }
@@ -72,7 +72,7 @@ class SaleController extends Controller
         }
         // mendapatkan data clinet berdasarkan role user yang login
         $client = Client::where('deleted_at', '=', null)->get(['id', 'name']);
-        // mengirim data ke client
+        // mengirim data ke frontend
         return view('templates.sale.index', [
             'sale' => $sale,
             'warehouse' => $warehouses,
@@ -145,10 +145,17 @@ class SaleController extends Controller
      */
     public function create()
     {
-        $warehouse = Warehouse::query()->get();
+        $user_auth = auth()->user();
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+        } else {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+            $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
+        }
+        // $warehouse = Warehouse::query()->get();
         $client = Client::query()->get();
 
-        return view('templates.sale.create', ['warehouse' => $warehouse, 'client' => $client]);
+        return view('templates.sale.create', ['warehouse' => $warehouses, 'client' => $client]);
     }
     //------------- Reference Number Order SALE -----------\\
 
