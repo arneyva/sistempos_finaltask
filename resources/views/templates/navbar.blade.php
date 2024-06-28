@@ -249,7 +249,7 @@
                         <img src="{{ asset('hopeui/html/assets/images/avatars/avtar_3.png') }}" alt="User-Profile"
                             class="theme-color-pink-img img-fluid avatar avatar-50 avatar-rounded">
                         <div class="caption ms-3 d-none d-md-block ">
-                            <h6 class="mb-0 caption-title">{{ Auth::user()->username }}</h6>
+                            <h6 class="mb-0 caption-title">{{ Auth::user()->lastname }}</h6>
                             {{-- <h6 class="mb-0 caption-title">User</h6> --}}
                             <p class="mb-0 caption-sub-title">Marketing Administrator</p>
                         </div>

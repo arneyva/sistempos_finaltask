@@ -121,7 +121,7 @@
                                 <span class="item-name">All Product</span>
                             </a>
                         </li>
-                        @role('superadmin')
+                        @role('underdev')
                             <li class="nav-item">
                                 <a class="nav-link " href="../dashboard/index-dual-compact.html">
                                     <i class="icon svg-icon">
@@ -608,21 +608,23 @@
                         </i>
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-form" data-bs-parent="#sidebar-menu">
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('transfer.create') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> E </i>
-                                <span class="item-name">Create Transfer</span>
-                            </a>
-                        </li>
+                        @role('superadmin|inventaris')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('transfer.create') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> E </i>
+                                    <span class="item-name">Create Transfer</span>
+                                </a>
+                            </li>
+                        @endrole
                         <li class="nav-item">
                             <a class="nav-link " href="{{ route('transfer.index') }}">
                                 <i class="icon">
@@ -854,6 +856,23 @@
                                     </i>
                                     <i class="sidenav-mini-icon"> C </i>
                                     <span class="item-name">Membership</span>
+                                </a>
+                            </li>
+                        @endrole
+                        @role('superadmin')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('settings.company.edit') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> B </i>
+                                    <span class="item-name">Company Setting</span>
                                 </a>
                             </li>
                         @endrole

@@ -24,6 +24,7 @@ use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\Settings\CompanyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -202,6 +203,8 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     Route::get('purchase', [ReportsController::class, 'purchase'])->name('purchase');
 });
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
+    Route::patch('company/update/{id}', [CompanyController::class, 'update'])->name('company.update');
+    Route::get('company/edit', [CompanyController::class, 'edit'])->name('company.edit');
     Route::prefix('warehouses')->name('warehouses.')->group(function () {
         Route::get('list', [WarehousesController::class, 'index'])->name('index');
         Route::get('detail/{id}', [WarehousesController::class, 'show'])->name('show');
