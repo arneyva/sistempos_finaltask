@@ -484,12 +484,19 @@ class ProductController extends Controller
                         ->where('deleted_at', '=', null)
                         ->where('warehouse_id', $warehouse->id)
                         ->where('product_variant_id', $variant->id)
-                        ->select(DB::raw('SUM(product_warehouse.qty) AS sum, stock_alert'))
+                        ->select(
+                            DB::raw('SUM(product_warehouse.qty) AS sum'),
+                            'stock_alert',
+                            'quantity_discount',
+                            'discount_percentage'
+                        )
                         ->first();
                     $war_var['mag'] = $warehouse->name;
                     $war_var['variant'] = $variant->name;
                     $war_var['qte'] = $product_warehouse->sum;
                     $war_var['stock_alert'] = $product_warehouse->stock_alert;
+                    $war_var['quantity_discount'] = $product_warehouse->quantity_discount; // Tambahkan stock_alert
+                    $war_var['discount_percentage'] = $product_warehouse->discount_percentage; // Tambahkan stock_alert
                     $item['CountQTY_variants'][] = $war_var;
                 }
             }
@@ -503,12 +510,19 @@ class ProductController extends Controller
                 ->where('product_id', $id)
                 ->where('deleted_at', '=', null)
                 ->where('warehouse_id', $warehouse->id)
-                ->select(DB::raw('SUM(product_warehouse.qty) AS sum, stock_alert'))
+                ->select(
+                    DB::raw('SUM(product_warehouse.qty) AS sum'),
+                    'stock_alert',
+                    'quantity_discount',
+                    'discount_percentage'
+                )
                 ->first();
 
             $war['mag'] = $warehouse->name;
             $war['qty'] = $product_warehouse_data->sum;
             $war['stock_alert'] = $product_warehouse_data->stock_alert; // Tambahkan stock_alert
+            $war['quantity_discount'] = $product_warehouse_data->quantity_discount; // Tambahkan stock_alert
+            $war['discount_percentage'] = $product_warehouse_data->discount_percentage; // Tambahkan stock_alert
             $item['CountQTY'][] = $war;
         }
 
@@ -518,50 +532,60 @@ class ProductController extends Controller
             'data' => $data,
         ]);
     }
-
     public function updateAlertStock(Request $request)
     {
         $product_id = $request->input('product_id');
         $stock_alerts = $request->input('stock_alert');
+        $quantity_discounts = $request->input('quantity_discount');
+        $discount_percentages = $request->input('discount_percentage');
 
         // Mengambil informasi produk
         $product = Product::findOrFail($product_id);
-
-        // Jika produk adalah tipe variant
         if ($product->is_variant) {
-            foreach ($stock_alerts as $variant_name => $warehouses) {
-                foreach ($warehouses as $warehouse_name => $stock_alert) {
+            foreach ($stock_alerts as $variant_name => $warehouseData) {
+                foreach ($warehouseData as $warehouse_name => $stock_alert) {
                     $variant = ProductVariant::where('name', $variant_name)->first();
-                    $warehouseModel = Warehouse::where('name', $warehouse_name)->first();
+                    $warehouse = Warehouse::where('name', $warehouse_name)->first();
 
-                    if ($variant && $warehouseModel) {
+                    if ($variant && $warehouse) {
                         DB::table('product_warehouse')
                             ->where('product_id', $product_id)
                             ->where('product_variant_id', $variant->id)
-                            ->where('warehouse_id', $warehouseModel->id)
-                            ->update(['stock_alert' => $stock_alert]);
+                            ->where('warehouse_id', $warehouse->id)
+                            ->update([
+                                'stock_alert' => $stock_alert,
+                                'quantity_discount' => $quantity_discounts[$variant_name][$warehouse_name] ?? 0,
+                                'discount_percentage' => $discount_percentages[$variant_name][$warehouse_name] ?? 0
+                            ]);
                     }
                 }
             }
         } else {
             // Jika produk bukan tipe variant
             foreach ($stock_alerts as $warehouse_name => $stock_alert) {
-                $warehouseModel = Warehouse::where('name', $warehouse_name)->first();
+                $warehouse = Warehouse::where('name', $warehouse_name)->first();
 
-                if ($warehouseModel) {
-                    DB::table('product_warehouse')
+                if ($warehouse) {
+                    $productWarehouse = DB::table('product_warehouse')
                         ->where('product_id', $product_id)
-                        ->whereNull('product_variant_id') // Untuk produk bukan variant, product_variant_id = NULL
-                        ->where('warehouse_id', $warehouseModel->id)
-                        ->update(['stock_alert' => $stock_alert]);
+                        ->whereNull('product_variant_id')
+                        ->where('warehouse_id', $warehouse->id)
+                        ->first();
+
+                    if ($productWarehouse) {
+                        DB::table('product_warehouse')
+                            ->where('id', $productWarehouse->id)
+                            ->update([
+                                'stock_alert' => $stock_alert,
+                                'discount_percentage' => $discount_percentages[$warehouse_name] ?? 0,
+                                'quantity_discount' => $quantity_discounts[$warehouse_name] ?? 0
+                            ]);
+                    }
                 }
             }
         }
-
-        return redirect()->route('product.index')->with('success', 'Stock alert updated successfully.');
+        return redirect()->route('product.index')->with('success', 'Stock Alert and Discount Threshold updated successfully.');
     }
-
-
     /**
      * Show the form for editing the specified resource.
      */

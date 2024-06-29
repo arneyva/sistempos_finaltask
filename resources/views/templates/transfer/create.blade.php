@@ -4,7 +4,11 @@
     <h1>Add Transfer</h1>
     <p>Look All your transfer</p>
 @endsection
-
+<style>
+    .hidden-input {
+        display: none;
+    }
+</style>
 @section('content')
     <div class="col-md-12 col-lg-12">
     </div>
@@ -194,6 +198,7 @@
 @endsection
 
 @push('script')
+    <script type="text/javascript" src="{{ asset('hopeui/html/assets/js/multiselect-dropdown.js') }}"></script>
     <script>
         document.getElementById('selectWarehouse').addEventListener('change', function() {
             var fromWarehouse = this.value;
@@ -273,28 +278,64 @@
                             row += '<td class="item-discount">0</td>';
                             row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
+                            // row +=
+                            //     '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
                             row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_id]" value="' + data.id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">';
+                            row +=
+                                '<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 48 48">';
+                            row +=
+                                '<g fill="none" stroke="#FFFFFF" stroke-linejoin="round" stroke-width="4">';
+                            row += '<path d="M9 10v34h30V10z" />';
+                            row +=
+                                '<path stroke-linecap="round" d="M20 20v13m8-13v13M4 10h40" />';
+                            row += '<path d="m16 10l3.289-6h9.488L32 10z" />';
+                            row += '</g>';
+                            row += '</svg>';
+                            row += '</button></td>';
+                            // 
+                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                            //     variantId + '][product_id]" value="' + data.id + '"></td>';
+                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                            //     variantId + '][product_variant_id]" value="' + (variantId ||
+                            //         '') + '"></td>';
+                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                            //     variantId + '][purchase_unit_id]" value="' + data
+                            //     .purchase_unit_id + '"></td>';
+                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                            //     variantId + '][Unit_cost]" value="' + data.Unit_cost +
+                            //     '"></td>';
+                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                            //     variantId + '][tax_percent]" value="' + data.tax_percent +
+                            //     '"></td>';
+                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                            //     variantId + '][tax_method]" value="' + data.tax_method +
+                            //     '"></td>';
+                            // row +=
+                            //     '<td><input type="hidden" class="item-subtotal" name="details[' +
+                            //     data.id + '_' + variantId + '][subtotal]" value="0"></td>';
+                            // row += '</tr>';
+
+                            // Hidden inputs inside a hidden <td>
+                            row += '<td class="hidden-input">';
+                            row += '<input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][product_id]" value="' + data.id + '">';
+                            row += '<input type="hidden" name="details[' + data.id + '_' +
                                 variantId + '][product_variant_id]" value="' + (variantId ||
-                                    '') + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                    '') + '">';
+                            row += '<input type="hidden" name="details[' + data.id + '_' +
                                 variantId + '][purchase_unit_id]" value="' + data
-                                .purchase_unit_id + '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][Unit_cost]" value="' + data.Unit_cost +
-                                '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][tax_percent]" value="' + data.tax_percent +
-                                '"></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][tax_method]" value="' + data.tax_method +
-                                '"></td>';
-                            row +=
-                                '<td><input type="hidden" class="item-subtotal" name="details[' +
-                                data.id + '_' + variantId + '][subtotal]" value="0"></td>';
+                                .purchase_unit_id + '">';
+                            row += '<input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][Unit_cost]" value="' + data.Unit_cost + '">';
+                            row += '<input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][tax_percent]" value="' + data.tax_percent + '">';
+                            row += '<input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][tax_method]" value="' + data.tax_method + '">';
+                            row += '<input type="hidden" class="item-subtotal" name="details[' +
+                                data.id + '_' + variantId + '][subtotal]" value="0">';
+                            row += '</td>';
+
                             row += '</tr>';
 
                             $('#product-table-body').append(row);

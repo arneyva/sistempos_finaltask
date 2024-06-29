@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
-                <form action="{{ route('reports.supplier.index') }}" method="GET">
+                <form action="{{ route('reports.customers.index') }}" method="GET">
                     <div class="input-group search-input">
                         <span class="input-group-text d-inline" id="search-input">
                             <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
