@@ -14,6 +14,7 @@ use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\purchase\PurchaseController;
 use App\Http\Controllers\Reports\ReportsController;
 use App\Http\Controllers\Sale\SaleController;
 use App\Http\Controllers\Sale\SaleReturnController;
@@ -281,6 +282,16 @@ Route::prefix('hrm')->middleware(['auth', 'verified'])->name('hrm.')->group(func
         Route::get('list', [MyAttendanceController::class, 'index'])->name('index');
         Route::post('list', [MyAttendanceController::class, 'checkAttendance'])->name('check');
     });
+});
+Route::prefix('purchases')->middleware(['auth', 'verified'])->name('purchases.')->group(function () {
+    Route::get('list', [PurchaseController::class, 'index'])->name('index');
+    Route::get('create', [PurchaseController::class, 'create'])->name('create');
+    Route::post('store', [PurchaseController::class, 'store'])->name('store');
+    Route::get('detail/{id}', [PurchaseController::class, 'show'])->name('show');
+    Route::patch('update/{id}', [PurchaseController::class, 'update'])->name('update');
+    Route::delete('destroy/{id}', [PurchaseController::class, 'destroy'])->name('destroy');
+    Route::post('scanner/{code}', [PurchaseController::class, 'getFromScanner']);
+    Route::post('supplier/{id}', [PurchaseController::class, 'getSupplier']);
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

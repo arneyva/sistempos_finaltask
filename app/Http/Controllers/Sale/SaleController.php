@@ -340,13 +340,16 @@ class SaleController extends Controller
                 // Mengambil client dari sale
                 $client_sale = Client::find($clientId);
                 if ($client_sale) {
+                    //ambil poin awal client
+                    $initial_poin =  $client_sale->score;
+                    
                     //hitung harga bersih barang
                     if ($detail_sale) {
                         //awali total belanja dari nol 
                         $total_spend = 0;
                         //setiap barang dikurangkan taxnya
                         foreach ($detail_sale->details as $detail) {
-                            $total_spend += $detail->total - ($detail->price * ($detail->TaxNet / 100));
+                            $total_spend += $detail->total - ($detail->price * ($detail->TaxNet/100));
                         }
                         //kurangkan total belanja dengan diskon dari sale
                         $total_spend -= $sale->discount;
@@ -359,11 +362,31 @@ class SaleController extends Controller
                     $score_to_email = $membership_term->score_to_email;
                     $one_score_equal = $membership_term->one_score_equal;
 
-                    //hitung score yang didapat berdasarkan settingan membership
+                    //hitung score yang didapat berdasarkan total yang dibealanjakan
                     $total_score = intdiv($total_spend, $spend_every);
+
+                    //ambil diskon sale dari membership
+                    if($request->discount_client) {
+                        //kurangkan score dengan diskon yang sudah diubah ke score
+                        $total_score -= $request->discount_client / $one_score_equal;
+                    }
 
                     // Menambahkan total_score ke client score
                     $client_sale->score += $total_score;
+
+                    //mencegah score menjadi negatif
+                    if ($client_sale->score <= 0) {
+                        $client_sale->score = 0;
+                    }
+
+                    if ($client_sale->score >= $score_to_email) {
+                        if ($client_sale->is_poin_activated == 0) {
+                            //kirim email ke client
+                        }
+                    } elseif ($client_sale->score / $initial_poin < 0.4) {
+                        //score sudah terlalu kecil sehingga diskon ditutup untuk transaksi berikutnya
+                        $client_sale->is_poin_activated == 0;
+                    }
 
                     // Menyimpan perubahan pada client
                     $client_sale->save();
@@ -371,7 +394,7 @@ class SaleController extends Controller
             }
             //{{=========================================================================}}\\
             //{{==================================================================}}\\
-            //{{==========================================================}}\\
+            //{{==========================================================}}
             // dd($request->all());
         }, 10);
 

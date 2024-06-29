@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Create Supplier</h1>
-<p>Create new user supplier</p>
+<h1>Edit Shift</h1>
+<p>Do Something with a shift data</p>
 @endsection
 
 @push('style')
@@ -86,11 +86,11 @@
         @method('patch')
             <div class="card-body">
                 <div class="row">
-                    <div class="col">
+                    <div class="form-group col-sm-6">
                         <label for="name">Nama Shift</label>
                         <input type="text" class="form-control" value="{{$shift->name}}" id="name" name="name" required>
                     </div>
-                    <div class="col">
+                    <div class="form-group col-sm-6">
                         <label for="location">Lokasi</label>
                         <select class="form-control" id="location" name="location[]" multiple>
                             @foreach($warehouses as $warehouse)
@@ -100,7 +100,6 @@
                     </div>
                 </div>
             </div>
-            <br>
             <br>
             <br>
             <div class="card-body p-0">
@@ -251,13 +250,23 @@
             templateSelected: formatUser,
             matcher: customMatcher
         });
+        $('#itemDropdown').on('select2:open', function() {
+            $('.select2-search__field').select(); // Mengatur fokus ke kotak pencarian
+        });
 
         function formatUser (user) {
             if (!user.id) {
                 return user.text;
             }
             var $user = $(
-                '<div class="d-flex align-items-center"> <img class="img-fluid avatar avatar-50 avatar-rounded" src="/hopeui/html/assets/images/avatars/'+ $(user.element).data('avatar') + '"alt="profile"><a style="margin-right:10px;"><a/><div><h6 class="mb-0 caption-title">'+ user.text + '</h6><p class="mb-0 caption-sub-title">' +  $(user.element).data('pin') + '</p></div></div>'
+                '<div class="d-flex align-items-center">'+ 
+                    '<img class="img-fluid avatar avatar-50 avatar-rounded" src="/hopeui/html/assets/images/avatars/'+ $(user.element).data('avatar') + '"alt="profile">'+
+                    '<a style="margin-right:10px;">'+'<a/>'+
+                    '<div>'+
+                        '<h6 class="mb-0 caption-title">'+ user.text + '</h6>'+
+                        '<p class="mb-0 caption-sub-title">' +  $(user.element).data('pin') + '</p>'+
+                    '</div>'+
+                '</div>'
             );
             return $user;
         };

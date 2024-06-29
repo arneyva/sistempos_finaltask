@@ -145,18 +145,18 @@
                                 <select name="status" class="form-select"  data-style="py-0" >
                                     <option selected disabled hidden value="">Status</option>
                                     @role('superadmin')  
-                                    <option value="0" {{ $expense->status == 0 ? 'selected' : '' }}>Pending</option>
-                                    <option value="1" {{ $expense->status == 1 ? 'selected' : '' }}>Agreed</option>
-                                    <option value="2" {{ $expense->status == 2 ? 'selected' : '' }}>Canceled</option>
+                                    <option value="0" {{ old('status', $expense->status) == 0 ? 'selected' : '' }}>Pending</option>
+                                    <option value="1" {{ old('status', $expense->status) == 1 ? 'selected' : '' }}>Agreed</option>
+                                    <option value="2" {{ old('status', $expense->status) == 2 ? 'selected' : '' }}>Canceled</option>
                                     @endrole
                                     @hasanyrole('staff|inventaris')
                                     @if($expense->status == 0)
-                                    <option value="0" {{ $expense->status == 0 ? 'selected' : '' }}>Pending</option>
-                                    <option value="2" {{ $expense->status == 2 ? 'selected' : '' }}>Canceled</option>
+                                    <option value="0" {{ old('status', $expense->status) == 0 ? 'selected' : '' }}>Pending</option>
+                                    <option value="2" {{ old('status', $expense->status) == 2 ? 'selected' : '' }}>Canceled</option>
                                     @elseif($expense->status == 2)
-                                    <option value="2" {{ $expense->status == 2 ? 'selected' : '' }}>Canceled</option>
+                                    <option value="2" {{ old('status', $expense->status) == 2 ? 'selected' : '' }}>Canceled</option>
                                     @elseif($expense->status == 1)
-                                    <option value="1" {{ $expense->status == 1 ? 'selected' : '' }}>Agreed</option>
+                                    <option value="1" {{ old('status', $expense->status) == 1 ? 'selected' : '' }}>Agreed</option>
                                     @endif
                                     @endhasanyrole
                                 </select>

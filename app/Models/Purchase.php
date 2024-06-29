@@ -47,19 +47,25 @@ class Purchase extends Model
 
     protected $casts = [
         'user_id' => 'int',
+        'checked_by' => 'int',
         'date' => 'datetime',
+        'req_arrive_date' => 'datetime',
+        'estimate_arrive_date' => 'datetime',
         'provider_id' => 'int',
         'warehouse_id' => 'int',
+        'down_payment' => 'int',
         'tax_rate' => 'float',
         'TaxNet' => 'float',
         'discount' => 'float',
         'shipping' => 'float',
         'GrandTotal' => 'float',
         'paid_amount' => 'float',
+        'shipment_cost' => 'float'
     ];
 
     protected $fillable = [
         'user_id',
+        'checked_by',
         'Ref',
         'date',
         'provider_id',
@@ -73,6 +79,18 @@ class Purchase extends Model
         'statut',
         'payment_statut',
         'notes',
+        'payment_method',
+        'payment_term',
+        'courier',
+        'down_payment',
+        'supplier_notes',
+        'req_arrive_date',
+        'estimate_arrive_date',
+        'shipment_number',
+        'shipment_cost',
+        'driver_contact',
+        'barcode',
+        'delivery_file'
     ];
 
     public function provider()
@@ -82,7 +100,12 @@ class Purchase extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function checked_by()
+    {
+        return $this->belongsTo(User::class, 'checked_by');
     }
 
     public function warehouse()

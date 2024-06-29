@@ -81,6 +81,11 @@
                                                 name="country" placeholder="input country">
                                         </div>
                                         <div class="col mb-3">
+                                            <label class="form-label" for="address">Address *</label>
+                                            <textarea class="form-control" id="address" required
+                                                name="address" placeholder="input address"></textarea>
+                                        </div>
+                                        <div class="col mb-3">
                                             <label class="form-label" for="google_maps">Google Maps Link *</label>
                                             <input type="url" class="form-control mb-1" id="google_maps" required
                                                 name="google_maps" placeholder="input Link">
@@ -217,6 +222,14 @@
                                                                         id="country{{ $item->id }}" required
                                                                         name="country" placeholder="input country"
                                                                         value="{{ $item->country }}">
+                                                                </div>
+                                                                <div class="col mb-3">
+                                                                    <label class="form-label"
+                                                                        for="address{{ $item->id }}">Address
+                                                                        *</label>
+                                                                    <textarea class="form-control"
+                                                                        id="address{{ $item->id }}" required
+                                                                        name="address" placeholder="input address">{{ $item->address }}</textarea>
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label" for="google_maps{{ $item->id }}">Google Maps Link *</label>

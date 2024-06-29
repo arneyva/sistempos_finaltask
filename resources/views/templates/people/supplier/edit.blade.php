@@ -151,11 +151,6 @@
                                 <input value="{{ old('alamat_website', $provider->alamat_website) }}" type="text" name="alamat_website"
                                     class="form-control bg-transparent @error('phone') is-invalid @enderror"
                                     id="cname" placeholder="Website Address" required>
-                                <small class=" text-danger font-italic">
-                                    @error('phone')
-                                        {{ $message }}
-                                    @enderror
-                                </small>
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label" for="cname">Lead Time:</label>
@@ -169,14 +164,42 @@
                                     </small>
                                 </div>
                             </div>
+                            <div class="form-group col-md-4">
+                                <label class="form-label" for="lname">Payment Method :</label>
+                                <select name="payment_method" id="payment_method" class="form-control">
+                                    <option value="" select disabled hidden>Payment Method</option>
+                                    <option value="bni" {{ old('payment_method', $provider->payment_method) == 'bni' ? 'selected' : '' }}>BNI</option>
+                                    <option value="bri" {{ old('payment_method', $provider->payment_method) == 'bri' ? 'selected' : '' }}>BRI</option>
+                                    <option value="mandiri" {{ old('payment_method', $provider->payment_method) == 'mandiri' ? 'selected' : '' }}>Mandiri</option>
+                                    <option value="permata" {{ old('payment_method', $provider->payment_method) == 'permata' ? 'selected' : '' }}>Permata</option>
+                                    <option value="bca" {{ old('payment_method', $provider->payment_method) == 'bca' ? 'selected' : '' }}>BCA</option>
+                                    <option value="gopay" {{ old('payment_method', $provider->payment_method) == 'gopay' ? 'selected' : '' }}>Gopay</option>
+                                    <option value="ovo" {{ old('payment_method', $provider->payment_method) == 'ovo' ? 'selected' : '' }}>OVO</option>
+                                    <option value="cash" {{ old('payment_method', $provider->payment_method) == 'cash' ? 'selected' : '' }}>Cash</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="form-label" for="lname">Payment Term :</label>
+                                <select name="payment_term" id="payment_term" class="form-control">
+                                    <option value="" select disabled hidden>Payment Term</option>
+                                    <option value="on_invoice" {{ old('payment_term', $provider->payment_term) == 'on_invoice' ? 'selected' : '' }}>Due on invoice</option>
+                                    <option value="7_invoice" {{ old('payment_term', $provider->payment_term) == '7_invoice' ? 'selected' : '' }}>7 days after invoice</option>
+                                    <option value="14_invoice" {{ old('payment_term', $provider->payment_term) == '14_invoice' ? 'selected' : '' }}>14 Days after Invoice</option>
+                                    <option value="on_arrive" {{ old('payment_term', $provider->payment_term) == 'on_arrive' ? 'selected' : '' }}>Due on arrive</option>
+                                    <option value="7_arrive" {{ old('payment_term', $provider->payment_term) == '7_arrive' ? 'selected' : '' }}>7 days after arrive</option>
+                                    <option value="14_arrive" {{ old('payment_term', $provider->payment_term) == '14_arrive' ? 'selected' : '' }}>14 Days after arrive</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="form-label" for="lname">Down Payment :</label>
+                                <div class="input-group">
+                                    <input type="tel" value="{{ old('down_payment', $provider->down_payment) }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="down_payment" name="down_payment" aria-describedby="basic-addon2">
+                                    <span class="input-group-text" id="basic-addon2">%</span>
+                                </div>
+                            </div>
                             <div class="form-group col-md-12">
                                 <label class="form-label" for="cname">Address:</label>
                                 <textarea class="form-control" name="adresse" placeholder="Address" required>{{ $provider->adresse}}</textarea>
-                                <small class=" text-danger font-italic">
-                                    @error('phone')
-                                        {{ $message }}
-                                    @enderror
-                                </small>
                             </div>
                         </div>
                         <div class="row">

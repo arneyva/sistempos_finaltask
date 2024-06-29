@@ -69,6 +69,9 @@ class WarehousesController extends Controller
                     'url',
                     'size:41',
                 ],
+                'address' => [
+                    'required',
+                ],
             ]);
 
             $gmaps = $request->input('google_maps');
@@ -86,6 +89,7 @@ class WarehousesController extends Controller
                 'email' => $validated['email'],
                 'country' => $validated['country'],
                 'google_maps' => $validated['google_maps'],
+                'address' => $validated['address'],
                 'longitude' => $coordinates['longitude'],
                 'latitude' => $coordinates['latitude'],
             ]);
@@ -162,6 +166,9 @@ class WarehousesController extends Controller
                 'url',
                 'size:41',
             ],
+            'address' => [
+                'required',
+            ],
         ]);
 
         $gmaps = $request->input('google_maps');
@@ -180,6 +187,7 @@ class WarehousesController extends Controller
             'email' => $updateRules['email'],
             'country' => $updateRules['country'],
             'google_maps' => $updateRules['google_maps'],
+            'address' => $updateRules['address'],
             'longitude' => $coordinates['longitude'],
             'latitude' => $coordinates['latitude'],
         ]);
