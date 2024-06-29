@@ -76,6 +76,9 @@ class ProviderController extends Controller
         $provider->alamat_website = $request['alamat_website'];
         $provider->lead_time = $request['lead_time'];
         $provider->nomor_kontak_person = $request['nomor_kontak_person'];
+        $provider->payment_method = $request['payment_method'];
+        $provider->payment_term = $request['payment_term'];
+        $provider->down_payment = $request['down_payment'];
         $provider->save();
 
         return redirect()->route('people.suppliers.index', ['orderBy' => 'name'])->with('success', 'Supplier berhasil ditambahkan');
@@ -125,6 +128,9 @@ class ProviderController extends Controller
             'alamat_website' => $request['alamat_website'],
             'lead_time' => $request['lead_time'],
             'nomor_kontak_person' => $request['nomor_kontak_person'],
+            'payment_method' => $request['payment_method'],
+            'payment_term' => $request['payment_term'],
+            'down_payment' => $request['down_payment'],
         ]);
 
         return back()->with('success', 'Supplier berhasil diedit');

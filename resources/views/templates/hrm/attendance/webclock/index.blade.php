@@ -564,13 +564,10 @@
                             }
                         },
                         error: function (xhr, status, error) {
-                        // Log the error for debugging
-                        console.error('Error: ', error);
-                        console.error('Response: ', xhr.responseText);
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Oops...',
-                                text: 'Terjadi kesalahan saat mengirim data.'
+                                text: 'Terdapat error pada server'
                             });
                         }
                     });

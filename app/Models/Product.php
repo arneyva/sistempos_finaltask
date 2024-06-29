@@ -43,7 +43,7 @@ class Product extends Model
 
     public function PurchaseDetail()
     {
-        return $this->belongsTo('App\Models\PurchaseDetail');
+        return $this->hasMany('App\Models\PurchaseDetail');
     }
 
     public function SaleDetail()

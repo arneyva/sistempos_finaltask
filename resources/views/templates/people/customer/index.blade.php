@@ -308,7 +308,6 @@ document.querySelectorAll('.editBtn').forEach(button => {
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
                     location.reload();
                 })
                 .catch(error => {

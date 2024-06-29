@@ -61,6 +61,10 @@ class Provider extends Model
         'lead_time',
         'nomor_kontak_person',
         'avatar',
+        'payment_method',
+        'payment_term',
+        'courier',
+        'down_payment'
     ];
 
     public function purchase_returns()

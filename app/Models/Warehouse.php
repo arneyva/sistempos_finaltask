@@ -58,6 +58,7 @@ class Warehouse extends Model
         'google_maps',
         'latitude',
         'longitude',
+        'address',
     ];
 
     public function adjustments()
