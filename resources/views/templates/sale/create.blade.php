@@ -412,6 +412,12 @@
                                 '<td><input type="hidden"class="item-subdiscountmethod" name="details[' +
                                 data.id + '_' +
                                 variantId + '][discount_method]" value="0"></td>'; // discount
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][quantity_discount]" value="' + data
+                                .quantity_discount + '"></td>'; // quantity_discount
+                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
+                                variantId + '][discount_percentage]" value="' + data
+                                .discount_percentage + '"></td>'; // quantity_discount
                             row += '</tr>';
 
                             $('#product-table-body').append(row);
@@ -435,10 +441,13 @@
 
                 var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
                 var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-
+                var quantityDiscount = parseFloat(row.find('input[name$="[quantity_discount]"]').val()) ||
+                    0;
+                var discountPercentage = parseFloat(row.find('input[name$="[discount_percentage]"]').val()) ||
+                    0;
                 var discount = 0;
-                if (quantity > 10) {
-                    discount = unitPrice * 0.05 * quantity; // 5% discount for quantity > 10
+                if (quantity >= quantityDiscount) {
+                    discount = (unitPrice * quantity) * (discountPercentage / 100);
                     row.find('.item-discount').text('Rp ' + discount.toFixed(2));
                     row.find('.item-subdiscount').val(discount.toFixed(2));
                     row.find('.item-subdiscountmethod').val('discount');

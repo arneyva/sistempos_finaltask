@@ -13,8 +13,7 @@ class ProductWarehouse extends Model
     protected $table = 'product_warehouse';
 
     protected $fillable = [
-        // 'product_id', 'warehouse_id', 'qty', 'manage_stock',
-        'product_id', 'warehouse_id', 'qty', 'manage_stock', 'product_variant_id', 'stock_alert'
+        'product_id', 'warehouse_id', 'qty', 'manage_stock', 'product_variant_id', 'stock_alert','quantity_discount','discount_percentage'
     ];
 
     public function product()

@@ -324,6 +324,8 @@ class AdjustmentController extends Controller
             $stock = ProductWarehouse::where('product_id', $Product_data['id'])->where('warehouse_id', $warehouse_id)->first();
             $product_price = $Product_data['price'];
             $product_cost = $Product_data['cost'];
+            $item['quantity_discount'] = $stock->quantity_discount;
+            $item['discount_percentage'] = $stock->discount_percentage;
             $item['qty'] = $stock->qty;
             if ($Product_data['unitSale']) {
                 if ($Product_data['unitSale']->operator == '/') {
@@ -356,6 +358,8 @@ class AdjustmentController extends Controller
 
             $product_price = $product_variant_data['price'];
             $product_cost = $product_variant_data['cost'];
+            $item['quantity_discount'] = $stock->quantity_discount;
+            $item['discount_percentage'] = $stock->discount_percentage;
             $item['qty'] = $stock->qty;
             if ($Product_data['unitSale']) {
                 if ($Product_data['unitSale']->operator == '/') {
