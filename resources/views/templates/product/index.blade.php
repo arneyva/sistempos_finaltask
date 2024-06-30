@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>All Products</h1>
-    <p>Do Something with all your store's products</p>
+    <h1>{{ __('All Products') }}</h1>
+    <p>{{ __('Do Something with all your stores products') }}</p>
 @endsection
 
 @section('content')
@@ -13,11 +13,11 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Products</h4>
+                    <h4 class="card-title">{{ __('All Products') }}</h4>
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#createModal">Filter</button>
+                        data-bs-target="#createModal">{{ __('Filter') }}</button>
                     <a href="{{ route('product.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
                     <a href="{{ route('product.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
@@ -25,26 +25,26 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <h5 class="modal-title" id="createModalLabel">{{ __('Filter') }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ route('product.index') }}" method="GET" id="filterForm">
                                         <div class="col mb-3">
-                                            <label class="form-label" for="code">Search By Code *</label>
-                                            <input type="text" class="form-control" id="code" name="code"
-                                                value="{{ request()->input('code') }}" placeholder="Input Code ...">
+                                            <label class="form-label" for="code">{{ __('Search By Code') }}</label>
+                                                <input type="text" class="form-control" id="code" name="code"
+                                                    value="{{ request()->input('code') }}" placeholder="{{ __('Input Code ...') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="name">Search By Name*</label>
+                                            <label class="form-label" for="name">{{ __('Search By Name') }}</label>
                                             <input type="text" class="form-control" id="name" name="name"
-                                                value="{{ request()->input('name') }}" placeholder="Input Name ...">
+                                                value="{{ request()->input('name') }}" placeholder="{{ __('Input Name ...') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="category_id">Choose Category *</label>
+                                            <label class="form-label" for="category_id">{{ __('Choose Category') }}</label>
                                             <select class="form-select" id="category_id" name="category_id">
-                                                <option selected disabled value="">Choose...</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
                                                 @foreach ($categories as $wh)
                                                     <option value="{{ $wh->id }}"
                                                         {{ request()->input('category_id') == $wh->id ? 'selected' : '' }}>
@@ -54,9 +54,9 @@
                                             </select>
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="brand_id">Choose Brand *</label>
+                                            <label class="form-label" for="brand_id">{{ __('Choose Brand') }}</label>
                                             <select class="form-select" id="brand_id" name="brand_id">
-                                                <option selected disabled value="">Choose...</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
                                                 @foreach ($brands as $wh)
                                                     <option value="{{ $wh->id }}"
                                                         {{ request()->input('brand_id') == $wh->id ? 'selected' : '' }}>
@@ -68,8 +68,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" onclick="resetFilters()"
-                                        data-bs-dismiss="modal">Reset</button>
-                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                        data-bs-dismiss="modal">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Filter') }}</button>
                                 </div>
                                 </form>
                             </div>
@@ -77,102 +77,99 @@
                     </div>
                     @role('superadmin|inventaris')
                         <button type="button" class="btn btn-soft-gray" data-bs-toggle="modal"
-                            data-bs-target="#ImportProduct">Import Product</button>
+                            data-bs-target="#ImportProduct">{{ __('Import Product') }}</button>
                         <div class="modal fade" id="ImportProduct" tabindex="-1" aria-labelledby="ImportProduct"
                             aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="createModalLabel">Import Products</h5>
+                                        <h5 class="modal-title" id="createModalLabel">{{ __('Import Product') }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-header">
-                                        <h6 class="modal-title" id="createModalLabel" style="color:#d06565">*Only Single Product
-                                            Type</h6>
+                                        <h6 class="modal-title" id="createModalLabel" style="color:#d06565">
+                                            {{ __('*Only Single Product Type') }}</h6>
                                     </div>
                                     <form action="{{ route('product.import') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="modal-body">
                                             <div class="mb-3">
-                                                <label for="fileInput" class="form-label">Choose File</label>
+                                                <label for="fileInput" class="form-label">{{ __('Choose File') }}</label>
                                                 <input class="form-control" type="file" name="products" id="fileInput"
                                                     accept=".csv">
-                                                <p style="color: #d06565">File must be in CSV format</p>
+                                                <p style="color: #d06565">{{ __('File must be in CSV format') }}</p>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="name">Name</label>
+                                                <label class="col-sm-4 col-form-label"
+                                                    for="name">{{ __('Name*') }}</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
-                                                        Field is required</button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                                        disabled>{{ __('This Field is required') }}</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="codeProduct">Code Product</label>
+                                                <label class="col-sm-4 col-form-label"
+                                                    for="codeProduct">{{ __('Code Product*') }}</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
-                                                        Field is required</button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                                        disabled>{{ __('This Field is required') }}</button>
                                                     <button style="margin-top: 5px" type="button"
-                                                        class="btn btn-outline-danger btn-sm" disabled>Code
-                                                        must not exist already</button>
+                                                        class="btn btn-outline-danger btn-sm"
+                                                        disabled>{{ __('Code must not exist already') }}</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="category">Category</label>
+                                                <label class="col-sm-4 col-form-label"
+                                                    for="category">{{ __('Category') }}</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
-                                                        Field is required</button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                                        disabled>{{ __('This Field is required') }}</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="productCost">Product Cost</label>
+                                                <label class="col-sm-4 col-form-label"
+                                                    for="productCost">{{ __('Product Cost') }}</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
-                                                        Field is required</button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>{{ __('This Field is required') }}</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="productUnit">Product Unit</label>
+                                                <label class="col-sm-4 col-form-label" for="productUnit">{{ __('Product Unit') }}</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>This
-                                                        Field is required</button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>{{ __('This Field is required')  }}</button>
                                                     <button style="margin-top: 5px" type="button"
-                                                        class="btn btn-outline-danger btn-sm" disabled>This
-                                                        Unit must already be created</button>
+                                                        class="btn btn-outline-danger btn-sm" disabled>{{ __('This Unit must already be created') }}</button>
                                                     <button style="margin-top: 5px" type="button"
-                                                        class="btn btn-outline-danger btn-sm" disabled>This
-                                                        Please use short name of
-                                                        unit</button>
+                                                        class="btn btn-outline-danger btn-sm" disabled>
+                                                        {{ __('Please use short name of unit')  }}</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="brand">Brand</label>
+                                                <label class="col-sm-4 col-form-label" for="brand">{{ __('Brand') }}</label>
                                                 <div class="col-sm-8">
                                                     <button type="button"
-                                                        class="btn btn-outline-primary btn-sm"disabled>Field
-                                                        optional</button>
+                                                        class="btn btn-outline-primary btn-sm"disabled>{{ __('Field optional') }}</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="note">Note</label>
+                                                <label class="col-sm-4 col-form-label" for="note">{{ __('Note') }}</label>
                                                 <div class="col-sm-8">
                                                     <button type="button" class="btn btn-outline-primary btn-sm"
-                                                        disabled>Field
-                                                        optional</button>
+                                                        disabled>{{ __('Field optional') }}</button>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <a href="/import/import_products.csv" class="btn btn-soft-success"
-                                                    download>Download Example</a>
-                                                <button type="submit" class="btn btn-soft-primary">Submit</button>
+                                                    download>{{ __('Download Example') }}</a>
+                                                <button type="submit" class="btn btn-soft-primary">{{ __('Submit form') }}</button>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
-                        <a href="{{ route('product.create') }}"><button type="button" class="btn btn-soft-primary">Create
-                                +</button></a>
+                        <a href="{{ route('product.create') }}"><button type="button" class="btn btn-soft-primary">{{ __('Create +') }}</button></a>
                     @endrole
                 </div>
             </div>
@@ -182,21 +179,21 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Product Name</th>
-                                <th>Type</th>
-                                <th>Code</th>
-                                <th>Brand</th>
-                                <th>Category</th>
-                                <th>Cost</th>
-                                <th>Price</th>
-                                <th>Unit</th>
-                                <th>Quantity</th>
+                                <th>{{ __('Product Name') }}</th>
+                                <th>{{ __('Type') }}</th>
+                                <th>{{ __('Code') }}</th>
+                                <th>{{ __('Brand') }}</th>
+                                <th>{{ __('Category') }}</th>
+                                <th>{{ __('Cost') }}</th>
+                                <th>{{ __('Price') }}</th>
+                                <th>{{ __('Unit') }}</th>
+                                <th>{{ __('Quantity') }}</th>
                                 @role('superadmin|inventaris')
-                                    <th>Actions</th>
+                                    <th>{{ __('Actions') }}</th>
                                 @endrole
                                 @role('staff')
-                                    <th>Stock Alert!</th>
-                                    <th>Tax</th>
+                                    <th>{{ __('Stock Alert') }}</th>
+                                    <th>{{ __('Tax') }}</th>
                                 @endrole
                             </tr>
                         </thead>
@@ -227,7 +224,8 @@
                                         <div class="d-flex flex-column">
                                             @if ($item['type'] === 'Variant Product')
                                                 @foreach ($item['cost'] as $cost)
-                                                    <h6 style="margin-top:10px">{{ 'Rp ' . number_format($cost, 2, ',', '.') }} </h6>
+                                                    <h6 style="margin-top:10px">
+                                                        {{ 'Rp ' . number_format($cost, 2, ',', '.') }} </h6>
                                                 @endforeach
                                             @else
                                                 {{ $item['cost'] }}
@@ -238,7 +236,8 @@
                                         <div class="d-flex flex-column">
                                             @if ($item['type'] === 'Variant Product')
                                                 @foreach ($item['price'] as $price)
-                                                    <h6 style="margin-top:10px">{{ 'Rp ' . number_format($price, 2, ',', '.') }} </h6>
+                                                    <h6 style="margin-top:10px">
+                                                        {{ 'Rp ' . number_format($price, 2, ',', '.') }} </h6>
                                                 @endforeach
                                             @else
                                                 {{ $item['price'] }}
