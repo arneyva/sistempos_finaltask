@@ -42,7 +42,7 @@
     "Create": "Buat",
     "Name *": "Nama *",
     "input product cost": "masukkan biaya produk",
-    "Short Name*": "Nama Singkat*",
+    "Short Name *": "Nama Singkat *",
     "Base Unit": "Unit Dasar",
     "Product Unit": "Unit Produk",
     "Gram": "Gram",
@@ -111,5 +111,14 @@
     "ordered": "dipesan",
     "pending": "tunda",
     "paid": "dibayar",
-    "unpaid": "belum dibayar"
+    "unpaid": "belum dibayar",
+    "All Unit Measurement": "Semua Pengukuran Unit",
+    "Do Something with all your measurement": "Lakukan Sesuatu dengan Semua Pengukuran Anda",
+"All Unit": "Semua Unit",
+"Create Unit": "Buat Unit",
+"Update Unit": "Perbarui Unit",
+"Base Unit Cannot be deleted!": "Unit Base tidak dapat dihapus!",
+"Are you sure you want to delete this data?": "Apakah Anda yakin ingin menghapus data ini?",
+"input unit name": "masukkan nama unit",
+"input short name": "masukkan singkatan"
 }

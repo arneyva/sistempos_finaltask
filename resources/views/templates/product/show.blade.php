@@ -58,7 +58,7 @@
                                                         name="discount_percentage[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
                                                         id="discount_percentagevariant{{ $variant['variant'] }}_{{ $variant['mag'] }}"
                                                         class="form-control"
-                                                        style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
                                                         value="{{ $variant['discount_percentage'] ?? 0 }}" min="0">
                                                 </div>
                                                 <div class="form-group input-group">
@@ -73,8 +73,10 @@
                                                         name="quantity_discount[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
                                                         id="quantity_discountvariant{{ $variant['variant'] }}_{{ $variant['mag'] }}"
                                                         class="form-control"
-                                                        style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
                                                         value="{{ $variant['quantity_discount'] ?? 0 }}" min="0">
+                                                    <span class="input-group-text"
+                                                        id="">{{ $data[0]['unit'] }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -102,7 +104,7 @@
                                                     <span class="input-group-text" id="basic-addon1">%</span>
                                                     <input type="number" name="discount_percentage[{{ $qty['mag'] }}]"
                                                         id="discount_percentage{{ $qty['mag'] }}" class="form-control"
-                                                        style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
                                                         value="{{ $qty['discount_percentage'] ?? 0 }}">
                                                 </div>
                                                 <div class="form-group input-group">
@@ -115,8 +117,10 @@
                                                         </svg></span>
                                                     <input type="number" name="quantity_discount[{{ $qty['mag'] }}]"
                                                         id="quantity_discount{{ $qty['mag'] }}" class="form-control"
-                                                        style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
                                                         value="{{ $qty['quantity_discount'] ?? 0 }}">
+                                                    <span class="input-group-text"
+                                                        id="">{{ $data[0]['unit'] }}</span>
                                                 </div>
                                             </div>
                                         </div>
