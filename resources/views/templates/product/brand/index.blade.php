@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>All Product Brand</h1>
-    <p>Do Something with all your product brand</p>
+    <h1>{{ __('All Product Brand') }}</h1>
+    <p>{{ __('Do Something with all your product brands') }}</p>
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Brand</h4>
+                    <h4 class="card-title">{{ __('All Brand') }}</h4>
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
@@ -29,21 +29,21 @@
                             </svg>
                         </span>
                         <input type="search" class="form-control" name="search" value="{{ request()->input('search') }}"
-                            placeholder="Search...">
+                            placeholder="{{ __('Search...') }}">
                     </div>
                 </form>
                 <div class="header-title">
                     @role('superadmin|inventaris')
                         <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                             data-bs-target="#createModal">
-                            Create+
+                            {{ __('Create +') }}
                         </button>
                         <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="createModalLabel">Create</h5>
+                                        <h5 class="modal-title" id="createModalLabel">{{ __('Create') }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
@@ -52,23 +52,23 @@
                                             enctype="multipart/form-data">
                                             @csrf
                                             <div class="col mb-3">
-                                                <label class="form-label" for="name">Brand Name *</label>
+                                                <label class="form-label" for="name">{{ __('Brand Name*') }}</label>
                                                 <input type="text" class="form-control" id="name" required
-                                                    placeholder="input brands" name="name">
+                                                    placeholder="{{ __('input brands') }}" name="name">
                                             </div>
                                             <div class="col mb-3">
-                                                <label class="form-label" for="description">Description *</label>
+                                                <label class="form-label" for="description">{{ __('Description*') }}</label>
                                                 <input type="text" class="form-control" id="description" required
-                                                    placeholder="input description" name="description">
+                                                    placeholder="{{ __('input description') }}" name="description">
                                             </div>
                                             <div class="col mb-3">
-                                                <label class="form-label" for="image">Image</label>
+                                                <label class="form-label" for="image">{{ __('Image') }}</label>
                                                 <input type="file" class="form-control" id="image" name="image">
                                             </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                        <button type="submit" class="btn btn-primary">{{ __('Save changes') }}</button>
                                     </div>
                                     </form>
                                 </div>
@@ -83,10 +83,10 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Brand Name</th>
-                                <th>Description</th>
+                                <th>{{ __('Brand Name') }}</th>
+                                <th>{{ __('Description') }}</th>
                                 @role('superadmin|inventaris')
-                                    <th>Actions</th>
+                                    <th>{{ __('Actions') }}</th>
                                 @endrole
                             </tr>
                         </thead>
@@ -127,7 +127,7 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title"
-                                                                    id="exampleModalLabel{{ $item->id }}">Update</h5>
+                                                                    id="exampleModalLabel{{ $item->id }}">{{ __('Update Brand') }}</h5>
                                                                 <button type="button" class="btn-close"
                                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
@@ -138,25 +138,24 @@
                                                                     @method('PUT')
                                                                     <div class="col mb-3">
                                                                         <label class="form-label"
-                                                                            for="editname{{ $item->id }}">Brand Name
-                                                                            *</label>
+                                                                            for="editname{{ $item->id }}">{{ __('Brand Name*') }}</label>
                                                                         <input type="text" class="form-control"
                                                                             id="editname{{ $item->id }}" required
-                                                                            placeholder="input brands" name="name"
+                                                                            placeholder="{{ __('input brands') }}" name="name"
                                                                             value="{{ $item->name }}">
                                                                     </div>
                                                                     <div class="col mb-3">
                                                                         <label class="form-label"
-                                                                            for="editdescription{{ $item->id }}">Description
-                                                                            *</label>
+                                                                            for="editdescription{{ $item->id }}">{{ __('Description*') }}
+                                                                            </label>
                                                                         <input type="text" class="form-control"
                                                                             id="editdescription{{ $item->id }}" required
-                                                                            placeholder="input description" name="description"
+                                                                            placeholder="{{ __('input description') }}" name="description"
                                                                             value="{{ $item->description }}">
                                                                     </div>
                                                                     <div class="col mb-3">
                                                                         <label class="form-label"
-                                                                            for="editimage{{ $item->id }}">Image</label>
+                                                                            for="editimage{{ $item->id }}">{{ __('Image') }}</label>
                                                                         <input type="file" class="form-control"
                                                                             id="editimage{{ $item->id }}" name="image">
                                                                     </div>
@@ -164,9 +163,8 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-primary">Save
-                                                                    changes</button>
+                                                                    data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                                                <button type="submit" class="btn btn-primary">{{ __('Save changes') }}</button>
                                                             </div>
                                                             </form>
                                                         </div>
@@ -211,17 +209,17 @@
                                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>"Are you sure you want to delete this data?"</p>
+                                                                <p>{{ __('Are you sure you want to delete this data?') }}</p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Close</button>
+                                                                    data-bs-dismiss="modal">{{ __('Close') }}</button>
                                                                 <form action="{{ route('product.brand.destroy', $item->id) }}"
                                                                     method="POST" style="display: inline;">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit"
-                                                                        class="btn btn-primary">Delete</button>
+                                                                        class="btn btn-primary">{{ __('Delete') }}</button>
                                                                 </form>
                                                             </div>
                                                         </div>
