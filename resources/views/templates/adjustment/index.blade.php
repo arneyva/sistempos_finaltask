@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>{{ __("All Adjustment") }}</h1>
-    <p>{{ __("Do Something with all your adjustment") }}</p>
+    <h1>{{ __('All Adjustment') }}</h1>
+    <p>{{ __('Do Something with all your adjustment') }}</p>
 @endsection
 
 <style>
@@ -21,40 +21,44 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">{{ __("All Adjustment") }}</h4>
+                    <h4 class="card-title">{{ __('All Adjustment') }}</h4>
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#createModal">{{ __("Filter") }}</button>
-                    <a href="{{ route('adjustment.pdf', request()->query()) }}" class="btn btn-soft-success">{{ __("PDF") }}</a>
-                    <a href="{{ route('adjustment.export', request()->query()) }}" class="btn btn-soft-danger">{{ __("Excel") }}</a>
-                    <button type="button" class="btn btn-soft-gray">{{ __("Import Product") }}</button>
-                    <a href="{{ route('adjustment.create') }}" class="btn btn-soft-primary">{{ __("+create") }}</a>
+                        data-bs-target="#createModal">{{ __('Filter') }}</button>
+                    <a href="{{ route('adjustment.pdf', request()->query()) }}"
+                        class="btn btn-soft-success">{{ __('PDF') }}</a>
+                    <a href="{{ route('adjustment.export', request()->query()) }}"
+                        class="btn btn-soft-danger">{{ __('Excel') }}</a>
+                    <button type="button" class="btn btn-soft-gray">{{ __('Import Product') }}</button>
+                    <a href="{{ route('adjustment.create') }}" class="btn btn-soft-primary">{{ __('+create') }}</a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">{{ __("Filter") }}</h5>
+                                    <h5 class="modal-title" id="createModalLabel">{{ __('Filter') }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ route('adjustment.index') }}" method="GET" id="filterForm">
                                         <div class="col mb-3">
-                                            <label class="form-label" for="date">{{ __("Date") }} *</label>
+                                            <label class="form-label" for="date">{{ __('Date') }} *</label>
                                             <input type="date" class="form-control" id="date" name="date"
                                                 value="{{ request()->input('date') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="Ref">{{ __("Reference") }}*</label>
+                                            <label class="form-label" for="Ref">{{ __('Reference') }}*</label>
                                             <input type="text" class="form-control" id="Ref" name="Ref"
-                                                value="{{ request()->input('Ref') }}" placeholder="{{ __("Input Ref ...") }}">
+                                                value="{{ request()->input('Ref') }}"
+                                                placeholder="{{ __('Input Ref ...') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="warehouse_id">{{ __("From Warehouse/Outlet") }} *</label>
+                                            <label class="form-label" for="warehouse_id">{{ __('From Warehouse/Outlet') }}
+                                                *</label>
                                             <select class="form-select" id="warehouse_id" name="warehouse_id">
-                                                <option selected disabled value="">{{ __("Choose...") }}</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
                                                 @foreach ($warehouse as $wh)
                                                     <option value="{{ $wh->id }}"
                                                         {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -65,67 +69,67 @@
                                         </div>
                                 </div>
                                 <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" onclick="resetFilters()"
-                        data-bs-dismiss="modal">{{ __("Reset") }}</button>
-                <button type="submit" class="btn btn-primary">{{ __("Filter") }}</button>
+                                    <button type="button" class="btn btn-secondary" onclick="resetFilters()"
+                                        data-bs-dismiss="modal">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Filter') }}</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                </form>
-                </div>
-                </div>
-                </div>
-                </div>
-                </div>
+            </div>
 
-                {{-- </div> --}}
-                <div class="card-body p-0">
-                    <div class="table-responsive mt-4">
-                        <table id="basic-table" class="table table-striped mb-0" role="grid">
-                            <thead>
+            {{-- </div> --}}
+            <div class="card-body p-0">
+                <div class="table-responsive mt-4">
+                    <table id="basic-table" class="table table-striped mb-0" role="grid">
+                        <thead>
+                            <tr>
+                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('Reference') }}</th>
+                                <th>{{ __('Warehouse/Outlet') }}</th>
+                                <th>{{ __('Total Products') }}</th>
+                                <th>{{ __('Actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($data as $item)
                                 <tr>
-                                    <th>{{ __("Date") }}</th>
-                                    <th>{{ __("Reference") }}</th>
-                                    <th>{{ __("Warehouse/Outlet") }}</th>
-                                    <th>{{ __("Total Products") }}</th>
-                                    <th>{{ __("Actions") }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data as $item)
-                                    <tr>
-                                        <td>
-                                            {{ $item['date'] }}
-                                        </td>
-                                        <td>
-                                            {{ $item['Ref'] }}
-                                        </td>
-                                        <td>
-                                            {{-- {{ $item['warehouse'] }} --}}
-                                            @if ($item['warehouse'] === 'deleted')
-                                                <span class="warehousedeleted">{{ __("warehouse deleted") }}</span>
-                                            @else
-                                                {{ $item['warehouse'] }}
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ $item['items'] }} {{ __("Items") }}
-                                        </td>
-                                        <td>
-                                            <div class="inline">
-                                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal"
-                                                    data-bs-target="#detailModal{{ $item['id'] }}">
-                                                    <path
-                                                        d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
-                                                        stroke="#130F26"></path>
-                                                    <circle cx="12" cy="12" r="5" stroke="#130F26">
+                                    <td>
+                                        {{ $item['date'] }}
+                                    </td>
+                                    <td>
+                                        {{ $item['Ref'] }}
+                                    </td>
+                                    <td>
+                                        {{-- {{ $item['warehouse'] }} --}}
+                                        @if ($item['warehouse'] === 'deleted')
+                                            <span class="warehousedeleted">{{ __('warehouse deleted') }}</span>
+                                        @else
+                                            {{ $item['warehouse'] }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $item['items'] }} {{ __('Items') }}
+                                    </td>
+                                    <td>
+                                        <div class="inline">
+                                            <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal"
+                                                data-bs-target="#detailModal{{ $item['id'] }}">
+                                                <path
+                                                    d="M22.4541 11.3918C22.7819 11.7385 22.7819 12.2615 22.4541 12.6082C21.0124 14.1335 16.8768 18 12 18C7.12317 18 2.98759 14.1335 1.54586 12.6082C1.21811 12.2615 1.21811 11.7385 1.54586 11.3918C2.98759 9.86647 7.12317 6 12 6C16.8768 6 21.0124 9.86647 22.4541 11.3918Z"
+                                                    stroke="#130F26"></path>
+                                                <circle cx="12" cy="12" r="5" stroke="#130F26">
+                                                </circle>
+                                                <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
+                                                <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
+                                                    width="6" height="6">
+                                                    <circle cx="12" cy="12" r="3" fill="#130F26">
                                                     </circle>
-                                                    <circle cx="12" cy="12" r="3" fill="#130F26"></circle>
-                                                    <mask mask-type="alpha" maskUnits="userSpaceOnUse" x="9" y="9"
-                                                        width="6" height="6">
-                                                        <circle cx="12" cy="12" r="3" fill="#130F26">
-                                                        </circle>
-                                                    </mask>
-                                                    <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
+                                                </mask>
+                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
                                                     fill="white">
                                                 </circle>
                                             </svg>
@@ -135,7 +139,7 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="showDetailsLabel">
-                                                                {{ __("Adjustment Detail") }}</h5>
+                                                                {{ __('Adjustment Detail') }}</h5>
                                                         </div>
                                                         <div class="modal-body">
                                                             <div class="row">
@@ -144,15 +148,15 @@
                                                                         class="table table-hover table-bordered table-sm">
                                                                         <tbody>
                                                                             <tr>
-                                                                                <td>{{ __("Date") }}</td>
+                                                                                <td>{{ __('Date') }}</td>
                                                                                 <th>{{ $item['date'] }}</th>
                                                                             </tr>
                                                                             <tr>
-                                                                                <td>{{ __("Reference") }}</td>
+                                                                                <td>{{ __('Reference') }}</td>
                                                                                 <th>{{ $item['Ref'] }}</th>
                                                                             </tr>
                                                                             <tr>
-                                                                                <td>{{ __("Warehouse") }}</td>
+                                                                                <td>{{ __('Warehouse') }}</td>
                                                                                 <th>{{ $item['warehouse'] }}</th>
                                                                             </tr>
                                                                         </tbody>
@@ -165,12 +169,12 @@
                                                                             <thead>
                                                                                 <tr>
                                                                                     <th scope="col">
-                                                                                        {{ __("ProductName") }}</th>
+                                                                                        {{ __('ProductName') }}</th>
                                                                                     <th scope="col">
-                                                                                        {{ __("CodeProduct") }}</th>
+                                                                                        {{ __('CodeProduct') }}</th>
                                                                                     <th scope="col">
-                                                                                        {{ __("Quantity") }}</th>
-                                                                                    <th scope="col">{{ __("Type") }}
+                                                                                        {{ __('Quantity') }}</th>
+                                                                                    <th scope="col">{{ __('Type') }}
                                                                                     </th>
                                                                                 </tr>
                                                                             </thead>
@@ -196,9 +200,9 @@
                                                                                         </td>
                                                                                         <td>
                                                                                             @if ($item['details_type'][$key] == 'add')
-                                                                                                {{ __("Addition") }}
+                                                                                                {{ __('Addition') }}
                                                                                             @elseif($item['details_type'][$key] == 'sub')
-                                                                                                {{ __("Subtraction") }}
+                                                                                                {{ __('Subtraction') }}
                                                                                             @endif
                                                                                         </td>
                                                                                     </tr>
@@ -260,71 +264,6 @@
                     <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
                         {{ $adjustment->links() }}
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Create</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="">
-                        <div class="col mb-3">
-                            <label class="form-label" for="validationDefault01">Name *</label>
-                            <input type="text" class="form-control" id="validationDefault01" required
-                                placeholder="input product cost">
-                        </div>
-                        <div class="col mb-3">
-                            <label class="form-label" for="validationDefault01">Short Name*</label>
-                            <input type="text" class="form-control" id="validationDefault01" required
-                                placeholder="input product cost">
-                        </div>
-                        <div class="accordion" id="accordionExample">
-                            <div class="accordion-item">
-                                <h4 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        Base Unit
-                                    </button>
-                                </h4>
-                                <div id="collapseOne" class="accordion-collapse collapse show"
-                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        <label for="validationCustomUsername" class="form-label">Product Unit</label>
-                                        <select class="form-select" id="validationDefault04" required>
-                                            <option selected disabled value="">Choose...</option>
-                                            <option>Gram</option>
-                                            <option>Liter</option>
-                                            <option>Meter</option>
-                                            <option>Gram</option>
-                                        </select>
-                                    </div>
-                                    <div class="accordion-body">
-                                        <label for="validationCustomUsername" class="form-label">Operator</label>
-                                        <select class="form-select" id="validationDefault04" required>
-                                            <option selected disabled value="">Choose...</option>
-                                            <option>Multiply (*)</option>
-                                            <option>Devide (/)</option>
-                                        </select>
-                                    </div>
-                                    <div class="accordion-body">
-                                        <label class="form-label" for="validationDefault01">Operation value *</label>
-                                        <input type="text" class="form-control" id="validationDefault01" required
-                                            placeholder="input product cost">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
