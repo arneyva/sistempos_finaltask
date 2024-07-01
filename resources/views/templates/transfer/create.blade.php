@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Add Transfer</h1>
-    <p>Look All your transfer</p>
+    <h1>{{ __('Create Transfer') }}</h1>
+    <p>{{ __('Manage your product transfers easily and efficiently') }}</p>
 @endsection
 <style>
     .hidden-input {
@@ -18,7 +18,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Create Transfer</h4>
+                            <h4 class="card-title">{{ __('Create Transfer') }}</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -26,32 +26,34 @@
                             @csrf
                             <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="selectWarehouse">From Warehouse/Outlet *</label>
+                                    <label class="form-label"
+                                        for="selectWarehouse">{{ __('From Warehouse/Outlet *') }}</label>
                                     <select class="form-select" id="selectWarehouse" name="transfer[from_warehouse]"
                                         required>
-                                        <option selected disabled value="">Choose...</option>
+                                        <option selected disabled value="">{{ __('Choose...') }}.</option>
                                         @foreach ($warehouse as $wh)
                                             <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="selectToWarehouse">To Warehouse/Outlet *</label>
+                                    <label class="form-label"
+                                        for="selectToWarehouse">{{ __('To Warehouse/Outlet *') }}</label>
                                     <select class="form-select" id="selectToWarehouse" name="transfer[to_warehouse]"
                                         required>
-                                        <option selected disabled value="">Choose...</option>
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
                                         @foreach ($warehouse as $wh)
                                             <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Date *</label>
+                                    <label class="form-label" for="exampleInputdate">{{ __('Date *') }}</label>
                                     <input type="date" class="form-control" id="exampleInputdate" name="transfer[date]"
                                         value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="selectProduct">Product *</label>
+                                    <label class="form-label" for="selectProduct">{{ __('Product *') }}</label>
                                     <select class="form-select" id="selectProduct" disabled>
                                         <option selected disabled value="">Choose warehouse first...</option>
                                     </select>
@@ -62,13 +64,13 @@
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>Product</th>
-                                                    <th>Net Unit Cost</th>
-                                                    <th>Stock</th>
-                                                    <th>Quantity</th>
-                                                    <th>Discount</th>
-                                                    <th>Tax</th>
-                                                    <th>SubTotal</th>
+                                                    <th>{{ __('Product') }}</th>
+                                                    <th>{{ __('Price') }}</th>
+                                                    <th>{{ __('Stock') }}</th>
+                                                    <th>{{ __('Quantity') }}</th>
+                                                    <th>{{ __('Discount') }}</th>
+                                                    <th>{{ __('Tax') }}</th>
+                                                    <th>{{ __('Subtotal') }}</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -83,19 +85,19 @@
                                         role="grid">
                                         <tbody>
                                             <tr>
-                                                <td>Order Tax</td>
+                                                <td>{{ __('Order Tax') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Discount</td>
+                                                <td>{{ __('Discount') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Shipping</td>
+                                                <td>{{ __('Shipping') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Grand Total</td>
+                                                <td>{{ __('Grand Total') }}</td>
                                                 <th></th>
                                             </tr>
                                         </tbody>
@@ -104,10 +106,10 @@
                                 <div class="col-md-12 mb-3">
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="tax_rate">Order Tax *</label>
+                                            <label class="form-label" for="tax_rate">{{ __('Order Tax') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="tax_rate"
-                                                    placeholder="input tax" name="transfer[tax_rate]"
+                                                    placeholder="{{ __('input tax') }}" name="transfer[tax_rate]"
                                                     value="{{ old('transfer.tax_rate') }}">
                                                 <span class="input-group-text" id="basic-addon1">%</span>
                                             </div>
@@ -126,10 +128,10 @@
                                             value="{{ old('transfer.TaxNet') }}">
                                         <input class="" type="hidden" id="grandTotal" name="GrandTotal">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="discount">Discount *</label>
+                                            <label class="form-label" for="discount">{{ __('Discount') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="discount"
-                                                    placeholder="input discount" name="transfer[discount]"
+                                                    placeholder="{{ __('input discount') }}" name="transfer[discount]"
                                                     value="{{ old('transfer.discount') }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
@@ -144,10 +146,10 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="shipping">Shipping *</label>
+                                            <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="shipping"
-                                                    placeholder="input shipping" name="transfer[shipping]"
+                                                    placeholder="{{ __('input shipping') }}" name="transfer[shipping]"
                                                     value="{{ old('transfer.shipping') }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
@@ -162,12 +164,12 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="status">Status *</label>
+                                            <label class="form-label" for="status">{{ __('Status *') }}</label>
                                             <select class="form-select select2" id="status" name="transfer[statut]"
                                                 required data-placeholder="Select a Status">
-                                                <option selected disabled value="">Choose...</option>
-                                                <option value="sent">Sent</option>
-                                                <option value="completed">Completed</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
+                                                <option value="sent">{{ __('Sent') }}</option>
+                                                <option value="completed">{{ __('Completed') }}</option>
                                             </select>
                                             @error('transfer.statut')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -182,11 +184,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="exampleFormControlTextarea1">Note</label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="transfer[notes]">{{ old('transfer.notes') }}</textarea>
+                                    <label class="form-label"
+                                        for="exampleFormControlTextarea1">{{ __('Note') }}</label>
+                                    <input type="text" class="form-control" id="exampleFormControlTextarea1"
+                                        rows="3" name="transfer[notes]" value="{{ old('transfer.notes') }}">
                                 </div>
                                 <div class="col-md-12">
-                                    <button type="submit" class="btn btn-primary">Add Transfer</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Add Transfer') }}</button>
                                 </div>
                             </div>
                         </form>
@@ -208,7 +212,6 @@
                 this.value = '';
             }
         });
-
         document.getElementById('selectToWarehouse').addEventListener('change', function() {
             var toWarehouse = this.value;
             var fromWarehouse = document.getElementById('selectWarehouse').value;
@@ -278,8 +281,6 @@
                             row += '<td class="item-discount">0</td>';
                             row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
                             row += '<td class="item-total">Rp 0</td>';
-                            // row +=
-                            //     '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
                             row +=
                                 '<td><button type="button" class="btn btn-danger btn-sm delete-row">';
                             row +=
@@ -293,29 +294,6 @@
                             row += '</g>';
                             row += '</svg>';
                             row += '</button></td>';
-                            // 
-                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                            //     variantId + '][product_id]" value="' + data.id + '"></td>';
-                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                            //     variantId + '][product_variant_id]" value="' + (variantId ||
-                            //         '') + '"></td>';
-                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                            //     variantId + '][purchase_unit_id]" value="' + data
-                            //     .purchase_unit_id + '"></td>';
-                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                            //     variantId + '][Unit_cost]" value="' + data.Unit_cost +
-                            //     '"></td>';
-                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                            //     variantId + '][tax_percent]" value="' + data.tax_percent +
-                            //     '"></td>';
-                            // row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                            //     variantId + '][tax_method]" value="' + data.tax_method +
-                            //     '"></td>';
-                            // row +=
-                            //     '<td><input type="hidden" class="item-subtotal" name="details[' +
-                            //     data.id + '_' + variantId + '][subtotal]" value="0"></td>';
-                            // row += '</tr>';
-
                             // Hidden inputs inside a hidden <td>
                             row += '<td class="hidden-input">';
                             row += '<input type="hidden" name="details[' + data.id + '_' +
@@ -335,9 +313,7 @@
                             row += '<input type="hidden" class="item-subtotal" name="details[' +
                                 data.id + '_' + variantId + '][subtotal]" value="0">';
                             row += '</td>';
-
                             row += '</tr>';
-
                             $('#product-table-body').append(row);
                             updateGrandTotal();
                         }
