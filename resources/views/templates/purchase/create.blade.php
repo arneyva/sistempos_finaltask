@@ -177,7 +177,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-sm-6 mb-3">
+                    <div class="col-sm-6 mb-1">
                         <div class="card-header d-flex justify-content-between px-0">
                             <div class="header-title">
                                 <h6 class="card-title">Supplier Information</h6>
@@ -223,7 +223,7 @@
                                 <div class="row">
                                     <div class="form-group" style="display: flex; align-items: center;">
                                         <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Address</label>
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Destination Address</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
                                             <textarea class="form-control form-control-sm @error('date') is-invalid @enderror" id="address" name="address" >{{ old('address') ?? $warehouse->address }}</textarea>
@@ -297,7 +297,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 mb-3">
+                    <div class="col-sm-6 mb-1">
                         <div class="card-header d-flex justify-content-between px-0">
                             <div class="header-title">
                                 <h6 class="card-title">Payment Information</h6>
@@ -342,6 +342,22 @@
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
                                         <div class="col-sm-3 p-0">
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Bank Account</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <input type="tel" value="{{ old('supplier_bank_account') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="supplier_bank_account" name="supplier_bank_account" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: flex; align-items: center;">
+                                        <div class="col-sm-3 p-0">
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">E-Walet Number</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <input type="tel" value="{{ old('supplier_ewalet') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="supplier_ewalet" name="supplier_ewalet" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: flex; align-items: center;">
+                                        <div class="col-sm-3 p-0">
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Term</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
@@ -368,42 +384,68 @@
                             </div>
                         </div>
                         <div class="card-body py-0" style="padding-left:0px;">
-                            <table id="basic-table" class="table table-hover table-bordered table-sm"
+                            <table id="basic-table" class="table table-bordered table-sm"
                                 role="grid">
                                 <tbody>
                                     <tr>
-                                        <td>Order Tax</td>
-                                        <th>Rp 0.00</th>
+                                        <td class="col-3">Order Subtotal</td>
+                                        <td id="order_subtotal" class="col-7"style="text-align:right;">Rp 0</td>
+                                        <input type="hidden" name="order_subtotal_input" id="order_subtotal_input">
                                     </tr>
                                     <tr>
-                                        <td>Discount</td>
-                                        <th>Rp 0.00</th>
+                                        <td class="col-3">Order Tax</td>
+                                        <td id="order_tax" class="col-7"style="text-align:right;">Rp 0</td>
+                                        <input type="hidden" name="order_tax_input" id="order_tax_input">
                                     </tr>
                                     <tr>
-                                        <td>Shipping</td>
-                                        <th>Rp 0.00</th>
+                                        <td class="col-3">Discount</td>
+                                        <td id="order_discount" class="col-7"style="text-align:right;">Rp 0</td>
+                                        <input type="hidden" name="order_discount_input" id="order_discount_input">
                                     </tr>
                                     <tr>
-                                        <td>Grand Total</td>
-                                        <th>Rp 0.00</th>
+                                        <td class="col-3">Grand Total</td>
+                                        <td id="order_total" class="col-7"style="text-align:right;">Rp 0</td>
+                                        <input type="hidden" name="order_total_input" id="order_total_input">
+                                    </tr>
+                                    <tr>
+                                        <td class="col-3">Down Payment</td>
+                                        <td id="order_down_payment" class="col-7"style="text-align:right;"> Rp 0</td>
+                                        <input type="hidden" name="order_down_payment_input" id="order_down_payment_input">
                                     </tr>
                             </table>
                         </div>
                     </div>
+                    <div class="form-group col-sm-12">
+                        <label class="form-label" for="name">Order Note:</label>
+                        <textarea  class="form-control @error('date') is-invalid @enderror" id="notes" name="notes" >{{ old('notes') }}</textarea> 
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label class="form-label" for="name">Supplier Note:</label>
+                        <textarea  class="form-control @error('date') is-invalid @enderror" id="supplier_notes" name="supplier_notes" >{{ old('supplier_notes') }}</textarea> 
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <select name="statut" id="statut" class="form-control" >
+                            <option value="pending">Pending</option>
+                            <option value="ordered">Ordered</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="arrived">Arrived</option>
+                            <option value="complete">Complete</option>
+                        </select>   
+                    </div>
                 </div>
                 <div class="card-footer" style="float: right;">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
             </div>
             <div class="card-body py-5 tab-pane fade" id="return">
                 <div class="card-footer" style="float: right;">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
             <div class="card-body py-5 tab-pane fade" id="payment">
                 <div class="card-footer" style="float: right;">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </div>
@@ -468,10 +510,99 @@
 
 <script>
     $(document).ready(function() {
+        var subtotal = 0;
+        var tax = 0;
+        var discount = 0;
+        var grandtotal = 0;
+        var downPayment = 0;
+
+        function setTablePayment() {
+            setTimeout(function() {
+                // 1. Akumulasi nilai dari setiap .subtotal
+                subtotal = 0;
+                $('.subtotal').each(function() {
+                    var value = parseFloat($(this).text());
+                    subtotal += isNaN(value) ? 0 : value;
+                });
+
+                // 2. Hitung nilai pajak (tax) dari subtotal
+                var taxValue = parseFloat($('#tax').val());
+                var taxPercentage = isNaN(taxValue) ? 0 : taxValue / 100;
+                tax = subtotal * taxPercentage;
+
+                // 3. Ambil nilai diskon
+                var discountValue = parseFloat($('#discount').val());
+                discount = isNaN(discountValue) ? 0 : discountValue;
+
+                // 4. Hitung grandtotal
+                grandtotal = subtotal + tax - discount;
+
+                if (grandtotal < 0) {
+                    grandtotal = 0;
+                };
+
+                // 5. Hitung down payment (dp) dari grandtotal
+                var downPaymentValue = parseFloat($('#down_payment').val());
+                var downPaymentPercentage = isNaN(downPaymentValue) ? 0 : downPaymentValue / 100;
+                downPayment = grandtotal * downPaymentPercentage
+
+                $('#order_down_payment').text('Rp ' + downPayment);
+                $('#order_subtotal').text('Rp ' + subtotal);
+                $('#order_discount').text('Rp ' + discount);
+                $('#order_tax').text('Rp ' + tax);
+                $('#order_total').text('Rp ' + grandtotal);
+                
+                $('#order_down_payment_input_input').val(downPayment);
+                $('#order_subtotal_input').val(subtotal);
+                $('#order_discount_input').val(discount);
+                $('#order_tax_input').val(tax);
+                $('#order_total_input').val(grandtotal);
+            }, 700); // Jeda 0,7 detik
+        };
+        $('#itemDropdown').change(function() {
+        setTablePayment();
+        console.log('itemDropdown');
+        });
+
+        $('#tax').change(function() {
+            setTablePayment();
+            console.log('tax');
+        });
+
+        $('#discount').change(function() {
+            setTablePayment();
+            console.log('discount');
+        });
+
+        $('#down_payment').change(function() {
+            setTablePayment();
+            console.log('down_payment');
+        });
+
+        $(document).on('click', '.add', function() {
+            setTablePayment();
+            console.log('add');
+        });
+
+        $(document).on('click', '.subtract', function() {
+            setTablePayment();
+            console.log('subtract');
+        });
+
+        $(document).on('click', '.delete', function() {
+            setTablePayment();
+            console.log('delete');
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
         var products = [];
         var products_with_variant = [];
         var productsObj = {};
         var productsWithVariantObj = {};
+
         $('#itemDropdown').change(function() {
             var selectedValue = $(this).val();
             if (selectedValue) {
@@ -519,7 +650,7 @@
                             '</td>' +
                             '</tr>';
 
-                //paremeter item sudah ada atau belum
+                //paremeter untuk apakah item sudah ada atau belum
                 var itemExists = false;
 
                 //cek setiap row
@@ -527,9 +658,13 @@
                     var rowCode = $(this).find('.delete').data('code');
                     if (rowCode == code) {
                         var qtyElement = $(this).find('.qty');
+                        var subtotalElement = $(this).find('.subtotal');
                         var pastQty = parseInt(qtyElement.text());
+                        var pastElement = parseFloat(subtotalElement.text());
                         //jika ada tambahkan qty dengan 1
                         qtyElement.text(pastQty + 1);
+                        //jika ada tambahkan elemen dengan cost
+                        subtotalElement.text(pastElement + parseFloat(cost));
                         // parameter menjadi true
                         itemExists = true;
                         // Break the loop
@@ -869,14 +1004,12 @@
                         });
                     } else {
                         $('#email').val(response.email);
-                        $('#tax').val(response.tax_number);
-                        $('#address').val(response.adresse);
                         $('#contact_person').val(response.nama_kontak_person);
                         $('#cp_phone').val(response.nomor_kontak_person);
                         $('#payment_method').val(response.payment_method);
                         $('#payment_term').val(response.payment_term);
                         $('#courier').val(response.courier);
-                        $('#down_payment').val(response.down_payment);
+                        $('#down_payment').val(response.down_payment).trigger('change');
                     }
                 },
                 error: function (xhr, status, error) {

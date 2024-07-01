@@ -13,6 +13,7 @@ class ExpenseSeeder extends Seeder
     public function run(): void
     {
         Expense::firstOrCreate([
+            'id' => 1,],[
             'date' => '2022-11-11 19:12:55',
             'Ref' => 'EXP_001',
             'user_id' => 1,

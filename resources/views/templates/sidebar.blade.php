@@ -266,7 +266,7 @@
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-auth" role="button"
                         aria-expanded="false" aria-controls="sidebar-user">
                         <i class="icon">
-                            <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
+                            <svg class="icon-20 text-danger" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path opacity="0.4"
                                     d="M12.0865 22C11.9627 22 11.8388 21.9716 11.7271 21.9137L8.12599 20.0496C7.10415 19.5201 6.30481 18.9259 5.68063 18.2336C4.31449 16.7195 3.5544 14.776 3.54232 12.7599L3.50004 6.12426C3.495 5.35842 3.98931 4.67103 4.72826 4.41215L11.3405 2.10679C11.7331 1.96656 12.1711 1.9646 12.5707 2.09992L19.2081 4.32684C19.9511 4.57493 20.4535 5.25742 20.4575 6.02228L20.4998 12.6628C20.5129 14.676 19.779 16.6274 18.434 18.1581C17.8168 18.8602 17.0245 19.4632 16.0128 20.0025L12.4439 21.9088C12.3331 21.9686 12.2103 21.999 12.0865 22Z"
@@ -276,9 +276,9 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Purchase</span>
+                        <span class="item-name text-danger" >Purchase</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
@@ -287,7 +287,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-auth" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link" href="../dashboard/auth/sign-in.html">
+                            <a class="nav-link" href="{{route('purchases.create')}}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -302,7 +302,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../dashboard/auth/sign-up.html">
+                            <a class="nav-link" href="{{route('purchases.index')}}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -454,7 +454,7 @@
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-widget" role="button"
                         aria-expanded="false" aria-controls="sidebar-widget">
                         <i class="icon">
-                            <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
+                            <svg class="icon-20 text-danger" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path opacity="0.4"
                                     d="M21.25 13.4764C20.429 13.4764 19.761 12.8145 19.761 12.001C19.761 11.1865 20.429 10.5246 21.25 10.5246C21.449 10.5246 21.64 10.4463 21.78 10.3076C21.921 10.1679 22 9.97864 22 9.78146L21.999 7.10415C21.999 4.84102 20.14 3 17.856 3H6.144C3.86 3 2.001 4.84102 2.001 7.10415L2 9.86766C2 10.0648 2.079 10.2541 2.22 10.3938C2.36 10.5325 2.551 10.6108 2.75 10.6108C3.599 10.6108 4.239 11.2083 4.239 12.001C4.239 12.8145 3.571 13.4764 2.75 13.4764C2.336 13.4764 2 13.8093 2 14.2195V16.8949C2 19.158 3.858 21 6.143 21H17.857C20.142 21 22 19.158 22 16.8949V14.2195C22 13.8093 21.664 13.4764 21.25 13.4764Z"
@@ -464,9 +464,9 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Purchase Return</span>
+                        <span class="item-name text-danger">Purchase Return</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
@@ -528,7 +528,7 @@
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-maps" role="button"
                         aria-expanded="false" aria-controls="sidebar-maps">
                         <i class="icon">
-                            <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
+                            <svg class="icon-20 text-danger" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd"
                                     d="M8.53162 2.93677C10.7165 1.66727 13.402 1.68946 15.5664 2.99489C17.7095 4.32691 19.012 6.70418 18.9998 9.26144C18.95 11.8019 17.5533 14.19 15.8075 16.0361C14.7998 17.1064 13.6726 18.0528 12.4488 18.856C12.3228 18.9289 12.1848 18.9777 12.0415 19C11.9036 18.9941 11.7693 18.9534 11.6508 18.8814C9.78243 17.6746 8.14334 16.134 6.81233 14.334C5.69859 12.8314 5.06584 11.016 5 9.13442C4.99856 6.57225 6.34677 4.20627 8.53162 2.93677ZM9.79416 10.1948C10.1617 11.1008 11.0292 11.6918 11.9916 11.6918C12.6221 11.6964 13.2282 11.4438 13.6748 10.9905C14.1214 10.5371 14.3715 9.92064 14.3692 9.27838C14.3726 8.29804 13.7955 7.41231 12.9073 7.03477C12.0191 6.65723 10.995 6.86235 10.3133 7.55435C9.63159 8.24635 9.42664 9.28872 9.79416 10.1948Z"
@@ -537,9 +537,9 @@
                                     fill="currentColor"></ellipse>
                             </svg>
                         </i>
-                        <span class="item-name">HRM</span>
+                        <span class="item-name text-danger">HRM</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
@@ -565,7 +565,7 @@
                             </li>
                         @endrole
                         <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/maps/vector.html">
+                            <a class="nav-link " href="{{ route('hrm.myattendances.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -576,7 +576,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> V </i>
-                                <span class="item-name">Vector</span>
+                                <span class="item-name">My Attendance</span>
                             </a>
                         </li>
                     </ul>
@@ -649,7 +649,7 @@
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-table" role="button"
                         aria-expanded="false" aria-controls="sidebar-table">
                         <i class="icon">
-                            <svg class="icon-20" xmlns="http://www.w3.org/2000/svg" width="20"
+                            <svg class="icon-20 text-danger" xmlns="http://www.w3.org/2000/svg" width="20"
                                 viewBox="0 0 24 24" fill="none">
                                 <path
                                     d="M2 5C2 4.44772 2.44772 4 3 4H8.66667H21C21.5523 4 22 4.44772 22 5V8H15.3333H8.66667H2V5Z"
@@ -659,9 +659,9 @@
                                     stroke="currentColor" />
                             </svg>
                         </i>
-                        <span class="item-name">Expense</span>
+                        <span class="item-name text-danger">Expense</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
@@ -710,7 +710,7 @@
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-people" role="button"
                         aria-expanded="false" aria-controls="sidebar-people">
                         <i class="icon">
-                            <svg class="icon-20" xmlns="http://www.w3.org/2000/svg" width="20"
+                            <svg class="icon-20 text-danger" xmlns="http://www.w3.org/2000/svg" width="20"
                                 viewBox="0 0 24 24" fill="none">
                                 <path
                                     d="M2 5C2 4.44772 2.44772 4 3 4H8.66667H21C21.5523 4 22 4.44772 22 5V8H15.3333H8.66667H2V5Z"
@@ -720,9 +720,9 @@
                                     stroke="currentColor" />
                             </svg>
                         </i>
-                        <span class="item-name">People</span>
+                        <span class="item-name text-danger">People</span>
                         <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />

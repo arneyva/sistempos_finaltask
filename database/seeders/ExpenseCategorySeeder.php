@@ -13,6 +13,7 @@ class ExpenseCategorySeeder extends Seeder
     public function run(): void
     {
         ExpenseCategory::firstOrCreate([
+            'id' => 1,],[
             'user_id' => 1,
             'name' => 'Dekorasi',
             'description' => 'Menanamkan Pohon di sekitaran',

@@ -46,12 +46,28 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="mb-2 navbar-nav ms-auto align-items-center navbar-list mb-lg-0">
+                <a href="{{ url('/webclock') }}" style="margin-right:4px;">
+                    <button type="button" class="btn btn-sm btn-danger" style="margin-right:4px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"></path>
+                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"></path>
+                        </svg>
+                    </button>
+                </a>
+                <a href="{{ url('/cashier') }}" style="margin-right:6px;">
+                    <button type="button" class="btn btn-sm btn-danger" style="margin-right:6px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket2" viewBox="0 0 16 16">
+                        <path d="M4 10a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0zm3 0a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0zm3 0a1 1 0 1 1 2 0v2a1 1 0 0 1-2 0z"/>
+                        <path d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-.623l-1.844 6.456a.75.75 0 0 1-.722.544H3.69a.75.75 0 0 1-.722-.544L1.123 8H.5a.5.5 0 0 1-.5-.5v-1A.5.5 0 0 1 .5 6h1.717L5.07 1.243a.5.5 0 0 1 .686-.172zM2.163 8l1.714 6h8.246l1.714-6z"/>
+                    </svg>
+                    </button>
+                </a>
                 <li class="nav-item dropdown">
                     <div class="nav-dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="nav1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="text-secondary fas fa-globe"></i><span class="text-with-icon text-responsive text-uppercase">{{ env('APP_LOCALE', 'en') }}</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" style="list-style: none;">
+                        <ul class="dropdown-menu dropdown-menu-start" style="list-style: none;">
                             <li><a href="{{ url('lang/en') }}" class="dropdown-item"><i class="fi fi-us mr-2"></i> English</a></li>
                             <li> <a href="{{ url('lang/id') }}" class="dropdown-item"><i class="fi fi-id mr-2"></i> Indonesia</a></li>
                         </ul>

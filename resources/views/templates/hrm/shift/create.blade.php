@@ -87,19 +87,8 @@
                 </div>
             </div>
                 <div class="card-body py-4 tab-pane fade active show" id="days">
-                    @php
-                        $days = [
-                            'monday' => 'monday',
-                            'tuesday' => 'tuesday',
-                            'wednesday' => 'wednesday',
-                            'thursday' => 'thursday',
-                            'friday' => 'friday',
-                            'saturday' => 'saturday',
-                            'sunday' => 'sunday'
-                        ];
-                    @endphp
                     <div class="row">
-                        @foreach($days as $day => $dayName)
+                        @foreach($days as $day)
                         <div class="col-md-12 mb-2">
                             <div class="checkbox-wrapper-46" id="{{ $day }}-wrapper">
                                 <input type="checkbox" id="{{ $day }}" name="{{ $day }}" value="1" class="inp-cbx" />
@@ -109,7 +98,7 @@
                                             <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
                                         </svg>
                                     </span>
-                                    <span>{{ $dayName }}</span>
+                                    <span>{{ $day }}</span>
                                 </label>
                             </div>
                             <div id="{{ $day }}-times" class="mt-2 mb-3" style="display: none; ">
