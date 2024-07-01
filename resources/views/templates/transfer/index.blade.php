@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>All Transfer</h1>
-    <p>Look All your transfer</p>
+    <h1>{{ __('All Transfers') }}</h1>
+    <p>{{ __('Look All your transfer') }}</p>
 @endsection
 
 <style>
@@ -21,43 +21,44 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Transfers
+                    <h4 class="card-title">{{ __('All Transfers') }}
                     </h4>
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#createModal">Filter</button>
+                        data-bs-target="#createModal">{{ __('Filter') }}</button>
                     <a href="{{ route('transfer.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
                     <a href="{{ route('transfer.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
-                    <a href="{{ route('transfer.create') }}"><button type="button" class="btn btn-soft-primary">Create
-                            +</button></a>
+                    <a href="{{ route('transfer.create') }}"><button type="button" class="btn btn-soft-primary">{{ __('Create +') }}</button></a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <h5 class="modal-title" id="createModalLabel">{{ __('Filter') }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ route('transfer.index') }}" method="GET" id="filterForm">
                                         <div class="col mb-3">
-                                            <label class="form-label" for="date">Date *</label>
+                                            <label class="form-label" for="date">{{ __('Date *') }}</label>
                                             <input type="date" class="form-control" id="date" name="date"
                                                 value="{{ request()->input('date') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="Ref">Reference*</label>
+                                            <label class="form-label" for="Ref">{{ __('Reference *') }}</label>
                                             <input type="text" class="form-control" id="Ref" name="Ref"
-                                                value="{{ request()->input('Ref') }}" placeholder="Input Ref ...">
+                                                value="{{ request()->input('Ref') }}"
+                                                placeholder="{{ __('Input Ref ...') }}">
                                         </div>
                                         @role('superadmin|inventaris')
                                             <div class="col mb-3">
-                                                <label class="form-label" for="from_warehouse_id">From Warehouse/Outlet
+                                                <label class="form-label"
+                                                    for="from_warehouse_id">{{ __('From Warehouse/Outlet') }}
                                                     *</label>
                                                 <select class="form-select" id="from_warehouse_id" name="from_warehouse_id">
-                                                    <option selected disabled value="">Choose...</option>
+                                                    <option selected disabled value="">{{ __('Choose...') }}</option>
                                                     @foreach ($warehouse as $wh)
                                                         <option value="{{ $wh->id }}"
                                                             {{ request()->input('from_warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -67,9 +68,10 @@
                                                 </select>
                                             </div>
                                             <div class="col mb-3">
-                                                <label class="form-label" for="to_warehouse_id">To Warehouse/Outlet *</label>
+                                                <label class="form-label"
+                                                    for="to_warehouse_id">{{ __('To Warehouse/Outlet') }}</label>
                                                 <select class="form-select" id="to_warehouse_id" name="to_warehouse_id">
-                                                    <option selected disabled value="">Choose...</option>
+                                                    <option selected disabled value="">{{ __('Choose...') }}</option>
                                                     @foreach ($warehouse as $wh)
                                                         <option value="{{ $wh->id }}"
                                                             {{ request()->input('to_warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -80,22 +82,23 @@
                                             </div>
                                         @endrole
                                         <div class="col mb-3">
-                                            <label class="form-label" for="statut">Status *</label>
+                                            <label class="form-label" for="statut">{{ __('Status') }}</label>
                                             <select class="form-select" id="statut" name="statut">
-                                                <option selected disabled value="">Choose...</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
                                                 <option value="completed"
                                                     {{ request()->input('statut') == 'completed' ? 'selected' : '' }}>
-                                                    Completed</option>
+                                                    {{ __('Completed') }}</option>
                                                 <option value="sent"
-                                                    {{ request()->input('statut') == 'sent' ? 'selected' : '' }}>Sent
+                                                    {{ request()->input('statut') == 'sent' ? 'selected' : '' }}>
+                                                    {{ __('Sent') }}
                                                 </option>
                                             </select>
                                         </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" onclick="resetFilters()"
-                                        data-bs-dismiss="modal">Reset</button>
-                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                        data-bs-dismiss="modal">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Filter') }}</button>
                                 </div>
                                 </form>
                             </div>
@@ -108,14 +111,14 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Reference</th>
-                                <th>From Warehouse/Outlet</th>
-                                <th>To Warehouse/Outlet</th>
-                                <th>Total Products</th>
-                                <th>Grand Total</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('Reference') }}</th>
+                                <th>{{ __('From Warehouse/Outlet') }}</th>
+                                <th>{{ __('To Warehouse/Outlet') }}</th>
+                                <th>{{ __('Total Products') }}</th>
+                                <th>{{ __('Grand Total') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -125,7 +128,7 @@
                                     <td>{{ $item['Ref'] }}</td>
                                     <td>{{ $item['from_warehouse']['name'] }}</td>
                                     <td>{{ $item['to_warehouse']['name'] }}</td>
-                                    <td>{{ $item['items'] }} Items</td>
+                                    <td>{{ $item['items'] }} {{ __('Items') }}</td>
                                     <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}</td>
                                     <td>{{ $item['statut'] }}</td>
                                     <td>
@@ -150,7 +153,8 @@
                                                 <div class="modal-dialog modal-lg" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="showDetailsLabel">Transfer Detail
+                                                            <h5 class="modal-title" id="showDetailsLabel">
+                                                                {{ __('Transfer Detail') }}
                                                             </h5>
                                                         </div>
                                                         <div class="modal-body">
@@ -168,12 +172,12 @@
                                                                                 <th>{{ $item['Ref'] }}</th>
                                                                             </tr>
                                                                             <tr>
-                                                                                <td>{{ __('From Warehouse') }}</td>
+                                                                                <td>{{ __('From Warehouse/Outlet') }}</td>
                                                                                 <th>{{ $item['from_warehouse']['name'] }}
                                                                                 </th>
                                                                             </tr>
                                                                             <tr>
-                                                                                <td>{{ __('To Warehouse') }}</td>
+                                                                                <td>{{ __('To Warehouse/Outlet') }}</td>
                                                                                 <th>{{ $item['to_warehouse']['name'] }}
                                                                                 </th>
                                                                             </tr>
