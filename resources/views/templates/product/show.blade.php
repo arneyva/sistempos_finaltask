@@ -3,8 +3,8 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 @endpush
 @section('pages_title')
-    <h1>{{ $data[0]['brand'] }} {{ $data[0]['name'] }} Detail</h1>
-    <p>Do Something with all your measurement</p>
+    <h1>{{ $data[0]['brand'] }} ~ {{ $data[0]['name'] }} Detail</h1>
+    <p>{{ __('Do Something with your Product') }}</p>
 @endsection
 <style>
     .swiper-button-next,
@@ -42,7 +42,7 @@
                                         <div class="progress-widget">
                                             <div class="progress-detail">
                                                 <p class="mb-2">{{ $variant['mag'] }} ~ {{ $variant['variant'] }}</p>
-                                                <p class="mb-2">Stock Alert</p>
+                                                <p class="mb-2">{{ __('Stock Alert') }}</p>
                                                 <div class="form-group">
                                                     <input type="number"
                                                         name="stock_alert[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
@@ -51,7 +51,7 @@
                                                         style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
                                                         value="{{ $variant['stock_alert'] ?? 0 }}" min="0">
                                                 </div>
-                                                <p class="mb-2">Discount Threshold</p>
+                                                <p class="mb-2">{{ __('Discount Threshold') }}</p>
                                                 <div class="form-group input-group">
                                                     <span class="input-group-text" id="basic-addon1">%</span>
                                                     <input type="number"
@@ -92,14 +92,14 @@
                                         <div class="progress-widget">
                                             <div class="progress-detail">
                                                 <p class="mb-2">{{ $qty['mag'] }}</p>
-                                                <p class="mb-2">Stock Alert</p>
+                                                <p class="mb-2">{{ __('Stock Alert') }}</p>
                                                 <div class="form-group">
                                                     <input type="number" name="stock_alert[{{ $qty['mag'] }}]"
                                                         id="stock_alert_qty_{{ $qty['mag'] }}" class="form-control"
                                                         style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
                                                         value="{{ $qty['stock_alert'] ?? 0 }}">
                                                 </div>
-                                                <p class="mb-2">Discount Threshold</p>
+                                                <p class="mb-2">{{ __('Discount Threshold') }}</p>
                                                 <div class="form-group input-group">
                                                     <span class="input-group-text" id="basic-addon1">%</span>
                                                     <input type="number" name="discount_percentage[{{ $qty['mag'] }}]"
@@ -142,7 +142,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Product Information</h4>
+                            <h4 class="card-title">{{ __('Product Information') }}</h4>
                         </div>
                         <a href="#"><button type="button" class="btn btn-soft-primary">Print</button></a>
                     </div>
@@ -151,41 +151,41 @@
                             <table id="basic-table" class="table table-striped mb-0" role="grid">
                                 <tbody>
                                     <tr>
-                                        <td>Product Name</td>
+                                        <td>{{ __('Product Name') }}</td>
                                         <th>{{ $data[0]['name'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Type</td>
+                                        <td>{{ __('Type') }}</td>
                                         <th>{{ $data[0]['type_name'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Code Product</td>
+                                        <td>{{ __('Code') }}</td>
                                         <th>{{ $data[0]['code'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Category</td>
+                                        <td>{{ __('Category') }}</td>
                                         <th>{{ $data[0]['cateogry'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Brand</td>
+                                        <td>{{ __('Brand') }}</td>
                                         <th>{{ $data[0]['brand'] }}</th>
                                     </tr>
                                     @if ($data[0]['type'] == 'is_single')
                                         <tr>
-                                            <td>Product Cost</td>
+                                            <td>{{ __('Product Cost') }}</td>
                                             <th>{{ $data[0]['cost'] }}</th>
                                         </tr>
                                         <tr>
-                                            <td>Product Price</td>
+                                            <td>{{ __('Product Price') }}</td>
                                             <th>{{ $data[0]['price'] }}</th>
                                         </tr>
                                     @endif
                                     <tr>
-                                        <td>Unit</td>
+                                        <td>{{ __('Unit') }}</td>
                                         <th>{{ $data[0]['unit'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Tax</td>
+                                        <td>{{ __('Tax') }}</td>
                                         <th>{{ $data[0]['tax'] }} %</th>
                                     </tr>
                                 </tbody>
@@ -202,7 +202,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Variant Detail</h4>
+                            <h4 class="card-title">{{ __('Variant Detail') }}</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -210,10 +210,10 @@
                             <table id="product-table" class="table table-striped mb-0" role="grid">
                                 <thead>
                                     <tr>
-                                        <th>Variant Name</th>
-                                        <th>Variant code</th>
-                                        <th>Variant cost</th>
-                                        <th>Variant price</th>
+                                        <th>{{ __('Variant Name') }}</th>
+                                        <th>{{ __('Variant code') }}</th>
+                                        <th>{{ __('Variant cost') }}</th>
+                                        <th>{{ __('Variant price') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -255,9 +255,9 @@
                         @if ($data[0]['is_variant'] == 'Yes')
                             <thead>
                                 <tr>
-                                    <th>Warehouse</th>
-                                    <th>Variant</th>
-                                    <th>Qty</th>
+                                    <th>{{ __('Warehouse/Outlet') }}</th>
+                                    <th>{{ __('Variant') }}</th>
+                                    <th>{{ __('Quantity') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -272,8 +272,8 @@
                         @else
                             <thead>
                                 <tr>
-                                    <th>Warehouse</th>
-                                    <th>Qty</th>
+                                    <th>{{ __('Warehouse/Outlet') }}</th>
+                                    <th>{{ __('Quantity') }}</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Edit Product</h1>
-    <p>Do Something with product's data</p>
+    <h1>{{ __('Edit Product') }}</h1>
+    <p>{{ __('Do Something with product data') }}</p>
 @endsection
 
 <style>
@@ -52,7 +52,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Update Product</h4>
+                            <h4 class="card-title">{{ __('Update Product') }}</h4>
                         </div>
                     </div>
                     <form method="POST" action="{{ route('product.update', $product['id']) }}"
@@ -63,7 +63,7 @@
                             <input type="hidden" id="variantData" name="new_variants">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="name">Name Product *</label>
+                                    <label class="form-label" for="name">{{ __('Product Name *') }}</label>
                                     <input type="text" class="form-control" id="name" required
                                         placeholder="input name" name="name" value="{{ $product['name'] }}">
                                     @error('name')
@@ -77,7 +77,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="codebaseproduct">Code Product *</label>
+                                    <label class="form-label" for="codebaseproduct">{{ __('Product Code *') }}</label>
                                     <input type="text" class="form-control" id="codebaseproduct" required
                                         placeholder="input code" name="code" value="{{ $product['code'] }}">
                                     @error('code')
@@ -91,10 +91,10 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="brand">Brand</label>
+                                    <label class="form-label" for="brand">{{ __('Brand') }}</label>
                                     <select class="form-select select2" id="brand" required name="brand_id"
                                         data-placeholder="Select a Brand ">
-                                        <option selected disabled value="">Choose...</option>
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
                                         @foreach ($brand as $item)
                                             <option value="{{ $item->id }}"
                                                 {{ (old('brand_id') ?? $product['brand_id']) == $item->id ? 'selected' : '' }}>
@@ -113,10 +113,10 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="category">Category *</label>
+                                    <label class="form-label" for="category">{{ __('Category')  }}</label>
                                     <select class="form-select select2" id="category" required name="category_id"
                                         data-placeholder="Select a Category">>
-                                        <option selected disabled value="">Choose...</option>
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
                                         @foreach ($category as $item)
                                             <option value="{{ $item->id }}"
                                                 {{ (old('category_id') ?? $product['category_id']) == $item->id ? 'selected' : '' }}>
@@ -134,7 +134,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="tax">Tax</label>
+                                    <label class="form-label" for="tax">{{ __('Tax') }}</label>
                                     <div class="form-group input-group">
                                         <span class="input-group-text" id="basic-addon1">%</span>
                                         <input type="text" class="form-control" id="tax" aria-label="Username"
@@ -152,7 +152,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="description">Note</label>
+                                    <label class="form-label" for="description">{{ __('Note') }}</label>
                                     <input type="text" class="form-control" id="description"
                                         placeholder="a few words..." name="note" value="{{ $product['note'] }}">
                                     @error('note')
@@ -174,12 +174,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="type">Type</label>
+                                <label class="form-label" for="type">{{ __('Type') }}</label>
                                 <input type="text" class="form-select" id="type" required name="type"
                                     value="{{ $product['type'] }}" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="productcost">Product Cost *</label>
+                                <label class="form-label" for="productcost">{{ __('Cost') }}</label>
                                 @if ($product['type'] == 'is_variant')
                                     <input type="text" class="form-control" id="productcost" required
                                         placeholder="input product cost" name="cost" value="{{ $product['cost'] }}"
@@ -199,7 +199,7 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="productprice">Product Price *</label>
+                                <label class="form-label" for="productprice">{{ __('Price') }}</label>
                                 @if ($product['type'] == 'is_variant')
                                     <input type="text" class="form-control" id="productprice" required
                                         placeholder="input product price" name="price"
@@ -220,10 +220,10 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="productunit" class="form-label">Product Unit</label>
+                                <label for="productunit" class="form-label">{{ __('Product Unit & Sale Unit') }}</label>
                                 <select class="form-select select2" id="productunit" required name="unit_id"
                                     data-placeholder="Select a Product Unit">
-                                    <option selected disabled value="">Choose...</option>
+                                    <option selected disabled value="">{{ __('Choose...') }}</option>
                                     @foreach ($unit as $item)
                                         <option value="{{ $item->id }}"
                                             {{ (old('unit_id') ?? $product['unit_id']) == $item->id ? 'selected' : '' }}>
@@ -232,7 +232,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <label for="saleunit" class="form-label">Sale Unit</label>
                                 <select class="form-select select2" id="saleunit" required name="unit_sale_id"
                                     data-placeholder="Select a Sale Unit">
@@ -243,9 +243,9 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
                             <div class="col-md-6 mb-3">
-                                <label for="purchaseunit" class="form-label">Purchase Unit</label>
+                                <label for="purchaseunit" class="form-label">{{ __('Purchase Unit') }}</label>
                                 <select class="form-select select2" id="purchaseunit" required name="unit_purchase_id"
                                     data-placeholder="Select a Purchase Unit">
                                     @foreach ($units_sub as $item)
@@ -262,21 +262,20 @@
                                     <div class="row">
                                         <div class="col-md-9 mb-3">
                                             <input type="text" class="form-control" id="variantNameInput"
-                                                placeholder="Enter New Variant Name">
+                                                placeholder="{{ __('Input Variant Name') }}">
                                         </div>
                                         <div class="col-md-3 mb-3">
-                                            <button class="btn btn-soft-primary" id="createVariantBtn" type="button">Add
-                                                +</button>
+                                            <button class="btn btn-soft-primary" id="createVariantBtn" type="button">{{ __('Add +') }}</button>
                                         </div>
                                         <div class="card-body p-3">
                                             <div class="table-responsive">
                                                 <table id="variantTable" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Variant Name</th>
-                                                            <th>Variant Code</th>
-                                                            <th>Variant Cost</th>
-                                                            <th>Variant Price</th>
+                                                            <th>{{ __('Variant Name') }}</th>
+                                                            <th>{{ __('Variant code') }}</th>
+                                                            <th>{{ __('Variant cost') }}</th>
+                                                            <th>{{ __('Variant price') }}</th>
                                                             <th></th>
                                                         </tr>
                                                     </thead>
@@ -312,7 +311,7 @@
                                 </div>
                             @else
                             @endif
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <div class="form-check mb-3">
                                     <input type="checkbox" class="form-check-input" id="is_imei" name="is_imei">
                                     <label class="form-check-label" for="is_imei">Product has Imei/Serial
@@ -324,7 +323,7 @@
                                         Number</label>
                                 </div>
 
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="form-group mt-2">
                             <button class="btn btn-primary" type="submit">Update</button>
