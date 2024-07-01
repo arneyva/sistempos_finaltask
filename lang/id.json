@@ -1,6 +1,7 @@
 {
     "Add Adjustment": "Tambahkan Adjustment",
     "Do Something with all your adjustment": "Lakukan Sesuatu dengan Semua Adjustment Anda",
+    "Do Something with your Product": "Lakukan Sesuatu dengan Produk Anda",
     "Create Adjustment": "Buat Adjustment",
     "Warehouse/Outlet": "Gudang/Outlet",
     "Choose...": "Pilih...",
@@ -21,6 +22,7 @@
     "Subtract": "Kurangi",
     "Delete": "Hapus",
     "Update Adjustment": "Perbarui Penyesuaian",
+    "Update Product": "Perbarui Produk",
     "All Adjustment": "Semua Penyesuaian",
     "Search...": "Cari...",
     "Filter": "Saring",
@@ -161,6 +163,7 @@
     "This Field is required": "Kolom ini wajib diisi",
      "Code must not exist already": "Kode tidak boleh sudah ada",
      "Product Cost": "Biaya Produk",
+     "Product Price": "Harga Produk",
     "This Unit must already be created": "Satuan ini harus sudah dibuat",
     "Please use short name of unit": "Silakan gunakan nama pendek dari satuan",
     "Field optional": "Kolom opsional",
@@ -192,5 +195,11 @@
     "input tax": "masukan pajak",
     "Select a Product & Sale Unit": "Pilih Satuan Produk & Penjualan",
     "Select a Purchase Unit": "Pilih Satuan Pembelian",
-    "Input Variant Name": "Masukkan Nama Varian"
+    "Input Variant Name": "Masukkan Nama Varian",
+    "Discount Threshold": "Diskon Harga Bertingkat",
+    "Variant Detail": "Detail Varian",
+    "Variant": "Varian",
+    "Product Information": "Informasi Produk",
+     "Edit Product": "Edit Produk",
+    "Do Something with product data": "Lakukan Sesuatu dengan data produk"
 }
