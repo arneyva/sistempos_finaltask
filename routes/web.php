@@ -15,6 +15,7 @@ use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\purchase\PurchaseController;
+use App\Http\Controllers\pos\PosController;
 use App\Http\Controllers\Reports\ReportsController;
 use App\Http\Controllers\Sale\SaleController;
 use App\Http\Controllers\Sale\SaleReturnController;
@@ -278,7 +279,7 @@ Route::prefix('hrm')->middleware(['auth', 'verified'])->name('hrm.')->group(func
         Route::patch('update/{id}', [OfficeShiftController::class, 'update'])->name('update');
         Route::delete('destroy/{id}', [OfficeShiftController::class, 'destroy'])->name('destroy');
     });
-    Route::prefix('MyAttendances')->name('myattendances.')->group(function () {
+    Route::prefix('myattendances')->name('myattendances.')->group(function () {
         Route::get('list', [MyAttendanceController::class, 'index'])->name('index');
         Route::post('list', [MyAttendanceController::class, 'checkAttendance'])->name('check');
     });
@@ -293,6 +294,11 @@ Route::prefix('purchases')->middleware(['auth', 'verified'])->name('purchases.')
     Route::post('scanner/{code}', [PurchaseController::class, 'getFromScanner']);
     Route::post('supplier/{id}', [PurchaseController::class, 'getSupplier']);
 });
+
+Route::get('cashier', [PosController::class, 'create'])->middleware(['auth', 'verified']);
+Route::prefix('cashier')->middleware(['auth', 'verified'])->name('cashier.')->group(function () {
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

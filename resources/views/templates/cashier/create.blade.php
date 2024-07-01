@@ -34,35 +34,31 @@
 
     <style>
         body {
-        width: 100%;
-        height: 100%;
-        --s: 82px;
-        --c1: #012D86;
-        --c2: #2E7AEB;
-        --c3: #0945A7;
+            width: 100%;
+            height: 100%;
+            --size: 80px; /* control the size */
+            --color: #add8e6;
 
-        --_g: var(--c3) 0 120deg, #0000 0;
-        background: conic-gradient(from -60deg at 50% calc(100% / 3), var(--_g)),
-            conic-gradient(from 120deg at 50% calc(200% / 3), var(--_g)),
-            conic-gradient(
-            from 60deg at calc(200% / 3),
-            var(--c3) 60deg,
-            var(--c2) 0 120deg,
-            #0000 0
-            ),
-            conic-gradient(from 180deg at calc(100% / 3), var(--c1) 60deg, var(--_g)),
-            linear-gradient(
-            90deg,
-            var(--c1) calc(100% / 6),
-            var(--c2) 0 50%,
-            var(--c1) 0 calc(500% / 6),
-            var(--c2) 0
-            );
-        background-size: calc(1.732 * var(--s)) var(--s);
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                transparent 40%,
+                #add8e6 41%,
+                #add8e6 60%,
+                transparent 61%,
+                transparent 100%
+                ),
+                linear-gradient(
+                45deg,
+                #add8e6 25%,
+                transparent 25%,
+                transparent 50%,
+                #add8e6 50%,
+                #add8e6 75%,
+                transparent 75%,
+                transparent
+                );
+            background-size: var(--size) var(--size);
         }
 
         .container {
@@ -74,168 +70,11 @@
         }
 
         .otp-Form {
-            background-color: #f9f9f9;
-            padding: 2rem; /* Menggunakan rem untuk padding agar responsif */
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 50rem; /* Menggunakan rem untuk lebar agar responsif */
+            width: 100%; /* Menggunakan rem untuk lebar agar responsif */
         }
 
         /* Custom CSS to adjust the Bootstrap media query breakpoints */
-        @media (max-width: 576px) {
-            /* Adjust the large (lg) screen breakpoint */
-            .otp-Form h1 {
-                display: flex;
-                justify-content: center;
-                font-size:12vw; 
-            }
-            .otp-Form h2 {
-                font-size: 5.1vw; 
-            }
-            .otp-Form h6 {
-                font-size:4.4vw; 
-                font-weight:1; 
-            }
-
-            .ButtonContainer {
-                gap:2vw;
-                margin-top:4.2vw;
-            }
-
-            .otp-Form {
-                display: flex;
-                justify-content: center;
-                flex-direction: column;
-                max-width: 97%; /* Set your desired minimum width for large screens (lg) */
-                padding: 1rem 2rem 1rem 2rem;
-            }
-
-            .verifyButton {
-                width: 35vw;
-                height: 12vw;
-                font-size: 4.3vw;
-                border: 2.7px solid;
-                border-radius: 5px;
-            }
-            .password-input {
-            -webkit-text-security: disc; /* Untuk Chrome/Safari */
-            -moz-text-security: disc; /* Untuk Firefox */
-            width: 70vw;
-            height: 11vw;
-            border-radius: 0.25vw;
-            outline: none;
-            border: 0.6vw solid transparent;
-            border-bottom: 0.6vw solid #3f3f3f;
-            caret-color: #3f3f3f;
-            background-color: transparent;
-            padding: 0px;
-            transition: .5s linear;
-            letter-spacing: 0.9px;
-            text-align:center;
-        }
-
-        .password-input:focus {
-        border: 0.6vw solid #fa4753;
-        color: #fa4753;
-        box-shadow: 0.34vw 0.34vw 0.9vw #6B6B6B;
-        }
-        
-        .password-input::placeholder {
-        font-size:4vw;
-        font-weight: 600;
-        position: relative;
-        top: -0.8px;
-        transition: .5s linear;
-        }
-        .password-input:focus::placeholder {
-        color: #fa4753;
-        }
-        #map {
-            height: 180px;
-            width: 100%;
-            margin-bottom:2.8vw;
-        }
-        }
-        @media (min-width: 577px) {
-            /* Adjust the large (lg) screen breakpoint */
-            .otp-Form h1 {
-                font-size:6vw; 
-            }
-            .otp-Form h2 {
-                font-size:2.3vw; 
-            }
-            .otp-Form h6 {
-                font-size:2vw;
-                font-weight:1;  
-            }
-            .otp-Form {
-                width: 100vw; /* Set your desired minimum width for large screens (lg) */
-            }
-            .ButtonContainer {
-                gap:1vw;
-                margin-top:1.5vw;
-            }
-
-            .verifyButton {
-            width: 16.7vw;
-            height: 4.2vw;
-            max-height: 40px;
-            border: 0.3vw solid ;
-            border-radius: 5px;
-            font-size:1.9vw;
-            }
-            .password-input {
-            -webkit-text-security: disc; /* Untuk Chrome/Safari */
-            -moz-text-security: disc; /* Untuk Firefox */
-            width: 31vw;
-            height: 4vw;
-            border-radius: 0.25vw;
-            outline: none;
-            border: 0.3vw solid transparent;
-            border-bottom: 0.3vw solid #3f3f3f;
-            caret-color: #3f3f3f;
-            background-color: transparent;
-            padding: 5px;
-            transition: .5s linear;
-            letter-spacing: 1px;
-            text-align:center;
-            margin-bottom 30px;
-        }
-
-        .password-input:focus {
-        border: 0.3vw solid #fa4753;
-        color: #fa4753;
-        box-shadow: 0.28vw 0.28vw 0.5vw #6B6B6B;
-        }
-        
-        .password-input::placeholder {
-        font-size:1.7vw;
-        font-weight: 660;
-        transition: .5s linear;
-        }
-        .password-input:focus::placeholder {
-        color: #fa4753;
-        }
-        #map {
-            height: 250px;
-            width: 90%;
-        }
-        }
         @media (min-width: 768px) {
-            /* Adjust the large (lg) screen breakpoint */
-            .otp-Form h1 {
-                font-size:5vw; 
-            }
-            .otp-Form h2 {
-                font-size:1.7vw; 
-            }
-            .otp-Form h6 {
-                font-size:1.23vw; 
-            }
-            .otp-Form {
-                max-width: 51%; /* Set your desired minimum width for large screens (lg) */
-            }
             .ButtonContainer {
                 gap:1.4vw;
             }
@@ -284,23 +123,6 @@
         }
         }
         @media (min-width: 1300px) {
-                #map {
-                height: 250px;
-                width: 90%;
-            }
-            /* Adjust the large (lg) screen breakpoint */
-            .otp-Form h1 {
-                font-size:5vw; 
-            }
-            .otp-Form h2 {
-                font-size:1.7vw; 
-            }
-            .otp-Form h6 {
-                font-size:1.2vw; 
-            }
-            .otp-Form {
-                max-width: 80%; /* Set your desired minimum width for large screens (lg) */
-            }
             .ButtonContainer {
                 gap:1.6vw;
             }
@@ -345,14 +167,6 @@
             }
         }
 
-        .otp-Form h1 {
-            margin: 0 0 0.3em 0;
-        }
-
-        .otp-Form p {
-            margin: 0;
-            font-size: 1.2vw; /* Menggunakan vw untuk font-size agar responsif */
-        }
 
         .mainHeading {
         font-size: 1.1em;
@@ -422,6 +236,18 @@
         .inline-block {
             display: inline-block;
         }
+        .fill-viewport {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-table-wrapper {
+            overflow-x: auto;
+        }
+        .full-height {
+            height: 100%;
+        }
 
     </style>
 
@@ -432,23 +258,11 @@
 </head>
 
 <body>
-    <div class=" position-absolute container top-50 start-50 translate-middle font-sans">
-        <form class="otp-Form" action="" method="get" autocomplete="off">
-            <h2 id="current-day" class="text-capitalize inline-block"></h2> <h2 class="inline-block">, </h2> <h2 id="current-date" class="text-capitalize inline-block"></h2>
-            <h1 id="current-time"></h1>
-            <div style="display:flex; justify-content:center; margin-bottom:2.2vw;">
-                <div class="" id="map"></div>
-            </div>
-            <div  style="display:flex; justify-content:center; margin-bottom:2.2vw;">
-                <input type="tel" id="numeric-input" class="form-control password-input" style="caret-color: transparent;" placeholder="Enter your PIN here" name="pin" autocomplete="off">
-            </div>
-            <div  style="display:flex; justify-content:center;" class="ButtonContainer">
-                <button id="btn-clockin" data-method="clockin" class="verifyButton" type="button">Clock-In</button>
-                <button id="btn-clockout" data-method="clockout" class="verifyButton out" type="button">Clock-Out</button>
-            </div>
-            </div>
-        </form>
+<main class="main-content">
+    <div class="container-fluid content-inner mt-n5 py-0">
+        .row
     </div>
+</main>
 
 
     <!-- Library Bundle Script -->
@@ -574,9 +388,6 @@
                                 title: 'Oops...',
                                 text: 'Terdapat error pada server'
                             });
-                            // Log the error for debugging
-                console.error('Error: ', error);
-                console.error('Response: ', xhr.responseText);
                         }
                     });
 

@@ -33,9 +33,18 @@ class OfficeShiftController extends Controller
      */
     public function create()
     {
-
+        $days = [
+            'monday' ,
+            'tuesday',
+            'wednesday' ,
+            'thursday',
+            'friday' ,
+            'saturday',
+            'sunday'
+        ];
         return view('templates.hrm.shift.create', [
             'warehouses' => Warehouse::all(),
+            'days' => $days
         ]);
     }
 

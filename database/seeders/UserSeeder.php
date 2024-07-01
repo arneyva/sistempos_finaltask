@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     {
 
         User::firstOrCreate([
-            'id' => 1,
+            'id' => 1,],[
             'firstname' => 'Staff',
             'lastname' => 'biasa',
             'username' => 'user',
@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
         ])->assignRole('staff')
             ->warehouses()->attach(2);
         User::firstOrCreate([
-            'id' => 2,
+            'id' => 2,],[
             'firstname' => 'Inventaris',
             'lastname' => 'Biasa',
             'username' => 'userutama',
@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
         ])->assignRole('inventaris')
             ->warehouses()->attach(1);
         User::firstOrCreate([
-            'id' => 3,
+            'id' => 3,],[
             'firstname' => 'Super',
             'lastname' => 'admin',
             'username' => 'admin',

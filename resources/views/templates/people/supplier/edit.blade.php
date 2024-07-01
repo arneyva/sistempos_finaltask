@@ -167,7 +167,7 @@
                             <div class="form-group col-md-4">
                                 <label class="form-label" for="lname">Payment Method :</label>
                                 <select name="payment_method" id="payment_method" class="form-control">
-                                    <option value="" select disabled hidden>Payment Method</option>
+                                    <option value="" selected disabled hidden>Payment Method</option>
                                     <option value="bni" {{ old('payment_method', $provider->payment_method) == 'bni' ? 'selected' : '' }}>BNI</option>
                                     <option value="bri" {{ old('payment_method', $provider->payment_method) == 'bri' ? 'selected' : '' }}>BRI</option>
                                     <option value="mandiri" {{ old('payment_method', $provider->payment_method) == 'mandiri' ? 'selected' : '' }}>Mandiri</option>
@@ -181,7 +181,7 @@
                             <div class="form-group col-md-4">
                                 <label class="form-label" for="lname">Payment Term :</label>
                                 <select name="payment_term" id="payment_term" class="form-control">
-                                    <option value="" select disabled hidden>Payment Term</option>
+                                    <option value="" selected disabled hidden>Payment Term</option>
                                     <option value="on_invoice" {{ old('payment_term', $provider->payment_term) == 'on_invoice' ? 'selected' : '' }}>Due on invoice</option>
                                     <option value="7_invoice" {{ old('payment_term', $provider->payment_term) == '7_invoice' ? 'selected' : '' }}>7 days after invoice</option>
                                     <option value="14_invoice" {{ old('payment_term', $provider->payment_term) == '14_invoice' ? 'selected' : '' }}>14 Days after Invoice</option>

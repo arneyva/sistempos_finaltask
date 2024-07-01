@@ -59,6 +59,7 @@ class Purchase extends Model
         'discount' => 'float',
         'shipping' => 'float',
         'GrandTotal' => 'float',
+        'subtotal' => 'float',
         'paid_amount' => 'float',
         'shipment_cost' => 'float'
     ];
@@ -75,6 +76,7 @@ class Purchase extends Model
         'discount',
         'shipping',
         'GrandTotal',
+        'subtotal',
         'paid_amount',
         'statut',
         'payment_statut',
@@ -90,6 +92,8 @@ class Purchase extends Model
         'shipment_cost',
         'driver_contact',
         'barcode',
+        'supplier_bank_account',
+        'supplier_ewalet',
         'delivery_file'
     ];
 
