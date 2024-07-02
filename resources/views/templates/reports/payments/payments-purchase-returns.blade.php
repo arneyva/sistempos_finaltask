@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Purchases Returns ~ Payments</h1>
-    <p>look up your payments</p>
+    <h1>{{ __('Purchases') }} {{ __('Return') }} ~ {{ __('Payments')  }}</h1>
+    <p>{{ __('look up your payments') }}</p>
 @endsection
 
 <style>
@@ -87,21 +87,21 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">Purchase
-                                            Return</a>
+                                        <a class="nav-link active show" role="tab" aria-selected="false">{{ __('Purchases') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.payments.sales-returns') }}"
-                                            role="tab" aria-selected="false">Sales
-                                            Return</a>
+                                            role="tab" aria-selected="false">{{ __('Sales') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.payments.sales') }}" role="tab"
-                                            aria-selected="false">Sales</a>
+                                            aria-selected="false">{{ __('Sales') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.payments.purchases') }}" role="tab"
-                                            aria-selected="false">Purchase
+                                            aria-selected="false">{{ __('Purchases') }}
                                         </a>
                                     </li>
                                 </ul>
@@ -136,12 +136,12 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Date</th>
-                                                            <th>Reference</th>
-                                                            <th>Returns</th>
-                                                            <th>Supplier</th>
-                                                            <th>Paid by</th>
-                                                            <th>Amount</th>
+                                                            <th>{{ __('Date') }}</th>
+                                                            <th>{{ __('Reference') }}</th>
+                                                            <th>{{ __('Return') }}</th>
+                                                            <th>{{ __('Supplier') }}</th>
+                                                            <th>{{ __('Payment Method') }}</th>
+                                                            <th>{{ __('Amount') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
