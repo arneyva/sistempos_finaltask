@@ -383,10 +383,11 @@ class SaleController extends Controller
                         if ($client_sale->is_poin_activated == 0) {
                             //kirim email ke client
                         }
-                    } elseif ($client_sale->score / $initial_poin < 0.4) {
-                        //score sudah terlalu kecil sehingga diskon ditutup untuk transaksi berikutnya
-                        $client_sale->is_poin_activated == 0;
-                    }
+                    } 
+                    // elseif ($client_sale->score / $initial_poin < 0.4) {
+                    //     //score sudah terlalu kecil sehingga diskon ditutup untuk transaksi berikutnya
+                    //     $client_sale->is_poin_activated == 0;
+                    // }
 
                     // Menyimpan perubahan pada client
                     $client_sale->save();
