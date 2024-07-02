@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Create Sale Return</h1>
-    <p>Look All your sales</p>
+    <h1>{{ __('Create Sales Return') }}</h1>
+    <p>{{ __('Create sales return transaction data easily and efficiently') }}</p>
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Create Sale Return</h4>
+                            <h4 class="card-title">{{ __('Create Sales Return') }}</h4>
                         </div>
                     </div>
                     {{--  --}}
@@ -30,17 +30,17 @@
                             <div class="row">
 
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Date *</label>
+                                    <label class="form-label" for="exampleInputdate">{{ __('Date *') }}</label>
                                     <input type="date" class="form-control" id="exampleInputdate" name="date"
                                         value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Sale Ref *</label>
+                                    <label class="form-label" for="exampleInputdate">{{ __('Sale Reference') }}</label>
                                     <input type="text" class="form-control" id="exampleInputdate"
                                         value="{{ $sale_return['sale_ref'] }}">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Status *</label>
+                                    <label class="form-label" for="exampleInputdate">{{ __('Status *') }}</label>
                                     <input type="text" class="form-control" id="exampleInputdate" name="statut"
                                         value="{{ $sale_return['statut'] }}">
                                 </div>
@@ -50,13 +50,13 @@
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>Product</th>
-                                                    <th>Net Unit Price</th>
-                                                    <th>Quantity Sold</th>
-                                                    <th>Quantity Return</th>
-                                                    <th>Discount</th>
-                                                    <th>Tax</th>
-                                                    <th>Subtotal</th>
+                                                    <th>{{ __('Product Name') }}</th>
+                                                    <th>{{ __('Price') }}</th>
+                                                    <th>{{ __('Quantity Sold') }}</th>
+                                                    <th>{{ __('Quantity Returned') }}</th>
+                                                    <th>{{ __('Discount') }}</th>
+                                                    <th>{{ __('Tax') }}</th>
+                                                    <th>{{ __('SubTotal') }}</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -122,19 +122,19 @@
                                         role="grid">
                                         <tbody>
                                             <tr>
-                                                <td>Order Tax</td>
+                                                <td>{{ __('Order Tax') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Discount</td>
+                                                <td>{{ __('Discount') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Shipping</td>
+                                                <td>{{ __('Shipping') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Grand Total</td>
+                                                <td>{{ __('Grand Total') }}</td>
                                                 <th></th>
                                             </tr>
                                     </table>
@@ -142,10 +142,10 @@
                                 <div class="col-md-12 mb-3">
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="tax_rate">Order Tax *</label>
+                                            <label class="form-label" for="tax_rate">{{ __('Order Tax') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="tax_rate"
-                                                    placeholder="input tax" name="tax_rate"
+                                                    placeholder="{{ __('input tax') }}" name="tax_rate"
                                                     value="{{ $sale_return['tax_rate'] }}">
                                                 <span class="input-group-text" id="basic-addon1">%</span>
                                             </div>
@@ -163,10 +163,10 @@
                                             placeholder="input tax net" name="TaxNet" value="{{ old('sale.TaxNet') }}">
                                         <input class="" type="hidden" id="grandTotal" name="GrandTotal">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="discount">Discount *</label>
+                                            <label class="form-label" for="discount">{{ __('Discount') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="discount"
-                                                    placeholder="input discount" name="discount"
+                                                    placeholder="{{ __('input discount') }}" name="discount"
                                                     value="{{ $sale_return['discount'] }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
@@ -181,10 +181,10 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="shipping">Shipping *</label>
+                                            <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="shipping"
-                                                    placeholder="input shipping" name="shipping"
+                                                    placeholder="{{ __('input shipping') }}" name="shipping"
                                                     value="{{ $sale_return['shipping'] }}">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                             </div>
@@ -200,13 +200,13 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 mb-3">
-                                        <label class="form-label" for="validationDefault05">Description</label>
+                                        <label class="form-label" for="validationDefault05">{{ __('Note') }}</label>
                                         <input type="text" class="form-control" id="validationDefault05"
-                                            name="notes" placeholder="a few words...">
+                                            name="notes" placeholder="{{ __('a few words...') }}">
                                     </div>
                                 </div>
                                 <div class="form-group mt-2">
-                                    <button class="btn btn-primary" type="submit">Submit form</button>
+                                    <button class="btn btn-primary" type="submit">{{ __('Submit form') }}</button>
                                 </div>
                         </form>
                     </div>
