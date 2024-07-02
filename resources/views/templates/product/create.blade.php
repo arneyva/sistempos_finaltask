@@ -39,6 +39,28 @@
         display: flex;
         gap: 5px
     }
+
+    .select2-container .select2-selection--single {
+        height: 54px;
+        /* Atur tinggi sesuai kebutuhan */
+        display: flex;
+        align-items: center;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 54px;
+        /* Sesuaikan dengan tinggi yang diatur */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 52px;
+        /* Sesuaikan dengan tinggi yang diatur - 2px untuk padding */
+    }
+
+    .select2-container .select2-dropdown .select2-results__options {
+        max-height: 220px;
+        /* Atur tinggi maksimum sesuai kebutuhan */
+    }
 </style>
 @section('content')
     <div class="col-md-12 col-lg-12">
@@ -64,7 +86,8 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="name">{{ __('Product Name *') }}</label>
                                     <input type="text" class="form-control" id="name" required
-                                        placeholder="{{ __('Input Name ...') }}" name="name" value="{{ Session::get('name') }}">
+                                        placeholder="{{ __('Input Name ...') }}" name="name"
+                                        value="{{ Session::get('name') }}">
                                     @error('name')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -78,7 +101,8 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="codebaseproduct">{{ __('Product Code *') }}</label>
                                     <input type="text" class="form-control" id="codebaseproduct" required
-                                        placeholder="{{ __('Input Code ...') }}" name="code" value="{{ Session::get('code') }}">
+                                        placeholder="{{ __('Input Code ...') }}" name="code"
+                                        value="{{ Session::get('code') }}">
                                     @error('code')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -111,16 +135,39 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="category">{{ __('Category')  }}</label>
+                                    {{-- <label class="form-label" for="category">{{ __('Category')  }}</label>
                                     <select class="form-select select2" id="category" required name="category_id"
                                         data-placeholder="{{ __('Select a Category') }}">>
                                         <option selected disabled value="">{{ __('Choose...') }}</option>
                                         @foreach ($category as $item)
                                             <option value="{{ $item->id }}"
                                                 {{ old('category_id') == $item->id ? 'selected' : '' }}>
-                                                {{ $item->name }}</option>
+                                                {{ $item->code }}</option>
+                                        @endforeach
+                                    </select> --}}
+                                    {{-- <label class="form-label" for="category">{{ __('Category') }}</label>
+                                    <select class="form-select select2" id="category" required name="category_id"
+                                        data-placeholder="{{ __('Select a Category') }}">
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
+                                        @foreach ($category as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ old('category_id') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->code }}
+                                            </option>
+                                        @endforeach
+                                    </select> --}}
+                                    <label class="form-label" for="category">{{ __('Category') }}</label>
+                                    <select class="form-select select2" id="category" required name="category_id"
+                                        data-placeholder="{{ __('Select a Category') }}">
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
+                                        @foreach ($category as $item)
+                                            <option value="{{ $item->id }}" data-code="{{ $item->code }}"
+                                                {{ old('category_id') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->name }}
+                                            </option>
                                         @endforeach
                                     </select>
+
                                     @error('category_id')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -152,7 +199,8 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="description">{{ __('Note') }}</label>
                                     <input type="text" class="form-control" id="description"
-                                        placeholder="{{ __('a few words...') }}" name="note" value="{{ Session::get('note') }}">
+                                        placeholder="{{ __('a few words...') }}" name="note"
+                                        value="{{ Session::get('note') }}">
                                     @error('note')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -175,14 +223,17 @@
                                 <label class="form-label" for="type">{{ __('Type') }}</label>
                                 <select class="form-select" id="type" required name="type">
                                     <option selected disabled value="">{{ __('Choose...') }}</option>
-                                    <option value="is_single" {{ old('type') == 'is_single' ? 'selected' : '' }}>{{ __('Standard Product') }}</option>
-                                    <option value="is_variant" {{ old('type') == 'is_variant' ? 'selected' : '' }}>{{ __('Varied Product') }}</option>
+                                    <option value="is_single" {{ old('type') == 'is_single' ? 'selected' : '' }}>
+                                        {{ __('Standard Product') }}</option>
+                                    <option value="is_variant" {{ old('type') == 'is_variant' ? 'selected' : '' }}>
+                                        {{ __('Varied Product') }}</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="productcost">{{ __('Cost') }}</label>
                                 <input type="text" class="form-control" id="productcost" required
-                                    placeholder="{{ __('input product cost') }}" name="cost" value="{{ Session::get('cost') }}">
+                                    placeholder="{{ __('input product cost') }}" name="cost"
+                                    value="{{ Session::get('cost') }}">
                                 @error('cost')
                                     <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                         role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -235,7 +286,8 @@
                                             placeholder="{{ __('Input Variant Name') }}">
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <button class="btn btn-soft-primary" id="createVariantBtn" type="button">{{ __('Add +') }}</button>
+                                        <button class="btn btn-soft-primary" id="createVariantBtn"
+                                            type="button">{{ __('Add +') }}</button>
                                     </div>
                                     <div class="card-body p-3">
                                         <div class="table-responsive">
@@ -292,7 +344,8 @@
                                     class="d-flex flex-column justify-content-center align-items-center upload-logo">
                                     <span style="font-size: 24px; color:#D25555">+</span>
                                     <span style="font-size: 20px; color:#ffffff">{{ __('Upload Image') }}</span>
-                                    <span style="font-size: 20px; color:#ffffff; margin-top: 10px;">{{ __('Max. File Size 15MB')  }}</span>
+                                    <span
+                                        style="font-size: 20px; color:#ffffff; margin-top: 10px;">{{ __('Max. File Size 15MB') }}</span>
                                 </div>
                                 <div id="afterLogoUpload" style="max-height: 100%;max-width: 100%;"
                                     class="d-none justify-content-center align-items-center after-upload-logo">
@@ -578,6 +631,62 @@
                         $('#purchaseunit').select2();
                     }
                 });
+            });
+        });
+    </script>
+    {{-- <script>
+        $(document).ready(function() {
+            // Inisialisasi Select2
+            $('#category').select2({
+                placeholder: $(this).data('placeholder'),
+                allowClear: true
+            });
+
+            // Tambahkan event listener untuk fokus pada input pencarian saat dropdown dibuka
+            $('#category').on('select2:open', function() {
+                setTimeout(function() {
+                    document.querySelector('.select2-search__field').focus();
+                }, 100); // Penundaan 100ms sebelum fokus pada input pencarian
+            });
+        });
+    </script> --}}
+    <script>
+        $(document).ready(function() {
+            // Inisialisasi Select2 dengan custom matcher
+            $('#category').select2({
+                placeholder: $(this).data('placeholder'),
+                allowClear: true,
+                matcher: function(params, data) {
+                    // If there are no search terms, return all data
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+
+                    // If there is no 'text' or 'data-code' attribute, return null
+                    if (typeof data.text === 'undefined' || typeof $(data.element).data('code') ===
+                        'undefined') {
+                        return null;
+                    }
+
+                    // Custom search logic: search in both text and data-code
+                    var term = params.term.toLowerCase();
+                    var text = data.text.toLowerCase();
+                    var code = $(data.element).data('code').toString().toLowerCase();
+
+                    if (text.indexOf(term) > -1 || code.indexOf(term) > -1) {
+                        return data;
+                    }
+
+                    // Return null if the term should not be displayed
+                    return null;
+                }
+            });
+
+            // Tambahkan event listener untuk fokus pada input pencarian saat dropdown dibuka
+            $('#category').on('select2:open', function() {
+                setTimeout(function() {
+                    document.querySelector('.select2-search__field').focus();
+                }, 100); // Penundaan 100ms sebelum fokus pada input pencarian
             });
         });
     </script>
