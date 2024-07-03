@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Supplier ~ Payments Reports</h1>
-    <p>look up your daily report</p>
+    <h1>{{ __('Supplier') }} ~ {{ __('Payments') }} {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 <style>
@@ -94,7 +94,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Purchases</p>
+                                                <p class="mb-2">{{ __('Purchases') }}</p>
                                                 <h7 class="counter">{{ $purchases_data['total_purchases'] }}</h7>
                                             </div>
                                         </div>
@@ -111,7 +111,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Total Amount</p>
+                                                <p class="mb-2">{{ __('Total') }} {{ __('Amount') }}</p>
                                                 <h7 class="counter">
                                                     {{ 'Rp ' . number_format($purchases_data['total_amount'], 2, ',', '.') }}
                                                 </h7>
@@ -130,7 +130,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Total Paid</p>
+                                                <p class="mb-2">{{ __('Total') }} {{ __('Paid') }}</p>
                                                 <h7 class="counter">
                                                     {{ 'Rp ' . number_format($purchases_data['total_paid'], 2, ',', '.') }}
                                                 </h7>
@@ -149,7 +149,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Due</p>
+                                                <p class="mb-2">{{ __('Total') }} {{ __('Due') }}</p>
                                                 <h7 class="counter">
                                                     {{ 'Rp ' . number_format($purchases_data['due'], 2, ',', '.') }}</h7>
                                             </div>
@@ -163,15 +163,15 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">Payments</a>
+                                        <a class="nav-link active show" role="tab" aria-selected="false">{{ __('Payments') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.supplier.returns', $provider->id) }}"
-                                            role="tab" aria-selected="false">Purchases Return</a>
+                                            role="tab" aria-selected="false">{{ __('Purchases') }} {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.supplier.purchases', $provider->id) }}"
-                                            role="tab" aria-selected="false">Purchase</a>
+                                            role="tab" aria-selected="false">{{ __('Purchases') }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -194,7 +194,7 @@
                                                         </svg>
                                                     </span>
                                                     <input type="search" class="form-control" name="search"
-                                                        value="{{ request()->input('search') }}" placeholder="Search...">
+                                                        value="{{ request()->input('search') }}" placeholder="{{ __('Search...') }}">
                                                 </div>
                                             </form>
                                             <div class="header-title">
@@ -208,11 +208,11 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Date</th>
-                                                            <th>Reference</th>
-                                                            <th>Purchase</th>
-                                                            <th>Paid by</th>
-                                                            <th>Amount</th>
+                                                            <th>{{ __('Date') }}</th>
+                                                            <th>{{ __('Reference') }}</th>
+                                                            <th>{{ __('Purchases') }} {{ __('Reference') }}</th>
+                                                            <th>{{ __('Payment Method') }}</th>
+                                                            <th>{{ __('Amount') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
