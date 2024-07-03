@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Top Selling Products ~ Reports</h1>
-    <p>look up your daily report</p>
+    <h1>{{ __('Top Selling Products') }} ~ {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 <style>
@@ -21,7 +21,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Top Selling Products
+                    <h4 class="card-title">{{ __('Top Selling Products') }}
                     </h4>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                             </svg>
                         </span>
                         <input type="search" class="form-control" name="search" value="{{ request()->input('search') }}"
-                            placeholder="Search...">
+                            placeholder="{{ __('Search...') }}">
                     </div>
                 </form>
                 <div class="header-title">
@@ -51,10 +51,10 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Product</th>
-                                <th>Total Sales</th>
-                                <th>Total Amount</th>
+                                <th>{{ __('Code') }}</th>
+                                <th>{{ __('Product Name') }}</th>
+                                <th>{{  __('Total') }} {{ __('Sales') }}</th>
+                                <th>{{ __('Total') }} {{ __('Amount') }}</th>
                             </tr>
                         </thead>
                         <tbody>
