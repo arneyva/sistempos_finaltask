@@ -1,7 +1,7 @@
 @extends('templates.main')
 @section('pages_title')
-    <h1>Stock ~ Reports</h1>
-    <p>look up your daily report</p>
+    <h1>{{ __('Stock') }} ~ {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily report') }}</p>
 @endsection
 
 <style>
@@ -35,7 +35,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Stock Report
+                    <h4 class="card-title">{{ __('Stock') }} {{ __('Reports') }}
                     </h4>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 <div class="col-md-4 mb-3">
                     <form action="{{ route('reports.stock.index') }}" method="GET">
                         <select class="form-select" id="selectWarehouse" name="warehouse_id">
-                            <option value="">All Warehouse/Outlet</option>
+                            <option value="">{{ __('All Warehouse/Outlet') }}</option>
                             @foreach ($warehouses as $wh)
                                 <option value="{{ $wh->id }}"
                                     {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -64,12 +64,12 @@
                             </svg>
                         </span>
                         <input type="search" class="form-control" name="search" value="{{ request()->input('search') }}"
-                            placeholder="Search...">
+                            placeholder="{{ __('Search...') }}">
                     </div>
                 </div>
                 </form>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-success">PDF</button>
+                    {{-- <button type="button" class="btn btn-soft-success">PDF</button> --}}
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                 </div>
             </div>
@@ -79,11 +79,11 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Product</th>
-                                <th>Category</th>
-                                <th>Current Stock</th>
-                                <th>Actions</th>
+                                <th>{{ __('Code') }}</th>
+                                <th>{{ __('Product Name') }}</th>
+                                <th>{{ __('Category') }}</th>
+                                <th>{{ __('Current Stock') }}</th>
+                                <th>{{ __('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
