@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Stock Purchases ~ Reports</h1>
-    <p>look up your daily report</p>
+    <h1>{{ __('Stock') }} {{ __('Purchases') }} ~ {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 @section('content')
@@ -14,11 +14,10 @@
                     <div class="card-body">
                         <div class="col-md-6 col-lg-12" style="margin-bottom: 30px">
                             <table class="table table-striped mb-0" role="grid">
-
                                 <thead>
                                     <tr>
-                                        <th>Warehouse</th>
-                                        <th>Qty</th>
+                                        <th>{{ __('Warehouse/Outlet') }}</th>
+                                        <th>{{ __('Quantity') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -37,28 +36,30 @@
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active show" data-bs-toggle="tab" href="#profile-feed"
-                                            role="tab" aria-selected="false">Purchases</a>
+                                            role="tab" aria-selected="false">{{ __('Purchases') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.sales-returns', $product->id) }}"
-                                            role="tab" aria-selected="false">Sales Return</a>
+                                            role="tab" aria-selected="false">{{ __('Sales') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.sales', $product->id) }}"
-                                            role="tab" aria-selected="false">Sales</a>
+                                            role="tab" aria-selected="false">{{ __('Sales') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link"
                                             href="{{ route('reports.stock.purchases-returns', $product->id) }}"
-                                            role="tab" aria-selected="false">Purchases Return</a>
+                                            role="tab" aria-selected="false">{{ __('Purchases') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.adjustment', $product->id) }}"
-                                            role="tab" aria-selected="false">Adjustment</a>
+                                            role="tab" aria-selected="false">{{ __('Adjustment') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.transfer', $product->id) }}"
-                                            role="tab" aria-selected="false">Transfer</a>
+                                            role="tab" aria-selected="false">{{ __('Transfer') }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -66,7 +67,8 @@
                                 <div class="profile-content tab-content">
                                     <div id="profile-feed" class="tab-pane fade active show">
                                         <div class="card-header d-flex justify-content-between">
-                                            <form action="{{ route('reports.stock.purchases', $product->id) }}" method="GET">
+                                            <form action="{{ route('reports.stock.purchases', $product->id) }}"
+                                                method="GET">
                                                 <div class="input-group search-input">
                                                     <span class="input-group-text d-inline" id="search-input">
                                                         <svg class="icon-18" width="18" viewBox="0 0 24 24"
@@ -80,7 +82,8 @@
                                                         </svg>
                                                     </span>
                                                     <input type="search" class="form-control" name="search"
-                                                        value="{{ request()->input('search') }}" placeholder="Search...">
+                                                        value="{{ request()->input('search') }}"
+                                                        placeholder="{{ __('Search...') }}">
                                                 </div>
                                             </form>
                                             <div class="header-title">
@@ -92,13 +95,13 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Date</th>
-                                                            <th>Reference</th>
-                                                            <th>Product Name</th>
-                                                            <th>Supplier</th>
-                                                            <th>Warehouse</th>
-                                                            <th>Quantity</th>
-                                                            <th>Subtotal</th>
+                                                            <th>{{ __('Date') }}</th>
+                                                            <th>{{ __('Reference') }}</th>
+                                                            <th>{{ __('Product Name') }}</th>
+                                                            <th>{{ __('Supplier') }}</th>
+                                                            <th>{{ __('Warehouse/Outlet') }}</th>
+                                                            <th>{{ __('Quantity') }}</th>
+                                                            <th>{{ __('SubTotal') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>

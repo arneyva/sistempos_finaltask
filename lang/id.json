@@ -1,5 +1,6 @@
 {
     "Add Adjustment": "Tambahkan Adjustment",
+    "Adjustment": "Penyesuaian",
     "Do Something with all your adjustment": "Lakukan Sesuatu dengan Semua Adjustment Anda",
     "Do Something with your Product": "Lakukan Sesuatu dengan Produk Anda",
     "Create Adjustment": "Buat Adjustment",
@@ -40,6 +41,7 @@
     "Total Products": "Total Produk",
     "Actions": "Aksi",
     "Transfer Detail": "Detail Transfer",
+    "Transfer": "Transfer",
     "warehouse deleted": "gudang dihapus",
     "Items": "Barang",
     "Adjustment Detail": "Detail Penyesuaian",
@@ -289,5 +291,7 @@
     "look up your payments": "lihat semua pembayaran Anda",
     "Return": "Pengembalian",
     "Purchases": "Pembelian",
-    "Amount": "Jumlah"
+    "Amount": "Jumlah",
+    "Reports": "Laporan",
+    "look up your daily reports": "lihat  laporan harian Anda"
 }

@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Stock Adjustment ~ Reports</h1>
-    <p>look up your daily report</p>
+    <h1>{{ __('Stock') }} {{ __('Adjustment') }} ~ {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 @section('content')
@@ -17,8 +17,8 @@
 
                                 <thead>
                                     <tr>
-                                        <th>Warehouse</th>
-                                        <th>Qty</th>
+                                        <th>{{ __('Warehouse/Outlet') }}</th>
+                                        <th>{{ __('Quantity') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -37,28 +37,30 @@
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active show" data-bs-toggle="tab" href="#profile-feed"
-                                            role="tab" aria-selected="false">Adjustment</a>
+                                            role="tab" aria-selected="false">{{ __('Adjustment') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.sales-returns', $product->id) }}"
-                                            role="tab" aria-selected="false">Sales Return</a>
+                                            role="tab" aria-selected="false">{{ __('Sales') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.sales', $product->id) }}"
-                                            role="tab" aria-selected="false">Sales</a>
+                                            role="tab" aria-selected="false">{{ __('Sales') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.purchases', $product->id) }}"
-                                            role="tab" aria-selected="false">Purchases</a>
+                                            role="tab" aria-selected="false">{{ __('Purchases') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link"
                                             href="{{ route('reports.stock.purchases-returns', $product->id) }}"
-                                            role="tab" aria-selected="false">Purchases Return</a>
+                                            role="tab" aria-selected="false">{{ __('Purchases') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.transfer', $product->id) }}"
-                                            role="tab" aria-selected="false">Transfer</a>
+                                            role="tab" aria-selected="false">{{ __('Transfer') }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -81,7 +83,8 @@
                                                         </svg>
                                                     </span>
                                                     <input type="search" class="form-control" name="search"
-                                                        value="{{ request()->input('search') }}" placeholder="Search...">
+                                                        value="{{ request()->input('search') }}"
+                                                        placeholder="{{ __('Search...') }}">
                                                 </div>
                                             </form>
                                             <div class="header-title">
@@ -93,10 +96,10 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Date</th>
-                                                            <th>Reference</th>
-                                                            <th>Product Name</th>
-                                                            <th>Warehouse</th>
+                                                            <th>{{ __('Date') }}</th>
+                                                            <th>{{ __('Reference') }}</th>
+                                                            <th>{{ __('Product Name') }}</th>
+                                                            <th>{{ __('Warehouse/Outlet') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
