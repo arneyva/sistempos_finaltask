@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Supplier ~ Purchase Reports</h1>
-    <p>look up your daily report</p>
+    <h1>{{ __('Supplier') }} ~ {{ __('Purchases') }} {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 <style>
@@ -94,7 +94,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Purchases</p>
+                                                <p class="mb-2">{{ __('Purchases') }}</p>
                                                 <h7 class="counter">{{ $purchases_data['total_purchases'] }}</h7>
                                             </div>
                                         </div>
@@ -111,7 +111,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Total Amount</p>
+                                                <p class="mb-2">{{ __('Total') }} {{ __('Amount') }}</p>
                                                 <h7 class="counter">
                                                     {{ 'Rp ' . number_format($purchases_data['total_amount'], 2, ',', '.') }}
                                                 </h7>
@@ -130,7 +130,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Total Paid</p>
+                                                <p class="mb-2">{{ __('Total') }} {{ __('Paid') }}</p>
                                                 <h7 class="counter">
                                                     {{ 'Rp ' . number_format($purchases_data['total_paid'], 2, ',', '.') }}
                                                 </h7>
@@ -149,7 +149,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Due</p>
+                                                <p class="mb-2">{{ __('Total') }} {{ __('Due') }}</p>
                                                 <h7 class="counter">
                                                     {{ 'Rp ' . number_format($purchases_data['due'], 2, ',', '.') }}</h7>
                                             </div>
@@ -163,15 +163,15 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">Purchases</a>
+                                        <a class="nav-link active show" role="tab" aria-selected="false">{{ __('Purchases') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.supplier.returns', $provider->id) }}"
-                                            role="tab" aria-selected="false">Purchases Return</a>
+                                            role="tab" aria-selected="false">{{ __('Purchases') }} {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.supplier.payments', $provider->id) }}"
-                                            role="tab" aria-selected="false">Payments</a>
+                                            role="tab" aria-selected="false">{{ __('Payments') }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -194,7 +194,7 @@
                                                         </svg>
                                                     </span>
                                                     <input type="search" class="form-control" name="search"
-                                                        value="{{ request()->input('search') }}" placeholder="Search...">
+                                                        value="{{ request()->input('search') }}" placeholder="{{ __('Search...') }}">
                                                 </div>
                                             </form>
                                             <div class="header-title">
@@ -208,14 +208,14 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Reference</th>
-                                                            <th>Supplier</th>
-                                                            <th>Warehouse</th>
-                                                            <th>Grand Total</th>
-                                                            <th>Paid</th>
-                                                            <th>Due</th>
-                                                            <th>Status</th>
-                                                            <th>Payment Status</th>
+                                                            <th>{{ __('Reference') }}</th>
+                                                            <th>{{ __('Supplier') }}</th>
+                                                            <th>{{ __('Warehouse') }}</th>
+                                                            <th>{{ __('Grand Total') }}</th>
+                                                            <th>{{ __('Paid') }}</th>
+                                                            <th>{{ __('Due') }}</th>
+                                                            <th>{{ __('Status') }}</th>
+                                                            <th>{{ __('Payment') }} {{ __('Status') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -232,18 +232,18 @@
                                                                 </td>
                                                                 <td>
                                                                     @if ($item['statut'] == 'completed')
-                                                                        <span class="status-completed">completed</span>
+                                                                        <span class="status-completed">{{ __('Completed') }}</span>
                                                                     @elseif($item['statut'] == 'ordered')
-                                                                        <span class="status-ordered">ordered</span>
+                                                                        <span class="status-ordered">{{ __('Ordered') }}</span>
                                                                     @else
-                                                                        <span class="status-pending">pending</span>
+                                                                        <span class="status-pending">{{ __('Pending') }}</span>
                                                                     @endif
                                                                 </td>
                                                                 <td>
                                                                     @if ($item['payment_status'] == 'paid')
-                                                                        <span class="payment-paid">paid</span>
+                                                                        <span class="payment-paid">{{ __('Paid') }}</span>
                                                                     @else
-                                                                        <span class="payment-unpaid">unpaid</span>
+                                                                        <span class="payment-unpaid">{{ __('Unpaid') }}</span>
                                                                     @endif
                                                                 </td>
                                                             </tr>
