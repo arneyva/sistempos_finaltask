@@ -1892,6 +1892,7 @@ class ReportsController extends Controller
                 'due' => $sale->GrandTotal - $sale->paid_amount,
                 'payment_status' => $sale->payment_statut,
                 'shipping_status' => $sale->shipping_status,
+                "shipping" => $sale->shipping,
             ];
 
             $sales_data[] = $item;
