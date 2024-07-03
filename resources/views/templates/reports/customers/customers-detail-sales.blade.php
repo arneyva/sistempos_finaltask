@@ -268,8 +268,7 @@
                                                                         <span
                                                                             class="shipping-packed">{{ __('Packed') }}</span>
                                                                     @else
-                                                                        <span class="shipping-cancelled">Without
-                                                                            Shipping</span>
+                                                                        <span class="shipping-cancelled">{{ __('Without Shipment') }}</span>
                                                                     @endif
                                                                 </td>
                                                             </tr>

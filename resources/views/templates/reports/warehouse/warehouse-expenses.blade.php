@@ -2,8 +2,8 @@
 
 @section('pages_title')
     <h1>
-        Warehouse ~ Expenses Reports</h1>
-    <p>look up your daily report</p>
+        {{ __('Warehouse/Outlet') }} ~ {{ __('Expenses') }} {{ __('Reports') }}</h1>
+        <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 <style>
@@ -85,7 +85,7 @@
                     <div style="align-self:center;margin-top:20px;">
                         <form action="{{ route('reports.warehouse.expenses') }}" method="GET">
                             <select class="form-select" id="selectWarehouse" name="warehouse_id">
-                                <option value="">All Warehouse/Outlet</option>
+                                <option value="">{{ __('All Warehouse/Outlet') }}</option>
                                 @foreach ($warehouses as $wh)
                                     <option value="{{ $wh->id }}"
                                         {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -106,7 +106,7 @@
                                                     style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Sales</p>
+                                                <p class="mb-2">{{ __('Sales') }}</p>
                                                 <h7 class="counter">{{ $data['sales'] }}</h7>
                                             </div>
                                         </div>
@@ -123,7 +123,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Purchases</p>
+                                                <p class="mb-2">{{ __('Purchases') }}</p>
                                                 <h7 class="counter">{{ $data['purchases'] }}</h7>
                                             </div>
                                         </div>
@@ -140,7 +140,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Purchases Return</p>
+                                                <p class="mb-2">{{ __('Purchases') }} {{ __('Return') }}</p>
                                                 <h7 class="counter">{{ $data['ReturnPurchase'] }}</h7>
                                             </div>
                                         </div>
@@ -157,7 +157,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Sales Return</p>
+                                                <p class="mb-2">{{ __('Sales') }} {{ __('Return') }}</p>
                                                 <h7 class="counter">{{ $data['ReturnSale'] }}</h7>
                                             </div>
                                         </div>
@@ -171,24 +171,24 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false"> Expenses
+                                        <a class="nav-link active show" role="tab" aria-selected="false">{{ __('Expenses') }}
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.sales') }}" role="tab"
-                                            aria-selected="false">Sales</a>
+                                            aria-selected="false">{{ __('Sales') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.purchase') }}" role="tab"
-                                            aria-selected="false">Purchase</a>
+                                            aria-selected="false">{{ __('Purchases') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.sales-returns') }}"
-                                            role="tab" aria-selected="false">Sales Returns</a>
+                                            role="tab" aria-selected="false">{{ __('Sales') }} {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.purchase-returns') }}"
-                                            role="tab" aria-selected="false">Purchase Returns</a>
+                                            role="tab" aria-selected="false">{{ __('Purchases') }} {{ __('Return') }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -209,7 +209,7 @@
                                                     </svg>
                                                 </span>
                                                 <input type="search" class="form-control" name="search"
-                                                    value="{{ request()->input('search') }}" placeholder="Search...">
+                                                    value="{{ request()->input('search') }}" placeholder="{{ __('Search...') }}">
                                             </div>
                                             </form>
                                             <div class="header-title">
@@ -221,12 +221,12 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Date</th>
-                                                            <th>Reference</th>
-                                                            <th>Warehouse</th>
-                                                            <th>Details</th>
-                                                            <th>Amount</th>
-                                                            <th>Category</th>
+                                                            <th>{{ __('Date') }}</th>
+                                                            <th>{{ __('Reference') }}</th>
+                                                            <th>{{ __('Warehouse/Outlet') }}</th>
+                                                            <th>{{ __('Details') }}</th>
+                                                            <th>{{ __('Amount') }}</th>
+                                                            <th>{{ __('Category') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>

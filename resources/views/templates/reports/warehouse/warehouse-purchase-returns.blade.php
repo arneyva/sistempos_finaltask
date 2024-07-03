@@ -2,8 +2,8 @@
 
 @section('pages_title')
     <h1>
-        Warehouse ~ Purchase Return Reports</h1>
-    <p>look up your daily report</p>
+        {{ __('Warehouse/Outlet') }} ~ {{ __('Purchases') }} {{ __('Return') }} {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 <style>
@@ -85,7 +85,7 @@
                     <div style="align-self:center;margin-top:20px;">
                         <form action="{{ route('reports.warehouse.purchase-returns') }}" method="GET">
                             <select class="form-select" id="selectWarehouse" name="warehouse_id">
-                                <option value="">All Warehouse/Outlet</option>
+                                <option value="">{{ __('All Warehouse/Outlet') }}</option>
                                 @foreach ($warehouses as $wh)
                                     <option value="{{ $wh->id }}"
                                         {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -102,11 +102,11 @@
                                         <div class="progress-widget">
                                             <div
                                                 class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                <img src="{{ asset('hopeui/html/assets/images/sales.svg') }}" alt="purchase"
-                                                    style="max-height: 70px;max-width: 70px">
+                                                <img src="{{ asset('hopeui/html/assets/images/sales.svg') }}"
+                                                    alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Sales</p>
+                                                <p class="mb-2">{{ __('Sales') }}</p>
                                                 <h7 class="counter">{{ $data['sales'] }}</h7>
                                             </div>
                                         </div>
@@ -123,7 +123,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Purchases</p>
+                                                <p class="mb-2">{{ __('Purchases') }}</p>
                                                 <h7 class="counter">{{ $data['purchases'] }}</h7>
                                             </div>
                                         </div>
@@ -140,7 +140,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Purchases Return</p>
+                                                <p class="mb-2">{{ __('Purchases') }} {{ __('Return') }}</p>
                                                 <h7 class="counter">{{ $data['ReturnPurchase'] }}</h7>
                                             </div>
                                         </div>
@@ -157,7 +157,7 @@
                                                     alt="purchase" style="max-height: 70px;max-width: 70px">
                                             </div>
                                             <div class="progress-detail">
-                                                <p class="mb-2">Sales Return</p>
+                                                <p class="mb-2">{{ __('Sales') }} {{ __('Return') }}</p>
                                                 <h7 class="counter">{{ $data['ReturnSale'] }}</h7>
                                             </div>
                                         </div>
@@ -171,25 +171,26 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false"> Purchase
-                                            Returns
+                                        <a class="nav-link active show" role="tab" aria-selected="false">
+                                            {{ __('Purchases') }} {{ __('Return') }}
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.sales') }}" role="tab"
-                                            aria-selected="false">Sales</a>
+                                            aria-selected="false">{{ __('Sales') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.purchase') }}" role="tab"
-                                            aria-selected="false">Purchase</a>
+                                            aria-selected="false">{{ __('Purchases') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.sales-returns') }}"
-                                            role="tab" aria-selected="false">Sales Returns</a>
+                                            role="tab" aria-selected="false">{{ __('Sales') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.expenses') }}" role="tab"
-                                            aria-selected="false">Expenses</a>
+                                            aria-selected="false">{{ __('Expenses') }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -210,7 +211,8 @@
                                                     </svg>
                                                 </span>
                                                 <input type="search" class="form-control" name="search"
-                                                    value="{{ request()->input('search') }}" placeholder="Search...">
+                                                    value="{{ request()->input('search') }}"
+                                                    placeholder="{{ __('Search...') }}">
                                             </div>
                                             </form>
                                             <div class="header-title">
@@ -222,15 +224,15 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Reference</th>
-                                                            <th>Supplier</th>
-                                                            <th>Warehouse</th>
-                                                            <th>Purchase ref</th>
-                                                            <th>Grand Total</th>
-                                                            <th>Paid</th>
-                                                            <th>Due</th>
-                                                            <th>Status</th>
-                                                            <th>Payment Status</th>
+                                                            <th>{{ __('Reference') }}</th>
+                                                            <th>{{ __('Supplier') }}</th>
+                                                            <th>{{ __('Warehouse') }}</th>
+                                                            <th>{{ __('Purchases') }} {{ __('Reference') }}</th>
+                                                            <th>{{ __('Grand Total') }}</th>
+                                                            <th>{{ __('Paid') }}</th>
+                                                            <th>{{ __('Due') }}</th>
+                                                            <th>{{ __('Status') }}</th>
+                                                            <th>{{ __('Payment Status') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -248,18 +250,23 @@
                                                                 </td>
                                                                 <td>
                                                                     @if ($item['statut'] == 'received')
-                                                                        <span class="status-completed">received</span>
+                                                                        <span
+                                                                            class="status-completed">{{ __('Received') }}</span>
                                                                     @elseif($item['statut'] == 'ordered')
-                                                                        <span class="status-ordered">ordered</span>
+                                                                        <span
+                                                                            class="status-ordered">{{ __('Ordered') }}</span>
                                                                     @else
-                                                                        <span class="status-pending">pending</span>
+                                                                        <span
+                                                                            class="status-pending">{{ __('Pending') }}</span>
                                                                     @endif
                                                                 </td>
                                                                 <td>
                                                                     @if ($item['payment_status'] == 'paid')
-                                                                        <span class="payment-paid">paid</span>
+                                                                        <span
+                                                                            class="payment-paid">{{ __('Paid') }}</span>
                                                                     @else
-                                                                        <span class="payment-unpaid">unpaid</span>
+                                                                        <span
+                                                                            class="payment-unpaid">{{ __('Unpaid') }}</span>
                                                                     @endif
                                                                 </td>
                                                             </tr>
