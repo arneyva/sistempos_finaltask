@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>All Outlet</h1>
-<p>Look All your outlet</p>
+    <h1>{{ __('All Warehouse/Outlet') }}</h1>
+    <p>{{ __('Look All your Warehouse/Outlet') }}</p>
 @endsection
 
 @section('content')
@@ -13,37 +13,37 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Warehouse</h4>
+                    <h4 class="card-title">{{ __('All Warehouse/Outlet') }}</h4>
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
-                <div class="input-group search-input" style="width: 30%">
-                    <span class="input-group-text d-inline" id="searchIcon">
-                        <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></circle>
-                            <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    </span>
-                    <input type="search" class="form-control" placeholder="Search...">
-                </div>
+                <form action="{{ route('settings.warehouses.index') }}" method="GET">
+                    <div class="input-group search-input">
+                        <span class="input-group-text d-inline" id="searchIcon">
+                            <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"></circle>
+                                <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </span>
+                        <input type="search" class="form-control" name="search" value="{{ request()->input('search') }}"
+                            placeholder="{{ __('Search...') }}">
+                    </div>
+                </form>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary">Filter</button>
-                    <button type="button" class="btn btn-soft-success">PDF</button>
                     <button type="button" class="btn btn-soft-danger">Excel</button>
-                    <button type="button" class="btn btn-soft-gray">Import Product</button>
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">
-                        Create+
+                        {{ __('Create +') }}
                     </button>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Create</h5>
+                                    <h5 class="modal-title" id="createModalLabel">{{ __('Create') }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -51,51 +51,54 @@
                                     <form action="{{ route('settings.warehouses.store') }}" method="POST">
                                         @csrf
                                         <div class="col mb-3">
-                                            <label class="form-label" for="name">Name *</label>
+                                            <label class="form-label" for="name">{{ __('Name') }} *</label>
                                             <input type="text" class="form-control" id="name" required
-                                                name="name" placeholder="input name">
+                                                name="name" placeholder="{{ __('Input') }} {{ __('Name') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="city">City *</label>
+                                            <label class="form-label" for="city">{{ __('City') }} *</label>
                                             <input type="text" class="form-control" id="city" required
-                                                name="city" placeholder="input city">
+                                                name="city" placeholder="{{ __('Input') }} {{ __('City') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="phone">Mobile Phone *</label>
+                                            <label class="form-label" for="phone">{{ __('Phone') }} *</label>
                                             <input type="text" class="form-control" id="phone" required
-                                                name="mobile" placeholder="input mobile phone">
+                                                name="mobile" placeholder="{{ __('Input') }} {{ __('Phone') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="postcode">Zip Potscode *</label>
+                                            <label class="form-label" for="postcode">{{ __('Zip Postcode') }} *</label>
                                             <input type="text" class="form-control" id="postcode" required
-                                                name="zip" placeholder="input postcode">
+                                                name="zip" placeholder="{{ __('Input') }} {{ __('Zip Postcode') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="email">Email *</label>
+                                            <label class="form-label" for="email">{{ __('Email') }} *</label>
                                             <input type="email" class="form-control" id="email" required
-                                                placeholder="input email" name="email">
+                                                placeholder="{{ __('Input') }} {{ __('Email') }}" name="email">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="country">Country *</label>
+                                            <label class="form-label" for="country">{{ __('Country') }} *</label>
                                             <input type="text" class="form-control" id="country" required
-                                                name="country" placeholder="input country">
+                                                name="country" placeholder="{{ __('Input') }} {{ __('Country') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="address">Address *</label>
-                                            <textarea class="form-control" id="address" required
-                                                name="address" placeholder="input address"></textarea>
+                                            <label class="form-label" for="address">{{ __('Address') }} *</label>
+                                            <textarea class="form-control" id="address" required name="address"
+                                                placeholder="{{ __('Input') }} {{ __('Address') }}"></textarea>
                                         </div>
                                         <div class="col mb-3">
                                             <label class="form-label" for="google_maps">Google Maps Link *</label>
                                             <input type="url" class="form-control mb-1" id="google_maps" required
                                                 name="google_maps" placeholder="input Link">
-                                                <p class="mx-3"> Use link from share feature in Google Maps<br>Link Example:<br><a href="#">https://maps.app.goo.gl/Bwz1W2ULp1xx3wWx5</a></p>
+                                            <p class="mx-3">
+                                                {{ __('Use link from share feature in Google Maps') }}<br>{{ __('Link Example') }}:<br><a
+                                                    href="#">https://maps.app.goo.gl/Bwz1W2ULp1xx3wWx5</a>
+                                            </p>
                                         </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                        data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Save changes') }}</button>
                                 </div>
                                 </form>
                             </div>
@@ -108,13 +111,13 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>City</th>
-                                <th>Mobile Phone</th>
-                                <th>Zip Potscode</th>
-                                <th>Email</th>
-                                <th>Country</th>
-                                <th>Actions</th>
+                                <th>{{ __('Name') }}</th>
+                                <th>{{ __('City') }}</th>
+                                <th>{{ __('Phone') }}</th>
+                                <th>{{ __('Zip Postcode') }}</th>
+                                <th>{{ __('Email') }}</th>
+                                <th>{{ __('Country') }}</th>
+                                <th>{{ __('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -159,7 +162,8 @@
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="editModalLabel">Update</h5>
+                                                            <h5 class="modal-title" id="editModalLabel">
+                                                                {{ __('Update') }} {{ __('Warehouse/Outlet') }}</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
@@ -171,7 +175,7 @@
                                                                 @method('PATCH')
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="editname{{ $item->id }}">Name
+                                                                        for="editname{{ $item->id }}">{{ __('Name') }}
                                                                         *</label>
                                                                     <input type="text" class="form-control"
                                                                         id="editname{{ $item->id }}" required
@@ -180,7 +184,7 @@
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="city{{ $item->id }}">City
+                                                                        for="city{{ $item->id }}">{{ __('City') }}
                                                                         *</label>
                                                                     <input type="text" class="form-control"
                                                                         id="city{{ $item->id }}" required
@@ -189,7 +193,7 @@
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="phone{{ $item->id }}">Mobile Phone
+                                                                        for="phone{{ $item->id }}">{{ __('Phone') }}
                                                                         *</label>
                                                                     <input type="text" class="form-control"
                                                                         id="phone{{ $item->id }}" required
@@ -198,7 +202,7 @@
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="postcode{{ $item->id }}">Zip Potscode
+                                                                        for="postcode{{ $item->id }}">{{ __('Zip Postcode') }}
                                                                         *</label>
                                                                     <input type="text" class="form-control"
                                                                         id="postcode{{ $item->id }}" required
@@ -207,7 +211,7 @@
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="email{{ $item->id }}">Email
+                                                                        for="email{{ $item->id }}">{{ __('Email') }}
                                                                         *</label>
                                                                     <input type="email" class="form-control"
                                                                         id="email{{ $item->id }}" required
@@ -216,7 +220,7 @@
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="country{{ $item->id }}">Country
+                                                                        for="country{{ $item->id }}">{{ __('Country') }}
                                                                         *</label>
                                                                     <input type="text" class="form-control"
                                                                         id="country{{ $item->id }}" required
@@ -225,26 +229,29 @@
                                                                 </div>
                                                                 <div class="col mb-3">
                                                                     <label class="form-label"
-                                                                        for="address{{ $item->id }}">Address
+                                                                        for="address{{ $item->id }}">{{ __('Address') }}
                                                                         *</label>
-                                                                    <textarea class="form-control"
-                                                                        id="address{{ $item->id }}" required
-                                                                        name="address" placeholder="input address">{{ $item->address }}</textarea>
+                                                                    <textarea class="form-control" id="address{{ $item->id }}" required name="address" placeholder="input address">{{ $item->address }}</textarea>
                                                                 </div>
                                                                 <div class="col mb-3">
-                                                                    <label class="form-label" for="google_maps{{ $item->id }}">Google Maps Link *</label>
+                                                                    <label class="form-label"
+                                                                        for="google_maps{{ $item->id }}">Google Maps
+                                                                        Link *</label>
                                                                     <input type="url" class="form-control mb-1"
                                                                         id="google_maps{{ $item->id }}" required
                                                                         name="google_maps" placeholder="input Link"
                                                                         value="{{ $item->google_maps }}">
-                                                                        <p class="mx-3"> Use link from share feature in Google Maps<br>Link Example:<br><a href="#">https://maps.app.goo.gl/Bwz1W2ULp1xx3wWx5</a></p>
+                                                                    <p class="mx-3">
+                                                                        {{ __('Use link from share feature in Google Maps') }}<br>{{ __('Link Example') }}:<br><a
+                                                                            href="#">https://maps.app.goo.gl/Bwz1W2ULp1xx3wWx5</a>
+                                                                    </p>
                                                                 </div>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Close</button>
-                                                            <button type="submit" class="btn btn-primary">Save
-                                                                changes</button>
+                                                                data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                                            <button type="submit"
+                                                                class="btn btn-primary">{{ __('Save changes') }}</button>
                                                         </div>
                                                         </form>
                                                     </div>
@@ -321,27 +328,4 @@
     </div>
 @endsection
 @push('script')
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const searchInput = document.querySelector('.search-input input');
-            const rows = document.querySelectorAll('#basic-table tbody tr');
-
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.trim().toLowerCase();
-
-                rows.forEach(row => {
-                    const nameColumn = row.querySelector('td:first-child').textContent.trim()
-                        .toLowerCase();
-                    const shortNameColumn = row.querySelector('td:nth-child(2)').textContent.trim()
-                        .toLowerCase();
-
-                    if (nameColumn.includes(searchTerm) || shortNameColumn.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
-        });
-    </script>
 @endpush

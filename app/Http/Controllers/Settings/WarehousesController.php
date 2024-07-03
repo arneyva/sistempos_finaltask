@@ -19,10 +19,19 @@ class WarehousesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $warehouses = Warehouse::query()->latest()->paginate(1);
-
+        $warehousesQuery = Warehouse::query()->where('deleted_at', '=', null)->latest();
+        if ($request->filled('search')) {
+            $warehousesQuery->where(function ($query) use ($request) {
+                $query->where('name', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('city', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('mobile', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('zip', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('country', 'LIKE', '%' . $request->input('search') . '%');
+            });
+        }
+        $warehouses = $warehousesQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
         return view('templates.settings.warehouses.index', [
             'warehouses' => $warehouses,
         ]);
