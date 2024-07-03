@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Customers ~ Reports</h1>
-    <p>look up your daily report</p>
+    <h1>{{ __('Customer') }} ~ {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 <style>
@@ -28,7 +28,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Customer Report</h4>
+                    <h4 class="card-title">{{ __('Customer') }} {{ __('Report') }}</h4>
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
@@ -44,7 +44,7 @@
                             </svg>
                         </span>
                         <input type="search" class="form-control" name="search" value="{{ request()->input('search') }}"
-                            placeholder="Search...">
+                            placeholder="{{ __('Search...') }}">
                     </div>
                 </form>
             </div>
@@ -53,14 +53,14 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Customer Name</th>
-                                <th>Phone</th>
-                                <th>Total Sales</th>
-                                <th>Amount</th>
-                                <th>Paid</th>
-                                <th>Total Sale Due</th>
-                                <th>Total Sell Return Due</th>
-                                <th>Action</th>
+                                <th>{{ __('Customer') }} {{ __('Name') }}</th>
+                                <th>{{ __('Phone') }}</th>
+                                <th>{{ __('Total') }} {{ __('Sales') }}</th>
+                                <th>{{ __('Total') }} {{ __('Amount') }}</th>
+                                <th>{{ __('Total') }} {{ __('Paid') }}</th>
+                                <th>{{ __('Total') }} {{ __('Due') }}</th>
+                                <th>{{ __('Total') }} {{ __('Return') }} {{ __('Due') }}</th>
+                                <th>{{ __('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
