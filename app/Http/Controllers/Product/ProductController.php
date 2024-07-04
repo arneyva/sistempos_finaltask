@@ -60,6 +60,7 @@ class ProductController extends Controller
             $item['category'] = $product['category']->name;
             $item['brand'] = $product['brand']->name;
             $item['TaxNet'] = $product->TaxNet;
+            $item['namebase'] = $product->name;
             // untuk product single
             if ($product->type == 'is_single') {
                 $item['name'] = $product->name;
@@ -79,6 +80,7 @@ class ProductController extends Controller
                 }
             } elseif ($product->type == 'is_variant') {
                 //untuk product variant
+
                 $item['type'] = 'Variant Product';
                 $item['unit'] = $product['unit']->ShortName;
                 $product_variant_data = ProductVariant::where('product_id', $product->id)
@@ -108,6 +110,12 @@ class ProductController extends Controller
             }
             $items[] = $item;
         }
+        // return response()->json([
+        //     'items' => $items,
+        //     // 'products' => $products,
+        //     // 'categories' => $categories,
+        //     // 'brands' => $brands,
+        // ]);
         return view('templates.product.index', [
             'items' => $items,
             'products' => $products,
@@ -330,11 +338,13 @@ class ProductController extends Controller
                 ],
                 'cost' => [
                     Rule::requiredIf($request->type == 'is_single'),
-                    'numeric', 'regex:/^\d+(\.\d{1,2})?$/',
+                    'numeric',
+                    'regex:/^\d+(\.\d{1,2})?$/',
                 ],
                 'price' => [
                     Rule::requiredIf($request->type == 'is_single'),
-                    'numeric', 'regex:/^\d+(\.\d{1,2})?$/',
+                    'numeric',
+                    'regex:/^\d+(\.\d{1,2})?$/',
                 ],
                 'category_id' => [
                     'required',
@@ -399,6 +409,7 @@ class ProductController extends Controller
                             'cost' => $variant->cost,
                             'price' => $variant->price,
                             'code' => $variant->code,
+                            'created_at' => now(),
                         ];
                     }
                 }
@@ -795,8 +806,8 @@ class ProductController extends Controller
                             $productVariant = ProductVariant::findOrFail($variantId);
                             $productVariant->name = $variantData['name'];
                             $productVariant->code = $variantData['code'];
-                            $productVariant->cost = $variantData['cost'];
-                            $productVariant->price = $variantData['price'];
+                            $productVariant->cost = str_replace(['Rp', '.'], '', $variantData['cost']);
+                            $productVariant->price = str_replace(['Rp', '.'], '', $variantData['price']);
                             $productVariant->save();
                         }
                         $existingVariantIds = collect($request->variants)->keys();
@@ -867,7 +878,7 @@ class ProductController extends Controller
                 $Product->image = $filename;
                 $Product->save();
             }, 10);
-
+            // dd($request->all());
             return redirect()->route('product.index')->with('success', 'Product updated successfully');
         } catch (ValidationException $e) {
             return response()->json([

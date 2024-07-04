@@ -207,6 +207,7 @@
                                                 alt="profile">
                                             <div class="d-flex flex-column">
                                                 @if ($item['type'] === 'Variant Product')
+                                                <h6 style="margin-top:10px"> {{ $item['namebase'] }} </h6>
                                                     @foreach ($item['name'] as $name)
                                                         <h6 style="margin-top:10px"> * {{ $name }}</h6>
                                                     @endforeach
