@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>{{ __('Purchases') }} {{ __('Return') }} ~ {{ __('Payments')  }}</h1>
+    <h1>{{ __('Purchases') }} {{ __('Return') }} ~ {{ __('Payments') }}</h1>
     <p>{{ __('look up your payments') }}</p>
 @endsection
 
@@ -87,7 +87,8 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">{{ __('Purchases') }}
+                                        <a class="nav-link active show" role="tab"
+                                            aria-selected="false">{{ __('Purchases') }}
                                             {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
@@ -110,7 +111,8 @@
                                 <div class="profile-content tab-content">
                                     <div id="profile-feed" class="tab-pane fade active show">
                                         <div class="card-header d-flex justify-content-between">
-                                            <form action="{{ route('reports.payments.purchases-returns') }}" method="GET">
+                                            <form action="{{ route('reports.payments.purchases-returns') }}"
+                                                method="GET">
                                                 <div class="input-group search-input">
                                                     <span class="input-group-text d-inline" id="search-input">
                                                         <svg class="icon-18" width="18" viewBox="0 0 24 24"
@@ -128,7 +130,8 @@
                                                 </div>
                                             </form>
                                             <div class="header-title">
-                                                <button type="button" class="btn btn-soft-danger">Excel</button>
+                                                <a href="{{ route('reports.payments.purchases-returns-export', request()->query()) }}"
+                                                    class="btn btn-soft-danger">Excel</a>
                                             </div>
                                         </div>
                                         <div class="card-body p-0">

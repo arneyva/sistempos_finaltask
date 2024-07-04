@@ -87,16 +87,20 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">{{ __('Sales') }}</a>
+                                        <a class="nav-link active show" role="tab"
+                                            aria-selected="false">{{ __('Sales') }}</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.payments.sales-returns') }}" role="tab" aria-selected="false">{{ __('Sales') }} {{ __('Return') }}</a>
+                                        <a class="nav-link" href="{{ route('reports.payments.sales-returns') }}"
+                                            role="tab" aria-selected="false">{{ __('Sales') }} {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.payments.purchases') }}" role="tab" aria-selected="false">{{ __('Purchases') }}</a>
+                                        <a class="nav-link" href="{{ route('reports.payments.purchases') }}" role="tab"
+                                            aria-selected="false">{{ __('Purchases') }}</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.payments.purchases-returns') }}" role="tab" aria-selected="false">{{ __('Purchases') }}
+                                        <a class="nav-link" href="{{ route('reports.payments.purchases-returns') }}"
+                                            role="tab" aria-selected="false">{{ __('Purchases') }}
                                             {{ __('Return') }}</a>
                                     </li>
                                 </ul>
@@ -119,11 +123,13 @@
                                                         </svg>
                                                     </span>
                                                     <input type="search" class="form-control" name="search"
-                                                        value="{{ request()->input('search') }}" placeholder="{{ __('Search...') }}">
+                                                        value="{{ request()->input('search') }}"
+                                                        placeholder="{{ __('Search...') }}">
                                                 </div>
                                             </form>
                                             <div class="header-title">
-                                                <button type="button" class="btn btn-soft-danger">Excel</button>
+                                                <a href="{{ route('reports.payments.sales-export', request()->query()) }}"
+                                                    class="btn btn-soft-danger">Excel</a>
                                             </div>
                                         </div>
                                         <div class="card-body p-0">

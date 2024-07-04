@@ -6,6 +6,10 @@ use App\Exports\Report\Customer\ReportCustomerSalesExport;
 use App\Exports\Report\Customer\ReportCustomerSalesPaymentExport;
 use App\Exports\Report\Customer\ReportCustomerSalesReturnExport;
 use App\Exports\Report\Customer\SalesExport;
+use App\Exports\Report\Payment\ReportPaymentPurchasesExport;
+use App\Exports\Report\Payment\ReportPaymentPurchasesReturnExport;
+use App\Exports\Report\Payment\ReportPaymentSalesExport;
+use App\Exports\Report\Payment\ReportPaymentSalesReturnExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesPaymentExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesReturnExport;
@@ -43,12 +47,19 @@ class ReportsController extends Controller
 {
     public function payments(Request $request)
     {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
         // mendapatkan data payment
         $paymentsQuery = DB::table('payment_sales')
             ->where('payment_sales.deleted_at', '=', null)
             ->join('sales', 'payment_sales.sale_id', '=', 'sales.id')
             ->join('clients', 'sales.client_id', '=', 'clients.id')
             ->latest('payment_sales.date');
+        if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $paymentsQuery = $paymentsQuery;
+        } else {
+            $paymentsQuery = $paymentsQuery->whereIn('sales.warehouse_id', $warehouses_id);
+        }
         // proses filtering
         if ($request->filled('search')) {
             $paymentsQuery->where(function ($query) use ($request) {
@@ -86,20 +97,38 @@ class ReportsController extends Controller
             'paymentDetails' => $paymentDetails
         ]);
     }
+    public function exportPaymentSale(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-payments-sales_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportPaymentSalesExport($request), $filename);
+    }
+    public function exportPaymentReturnSale(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-payments-sales-return_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportPaymentSalesReturnExport($request), $filename);
+    }
     public function paymentSaleReturns(Request $request)
     {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
         $paymentsQuery = DB::table('payment_sale_returns')
             ->where('payment_sale_returns.deleted_at', '=', null)
             ->join('sale_returns', 'payment_sale_returns.sale_return_id', '=', 'sale_returns.id')
             ->join('clients', 'sale_returns.client_id', '=', 'clients.id')
             ->latest('payment_sale_returns.date');
-
+        if (!$user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $paymentsQuery->whereIn('sale_returns.warehouse_id', $warehouses_id);
+        }
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->input('search') . '%';
             $paymentsQuery->where(function ($query) use ($searchTerm) {
                 $query->orWhere('payment_sale_returns.Ref', 'LIKE', $searchTerm)
-                    ->orWhere('clients.name', 'LIKE', $searchTerm);
-                // ->orWhere('payment_sale_returns.Reglement', 'LIKE', $searchTerm);
+                    ->orWhere('clients.name', 'LIKE', $searchTerm)
+                    ->orWhere('payment_sale_returns.Reglement', 'LIKE', $searchTerm);
             });
         }
 
@@ -133,12 +162,16 @@ class ReportsController extends Controller
     }
     public function paymentPurchases(Request $request)
     {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
         $paymentsQuery = DB::table('payment_purchases')
             ->whereNull('payment_purchases.deleted_at')
             ->join('purchases', 'payment_purchases.purchase_id', '=', 'purchases.id')
             ->join('providers', 'purchases.provider_id', '=', 'providers.id')
             ->latest('payment_purchases.date');
-
+        if (!$user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $paymentsQuery->whereIn('purchases.warehouse_id', $warehouses_id);
+        }
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->input('search') . '%';
             $paymentsQuery->where(function ($query) use ($searchTerm) {
@@ -147,7 +180,6 @@ class ReportsController extends Controller
                     ->orWhere('payment_purchases.Reglement', 'LIKE', $searchTerm);
             });
         }
-
         $payments = $paymentsQuery->select(
             'payment_purchases.date',
             'payment_purchases.Ref AS Payment_Ref',
@@ -176,14 +208,25 @@ class ReportsController extends Controller
             'paymentDetails' => $paymentDetails
         ]);
     }
+    public function exportPaymentPurchases(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-payments-purchases_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportPaymentPurchasesExport($request), $filename);
+    }
     public function paymentPurchaseReturns(Request $request)
     {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
         $paymentsQuery = DB::table('payment_purchase_returns')
             ->whereNull('payment_purchase_returns.deleted_at')
             ->join('purchase_returns', 'payment_purchase_returns.purchase_return_id', '=', 'purchase_returns.id')
             ->join('providers', 'purchase_returns.provider_id', '=', 'providers.id')
             ->latest('payment_purchase_returns.date');
-
+        if (!$user_auth->hasRole(['superadmin', 'inventaris'])) {
+            $paymentsQuery->whereIn('purchase_returns.warehouse_id', $warehouses_id);
+        }
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->input('search') . '%';
             $paymentsQuery->where(function ($query) use ($searchTerm) {
@@ -220,6 +263,13 @@ class ReportsController extends Controller
             'payments' => $payments,
             'paymentDetails' => $paymentDetails
         ]);
+    }
+    public function exportPaymentPurchasesReturn(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-payments-purchases-return_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportPaymentPurchasesReturnExport($request), $filename);
     }
     public function profitLoss(request $request)
     {
