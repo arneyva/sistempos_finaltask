@@ -542,6 +542,8 @@
     <script src="{{ asset('/sw.js') }}"></script>
     {{-- chartjs --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {{-- cleave format rupiah --}}
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
     <script>
         if ("serviceWorker" in navigator) {
             // Register a service worker hosted at the root of the

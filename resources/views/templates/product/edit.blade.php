@@ -56,7 +56,7 @@
                         </div>
                     </div>
                     <form method="POST" action="{{ route('product.update', $product['id']) }}"
-                        enctype="multipart/form-data" onsubmit="saveVariantData()">
+                        enctype="multipart/form-data" onsubmit="saveVariantData()" id="form">
                         @method('PATCH')
                         @csrf
                         <div class="card-body">
@@ -113,7 +113,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="category">{{ __('Category')  }}</label>
+                                    <label class="form-label" for="category">{{ __('Category') }}</label>
                                     <select class="form-select select2" id="category" required name="category_id"
                                         data-placeholder="Select a Category">>
                                         <option selected disabled value="">{{ __('Choose...') }}</option>
@@ -265,7 +265,8 @@
                                                 placeholder="{{ __('Input Variant Name') }}">
                                         </div>
                                         <div class="col-md-3 mb-3">
-                                            <button class="btn btn-soft-primary" id="createVariantBtn" type="button">{{ __('Add +') }}</button>
+                                            <button class="btn btn-soft-primary" id="createVariantBtn"
+                                                type="button">{{ __('Add +') }}</button>
                                         </div>
                                         <div class="card-body p-3">
                                             <div class="table-responsive">
@@ -288,11 +289,13 @@
                                                                 <td><input required class="form-control" type="text"
                                                                         value="{{ $variant['code'] }}"
                                                                         name="variants[{{ $variant['id'] }}][code]"></td>
-                                                                <td><input required class="form-control" type="text"
-                                                                        value="{{ $variant['cost'] }}"
+                                                                <td class="variant-cost"><input required
+                                                                        class="form-control" type="text"
+                                                                        value="{{ number_format($variant['cost'], 0, ',', '.') }}"
                                                                         name="variants[{{ $variant['id'] }}][cost]"></td>
-                                                                <td><input required class="form-control" type="text"
-                                                                        value="{{ $variant['price'] }}"
+                                                                <td class="variant-price"><input required
+                                                                        class="form-control" type="text"
+                                                                        value="{{ number_format($variant['price'], 0, ',', '.') }}"
                                                                         name="variants[{{ $variant['id'] }}][price]"></td>
                                                                 <td>
                                                                     <button type="button"
@@ -402,6 +405,64 @@
     {{-- end --}}
 @endsection
 @push('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.variant-cost input, .variant-price input').forEach(function(input) {
+                new Cleave(input, {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    prefix: 'Rp ',
+                    rawValueTrimPrefix: true, // Ensure that we get the numeric value without the prefix
+                    numeralDecimalMark: ',',
+                    delimiter: '.'
+                });
+            });
+        });
+        document.getElementById('#form').addEventListener('submit', function(event) {
+            // Strip formatting before submitting the form
+            document.querySelectorAll('.variant-cost input, .variant-price input').forEach(function(input) {
+                // Get the raw numeric value from Cleave.js
+                let cleaveInstance = input.cleave;
+                input.value = cleaveInstance.getRawValue();
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi Cleave.js untuk input biaya
+            new Cleave('#productcost', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                delimiter: '.', // Pemisah ribuan
+                numeralDecimalMark: ',', // Pemisah desimal
+                numeralDecimalScale: 2, // Dua digit desimal
+                prefix: 'Rp ', // Prefix mata uang
+                rawValueTrimPrefix: true // Hapus prefix saat mendapatkan nilai mentah
+            });
+
+            // Inisialisasi Cleave.js untuk input harga
+            new Cleave('#productprice', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                delimiter: '.', // Pemisah ribuan
+                numeralDecimalMark: ',', // Pemisah desimal
+                numeralDecimalScale: 2, // Dua digit desimal
+                prefix: 'Rp ', // Prefix mata uang
+                rawValueTrimPrefix: true // Hapus prefix saat mendapatkan nilai mentah
+            });
+        });
+        document.querySelector('#form').addEventListener('submit', function(event) {
+            var costInput = document.getElementById('productcost');
+            // Menghapus format dari input biaya
+            var cleanedCostValue = costInput.value.replace(/[Rp\s.]/g, '').replace(',', '.');
+            costInput.value = cleanedCostValue;
+
+            var priceInput = document.getElementById('productprice');
+            // Menghapus format dari input harga
+            var cleanedPriceValue = priceInput.value.replace(/[Rp\s.]/g, '').replace(',', '.');
+            priceInput.value = cleanedPriceValue;
+        });
+    </script>
     <script>
         $(document).ready(function() {
             var openLogoUpload = $('#openLogoUpload');
@@ -530,7 +591,30 @@
             var variantNameInput = document.getElementById("variantNameInput");
             var variantTableBody = document.getElementById("variantTableBody");
 
-            createVariantBtn.addEventListener("click", function() {
+            // Inisialisasi Cleave.js untuk input biaya dan harga
+            function initializeCleaveForVariant(row) {
+                new Cleave(row.querySelector('.variant-cost input'), {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    delimiter: '.',
+                    numeralDecimalMark: ',',
+                    numeralDecimalScale: 2, // Dua digit desimal
+                    prefix: 'Rp ', // Prefix mata uang
+                    rawValueTrimPrefix: true
+
+                });
+
+                new Cleave(row.querySelector('.variant-price input'), {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    delimiter: '.',
+                    numeralDecimalMark: ',',
+                    numeralDecimalScale: 2, // Dua digit desimal
+                    prefix: 'Rp ',
+                    rawValueTrimPrefix: true
+                });
+            }
+            createVariantBtn.addEventListener('click', function() {
                 var variantName = variantNameInput.value.trim();
 
                 if (variantName === "") {
@@ -560,84 +644,98 @@
             function addVariantRow(variantName) {
                 var newRow = document.createElement("tr");
                 newRow.innerHTML = `
-    <td><input required class="form-control" type="text" style="border-color: #DF4141;" value="${variantName}" name="new_variants[name]"></td>
-    <td contenteditable="true" class="variant-code"><input required class="form-control" type="text" style="border-color: #DF4141;" name="new_variants[code]"></td>
-    <td contenteditable="true" class="variant-cost"><input required class="form-control" type="text" style="border-color: #DF4141;"  name="new_variants[cost]"></td>
-    <td contenteditable="true" class="variant-price"><input required class="form-control" type="text" style="border-color: #DF4141;" name="new_variants[price]"></td>
-    <td>
-        <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
-    </td>
-`;
+                <td><input required class="form-control" type="text" style="border-color: #DF4141;" value="${variantName}" name="new_variants[name]"></td>
+                <td contenteditable="true" class="variant-code"><input required class="form-control" type="text" style="border-color: #DF4141;" name="new_variants[code]"></td>
+                <td contenteditable="true" class="variant-cost"><input required class="form-control" type="text" style="border-color: #DF4141;" name="new_variants[cost]"></td>
+                <td contenteditable="true" class="variant-price"><input required class="form-control" type="text" style="border-color: #DF4141;" name="new_variants[price]"></td>
+                <td>
+                    <button type="button" class="btn btn-soft-warning delete-variant">Delete</button>
+                </td>
+            `;
                 variantTableBody.appendChild(newRow);
+
+                initializeCleaveForVariant(newRow);
 
                 // Add event listener for delete button
                 newRow.querySelector(".delete-variant").addEventListener("click", function() {
                     newRow.remove(); // Remove the row when delete button is clicked
                 });
             }
-        });
 
-        // Menangani penyimpanan data produk varian sebelum formulir disubmit
-        function saveVariantData() {
-            var variantsData = [];
-            var rows = document.getElementById("variantTableBody").querySelectorAll("tr");
+            // Menangani penyimpanan data produk varian sebelum formulir disubmit
+            function saveVariantData() {
+                var variantsData = [];
+                var rows = document.getElementById("variantTableBody").querySelectorAll("tr");
 
-            // Menyimpan semua kode dalam array untuk memeriksanya
-            var codes = [];
-            rows.forEach(function(row) {
-                var variantName = row.cells[0].querySelector('input').value;
-                var variantCode = row.cells[1].querySelector('input').value;
-                var variantCost = row.cells[2].querySelector('input').value;
-                var variantPrice = row.cells[3].querySelector('input').value;
-
-                // Menambahkan kode ke dalam array
-                codes.push(variantCode)
-
-                // Memeriksa apakah input cost dan price numerik
-                if (isNaN(variantCost) || isNaN(variantPrice)) {
-                    alert("Cost and price must be numeric.");
-                    event.preventDefault();
-                    return;
-                }
-                // memriksa apakah cost dan price tidak kosong
-                if (variantCost == '' || variantPrice == '') {
-                    alert("Cost and price cannot be empty.");
-                    event.preventDefault();
-                    return;
-                }
-                if (variantCode == '') {
-                    alert("Code cannot be empty.");
-                    event.preventDefault();
-                    return;
+                function cleanNumericValue(value) {
+                    return value.replace(/[Rp\s.]/g, '').replace(',',
+                        '.'); // Menghapus karakter selain angka dan koma, ganti koma dengan titik
                 }
 
+                // Menyimpan semua kode dalam array untuk memeriksanya
+                var codes = [];
+                rows.forEach(function(row) {
+                    var variantName = row.cells[0].querySelector('input').value;
+                    var variantCode = row.cells[1].querySelector('input').value;
+                    var variantCost = cleanNumericValue(row.cells[2].querySelector('input').value);
+                    var variantPrice = cleanNumericValue(row.cells[3].querySelector('input').value);
 
-                variantsData.push({
-                    name: variantName,
-                    code: variantCode,
-                    cost: variantCost,
-                    price: variantPrice
+                    // Menambahkan kode ke dalam array
+                    codes.push(variantCode);
+
+                    // Memeriksa apakah input cost dan price numerik
+                    if (isNaN(variantCost) || isNaN(variantPrice)) {
+                        alert("Cost and price must be numeric.");
+                        event.preventDefault();
+                        return;
+                    }
+
+                    // Memeriksa apakah cost dan price tidak kosong
+                    if (variantCost == '' || variantPrice == '') {
+                        alert("Cost and price cannot be empty.");
+                        event.preventDefault();
+                        return;
+                    }
+
+                    if (variantCode == '') {
+                        alert("Code cannot be empty.");
+                        event.preventDefault();
+                        return;
+                    }
+
+                    variantsData.push({
+                        name: variantName,
+                        code: variantCode,
+                        cost: variantCost,
+                        price: variantPrice
+                    });
                 });
-            });
 
-            // Jika jenis produk adalah varian, maka lakukan validasi
-            if (document.getElementById("type").value === "is_variant") {
-                // Memeriksa duplikat kode
-                if (checkDuplicateCodes(codes)) {
-                    alert("Duplicate code found.");
-                    event.preventDefault();
-                    return;
+                // Jika jenis produk adalah varian, maka lakukan validasi
+                if (document.getElementById("type").value === "is_variant") {
+                    // Memeriksa duplikat kode
+                    if (checkDuplicateCodes(codes)) {
+                        alert("Duplicate code found.");
+                        event.preventDefault();
+                        return;
+                    }
                 }
+
+                // Simpan data produk varian ke dalam input tersembunyi sebelum formulir disubmit
+                document.getElementById("variantData").value = JSON.stringify(variantsData);
             }
 
-            // Simpan data produk varian ke dalam input tersembunyi sebelum formulir disubmit
-            document.getElementById("variantData").value = JSON.stringify(variantsData);
-        }
+            // Fungsi untuk memeriksa duplikat kode
+            function checkDuplicateCodes(codes) {
+                var uniqueCodes = new Set(codes); // Membuat set untuk mendapatkan nilai unik
+                return uniqueCodes.size !== codes
+                    .length; // Jika panjang set kurang dari panjang array, berarti ada duplikat
+            }
 
-        // Fungsi untuk memeriksa duplikat kode
-        function checkDuplicateCodes(codes) {
-            var uniqueCodes = new Set(codes); // Membuat set untuk mendapatkan nilai unik
-            return uniqueCodes.size !== codes.length; // Jika panjang set kurang dari panjang array, berarti ada duplikat
-        }
+            // Menyimpan data varian sebelum formulir disubmit
+            document.querySelector('#form').addEventListener('submit', function(event) {
+                saveVariantData();
+            });
+        });
     </script>
 @endpush

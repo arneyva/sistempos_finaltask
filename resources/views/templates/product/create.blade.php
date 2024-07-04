@@ -77,7 +77,7 @@
                             <h4 class="card-title">{{ __('Create Product') }}</h4>
                         </div>
                     </div>
-                    <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data"
+                    <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data" id="form"
                         onsubmit="saveVariantData()">
                         @csrf
                         <div class="card-body">
@@ -232,7 +232,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="productcost">{{ __('Cost') }}</label>
                                 <input type="text" class="form-control" id="productcost" required
-                                    placeholder="{{ __('input product cost') }}" name="cost"
+                                    placeholder="{{ __('Rp ') }}" name="cost"
                                     value="{{ Session::get('cost') }}">
                                 @error('cost')
                                     <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -247,7 +247,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="productprice">{{ __('Price') }}</label>
                                 <input type="text" class="form-control" id="productprice" required
-                                    placeholder="{{ __('input product price') }}" name="price"
+                                    placeholder="{{ __('Rp ') }}" name="price"
                                     value="{{ Session::get('price') }}">
                                 @error('price')
                                     <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -398,6 +398,42 @@
 @endsection
 @push('script')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi Cleave.js untuk input biaya
+            new Cleave('#productcost', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                delimiter: '.', // Pemisah ribuan
+                numeralDecimalMark: ',', // Pemisah desimal
+                numeralDecimalScale: 2, // Dua digit desimal
+                prefix: 'Rp ', // Prefix mata uang
+                rawValueTrimPrefix: true // Hapus prefix saat mendapatkan nilai mentah
+            });
+
+            // Inisialisasi Cleave.js untuk input harga
+            new Cleave('#productprice', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                delimiter: '.', // Pemisah ribuan
+                numeralDecimalMark: ',', // Pemisah desimal
+                numeralDecimalScale: 2, // Dua digit desimal
+                prefix: 'Rp ', // Prefix mata uang
+                rawValueTrimPrefix: true // Hapus prefix saat mendapatkan nilai mentah
+            });
+        });
+        document.querySelector('#form').addEventListener('submit', function(event) {
+            var costInput = document.getElementById('productcost');
+            // Menghapus format dari input biaya
+            var cleanedCostValue = costInput.value.replace(/[Rp\s.]/g, '').replace(',', '.');
+            costInput.value = cleanedCostValue;
+
+            var priceInput = document.getElementById('productprice');
+            // Menghapus format dari input harga
+            var cleanedPriceValue = priceInput.value.replace(/[Rp\s.]/g, '').replace(',', '.');
+            priceInput.value = cleanedPriceValue;
+        });
+    </script>
+    <script>
         $(document).ready(function() {
             var openLogoUpload = $('#openLogoUpload');
             var afterLogoUpload = $('#afterLogoUpload');
@@ -484,6 +520,30 @@
             var variantNameInput = document.getElementById("variantNameInput");
             var variantTableBody = document.getElementById("variantTableBody");
 
+            // Inisialisasi Cleave.js untuk input biaya dan harga
+            function initializeCleaveForVariant(row) {
+                new Cleave(row.querySelector('.variant-cost input'), {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    delimiter: '.',
+                    numeralDecimalMark: ',',
+                    numeralDecimalScale: 2, // Dua digit desimal
+                    prefix: 'Rp ', // Prefix mata uang
+                    rawValueTrimPrefix: true
+
+                });
+
+                new Cleave(row.querySelector('.variant-price input'), {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    delimiter: '.',
+                    numeralDecimalMark: ',',
+                    numeralDecimalScale: 2, // Dua digit desimal
+                    prefix: 'Rp ',
+                    rawValueTrimPrefix: true
+                });
+            }
+
             createVariantBtn.addEventListener("click", function() {
                 var variantName = variantNameInput.value.trim();
 
@@ -524,6 +584,9 @@
 `;
                 variantTableBody.appendChild(newRow);
 
+                // Inisialisasi Cleave.js untuk input biaya dan harga pada baris baru
+                initializeCleaveForVariant(newRow);
+
                 // Add event listener for delete button
                 newRow.querySelector(".delete-variant").addEventListener("click", function() {
                     newRow.remove(); // Remove the row when delete button is clicked
@@ -536,13 +599,17 @@
             var variantsData = [];
             var rows = document.getElementById("variantTableBody").querySelectorAll("tr");
 
+            function cleanNumericValue(value) {
+                return value.replace(/[^\d,]/g, '').replace(',',
+                    '.'); // Menghapus karakter selain angka dan koma, ganti koma dengan titik
+            }
             // Menyimpan semua kode dalam array untuk memeriksanya
             var codes = [];
             rows.forEach(function(row) {
                 var variantName = row.cells[0].querySelector('input').value;
                 var variantCode = row.cells[1].querySelector('input').value;
-                var variantCost = row.cells[2].querySelector('input').value;
-                var variantPrice = row.cells[3].querySelector('input').value;
+                var variantCost = cleanNumericValue(row.cells[2].querySelector('input').value);
+                var variantPrice = cleanNumericValue(row.cells[3].querySelector('input').value);
 
                 // Menambahkan kode ke dalam array
                 codes.push(variantCode)
