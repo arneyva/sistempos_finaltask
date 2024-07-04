@@ -144,6 +144,19 @@
                         <div class="header-title">
                             <h4 class="card-title">{{ __('Product Information') }}</h4>
                         </div>
+                        <span style="text-align: center; vertical-align: middle;margin-top: 30px">
+                            @php
+                                $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
+                                $barcodeData = base64_encode(
+                                    $generatorPNG->getBarcode($data[0]['code'], $generatorPNG::TYPE_CODE_128),
+                                );
+                                $barcodeUrl = 'data:image/png;base64,' . $barcodeData;
+                            @endphp
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <img src="{{ $barcodeUrl }}" alt="Barcode" style="margin-bottom: 5px;">
+                                <span>{{ $data[0]['code'] }}</span>
+                            </div>
+                        </span>
                         <a href="#"><button type="button" class="btn btn-soft-primary">Print</button></a>
                     </div>
                     <div class="card-body">
@@ -159,7 +172,11 @@
                                         <th>{{ $data[0]['type_name'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>{{ __('Code') }}</td>
+                                        @if ($data[0]['type'] == 'is_single')
+                                            <td>{{ __('Code') }}</td>
+                                        @else
+                                            <td>{{ __('Code Base Product') }}</td>
+                                        @endif
                                         <th>{{ $data[0]['code'] }}</th>
                                     </tr>
                                     <tr>
@@ -220,7 +237,24 @@
                                     @foreach ($data[0]['products_variants_data'] as $variant)
                                         <tr>
                                             <td>{{ $variant['name'] }}</td>
-                                            <td>{{ $variant['code'] }}</td>
+                                            {{-- <td>{{ $variant['code'] }}</td> --}}
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                @php
+                                                    $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
+                                                    $barcodeData = base64_encode(
+                                                        $generatorPNG->getBarcode(
+                                                            $variant['code'],
+                                                            $generatorPNG::TYPE_CODE_128,
+                                                        ),
+                                                    );
+                                                    $barcodeUrl = 'data:image/png;base64,' . $barcodeData;
+                                                @endphp
+                                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                                    <img src="{{ $barcodeUrl }}" alt="Barcode"
+                                                        style="margin-bottom: 5px;">
+                                                    <span>{{ $variant['code'] }}</span>
+                                                </div>
+                                            </td>
                                             <td>{{ $variant['cost'] }}</td>
                                             <td>{{ $variant['price'] }}</td>
                                         </tr>

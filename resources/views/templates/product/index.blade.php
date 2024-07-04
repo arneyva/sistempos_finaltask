@@ -33,13 +33,15 @@
                                     <form action="{{ route('product.index') }}" method="GET" id="filterForm">
                                         <div class="col mb-3">
                                             <label class="form-label" for="code">{{ __('Search By Code') }}</label>
-                                                <input type="text" class="form-control" id="code" name="code"
-                                                    value="{{ request()->input('code') }}" placeholder="{{ __('Input Code ...') }}">
+                                            <input type="text" class="form-control" id="code" name="code"
+                                                value="{{ request()->input('code') }}"
+                                                placeholder="{{ __('Input Code ...') }}">
                                         </div>
                                         <div class="col mb-3">
                                             <label class="form-label" for="name">{{ __('Search By Name') }}</label>
                                             <input type="text" class="form-control" id="name" name="name"
-                                                value="{{ request()->input('name') }}" placeholder="{{ __('Input Name ...') }}">
+                                                value="{{ request()->input('name') }}"
+                                                placeholder="{{ __('Input Name ...') }}">
                                         </div>
                                         <div class="col mb-3">
                                             <label class="form-label" for="category_id">{{ __('Choose Category') }}</label>
@@ -131,29 +133,35 @@
                                                 <label class="col-sm-4 col-form-label"
                                                     for="productCost">{{ __('Product Cost') }}</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>{{ __('This Field is required') }}</button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                                        disabled>{{ __('This Field is required') }}</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="productUnit">{{ __('Product Unit') }}</label>
+                                                <label class="col-sm-4 col-form-label"
+                                                    for="productUnit">{{ __('Product Unit') }}</label>
                                                 <div class="col-sm-8">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>{{ __('This Field is required')  }}</button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                                        disabled>{{ __('This Field is required') }}</button>
                                                     <button style="margin-top: 5px" type="button"
-                                                        class="btn btn-outline-danger btn-sm" disabled>{{ __('This Unit must already be created') }}</button>
+                                                        class="btn btn-outline-danger btn-sm"
+                                                        disabled>{{ __('This Unit must already be created') }}</button>
                                                     <button style="margin-top: 5px" type="button"
                                                         class="btn btn-outline-danger btn-sm" disabled>
-                                                        {{ __('Please use short name of unit')  }}</button>
+                                                        {{ __('Please use short name of unit') }}</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="brand">{{ __('Brand') }}</label>
+                                                <label class="col-sm-4 col-form-label"
+                                                    for="brand">{{ __('Brand') }}</label>
                                                 <div class="col-sm-8">
                                                     <button type="button"
                                                         class="btn btn-outline-primary btn-sm"disabled>{{ __('Field optional') }}</button>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4 col-form-label" for="note">{{ __('Note') }}</label>
+                                                <label class="col-sm-4 col-form-label"
+                                                    for="note">{{ __('Note') }}</label>
                                                 <div class="col-sm-8">
                                                     <button type="button" class="btn btn-outline-primary btn-sm"
                                                         disabled>{{ __('Field optional') }}</button>
@@ -162,14 +170,16 @@
                                             <div class="modal-footer">
                                                 <a href="/import/import_products.csv" class="btn btn-soft-success"
                                                     download>{{ __('Download Example') }}</a>
-                                                <button type="submit" class="btn btn-soft-primary">{{ __('Submit form') }}</button>
+                                                <button type="submit"
+                                                    class="btn btn-soft-primary">{{ __('Submit form') }}</button>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
-                        <a href="{{ route('product.create') }}"><button type="button" class="btn btn-soft-primary">{{ __('Create +') }}</button></a>
+                        <a href="{{ route('product.create') }}"><button type="button"
+                                class="btn btn-soft-primary">{{ __('Create +') }}</button></a>
                     @endrole
                 </div>
             </div>
@@ -207,7 +217,7 @@
                                                 alt="profile">
                                             <div class="d-flex flex-column">
                                                 @if ($item['type'] === 'Variant Product')
-                                                <h6 style="margin-top:10px"> {{ $item['namebase'] }} </h6>
+                                                    <h6 style="margin-top:10px"> {{ $item['namebase'] }} </h6>
                                                     @foreach ($item['name'] as $name)
                                                         <h6 style="margin-top:10px"> * {{ $name }}</h6>
                                                     @endforeach
@@ -218,7 +228,20 @@
                                         </div>
                                     </td>
                                     <td>{{ $item['type'] }}</td>
-                                    <td>{{ $item['code'] }}</td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        @php
+                                            $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
+                                            $barcodeData = base64_encode(
+                                                $generatorPNG->getBarcode($item['code'], $generatorPNG::TYPE_CODE_128),
+                                            );
+                                            $barcodeUrl = 'data:image/png;base64,' . $barcodeData;
+                                        @endphp
+                                        <div style="display: flex; flex-direction: column; align-items: center;">
+                                            <img src="{{ $barcodeUrl }}" alt="Barcode" style="margin-bottom: 5px;">
+                                            <span>{{ $item['code'] }}</span>
+                                        </div>
+                                    </td>
+
                                     <td>{{ $item['brand'] }}</td>
                                     <td>{{ $item['category'] }}</td>
                                     <td>
