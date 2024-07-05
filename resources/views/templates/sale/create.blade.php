@@ -152,10 +152,10 @@
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label" for="discount">{{ __('Discount') }}</label>
                                             <div class="form-group input-group">
-                                                <input type="number" class="form-control" id="discount"
+                                                <input type="text" class="form-control" id="discount"
                                                     placeholder="{{ __('input discount') }}" name="discount"
                                                     value="{{ old('sale.discount') }}">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="hidden" id="discount_value" name="discount_value">
                                             </div>
                                             @error('sale.discount')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -170,10 +170,10 @@
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
                                             <div class="form-group input-group">
-                                                <input type="number" class="form-control" id="shipping"
+                                                <input type="text" class="form-control" id="shipping"
                                                     placeholder="{{ __('input shipping') }}" name="shipping"
                                                     value="{{ old('sale.shipping') }}">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="hidden" id="shipping_value" name="shipping_value">
                                             </div>
                                             @error('sale.shipping')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -221,11 +221,10 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        <div class="col-md-4 mb-3" id="receivedAmount">
+                                        {{-- <div class="col-md-4 mb-3" id="receivedAmount">
                                             <label class="form-label"
                                                 for="received_amount">{{ __('Received Amount') }}</label>
                                             <div class="form-group input-group">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
                                                     placeholder="{{ __('input received amount') }}" id="received_amount"
                                                     name="received_amount" value="{{ Session::get('received_amount') }}">
@@ -244,7 +243,62 @@
                                             <label class="form-label"
                                                 for="paying_amount">{{ __('Paying Amount') }}</label>
                                             <div class="form-group input-group">
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{ __('input paying amount') }}" id="paying_amount"
+                                                    name="paying_amount" value="{{ Session::get('paying_amount') }}">
+                                            </div>
+                                            @error('paying_amount')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-4 mb-3" id="changeReturn">
+                                            <label class="form-label"
+                                                for="change_return">{{ __('Change Return') }}</label>
+                                            <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{ __('input change return') }}" id="change_return"
+                                                    name="change_return" value="{{ Session::get('change_return') }}"
+                                                    readonly>
+                                            </div>
+                                            @error('change_return')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div> --}}
+                                        <div class="col-md-4 mb-3" id="receivedAmount">
+                                            <label class="form-label"
+                                                for="received_amount">{{ __('Received Amount') }}</label>
+                                            <div class="form-group input-group">
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{ __('input received amount') }}" id="received_amount"
+                                                    name="received_amount" value="{{ Session::get('received_amount') }}">
+                                            </div>
+                                            @error('received_amount')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-4 mb-3" id="payingAmount">
+                                            <label class="form-label"
+                                                for="paying_amount">{{ __('Paying Amount') }}</label>
+                                            <div class="form-group input-group">
                                                 <input type="text" class="form-control"
                                                     placeholder="{{ __('input paying amount') }}" id="paying_amount"
                                                     name="paying_amount" value="{{ Session::get('paying_amount') }}">
@@ -345,24 +399,58 @@
                     changeReturn.style.display = 'none';
                 }
             }
+            // xyzab
+            var cleavereceived_amount = new Cleave('#received_amount', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                prefix: 'Rp ',
+                delimiter: '.'
+            });
 
-            function calculateChange() {
-                var received = parseFloat(document.getElementById('received_amount').value) || 0;
-                var paying = parseFloat(document.getElementById('paying_amount').value) || 0;
-                var change = received - paying;
-                document.getElementById('change_return').value = change >= 0 ? change : 0;
+            var cleaverepaying_amount = new Cleave('#paying_amount', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                prefix: 'Rp ',
+                delimiter: '.'
+            });
+
+            // Fungsi untuk format Rupiah
+            function formatRupiah(number) {
+                return 'Rp ' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
-            statusDropdown.addEventListener('change', updateVisibility);
-            paymentMethod.addEventListener('change', updateVisibility);
+            function getNumericValue(elementId) {
+                var formattedValue = $('#' + elementId).val();
+                var numericValue = formattedValue.replace(/[^\d]/g, ''); // Hapus karakter non-digit
+                return parseFloat(numericValue) || 0;
+            }
+
+            // Fungsi untuk menghitung kembalian
+            function calculateChange() {
+                var received = getNumericValue('received_amount');
+                var paying = getNumericValue('paying_amount');
+                var change = received - paying;
+                document.getElementById('change_return').value = formatRupiah(change >= 0 ? change : 0);
+            }
+
+            // Event listener untuk perubahan nilai pada input received amount dan paying amount
             document.getElementById('received_amount').addEventListener('input', calculateChange);
             document.getElementById('paying_amount').addEventListener('input', calculateChange);
 
-            updateVisibility(); // Initial call to set the correct visibility on page load
+            // Update visibility berdasarkan status dan metode pembayaran
+            statusDropdown.addEventListener('change', updateVisibility);
+            paymentMethod.addEventListener('change', updateVisibility);
+            updateVisibility();
         });
     </script>
     <script>
         $(document).ready(function() {
+            function formatRupiah(number) {
+                return 'Rp ' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
             // Update grand total on page load
             updateGrandTotal();
             // Delete row event handler
@@ -410,7 +498,7 @@
                 var warehouseId = $(this).val();
                 if (warehouseId) {
                     $.ajax({
-                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                        url: '/adjustment/get_Available_Products_by_warehouse/' + warehouseId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
@@ -430,6 +518,7 @@
                     $('#selectProduct').empty().prop('disabled', true);
                 }
             });
+
 
             // Select product event handler
             $('#selectProduct').on('change', function() {
@@ -466,28 +555,31 @@
                     } else {
                         $.ajax({
                             url: '/adjustment/show_product_data/' + productId + '/' + variantId +
-                                '/' +
-                                warehouseId,
+                                '/' + warehouseId,
                             type: "GET",
                             dataType: "json",
                             success: function(data) {
                                 var initialQuantity = 1;
                                 var initialTotal = initialQuantity * data.Unit_price +
                                     initialQuantity * data.tax_price;
+                                var formattedUnitPrice = formatRupiah(data.Unit_price);
+                                var formattedTaxPrice = formatRupiah(data.tax_price);
+                                var formattedInitialTotal = formatRupiah(initialTotal);
                                 var row = '<tr>';
                                 row += '<td>#</td>';
                                 row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-                                row += '<td>' + 'Rp ' + data.Unit_price + '</td>';
+                                row += '<td>' + formattedUnitPrice + '</td>';
                                 row += '<td>' + data.qty + ' ' + data.unitSale + '</td>';
                                 row +=
                                     '<td><input type="number" class="form-control item-quantity" name="details[' +
-                                    data.id + '_' + variantId +
-                                    '][quantity]" value="' + initialQuantity +
-                                    '"  data-min-quantity="1" data-max-quantity="' + data
-                                    .qty + '"></td>';
+                                    data.id + '_' + variantId + '][quantity]" value="' +
+                                    initialQuantity +
+                                    '" data-min-quantity="1" data-max-quantity="' + data.qty +
+                                    '"></td>';
                                 row += '<td class="item-discount">Rp 0</td>';
-                                row += '<td>' + 'Rp ' + data.tax_price + '</td>';
-                                row += '<td class="item-total">Rp ' + initialTotal + '</td>';
+                                row += '<td>' + formattedTaxPrice + '</td>';
+                                row += '<td class="item-total">' + formattedInitialTotal +
+                                    '</td>';
                                 row +=
                                     '<td><button type="button" class="btn btn-danger btn-sm delete-row">';
                                 row +=
@@ -501,7 +593,6 @@
                                 row += '</g>';
                                 row += '</svg>';
                                 row += '</button></td>';
-                                // Hidden inputs inside a hidden <td>
                                 row += '<td class="hidden-input">';
                                 row += '<input type="hidden" name="details[' + data.id + '_' +
                                     variantId + '][product_id]" value="' + data.id + '">';
@@ -523,7 +614,7 @@
                                 row +=
                                     '<input type="hidden" class="item-subtotal" name="details[' +
                                     data.id + '_' + variantId + '][subtotal]" value="' +
-                                    initialTotal + '">';
+                                    formattedInitialTotal + '">';
                                 row +=
                                     '<input type="hidden" class="item-subdiscount" name="details[' +
                                     data.id + '_' + variantId + '][discount]" value="0">';
@@ -545,6 +636,7 @@
                                 $('#selectProduct').val('').trigger('change');
                             }
                         });
+
                     }
                 }
             });
@@ -557,7 +649,6 @@
                 var minQuantity = parseFloat($(this).data('min-quantity')) || 1;
 
                 if (quantity > maxQuantity) {
-                    // alert('The quantity cannot exceed the available stock.');
                     Swal.fire({
                         toast: true,
                         position: 'top-end',
@@ -591,70 +682,103 @@
                     $(this).val(minQuantity);
                     quantity = minQuantity;
                 }
-                var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
-                var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-                var quantityDiscount = parseFloat(row.find('input[name$="[quantity_discount]"]')
-                        .val()) ||
+
+                // Mengambil nilai unitPrice, taxPrice, quantityDiscount, dan discountPercentage dari elemen HTML
+                var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '').replace(/\./g,
+                    '')) || 0;
+                var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '').replace(/\./g,
+                    '')) || 0;
+                var quantityDiscount = parseFloat(row.find('input[name$="[quantity_discount]"]').val()) ||
                     0;
                 var discountPercentage = parseFloat(row.find('input[name$="[discount_percentage]"]')
-                        .val()) ||
-                    0;
+                    .val()) || 0;
                 var discount = 0;
+
+                // Menghitung diskon jika kuantitas memenuhi syarat
                 if (quantity >= quantityDiscount) {
                     discount = (unitPrice * quantity) * (discountPercentage / 100);
-                    row.find('.item-discount').text('Rp ' + discount.toFixed(2));
-                    row.find('.item-subdiscount').val(discount.toFixed(2));
+                    row.find('.item-discount').text(formatRupiah(discount.toFixed(
+                        0))); // Menggunakan toFixed(0) jika tidak menggunakan koma
+                    row.find('.item-subdiscount').val(discount.toFixed(
+                        0)); // Menggunakan toFixed(0) jika tidak menggunakan koma
                     row.find('.item-subdiscountmethod').val('discount');
                 } else {
                     row.find('.item-discount').text('Rp 0');
-                    row.find('.item-subdiscount').val(discount.toFixed(2));
+                    row.find('.item-subdiscount').val('0');
                     row.find('.item-subdiscountmethod').val('nodiscount');
                 }
 
+                // Menghitung totalPrice
                 var totalPrice = (unitPrice + taxPrice) * quantity - discount;
+                row.find('.item-total').text(formatRupiah(totalPrice.toFixed(
+                    0))); // Menggunakan toFixed(0) jika tidak menggunakan koma
+                console.log("Total Price:", totalPrice.toFixed(
+                    0));
+                row.find('.item-subtotal').val(totalPrice.toFixed(
+                    0)); // Menggunakan toFixed(0) jika tidak menggunakan koma
 
-                row.find('.item-total').text('Rp ' + totalPrice.toFixed(2));
-                row.find('.item-subtotal').val(totalPrice.toFixed(2));
+                // Memperbarui grand total
                 updateGrandTotal();
             });
+            var cleaveDiscount = new Cleave('#discount', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                prefix: 'Rp ',
+                delimiter: '.'
+            });
+            var cleaveShipping = new Cleave('#shipping', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                prefix: 'Rp ',
+                delimiter: '.'
+            });
+
+            // Function to get numeric value from a formatted input
+            function getNumericValue(elementId) {
+                var formattedValue = $('#' + elementId).val();
+                var numericValue = formattedValue.replace(/[^\d,]/g, '').replace(',', '.');
+                return parseFloat(numericValue) || 0;
+            }
 
             // Tax rate, discount, shipping change event handler
             $('#tax_rate, #discount, #shipping').on('input', function() {
                 updateGrandTotal();
             });
+
             function updateGrandTotal() {
                 var grandTotal = 0;
 
                 // Iterate through each row in the product table
                 $('#product-table-body tr').each(function() {
-                    var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) ||
-                        0;
+                    // Extract and parse the raw numeric value from the item-total text
+                    var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '').replace(
+                        /\./g, '')) || 0;
                     if (!isNaN(total)) {
                         grandTotal += total;
                     }
                 });
-
-                // Get values of tax rate, discount, shipping
-                var discount = parseFloat($('#discount').val()) || 0;
-                var shipping = parseFloat($('#shipping').val()) || 0;
+                var discount = getNumericValue('discount');
+                console.log(discount);
+                var shipping = getNumericValue('shipping');
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
 
+                // Update hidden fields with numeric values
+                $('#discount_value').val(discount);
+                $('#shipping_value').val(shipping);
                 // Calculate tax amount
                 var taxNet = (taxRate / 100) * grandTotal;
                 $('#tax_net').val(taxNet.toFixed(2));
 
                 // Calculate grand total
                 grandTotal = grandTotal - discount + shipping + taxNet;
-
-                // Update displayed values in the summary table
-                $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNet.toFixed(2)); // Order Tax
-                $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
-                $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
-                $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
-
-                // Update hidden fields for backend submission
+                $('#basic-table tr:nth-child(1) th').text(formatRupiah(taxNet.toFixed(0))); // Order Tax
+                $('#basic-table tr:nth-child(2) th').text(formatRupiah(discount.toFixed(0))); // Discount
+                $('#basic-table tr:nth-child(3) th').text(formatRupiah(shipping.toFixed(0))); // Shipping
+                $('#basic-table tr:nth-child(4) th').text(formatRupiah(grandTotal.toFixed(0))); // Grand Total
                 $('#grandTotal').val(grandTotal.toFixed(2));
-                $('#paying_amount').val(grandTotal.toFixed(2));
+                $('#paying_amount').val(formatRupiah(grandTotal.toFixed(0)));
             }
         });
     </script>

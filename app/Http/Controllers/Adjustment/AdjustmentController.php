@@ -204,10 +204,107 @@ class AdjustmentController extends Controller
                                 $q->where('not_selling', '=', 0);
                             }
                         });
+                    }) //mencarai data product warehouse berdasarkan yang sudah dipilih di dropdown warehouse sebelumnya
+                    ->where(function ($query) use ($request) {
+                        if ($request->stock == '1' && $request->product_service == '1') {
+                            return $query->where('qty', '>', 0)->orWhere('manage_stock', false);
+                        } elseif ($request->stock == '1' && $request->product_service == '0') {
+                            return $query->where('qty', '>', 0)->orWhere('manage_stock', true);
+                        } else {
+                            return $query->where('manage_stock', true);
+                        }
+                    });
+            })->get();
+        foreach ($product_warehouse_data as $product_warehouse) { //araay setelah dapat data product warehouse
+
+            if ($product_warehouse->product_variant_id) { //jika memiliki data product_variant_id
+                $item['product_variant_id'] = $product_warehouse->product_variant_id;
+                $item['code'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
+                $item['Variant'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['name'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['barcode'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
+
+                $product_price = $product_warehouse['productVariant']->price; //code ngambil dari relasi productVariant
+            } else { //jika tidak memiliki data product_variant_id
+                $item['product_variant_id'] = null;
+                $item['Variant'] = null;
+                $item['code'] = $product_warehouse['product']->code;
+                $item['name'] = $product_warehouse['product']->name;
+                $item['barcode'] = $product_warehouse['product']->code;
+                $product_price = $product_warehouse['product']->price;
+            }
+
+            $item['id'] = $product_warehouse->product_id;
+            $item['product_type'] = $product_warehouse['product']->type;
+            $item['Type_barcode'] = $product_warehouse['product']->Type_barcode;
+            $firstimage = explode(',', $product_warehouse['product']->image);
+            $item['image'] = $firstimage[0];
+
+            if ($product_warehouse['product']['unitSale']) {
+
+                if ($product_warehouse['product']['unitSale']->operator == '/') {
+                    $item['qty_sale'] = $product_warehouse->qty * $product_warehouse['product']['unitSale']->operator_value;
+                    $price = $product_price / $product_warehouse['product']['unitSale']->operator_value;
+                } else {
+                    $item['qty_sale'] = $product_warehouse->qty / $product_warehouse['product']['unitSale']->operator_value;
+                    $price = $product_price * $product_warehouse['product']['unitSale']->operator_value;
+                }
+            } else {
+                $item['qty_sale'] = $product_warehouse['product']->type != 'is_service' ? $product_warehouse->qty : '---';
+                $price = $product_price;
+            }
+
+            if ($product_warehouse['product']['unitPurchase']) { //memeriksa apakah ada informasi tentang penjualan unit untuk produk di gudang.
+
+                if ($product_warehouse['product']['unitPurchase']->operator == '/') {
+                    $item['qty_purchase'] = round($product_warehouse->qty * $product_warehouse['product']['unitPurchase']->operator_value, 5);
+                } else {
+                    $item['qty_purchase'] = round($product_warehouse->qty / $product_warehouse['product']['unitPurchase']->operator_value, 5);
+                }
+            } else {
+                $item['qty_purchase'] = $product_warehouse->qty;
+            }
+
+            $item['manage_stock'] = $product_warehouse->manage_stock;
+            $item['qty'] = $product_warehouse['product']->type != 'is_service' ? $product_warehouse->qty : '---';
+            $item['unitSale'] = $product_warehouse['product']['unitSale'] ? $product_warehouse['product']['unitSale']->ShortName : '';
+            $item['unitPurchase'] = $product_warehouse['product']['unitPurchase'] ? $product_warehouse['product']['unitPurchase']->ShortName : '';
+
+            if ($product_warehouse['product']->TaxNet !== 0.0) {
+                //Exclusive
+                if ($product_warehouse['product']->tax_method == '1') {
+                    $tax_price = $price * $product_warehouse['product']->TaxNet / 100;
+                    $item['Net_price'] = $price + $tax_price;
+                    // Inxclusive
+                } else {
+                    $item['Net_price'] = $price;
+                }
+            } else {
+                $item['Net_price'] = $price;
+            }
+
+            $data[] = $item;
+        }
+
+        return response()->json($data);
+    }
+
+    public function Avilable_Products_by_Warehouse(request $request, $id)
+    {
+        $data = []; //menyimpan data array
+        $product_warehouse_data = ProductWarehouse::with('warehouse', 'product', 'productVariant')
+            ->where(function ($query) use ($request, $id) {
+                return $query->where('warehouse_id', $id)
+                    ->where('deleted_at', '=', null)
+                    ->where(function ($query) use ($request) {
+                        return $query->whereHas('product', function ($q) use ($request) {
+                            if ($request->is_sale == '1') {
+                                $q->where('not_selling', '=', 0);
+                            }
+                        });
                     }) // mencari data product warehouse berdasarkan yang sudah dipilih di dropdown warehouse sebelumnya
                     ->where('qty', '>', 1);
             })->get();
-
         foreach ($product_warehouse_data as $product_warehouse) { //araay setelah dapat data product warehouse
 
             if ($product_warehouse->product_variant_id) { //jika memiliki data product_variant_id
