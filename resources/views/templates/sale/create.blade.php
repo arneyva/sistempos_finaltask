@@ -4,7 +4,27 @@
     <h1>{{ __('Add Sales') }}</h1>
     <p>{{ __('Create sales transaction data easily and efficiently') }}</p>
 @endsection
+<style>
+    /* Custom CSS to ensure proper height */
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        /* Adjust this value as needed */
+    }
 
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        line-height: 38px !important;
+        /* Match this value with the height */
+    }
+
+    .select2-container .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+        /* Match this value with the height */
+    }
+
+    .hidden-input {
+        display: none;
+    }
+</style>
 @section('content')
     {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">
@@ -26,7 +46,8 @@
                             @csrf
                             <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="selectWarehouse">{{ __('From Warehouse/Outlet *') }}</label>
+                                    <label class="form-label"
+                                        for="selectWarehouse">{{ __('From Warehouse/Outlet *') }}</label>
                                     <select class="form-select" id="selectWarehouse" name="warehouse_id" required>
                                         <option selected disabled value="">{{ __('Choose...') }}</option>
                                         @foreach ($warehouse as $wh)
@@ -39,7 +60,8 @@
                                     <select class="form-select" id="customer" name="client_id" required>
                                         <option selected disabled value="">{{ __('Choose...') }}</option>
                                         @foreach ($client as $cl)
-                                            <option value="{{ $cl->id }}" data-status="{{ $cl->is_poin_activated }}">
+                                            <option value="{{ $cl->id }}"
+                                                data-status="{{ $cl->is_poin_activated }}">
                                                 {{ $cl->name }}</option>
                                         @endforeach
                                     </select>
@@ -52,7 +74,9 @@
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="selectProduct">{{ __('Product *') }}</label>
                                     <select class="form-select" id="selectProduct" disabled>
-                                        <option selected disabled value="">{{ __('Choose warehouse first...') }}</option>
+                                        <option selected disabled value="">
+                                            {{ __('Scan/Search Product by Code or Name') }}
+                                        </option>
                                     </select>
                                 </div>
                                 <!-- Tambahkan bagian untuk menampilkan tabel produk -->
@@ -163,7 +187,7 @@
                                         </div>
                                         {{--  --}}
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="brand">{{ __('Status *')  }}</label>
+                                            <label class="form-label" for="brand">{{ __('Status *') }}</label>
                                             <select class="form-select select2" id="typeStatus" required name="statut"
                                                 data-placeholder="Select a Brand">
                                                 <option value="completed" selected>{{ __('Completed') }}</option>
@@ -180,7 +204,8 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="paymentMethod">
-                                            <label class="form-label" for="payment_method">{{ __('Payment Method *') }}</label>
+                                            <label class="form-label"
+                                                for="payment_method">{{ __('Payment Method *') }}</label>
                                             <select class="form-select select2" name="payment_method" id="payment_method"
                                                 data-placeholder="Select a payment_method">
                                                 <option value="cash">{{ __('Cash') }}</option>
@@ -197,7 +222,8 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="receivedAmount">
-                                            <label class="form-label" for="received_amount">{{ __('Received Amount') }}</label>
+                                            <label class="form-label"
+                                                for="received_amount">{{ __('Received Amount') }}</label>
                                             <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
@@ -215,7 +241,8 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="payingAmount">
-                                            <label class="form-label" for="paying_amount">{{ __('Paying Amount') }}</label>
+                                            <label class="form-label"
+                                                for="paying_amount">{{ __('Paying Amount') }}</label>
                                             <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
@@ -233,7 +260,8 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="changeReturn">
-                                            <label class="form-label" for="change_return">{{ __('Change Return') }}</label>
+                                            <label class="form-label"
+                                                for="change_return">{{ __('Change Return') }}</label>
                                             <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
@@ -270,6 +298,21 @@
 @endsection
 
 @push('script')
+    <script>
+        $(document).ready(function() {
+            // Initialize Select2 for Warehouse Dropdown
+            $('#selectWarehouse').select2({
+                placeholder: "Choose a warehouse...",
+                allowClear: true
+            });
+
+            // Initialize Select2 for Customer Dropdown
+            $('#customer').select2({
+                placeholder: "Choose a customer...",
+                allowClear: true
+            });
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var statusDropdown = document.getElementById('typeStatus');
@@ -322,13 +365,46 @@
         $(document).ready(function() {
             // Update grand total on page load
             updateGrandTotal();
-
             // Delete row event handler
             $('#product-table-body').on('click', '.delete-row', function() {
                 $(this).closest('tr').remove();
                 updateGrandTotal();
+                // Reset dropdown produk setelah menghapus produk dari tabel
+                $('#selectProduct').val('').trigger('change');
+            });
+            $('#selectWarehouse').on('change', function() {
+                // Kosongkan tabel produk ketika warehouse diubah
+                $('#product-table-body').empty();
+                updateGrandTotal(); // Perbarui total grand setelah mengosongkan tabel
+            });
+            $('#selectProduct').select2({
+                placeholder: 'Scan/Search Product by Code or Name',
+                allowClear: true,
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    if (typeof data.text === 'undefined' || typeof $(data.element).data('code') ===
+                        'undefined') {
+                        return null;
+                    }
+                    var term = params.term.toLowerCase();
+                    var text = data.text.toLowerCase();
+                    var code = $(data.element).data('code').toString().toLowerCase();
+
+                    if (text.indexOf(term) > -1 || code.indexOf(term) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
             });
 
+            // Tambahkan event listener untuk fokus pada input pencarian saat dropdown dibuka
+            $('#selectProduct').on('select2:open', function() {
+                setTimeout(function() {
+                    document.querySelector('.select2-search__field').focus();
+                }, 100); // Penundaan 100ms sebelum fokus pada input pencarian
+            });
             // Select warehouse event handler
             $('#selectWarehouse').on('change', function() {
                 var warehouseId = $(this).val();
@@ -342,7 +418,8 @@
                                 '<option selected disabled value="">Choose...</option>');
                             $.each(data, function(key, value) {
                                 $('#selectProduct').append('<option value="' + value
-                                    .id + '" data-variant-id="' + (value
+                                    .id + '" data-code="' + value.code +
+                                    '" data-variant-id="' + (value
                                         .product_variant_id || '') + '">' + value
                                     .name + '</option>');
                             });
@@ -361,69 +438,114 @@
                 var variantId = $(this).find(':selected').data('variant-id') || null;
 
                 if (productId && warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
-                            warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            var row = '<tr>';
-                            row += '<td>#</td>';
-                            row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-                            row += '<td>' + 'Rp ' + data.Unit_price + '</td>';
-                            row += '<td>' + data.qty + ' ' + data.unitSale + '</td>';
-                            row +=
-                                '<td><input type="number" class="form-control item-quantity" name="details[' +
-                                data.id + '_' + variantId +
-                                '][quantity]" value="0" min="0" data-max-quantity="' + data
-                                .qty + '"></td>'; // quantity
-                            row += '<td class="item-discount">Rp 0</td>';
-                            row += '<td>' + 'Rp ' + data.tax_price + '</td>';
-                            row += '<td class="item-total">Rp 0</td>';
-                            row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">Delete</button></td>';
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_id]" value="' + data.id +
-                                '"></td>'; // product_id
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][product_variant_id]" value="' + (variantId ||
-                                    '') + '"></td>'; // product_variant_id
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][sale_unit_id]" value="' + data.sale_unit_id +
-                                '"></td>'; // sale_unit_id
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][Unit_price]" value="' + data.Unit_price +
-                                '"></td>'; // Unit_price
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][tax_percent]" value="' + data.tax_percent +
-                                '"></td>'; // tax_percent
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][tax_method]" value="' + data.tax_method +
-                                '"></td>'; // tax_method
-                            row +=
-                                '<td><input type="hidden" class="item-subtotal" name="details[' +
-                                data.id + '_' + variantId +
-                                '][subtotal]" value="0"></td>'; // subtotal
-                            row +=
-                                '<td><input type="hidden"class="item-subdiscount" name="details[' +
-                                data.id + '_' +
-                                variantId + '][discount]" value="0"></td>'; // discount
-                            row +=
-                                '<td><input type="hidden"class="item-subdiscountmethod" name="details[' +
-                                data.id + '_' +
-                                variantId + '][discount_method]" value="0"></td>'; // discount
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][quantity_discount]" value="' + data
-                                .quantity_discount + '"></td>'; // quantity_discount
-                            row += '<td><input type="hidden" name="details[' + data.id + '_' +
-                                variantId + '][discount_percentage]" value="' + data
-                                .discount_percentage + '"></td>'; // quantity_discount
-                            row += '</tr>';
-
-                            $('#product-table-body').append(row);
-                            updateGrandTotal();
+                    var isDuplicate = false;
+                    $('#product-table-body tr').each(function() {
+                        var existingProductId = $(this).find('input[name$="[product_id]"]').val();
+                        var existingVariantId = $(this).find('input[name$="[product_variant_id]"]')
+                            .val() || null;
+                        if (existingProductId == productId && existingVariantId == variantId) {
+                            isDuplicate = true;
+                            $('#selectProduct').val('').trigger('change');
+                            return false; // Hentikan loop
                         }
                     });
+                    if (isDuplicate) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'warning',
+                            title: 'Produk sudah ditambahkan.',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        });
+                    } else {
+                        $.ajax({
+                            url: '/adjustment/show_product_data/' + productId + '/' + variantId +
+                                '/' +
+                                warehouseId,
+                            type: "GET",
+                            dataType: "json",
+                            success: function(data) {
+                                var initialQuantity = 1;
+                                var initialTotal = initialQuantity * data.Unit_price +
+                                    initialQuantity * data.tax_price;
+                                var row = '<tr>';
+                                row += '<td>#</td>';
+                                row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
+                                row += '<td>' + 'Rp ' + data.Unit_price + '</td>';
+                                row += '<td>' + data.qty + ' ' + data.unitSale + '</td>';
+                                row +=
+                                    '<td><input type="number" class="form-control item-quantity" name="details[' +
+                                    data.id + '_' + variantId +
+                                    '][quantity]" value="' + initialQuantity +
+                                    '"  data-min-quantity="1" data-max-quantity="' + data
+                                    .qty + '"></td>';
+                                row += '<td class="item-discount">Rp 0</td>';
+                                row += '<td>' + 'Rp ' + data.tax_price + '</td>';
+                                row += '<td class="item-total">Rp ' + initialTotal + '</td>';
+                                row +=
+                                    '<td><button type="button" class="btn btn-danger btn-sm delete-row">';
+                                row +=
+                                    '<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 48 48">';
+                                row +=
+                                    '<g fill="none" stroke="#FFFFFF" stroke-linejoin="round" stroke-width="4">';
+                                row += '<path d="M9 10v34h30V10z" />';
+                                row +=
+                                    '<path stroke-linecap="round" d="M20 20v13m8-13v13M4 10h40" />';
+                                row += '<path d="m16 10l3.289-6h9.488L32 10z" />';
+                                row += '</g>';
+                                row += '</svg>';
+                                row += '</button></td>';
+                                // Hidden inputs inside a hidden <td>
+                                row += '<td class="hidden-input">';
+                                row += '<input type="hidden" name="details[' + data.id + '_' +
+                                    variantId + '][product_id]" value="' + data.id + '">';
+                                row += '<input type="hidden" name="details[' + data.id + '_' +
+                                    variantId + '][product_variant_id]" value="' + (variantId ||
+                                        '') + '">';
+                                row += '<input type="hidden" name="details[' + data.id + '_' +
+                                    variantId + '][sale_unit_id]" value="' + data.sale_unit_id +
+                                    '">';
+                                row += '<input type="hidden" name="details[' + data.id + '_' +
+                                    variantId + '][Unit_price]" value="' + data.Unit_price +
+                                    '">';
+                                row += '<input type="hidden" name="details[' + data.id + '_' +
+                                    variantId + '][tax_percent]" value="' + data.tax_percent +
+                                    '">';
+                                row += '<input type="hidden" name="details[' + data.id + '_' +
+                                    variantId + '][tax_method]" value="' + data.tax_method +
+                                    '">';
+                                row +=
+                                    '<input type="hidden" class="item-subtotal" name="details[' +
+                                    data.id + '_' + variantId + '][subtotal]" value="' +
+                                    initialTotal + '">';
+                                row +=
+                                    '<input type="hidden" class="item-subdiscount" name="details[' +
+                                    data.id + '_' + variantId + '][discount]" value="0">';
+                                row +=
+                                    '<input type="hidden" class="item-subdiscountmethod" name="details[' +
+                                    data.id + '_' + variantId +
+                                    '][discount_method]" value="0">';
+                                row += '<input type="hidden" name="details[' + data.id + '_' +
+                                    variantId + '][quantity_discount]" value="' + data
+                                    .quantity_discount + '">';
+                                row += '<input type="hidden" name="details[' + data.id + '_' +
+                                    variantId + '][discount_percentage]" value="' + data
+                                    .discount_percentage + '">';
+                                row += '</td>';
+                                row += '</tr>';
+                                $('#product-table-body').append(row);
+                                updateGrandTotal();
+                                // Reset dropdown produk setelah menambahkan produk ke tabel
+                                $('#selectProduct').val('').trigger('change');
+                            }
+                        });
+                    }
                 }
             });
 
@@ -432,18 +554,50 @@
                 var row = $(this).closest('tr');
                 var quantity = parseFloat($(this).val()) || 0;
                 var maxQuantity = parseFloat($(this).data('max-quantity')) || 0;
+                var minQuantity = parseFloat($(this).data('min-quantity')) || 1;
 
                 if (quantity > maxQuantity) {
-                    alert('The quantity cannot exceed the available stock.');
+                    // alert('The quantity cannot exceed the available stock.');
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'The quantity cannot exceed the available stock.',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
                     $(this).val(maxQuantity);
                     quantity = maxQuantity;
                 }
-
+                if (quantity < minQuantity) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'The quantity cannot be less than 1.',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    $(this).val(minQuantity);
+                    quantity = minQuantity;
+                }
                 var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
                 var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-                var quantityDiscount = parseFloat(row.find('input[name$="[quantity_discount]"]').val()) ||
+                var quantityDiscount = parseFloat(row.find('input[name$="[quantity_discount]"]')
+                        .val()) ||
                     0;
-                var discountPercentage = parseFloat(row.find('input[name$="[discount_percentage]"]').val()) ||
+                var discountPercentage = parseFloat(row.find('input[name$="[discount_percentage]"]')
+                        .val()) ||
                     0;
                 var discount = 0;
                 if (quantity >= quantityDiscount) {
@@ -468,14 +622,13 @@
             $('#tax_rate, #discount, #shipping').on('input', function() {
                 updateGrandTotal();
             });
-
-            // Function to update grand total
             function updateGrandTotal() {
                 var grandTotal = 0;
 
                 // Iterate through each row in the product table
                 $('#product-table-body tr').each(function() {
-                    var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) || 0;
+                    var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) ||
+                        0;
                     if (!isNaN(total)) {
                         grandTotal += total;
                     }

@@ -204,16 +204,8 @@ class AdjustmentController extends Controller
                                 $q->where('not_selling', '=', 0);
                             }
                         });
-                    }) //mencarai data product warehouse berdasarkan yang sudah dipilih di dropdown warehouse sebelumnya
-                    ->where(function ($query) use ($request) {
-                        if ($request->stock == '1' && $request->product_service == '1') {
-                            return $query->where('qty', '>', 0)->orWhere('manage_stock', false);
-                        } elseif ($request->stock == '1' && $request->product_service == '0') {
-                            return $query->where('qty', '>', 0)->orWhere('manage_stock', true);
-                        } else {
-                            return $query->where('manage_stock', true);
-                        }
-                    });
+                    }) // mencari data product warehouse berdasarkan yang sudah dipilih di dropdown warehouse sebelumnya
+                    ->where('qty', '>', 1);
             })->get();
 
         foreach ($product_warehouse_data as $product_warehouse) { //araay setelah dapat data product warehouse
