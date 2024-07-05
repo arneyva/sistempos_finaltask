@@ -196,8 +196,8 @@ class SaleController extends Controller
             $order->warehouse_id = $request->warehouse_id;
             $order->tax_rate = $request->tax_rate;
             $order->TaxNet = $request->TaxNet;
-            $order->discount = $request->discount;
-            $order->shipping = $request->shipping;
+            $order->discount = $request->discount_value;
+            $order->shipping = $request->shipping_value;
             $order->statut = $request->statut;
             // handle status pending
             $order->payment_method = $request->payment_method;
