@@ -123,6 +123,9 @@ class SaleReturnController extends Controller
                 $item_product ? $data['del'] = 0 : $data['del'] = 1;
                 $data['product_variant_id'] = $detail->product_variant_id;
                 $data['code'] = $productsVariants->code;
+                $data['quantity_discount'] = $item_product->quantity_discount;
+                $data['discount_percentage'] = $item_product->discount_percentage;
+
                 $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
             } else {
                 $item_product = ProductWarehouse::where('product_id', $detail->product_id)
@@ -134,6 +137,8 @@ class SaleReturnController extends Controller
                 $data['product_variant_id'] = null;
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
+                $data['quantity_discount'] = $item_product->quantity_discount;
+                $data['discount_percentage'] = $item_product->discount_percentage;
             }
 
             $data['id'] = $detail->id;
@@ -142,6 +147,7 @@ class SaleReturnController extends Controller
             $data['quantity'] = 0;
             $data['sale_quantity'] = $detail->quantity;
             $data['product_id'] = $detail->product_id;
+            $data['total'] = $detail->total;
             $data['unitSale'] = $unit ? $unit->ShortName : '';
             $data['sale_unit_id'] = $unit ? $unit->id : '';
             $data['is_imei'] = $detail['product']['is_imei'];
@@ -238,9 +244,10 @@ class SaleReturnController extends Controller
             $order->warehouse_id = $request->warehouse_id;
             $order->tax_rate = $request->tax_rate;
             $order->TaxNet = $request->TaxNet;
-            $order->discount = $request->discount;
-            $order->shipping = $request->shipping;
+            $order->discount = $request->discount_value;
+            $order->shipping = $request->shipping_value;
             $order->GrandTotal = $request->GrandTotal;
+            $order->paid_amount = $request->GrandTotal;
             $order->statut = $request->statut;
             $order->payment_statut = 'paid';
             $order->notes = $request->notes;
@@ -300,19 +307,19 @@ class SaleReturnController extends Controller
                             $product_warehouse->save();
                         }
                     }
-                    // paymnents
-                    $transaction = PaymentSaleReturns::create([
-                        'user_id' => $order->user_id,
-                        'date' => $order->date,
-                        'Ref' => $this->getNumberOrderPayement(),
-                        'sale_return_id' => $order->id,
-                        'montant' => $order->GrandTotal,
-                        'change' =>  0,
-                        'Reglement' => 'cash',
-                    ]);
                 }
             }
             SaleReturnDetails::insert($orderDetails);
+            // paymnents
+            $transaction = PaymentSaleReturns::create([
+                'user_id' => $order->user_id,
+                'date' => $order->date,
+                'Ref' => $this->getNumberOrderPayement(),
+                'sale_return_id' => $order->id,
+                'montant' => $order->GrandTotal,
+                'change' =>  0,
+                'Reglement' => 'cash',
+            ]);
         }, 10);
 
         return redirect()->route('sale.return.index')->with('success', 'Sale created successfully');
