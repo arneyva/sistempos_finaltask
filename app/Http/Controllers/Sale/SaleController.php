@@ -592,6 +592,8 @@ class SaleController extends Controller
             $sale['discount'] = $Sale_data->discount;
             $sale['shipping'] = $Sale_data->shipping;
             $sale['statut'] = $Sale_data->statut;
+            $sale['client_id'] = $Sale_data->client_id;
+            $sale['client_name'] = $Sale_data->client->name;
             $sale['payment_method'] = $Sale_data->payment_method ?? null;
             $sale['notes'] = $Sale_data->notes;
 
@@ -751,7 +753,7 @@ class SaleController extends Controller
 
             //get warehouses assigned to user
             $user_auth = auth()->user();
-            if ($user_auth->is_all_warehouses) {
+            if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
                 $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
             } else {
                 $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
