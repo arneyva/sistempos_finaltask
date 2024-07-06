@@ -56,13 +56,17 @@
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="customer">{{ __('Customer *') }}</label>
-                                    <select class="form-select" id="customer" name="client_id" required>
+                                    <input type="text" class="form-control" id="selectWarehouseName"
+                                        value="{{ $sale['client_name'] }}" readonly>
+                                    <input type="hidden" id="selectWarehouse" name="client_id"
+                                        value="{{ $sale['client_id'] }}">
+                                    {{-- <select class="form-select" id="customer" name="client_id" required>
                                         <option selected disabled value="">{{ __('Choose...') }}</option>
                                         @foreach ($client as $cl)
                                             <option value="{{ $cl->id }}" data-status="{{ $cl->is_poin_activated }}">
                                                 {{ $cl->name }}</option>
                                         @endforeach
-                                    </select>
+                                    </select> --}}
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="exampleInputdate">{{ __('Date *') }}</label>
