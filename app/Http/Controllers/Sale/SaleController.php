@@ -204,6 +204,7 @@ class SaleController extends Controller
             if ($order->statut == 'pending') {
                 $order->payment_statut = 'unpaid';
                 $order->paid_amount = 0;
+                $order->payment_method = null;
             } elseif ($order->statut == 'completed') {
                 if ($order->payment_method == 'cash') {
                     $order->payment_statut = 'paid';
@@ -342,14 +343,14 @@ class SaleController extends Controller
                 if ($client_sale) {
                     //ambil poin awal client
                     $initial_poin =  $client_sale->score;
-                    
+
                     //hitung harga bersih barang
                     if ($detail_sale) {
                         //awali total belanja dari nol 
                         $total_spend = 0;
                         //setiap barang dikurangkan taxnya
                         foreach ($detail_sale->details as $detail) {
-                            $total_spend += $detail->total - ($detail->price * ($detail->TaxNet/100));
+                            $total_spend += $detail->total - ($detail->price * ($detail->TaxNet / 100));
                         }
                         //kurangkan total belanja dengan diskon dari sale
                         $total_spend -= $sale->discount;
@@ -366,7 +367,7 @@ class SaleController extends Controller
                     $total_score = intdiv($total_spend, $spend_every);
 
                     //ambil diskon sale dari membership
-                    if($request->discount_client) {
+                    if ($request->discount_client) {
                         //kurangkan score dengan diskon yang sudah diubah ke score
                         $total_score -= $request->discount_client / $one_score_equal;
                     }
@@ -383,7 +384,7 @@ class SaleController extends Controller
                         if ($client_sale->is_poin_activated == 0) {
                             //kirim email ke client
                         }
-                    } 
+                    }
                     // elseif ($client_sale->score / $initial_poin < 0.4) {
                     //     //score sudah terlalu kecil sehingga diskon ditutup untuk transaksi berikutnya
                     //     $client_sale->is_poin_activated == 0;
@@ -591,7 +592,7 @@ class SaleController extends Controller
             $sale['discount'] = $Sale_data->discount;
             $sale['shipping'] = $Sale_data->shipping;
             $sale['statut'] = $Sale_data->statut;
-            $sale['payment_method'] = $Sale_data->payment_method ?? 'cash';
+            $sale['payment_method'] = $Sale_data->payment_method ?? null;
             $sale['notes'] = $Sale_data->notes;
 
             $details = [];
@@ -614,7 +615,7 @@ class SaleController extends Controller
 
                 $initial_stock = $initial_stock_item ? $initial_stock_item->qty : 0;
                 $quantity_discount =  $initial_stock_item->quantity_discount ?? 0;
-                $discount_percentage =  $initial_stock_item->discount_percentage?? 0;
+                $discount_percentage =  $initial_stock_item->discount_percentage ?? 0;
 
                 // Menghitung initial stock berdasarkan operasi penjualan
                 if ($detail->product_variant_id) {
@@ -901,13 +902,10 @@ class SaleController extends Controller
                         $orderDetails['tax_method'] = 'Exclusive';
                         $orderDetails['discount'] =  $prod_detail['discount'] ?  $prod_detail['discount'] : 0;
                         $orderDetails['discount_method'] =  $prod_detail['discount_method'];
-                        // 'discount' => $value['discount'] ? $value['discount'] : 0,
-                        // 'discount_method' => $value['discount_method'],
                         $orderDetails['quantity'] = $prod_detail['quantity'];
                         $orderDetails['product_id'] = $prod_detail['product_id'];
                         $orderDetails['product_variant_id'] = $prod_detail['product_variant_id'];
                         $orderDetails['total'] = $prod_detail['subtotal'];
-                        // $orderDetails['imei_number']        = $prod_detail['imei_number'];
 
                         if (!in_array($prod_detail['id'], $old_products_id)) {
                             $orderDetails['date'] = Carbon::now();
@@ -918,8 +916,8 @@ class SaleController extends Controller
                         }
                     }
                 }
+                // Initialize $updateData array
                 $payment_method = $request->payment_method;
-                $transaction = PaymentSale::where('sale_id', $id)->first();
                 $updateData = [
                     'date' => $request['date'],
                     'client_id' => $request['client_id'],
@@ -933,45 +931,61 @@ class SaleController extends Controller
                     'GrandTotal' => $request['GrandTotal'],
                     'payment_method' => $payment_method,
                 ];
-                if ($payment_method == 'cash') {
-                    $updateData['paid_amount'] = $request['GrandTotal'];
-                    $updateData['payment_statut'] = 'paid';
+                $transaction = PaymentSale::where('sale_id', $id)->first();
+                $statut = $request['statut'];
+                if ($statut == 'pending') {
+                    $updateData['paid_amount'] = 0;
+                    $updateData['payment_statut'] = 'unpaid';
+                    $updateData['payment_method'] = null;
                     if ($transaction) {
                         $transaction->update([
                             'montant' => $request->GrandTotal,
                             'change' => $request->change_return ?? 0,
-                            'Reglement' => 'cash',
-                            'status' => 'success',
-                        ]);
-                    }
-                } else {
-                    $updateData['paid_amount'] = 0;
-                    $updateData['payment_statut'] = 'unpaid';
-                    if ($transaction) {
-                        // Set your Merchant Server Key
-                        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
-                        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-                        \Midtrans\Config::$isProduction = false;
-                        // Set sanitization on (default)
-                        \Midtrans\Config::$isSanitized = true;
-                        // Set 3DS transaction for credit card to true
-                        \Midtrans\Config::$is3ds = true;
-                        $params = [
-                            'transaction_details' => [
-                                'order_id' => rand(),
-                                'gross_amount' => $request->GrandTotal,
-                            ],
-                        ];
-                        $snapToken = \Midtrans\Snap::getSnapToken($params);
-                        $transaction->update([
-                            'montant' => $request->GrandTotal,
-                            'change' => 0,
-                            'Reglement' => $snapToken,
+                            'Reglement' => 'pending',
                             'status' => 'pending',
                         ]);
                     }
+                } else {
+                    if ($payment_method == 'cash') {
+                        $updateData['paid_amount'] = $request['GrandTotal'];
+                        $updateData['payment_statut'] = 'paid';
+                        if ($transaction) {
+                            $transaction->update([
+                                'montant' => $request->GrandTotal,
+                                'change' => $request->change_return ?? 0,
+                                'Reglement' => 'cash',
+                                'status' => 'success',
+                            ]);
+                        }
+                    } else {
+                        $updateData['paid_amount'] = 0;
+                        $updateData['payment_statut'] = 'unpaid';
+                        $updateData['payment_method'] = 'midtrans';
+                        if ($transaction) {
+                            // Set your Merchant Server Key
+                            \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+                            // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+                            \Midtrans\Config::$isProduction = false;
+                            // Set sanitization on (default)
+                            \Midtrans\Config::$isSanitized = true;
+                            // Set 3DS transaction for credit card to true
+                            \Midtrans\Config::$is3ds = true;
+                            $params = [
+                                'transaction_details' => [
+                                    'order_id' => rand(),
+                                    'gross_amount' => $request->GrandTotal,
+                                ],
+                            ];
+                            $snapToken = \Midtrans\Snap::getSnapToken($params);
+                            $transaction->update([
+                                'montant' => $request->GrandTotal,
+                                'change' => 0,
+                                'Reglement' => $snapToken,
+                                'status' => 'pending',
+                            ]);
+                        }
+                    }
                 }
-
                 $current_Sale->update($updateData);
             }
         }, 10);
