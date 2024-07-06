@@ -613,6 +613,8 @@ class SaleController extends Controller
                 }
 
                 $initial_stock = $initial_stock_item ? $initial_stock_item->qty : 0;
+                $quantity_discount =  $initial_stock_item->quantity_discount ?? 0;
+                $discount_percentage =  $initial_stock_item->discount_percentage?? 0;
 
                 // Menghitung initial stock berdasarkan operasi penjualan
                 if ($detail->product_variant_id) {
@@ -673,6 +675,8 @@ class SaleController extends Controller
                     'etat' => 'current',
                     'is_imei' => $detail['product']['is_imei'],
                     'imei_number' => $detail->imei_number,
+                    'quantity_discount' => $quantity_discount,
+                    'discount_percentage' => $discount_percentage,
                 ];
 
                 // Memperoleh unit penjualan (sale unit) jika ada
@@ -924,8 +928,8 @@ class SaleController extends Controller
                     'statut' => $request['statut'],
                     'tax_rate' => $request['tax_rate'],
                     'TaxNet' => $request['TaxNet'],
-                    'discount' => $request['discount'],
-                    'shipping' => $request['shipping'],
+                    'discount' => $request['discount_value'],
+                    'shipping' => $request['shipping_value'],
                     'GrandTotal' => $request['GrandTotal'],
                     'payment_method' => $payment_method,
                 ];
