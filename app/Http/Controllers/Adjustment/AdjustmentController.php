@@ -406,7 +406,6 @@ class AdjustmentController extends Controller
 
         $item['is_imei'] = $Product_data['is_imei'];
         $item['not_selling'] = $Product_data['not_selling'];
-        // $item['qty']         = $stock->qty ?? 'cek';
 
         //product single
         if ($Product_data['type'] == 'is_single') {
@@ -436,6 +435,7 @@ class AdjustmentController extends Controller
             }
             $item['code'] = $Product_data['code'];
             $item['name'] = $Product_data['name'];
+            $item['quantity_discount_purchase'] =  $item['quantity_discount'] / $item['qty_product_sale'];
             $item['product_variant_id'] = null;
 
             //product is_variant
@@ -468,6 +468,7 @@ class AdjustmentController extends Controller
             } else {
                 $item['qty_product_purchase'] = floor($stock->qty);
             }
+            $item['quantity_discount_purchase'] =  $item['quantity_discount'] / $item['qty_product_sale'];
             $item['code'] = $product_variant_data['code'];
             $item['name'] = '[' . $product_variant_data['name'] . ']' . $Product_data['name'];
             $item['product_variant_id'] = $variant_id;
