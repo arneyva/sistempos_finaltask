@@ -390,12 +390,15 @@
                                     100) * initialQuantity;
                                 console.log(discountawal);
                                 var formattedDiscountCost = formatRupiah(discountawal);
-                                console.log("Discount Cost:", formattedDiscountCost);
+                                console.log("Discount Cost:", formattedDiscountCost, "test",
+                                    discountawal);
                                 var initialTotal = initialQuantity * data.Unit_cost +
                                     initialQuantity * data.tax_cost - discountawal;
                                 var formattedUnitCost = formatRupiah(data.Unit_cost);
                                 var formattedTaxCost = formatRupiah(data.tax_cost);
                                 var formattedInitialTotal = formatRupiah(initialTotal);
+                                var subdiscountawal = data.qty_product_purchase > data.quantity_discount_purchase ? 'discount' : 'nodiscount';
+                                // var
                                 var row = '<tr>';
                                 row += '<td>#</td>';
                                 row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
@@ -449,14 +452,14 @@
                                 row +=
                                     '<input type="hidden" class="item-subtotal" name="details[' +
                                     data.id + '_' + variantId + '][subtotal]" value="' +
-                                    formattedInitialTotal + '">';
+                                    initialTotal + '">';
                                 row +=
                                     '<input type="hidden" class="item-subdiscount" name="details[' +
-                                    data.id + '_' + variantId + '][discount]" value="0">';
+                                    data.id + '_' + variantId + '][discount]" value="' + discountawal + '">';
                                 row +=
                                     '<input type="hidden" class="item-subdiscountmethod" name="details[' +
                                     data.id + '_' + variantId +
-                                    '][discount_method]" value="0">';
+                                    '][discount_method]" value="' + subdiscountawal + '">';
                                 row += '<input type="hidden" name="details[' + data.id + '_' +
                                     variantId + '][quantity_discount]" value="' + data
                                     .quantity_discount_purchase + '">';

@@ -280,6 +280,7 @@ class TransferController extends Controller
                 $orderDetails['product_variant_id'] = $value['product_variant_id'];
                 $orderDetails['cost'] = $value['Unit_cost'];
                 $orderDetails['TaxNet'] = $value['tax_percent'];
+                $orderDetails['Tax_method'] = 'Exclusive';
                 $orderDetails['discount'] = $value['discount'] ? $value['discount'] : 0;
                 $orderDetails['discount_method'] = $value['discount_method'];
                 $orderDetails['total'] = $value['subtotal'];
