@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Add New Product</h1>
-    <p>Add new product to your store </p>
+    <h1>{{ __('Add New Product') }}</h1>
+    <p>{{ __('Add new product to your store') }} </p>
 @endsection
 
 <style>
@@ -39,6 +39,28 @@
         display: flex;
         gap: 5px
     }
+
+    .select2-container .select2-selection--single {
+        height: 54px;
+        /* Atur tinggi sesuai kebutuhan */
+        display: flex;
+        align-items: center;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 54px;
+        /* Sesuaikan dengan tinggi yang diatur */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 52px;
+        /* Sesuaikan dengan tinggi yang diatur - 2px untuk padding */
+    }
+
+    .select2-container .select2-dropdown .select2-results__options {
+        max-height: 220px;
+        /* Atur tinggi maksimum sesuai kebutuhan */
+    }
 </style>
 @section('content')
     <div class="col-md-12 col-lg-12">
@@ -52,19 +74,20 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Create Product</h4>
+                            <h4 class="card-title">{{ __('Create Product') }}</h4>
                         </div>
                     </div>
-                    <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data"
+                    <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data" id="form"
                         onsubmit="saveVariantData()">
                         @csrf
                         <div class="card-body">
                             <input type="hidden" id="variantData" name="variants">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="name">Name Product *</label>
+                                    <label class="form-label" for="name">{{ __('Product Name *') }}</label>
                                     <input type="text" class="form-control" id="name" required
-                                        placeholder="input name" name="name" value="{{ Session::get('name') }}">
+                                        placeholder="{{ __('Input Name ...') }}" name="name"
+                                        value="{{ Session::get('name') }}">
                                     @error('name')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -76,9 +99,10 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="codebaseproduct">Code Product *</label>
+                                    <label class="form-label" for="codebaseproduct">{{ __('Product Code *') }}</label>
                                     <input type="text" class="form-control" id="codebaseproduct" required
-                                        placeholder="input code" name="code" value="{{ Session::get('code') }}">
+                                        placeholder="{{ __('Input Code ...') }}" name="code"
+                                        value="{{ Session::get('code') }}">
                                     @error('code')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -90,10 +114,10 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="brand">Brand</label>
+                                    <label class="form-label" for="brand">{{ __('Brand') }}</label>
                                     <select class="form-select select2" id="brand" required name="brand_id"
-                                        data-placeholder="Select a Brand ">
-                                        <option selected disabled value="">Choose...</option>
+                                        data-placeholder="{{ __('Select a Brand') }}">
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
                                         @foreach ($brand as $item)
                                             <option value="{{ $item->id }}"
                                                 {{ old('brand_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}
@@ -111,16 +135,39 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="category">Category *</label>
+                                    {{-- <label class="form-label" for="category">{{ __('Category')  }}</label>
                                     <select class="form-select select2" id="category" required name="category_id"
-                                        data-placeholder="Select a Category">>
-                                        <option selected disabled value="">Choose...</option>
+                                        data-placeholder="{{ __('Select a Category') }}">>
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
                                         @foreach ($category as $item)
                                             <option value="{{ $item->id }}"
                                                 {{ old('category_id') == $item->id ? 'selected' : '' }}>
-                                                {{ $item->name }}</option>
+                                                {{ $item->code }}</option>
+                                        @endforeach
+                                    </select> --}}
+                                    {{-- <label class="form-label" for="category">{{ __('Category') }}</label>
+                                    <select class="form-select select2" id="category" required name="category_id"
+                                        data-placeholder="{{ __('Select a Category') }}">
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
+                                        @foreach ($category as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ old('category_id') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->code }}
+                                            </option>
+                                        @endforeach
+                                    </select> --}}
+                                    <label class="form-label" for="category">{{ __('Category') }}</label>
+                                    <select class="form-select select2" id="category" required name="category_id"
+                                        data-placeholder="{{ __('Select a Category') }}">
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
+                                        @foreach ($category as $item)
+                                            <option value="{{ $item->id }}" data-code="{{ $item->code }}"
+                                                {{ old('category_id') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->name }}
+                                            </option>
                                         @endforeach
                                     </select>
+
                                     @error('category_id')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -132,11 +179,11 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="tax">Tax</label>
+                                    <label class="form-label" for="tax">{{ __('Tax') }}</label>
                                     <div class="form-group input-group">
                                         <span class="input-group-text" id="basic-addon1">%</span>
                                         <input type="text" class="form-control" id="tax" aria-label="Username"
-                                            aria-describedby="basic-addon1" required placeholder="input tax"
+                                            aria-describedby="basic-addon1" required placeholder="{{ __('input tax') }}"
                                             name="TaxNet" value="{{ Session::get('TaxNet') }}">
                                     </div>
                                     @error('TaxNet')
@@ -150,9 +197,10 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="description">Note</label>
+                                    <label class="form-label" for="description">{{ __('Note') }}</label>
                                     <input type="text" class="form-control" id="description"
-                                        placeholder="a few words..." name="note" value="{{ Session::get('note') }}">
+                                        placeholder="{{ __('a few words...') }}" name="note"
+                                        value="{{ Session::get('note') }}">
                                     @error('note')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -172,19 +220,20 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="type">Type</label>
+                                <label class="form-label" for="type">{{ __('Type') }}</label>
                                 <select class="form-select" id="type" required name="type">
-                                    <option selected disabled value="">Choose...</option>
-                                    <option value="is_single" {{ old('type') == 'is_single' ? 'selected' : '' }}>Standart
-                                        Product</option>
-                                    <option value="is_variant" {{ old('type') == 'is_variant' ? 'selected' : '' }}>Varied
-                                        Product</option>
+                                    <option selected disabled value="">{{ __('Choose...') }}</option>
+                                    <option value="is_single" {{ old('type') == 'is_single' ? 'selected' : '' }}>
+                                        {{ __('Standard Product') }}</option>
+                                    <option value="is_variant" {{ old('type') == 'is_variant' ? 'selected' : '' }}>
+                                        {{ __('Varied Product') }}</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="productcost">Product Cost *</label>
+                                <label class="form-label" for="productcost">{{ __('Cost') }}</label>
                                 <input type="text" class="form-control" id="productcost" required
-                                    placeholder="input product cost" name="cost" value="{{ Session::get('cost') }}">
+                                    placeholder="{{ __('Rp ') }}" name="cost"
+                                    value="{{ Session::get('cost') }}">
                                 @error('cost')
                                     <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                         role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -196,9 +245,9 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="productprice">Product Price *</label>
+                                <label class="form-label" for="productprice">{{ __('Price') }}</label>
                                 <input type="text" class="form-control" id="productprice" required
-                                    placeholder="input product price" name="price"
+                                    placeholder="{{ __('Rp ') }}" name="price"
                                     value="{{ Session::get('price') }}">
                                 @error('price')
                                     <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -211,29 +260,21 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="productunit" class="form-label">Product Unit & Sale Unit</label>
+                                <label for="productunit" class="form-label">{{ __('Product Unit & Sale Unit') }}</label>
                                 <select class="form-select select2" id="productunit" required name="unit_id"
-                                    data-placeholder="Select a Product Unit">
-                                    <option selected disabled value="">Choose...</option>
+                                    data-placeholder="{{ __('Select a Product & Sale Unit') }}">
+                                    <option selected disabled value="">{{ __('Choose...') }}</option>
                                     @foreach ($unit as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-                            {{-- <div class="col-md-6 mb-3">
-                                <label for="saleunit" class="form-label">Sale Unit</label>
-                                <select class="form-select select2" id="saleunit" required name="unit_sale_id"
-                                    data-placeholder="Select a Sale Unit">
-                                    <option selected disabled value="">Choose...</option>
-                                    <option>...</option>
-                                </select>
-                            </div> --}}
                             <div class="col-md-6 mb-3">
-                                <label for="purchaseunit" class="form-label">Purchase Unit</label>
+                                <label for="purchaseunit" class="form-label">{{ __('Purchase Unit') }}</label>
                                 <select class="form-select select2" id="purchaseunit" required name="unit_purchase_id"
-                                    data-placeholder="Select a Purchase Unit">
-                                    <option selected disabled value="">Choose...</option>
+                                    data-placeholder="{{ __('Select a Purchase Unit') }}">
+                                    <option selected disabled value="">{{ __('Choose...') }}</option>
                                     <option>...</option>
                                 </select>
                             </div>
@@ -242,21 +283,21 @@
                                 <div class="row">
                                     <div class="col-md-9 mb-3">
                                         <input type="text" class="form-control" id="variantNameInput"
-                                            placeholder="Enter Variant Name">
+                                            placeholder="{{ __('Input Variant Name') }}">
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <button class="btn btn-soft-primary" id="createVariantBtn" type="button">Add
-                                            +</button>
+                                        <button class="btn btn-soft-primary" id="createVariantBtn"
+                                            type="button">{{ __('Add +') }}</button>
                                     </div>
                                     <div class="card-body p-3">
                                         <div class="table-responsive">
                                             <table id="variantTable" class="table table-striped mb-0" role="grid">
                                                 <thead>
                                                     <tr>
-                                                        <th>Variant Name</th>
-                                                        <th>Variant code</th>
-                                                        <th>Variant cost</th>
-                                                        <th>Variant price</th>
+                                                        <th>{{ __('Variant Name') }}</th>
+                                                        <th>{{ __('Variant code') }}</th>
+                                                        <th>{{ __('Variant cost') }}</th>
+                                                        <th>{{ __('Variant price') }}</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>
@@ -268,7 +309,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <div class="form-check mb-3">
                                     <input type="checkbox" class="form-check-input" id="is_imei" name="is_imei">
                                     <label class="form-check-label" for="is_imei">Product has Imei/Serial
@@ -277,12 +318,12 @@
                                 <div class="form-check mb-3">
                                     <input type="checkbox" class="form-check-input" id="not_selling" name="not_selling">
                                     <label class="form-check-label" for="not_selling">This Product Not For Selling
-                                        Number</label>
+                                    </label>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="form-group mt-2">
-                            <button class="btn btn-primary" type="submit">Create</button>
+                            <button class="btn btn-primary" type="submit">{{ __('Create') }}</button>
                         </div>
                     </div>
                 </div>
@@ -302,9 +343,9 @@
                                 <div id="openLogoUpload"
                                     class="d-flex flex-column justify-content-center align-items-center upload-logo">
                                     <span style="font-size: 24px; color:#D25555">+</span>
-                                    <span style="font-size: 20px; color:#ffffff">Upload Image</span>
-                                    <span style="font-size: 20px; color:#ffffff; margin-top: 10px;">Max. File Size
-                                        15MB</span>
+                                    <span style="font-size: 20px; color:#ffffff">{{ __('Upload Image') }}</span>
+                                    <span
+                                        style="font-size: 20px; color:#ffffff; margin-top: 10px;">{{ __('Max. File Size 15MB') }}</span>
                                 </div>
                                 <div id="afterLogoUpload" style="max-height: 100%;max-width: 100%;"
                                     class="d-none justify-content-center align-items-center after-upload-logo">
@@ -344,7 +385,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="viewLogoModalLabel">Logo Preview</h5>
+                    <h5 class="modal-title" id="viewLogoModalLabel">{{ __('Logo Preview') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -356,6 +397,42 @@
     </form>
 @endsection
 @push('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi Cleave.js untuk input biaya
+            new Cleave('#productcost', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                delimiter: '.', // Pemisah ribuan
+                numeralDecimalMark: ',', // Pemisah desimal
+                numeralDecimalScale: 2, // Dua digit desimal
+                prefix: 'Rp ', // Prefix mata uang
+                rawValueTrimPrefix: true // Hapus prefix saat mendapatkan nilai mentah
+            });
+
+            // Inisialisasi Cleave.js untuk input harga
+            new Cleave('#productprice', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                delimiter: '.', // Pemisah ribuan
+                numeralDecimalMark: ',', // Pemisah desimal
+                numeralDecimalScale: 2, // Dua digit desimal
+                prefix: 'Rp ', // Prefix mata uang
+                rawValueTrimPrefix: true // Hapus prefix saat mendapatkan nilai mentah
+            });
+        });
+        document.querySelector('#form').addEventListener('submit', function(event) {
+            var costInput = document.getElementById('productcost');
+            // Menghapus format dari input biaya
+            var cleanedCostValue = costInput.value.replace(/[Rp\s.]/g, '').replace(',', '.');
+            costInput.value = cleanedCostValue;
+
+            var priceInput = document.getElementById('productprice');
+            // Menghapus format dari input harga
+            var cleanedPriceValue = priceInput.value.replace(/[Rp\s.]/g, '').replace(',', '.');
+            priceInput.value = cleanedPriceValue;
+        });
+    </script>
     <script>
         $(document).ready(function() {
             var openLogoUpload = $('#openLogoUpload');
@@ -443,6 +520,30 @@
             var variantNameInput = document.getElementById("variantNameInput");
             var variantTableBody = document.getElementById("variantTableBody");
 
+            // Inisialisasi Cleave.js untuk input biaya dan harga
+            function initializeCleaveForVariant(row) {
+                new Cleave(row.querySelector('.variant-cost input'), {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    delimiter: '.',
+                    numeralDecimalMark: ',',
+                    numeralDecimalScale: 2, // Dua digit desimal
+                    prefix: 'Rp ', // Prefix mata uang
+                    rawValueTrimPrefix: true
+
+                });
+
+                new Cleave(row.querySelector('.variant-price input'), {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    delimiter: '.',
+                    numeralDecimalMark: ',',
+                    numeralDecimalScale: 2, // Dua digit desimal
+                    prefix: 'Rp ',
+                    rawValueTrimPrefix: true
+                });
+            }
+
             createVariantBtn.addEventListener("click", function() {
                 var variantName = variantNameInput.value.trim();
 
@@ -483,6 +584,9 @@
 `;
                 variantTableBody.appendChild(newRow);
 
+                // Inisialisasi Cleave.js untuk input biaya dan harga pada baris baru
+                initializeCleaveForVariant(newRow);
+
                 // Add event listener for delete button
                 newRow.querySelector(".delete-variant").addEventListener("click", function() {
                     newRow.remove(); // Remove the row when delete button is clicked
@@ -495,13 +599,17 @@
             var variantsData = [];
             var rows = document.getElementById("variantTableBody").querySelectorAll("tr");
 
+            function cleanNumericValue(value) {
+                return value.replace(/[^\d,]/g, '').replace(',',
+                    '.'); // Menghapus karakter selain angka dan koma, ganti koma dengan titik
+            }
             // Menyimpan semua kode dalam array untuk memeriksanya
             var codes = [];
             rows.forEach(function(row) {
                 var variantName = row.cells[0].querySelector('input').value;
                 var variantCode = row.cells[1].querySelector('input').value;
-                var variantCost = row.cells[2].querySelector('input').value;
-                var variantPrice = row.cells[3].querySelector('input').value;
+                var variantCost = cleanNumericValue(row.cells[2].querySelector('input').value);
+                var variantPrice = cleanNumericValue(row.cells[3].querySelector('input').value);
 
                 // Menambahkan kode ke dalam array
                 codes.push(variantCode)
@@ -590,6 +698,62 @@
                         $('#purchaseunit').select2();
                     }
                 });
+            });
+        });
+    </script>
+    {{-- <script>
+        $(document).ready(function() {
+            // Inisialisasi Select2
+            $('#category').select2({
+                placeholder: $(this).data('placeholder'),
+                allowClear: true
+            });
+
+            // Tambahkan event listener untuk fokus pada input pencarian saat dropdown dibuka
+            $('#category').on('select2:open', function() {
+                setTimeout(function() {
+                    document.querySelector('.select2-search__field').focus();
+                }, 100); // Penundaan 100ms sebelum fokus pada input pencarian
+            });
+        });
+    </script> --}}
+    <script>
+        $(document).ready(function() {
+            // Inisialisasi Select2 dengan custom matcher
+            $('#category').select2({
+                placeholder: $(this).data('placeholder'),
+                allowClear: true,
+                matcher: function(params, data) {
+                    // If there are no search terms, return all data
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+
+                    // If there is no 'text' or 'data-code' attribute, return null
+                    if (typeof data.text === 'undefined' || typeof $(data.element).data('code') ===
+                        'undefined') {
+                        return null;
+                    }
+
+                    // Custom search logic: search in both text and data-code
+                    var term = params.term.toLowerCase();
+                    var text = data.text.toLowerCase();
+                    var code = $(data.element).data('code').toString().toLowerCase();
+
+                    if (text.indexOf(term) > -1 || code.indexOf(term) > -1) {
+                        return data;
+                    }
+
+                    // Return null if the term should not be displayed
+                    return null;
+                }
+            });
+
+            // Tambahkan event listener untuk fokus pada input pencarian saat dropdown dibuka
+            $('#category').on('select2:open', function() {
+                setTimeout(function() {
+                    document.querySelector('.select2-search__field').focus();
+                }, 100); // Penundaan 100ms sebelum fokus pada input pencarian
             });
         });
     </script>

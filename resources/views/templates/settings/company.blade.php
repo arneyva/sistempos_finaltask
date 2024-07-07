@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Copmany Profile</h1>
-    <p>Configure your company </p>
+    <h1>{{ __('Company') }} {{ __('Profile') }}</h1>
+    <p>{{ __('Configure your company profile') }} </p>
 @endsection
 
 <style>
@@ -52,7 +52,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Company Profile</h4>
+                            <h4 class="card-title">{{ __('Update Company Profile') }}</h4>
                         </div>
                     </div>
                     <form method="POST" action="{{ route('settings.company.update', $company->id) }}"
@@ -62,7 +62,8 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="name">Company Name *</label>
+                                    <label class="form-label" for="name">{{ __('Company') }} {{ __('Name') }}
+                                        *</label>
                                     <input type="text" class="form-control" id="name" required
                                         placeholder="input name" name="CompanyName" value="{{ $company->CompanyName }}">
                                     @error('CompanyName')
@@ -76,7 +77,8 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="tax">Company Phone</label>
+                                    <label class="form-label" for="tax">{{ __('Company') }}
+                                        {{ __('Phone') }}</label>
                                     <div class="form-group input-group">
                                         <input type="text" class="form-control" id="tax" aria-label="Username"
                                             aria-describedby="basic-addon1" required placeholder="input tax"
@@ -93,7 +95,8 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="codebaseproduct">Company Email *</label>
+                                    <label class="form-label" for="codebaseproduct">{{ __('Company') }} {{ __('Email') }}
+                                        *</label>
                                     <input type="text" class="form-control" id="codebaseproduct" required
                                         placeholder="input code" name="email" value="{{ $company->email }}">
                                     @error('email')
@@ -122,7 +125,8 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="description">Address</label>
+                                    <label class="form-label" for="description">{{ __('Company') }}
+                                        {{ __('Address') }}</label>
                                     <input type="text" class="form-control" id="description" placeholder="a few words..."
                                         name="CompanyAdress" value="{{ $company->CompanyAdress }}">
                                     @error('CompanyAdress')
@@ -136,21 +140,19 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="type">Default Language</label>
+                                    <label class="form-label" for="type">{{ __('Default Language') }}</label>
                                     <select class="form-select" id="type" name="type">
-                                        <option selected disabled value="">Choose...</option>
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
                                         <option value="is_single" {{ old('type') == 'is_single' ? 'selected' : '' }}>
-                                            English
-                                            Language</option>
+                                            {{ __('English Language') }}</option>
                                         <option value="is_variant" {{ old('type') == 'is_variant' ? 'selected' : '' }}>
-                                            Bahasa
-                                            Indonesia</option>
+                                            {{ __('Indonesian Language') }}</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     {{-- <div class="form-group mt-2" style="margin-top: 10px"> --}}
                                     <button class="btn btn-primary" type="submit"
-                                        style="margin-top: 30px;">Update</button>
+                                        style="margin-top: 30px;">{{ __('Save changes') }}</button>
                                     {{-- </div> --}}
                                 </div>
                             </div>
@@ -172,9 +174,9 @@
                                 <div id="openLogoUpload"
                                     class="d-flex flex-column justify-content-center align-items-center upload-logo">
                                     <span style="font-size: 24px; color:#D25555">+</span>
-                                    <span style="font-size: 20px; color:#ffffff">Upload Image</span>
-                                    <span style="font-size: 20px; color:#ffffff; margin-top: 10px;">Max. File Size
-                                        15MB</span>
+                                    <span style="font-size: 20px; color:#ffffff">{{ __('Upload Image') }}</span>
+                                    <span
+                                        style="font-size: 20px; color:#ffffff; margin-top: 10px;">{{ __('Max. File Size 15MB') }}</span>
                                 </div>
                                 <div id="afterLogoUpload" style="max-height: 100%;max-width: 100%;"
                                     class="d-none justify-content-center align-items-center after-upload-logo">
@@ -214,7 +216,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="viewLogoModalLabel">Logo Preview</h5>
+                    <h5 class="modal-title" id="viewLogoModalLabel">{{ __('Logo Preview') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

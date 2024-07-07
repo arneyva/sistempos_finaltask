@@ -1,10 +1,14 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Create Sale Return</h1>
-    <p>Look All your sales</p>
+    <h1>{{ __('Create Sales Return') }}</h1>
+    <p>{{ __('Create sales return transaction data easily and efficiently') }}</p>
 @endsection
-
+<style>
+    .hidden-input {
+        display: none;
+    }
+</style>
 @section('content')
     {{-- part 1 --}}
     <div class="col-md-12 col-lg-12">
@@ -17,7 +21,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Create Sale Return</h4>
+                            <h4 class="card-title">{{ __('Create Sales Return') }}</h4>
                         </div>
                     </div>
                     {{--  --}}
@@ -30,19 +34,19 @@
                             <div class="row">
 
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Date *</label>
+                                    <label class="form-label" for="exampleInputdate">{{ __('Date *') }}</label>
                                     <input type="date" class="form-control" id="exampleInputdate" name="date"
                                         value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Sale Ref *</label>
+                                    <label class="form-label" for="exampleInputdate">{{ __('Sale Reference') }}</label>
                                     <input type="text" class="form-control" id="exampleInputdate"
-                                        value="{{ $sale_return['sale_ref'] }}">
+                                        value="{{ $sale_return['sale_ref'] }}" readonly>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="exampleInputdate">Status *</label>
+                                    <label class="form-label" for="exampleInputdate">{{ __('Status *') }}</label>
                                     <input type="text" class="form-control" id="exampleInputdate" name="statut"
-                                        value="{{ $sale_return['statut'] }}">
+                                        value="{{ $sale_return['statut'] }}" readonly>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
@@ -50,13 +54,13 @@
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>Product</th>
-                                                    <th>Net Unit Price</th>
-                                                    <th>Quantity Sold</th>
-                                                    <th>Quantity Return</th>
-                                                    <th>Discount</th>
-                                                    <th>Tax</th>
-                                                    <th>Subtotal</th>
+                                                    <th>{{ __('Product Name') }}</th>
+                                                    <th>{{ __('Price') }}</th>
+                                                    <th>{{ __('Quantity Sold') }}</th>
+                                                    <th>{{ __('Quantity Returned') }}</th>
+                                                    <th>{{ __('Discount') }}</th>
+                                                    <th>{{ __('Tax') }}</th>
+                                                    <th>{{ __('SubTotal') }}</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -66,50 +70,79 @@
                                                     <tr>
                                                         <td>#</td>
                                                         <td>{{ $detail['code'] }} ~ {{ $detail['name'] }}</td>
-                                                        <td>{{ $detail['Unit_price'] }}</td>
-                                                        <td>{{ $detail['sale_quantity'] }}</td>
+                                                        <td>{{ 'Rp ' . number_format($detail['Unit_price'], 0, ',', '.') }}
+                                                        </td>
+                                                        <td>{{ $detail['sale_quantity'] }} {{ $detail['unitSale'] }}</td>
                                                         <td> <input type="number" class="form-control item-quantity"
                                                                 name="details[{{ $loop->index }}][quantity]"
                                                                 value="{{ $detail['quantity'] }}" min="0"
-                                                                data-unit-price="{{ $detail['Net_price'] }}"
+                                                                {{-- data-unit-price="{{ $detail['Net_price'] }}" --}}
+                                                                data-unit-price="{{ $detail['Unit_price'] }}"
                                                                 data-tax-percent="{{ $detail['tax_percent'] }}"
                                                                 data-tax-method="{{ $detail['tax_method'] }}"
                                                                 max="{{ $detail['sale_quantity'] }}"></td>
-                                                        <td class="item-discount">Rp. {{ $detail['DiscountNet'] }}</td>
-                                                        <td>{{ $detail['taxe'] }}</td>
-                                                        <td class="item-total">Rp {{ $detail['subtotal'] }}</td>
-                                                        <input type="hidden" class="item-subtotal"
-                                                            name="details[{{ $loop->index }}][subtotal]"
-                                                            value="{{ $detail['subtotal'] }}">
+                                                        <td class="item-discount">
+                                                          Rp 0.00
+                                                        </td>
+                                                        <td>{{ 'Rp ' . number_format($detail['taxe'], 0, ',', '.') }}</td>
+                                                        <td class="item-total">
+                                                           Rp 0.00
+                                                        </td>
                                                         <td>
+                                                            <button type="button" class="btn btn-danger btn-sm delete-row">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                    height="1.5em" viewBox="0 0 48 48">
+                                                                    <g fill="none" stroke="#FFFFFF"
+                                                                        stroke-linejoin="round" stroke-width="4">
+                                                                        <path d="M9 10v34h30V10z" />
+                                                                        <path stroke-linecap="round"
+                                                                            d="M20 20v13m8-13v13M4 10h40" />
+                                                                        <path d="m16 10l3.289-6h9.488L32 10z" />
+                                                                    </g>
+                                                                </svg>
+                                                            </button>
+                                                        </td>
+                                                        <td class="hidden-input">
+                                                            <input type="hidden" class="item-subtotal"
+                                                                name="details[{{ $loop->index }}][subtotal]"
+                                                                value="{{ $detail['total'] }}">
                                                             <input type="hidden" class="item-subdiscount"
                                                                 name="details[{{ $loop->index }}][discount]"
                                                                 value="{{ $detail['discount'] }}">
-                                                        </td>
-                                                        <td>
                                                             <input type="hidden" class="item-subdiscountmethod"
                                                                 name="details[{{ $loop->index }}][discount_method]"
                                                                 value="{{ $detail['discount_method'] }}">
+
+                                                            <input type="hidden" name="details[{{ $loop->index }}][id]"
+                                                                value="{{ $detail['id'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $loop->index }}][no_unit]"
+                                                                value="{{ $detail['no_unit'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $loop->index }}][sale_unit_id]"
+                                                                value="{{ $detail['sale_unit_id'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $loop->index }}][product_variant_id]"
+                                                                value="{{ $detail['product_variant_id'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $loop->index }}][product_id]"
+                                                                value="{{ $detail['product_id'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $loop->index }}][Unit_price]"
+                                                                value="{{ $detail['Unit_price'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $loop->index }}][tax_percent]"
+                                                                value="{{ $detail['tax_percent'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $loop->index }}][tax_method]"
+                                                                value="{{ $detail['tax_method'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $loop->index }}][quantity_discount]"
+                                                                value="{{ $detail['quantity_discount'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $loop->index }}][discount_percentage]"
+                                                                value="{{ $detail['discount_percentage'] }}">
                                                         </td>
-                                                        <input type="hidden" name="details[{{ $loop->index }}][id]"
-                                                            value="{{ $detail['id'] }}">
-                                                        <input type="hidden" name="details[{{ $loop->index }}][no_unit]"
-                                                            value="{{ $detail['no_unit'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][sale_unit_id]"
-                                                            value="{{ $detail['sale_unit_id'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][product_variant_id]"
-                                                            value="{{ $detail['product_variant_id'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][product_id]"
-                                                            value="{{ $detail['product_id'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][Unit_price]"
-                                                            value="{{ $detail['Unit_price'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][tax_percent]"
-                                                            value="{{ $detail['tax_percent'] }}">
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -122,19 +155,19 @@
                                         role="grid">
                                         <tbody>
                                             <tr>
-                                                <td>Order Tax</td>
+                                                <td>{{ __('Order Tax') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Discount</td>
+                                                <td>{{ __('Discount') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Shipping</td>
+                                                <td>{{ __('Shipping') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Grand Total</td>
+                                                <td>{{ __('Grand Total') }}</td>
                                                 <th></th>
                                             </tr>
                                     </table>
@@ -142,10 +175,10 @@
                                 <div class="col-md-12 mb-3">
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="tax_rate">Order Tax *</label>
+                                            <label class="form-label" for="tax_rate">{{ __('Order Tax') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="tax_rate"
-                                                    placeholder="input tax" name="tax_rate"
+                                                    placeholder="{{ __('input tax') }}" name="tax_rate"
                                                     value="{{ $sale_return['tax_rate'] }}">
                                                 <span class="input-group-text" id="basic-addon1">%</span>
                                             </div>
@@ -163,12 +196,12 @@
                                             placeholder="input tax net" name="TaxNet" value="{{ old('sale.TaxNet') }}">
                                         <input class="" type="hidden" id="grandTotal" name="GrandTotal">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="discount">Discount *</label>
+                                            <label class="form-label" for="discount">{{ __('Discount') }}</label>
                                             <div class="form-group input-group">
-                                                <input type="number" class="form-control" id="discount"
-                                                    placeholder="input discount" name="discount"
+                                                <input type="text" class="form-control" id="discount"
+                                                    placeholder="{{ __('input discount') }}" name="discount"
                                                     value="{{ $sale_return['discount'] }}">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="hidden" id="discount_value" name="discount_value">
                                             </div>
                                             @error('sale.discount')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -181,12 +214,12 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="shipping">Shipping *</label>
+                                            <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
                                             <div class="form-group input-group">
-                                                <input type="number" class="form-control" id="shipping"
-                                                    placeholder="input shipping" name="shipping"
+                                                <input type="text" class="form-control" id="shipping"
+                                                    placeholder="{{ __('input shipping') }}" name="shipping"
                                                     value="{{ $sale_return['shipping'] }}">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="hidden" id="shipping_value" name="shipping_value">
                                             </div>
                                             @error('sale.shipping')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -200,13 +233,13 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 mb-3">
-                                        <label class="form-label" for="validationDefault05">Description</label>
+                                        <label class="form-label" for="validationDefault05">{{ __('Note') }}</label>
                                         <input type="text" class="form-control" id="validationDefault05"
-                                            name="notes" placeholder="a few words...">
+                                            name="notes" placeholder="{{ __('a few words...') }}">
                                     </div>
                                 </div>
                                 <div class="form-group mt-2">
-                                    <button class="btn btn-primary" type="submit">Submit form</button>
+                                    <button class="btn btn-primary" type="submit">{{ __('Submit form') }}</button>
                                 </div>
                         </form>
                     </div>
@@ -268,6 +301,9 @@
 
     <script>
         $(document).ready(function() {
+            function formatRupiah(number) {
+                return 'Rp ' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
             // Initial update on page load
             updateGrandTotal();
 
@@ -312,6 +348,7 @@
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
+
                             var row = '<tr>';
                             row += '<td>#</td>';
                             row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
@@ -357,82 +394,87 @@
                 }
             });
 
-            // $('#product-table-body').on('input', '.item-quantity', function() {
-            //     var row = $(this).closest('tr');
-            //     var quantity = parseFloat($(this).val()) || 0;
-            //     var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
-            //     var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-            //     var totalPrice = (unitPrice + taxPrice) * quantity;
-
-            //     row.find('.item-total').text('Rp ' + totalPrice.toFixed(2));
-            //     row.find('.item-subtotal').val(totalPrice.toFixed(2));
-            //     updateGrandTotal();
-            // });
-
-            // $('#tax_rate, #discount, #shipping').on('input', function() {
-            //     updateGrandTotal();
-            // });
-
-            // function updateGrandTotal() {
-            //     var grandTotal = 0;
-            //     $('#product-table-body tr').each(function() {
-            //         var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) || 0;
-            //         if (!isNaN(total)) {
-            //             grandTotal += total;
-            //         }
-            //     });
-
-            //     var discount = parseFloat($('#discount').val()) || 0;
-            //     var shipping = parseFloat($('#shipping').val()) || 0;
-            //     var taxRate = parseFloat($('#tax_rate').val()) || 0;
-            //     var taxNet = (taxRate / 100) * grandTotal;
-
-            //     $('#tax_net').val(taxNet.toFixed(2));
-            //     grandTotal = grandTotal - discount + shipping + taxNet;
-
-            //     $('#grandTotal').val(grandTotal.toFixed(2));
-            //     $('#paying_amount').val(grandTotal.toFixed(2));
-
-            //     // Update the displayed values in the table
-            //     $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNet.toFixed(2)); // Order Tax
-            //     $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
-            //     $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
-            //     $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
-            // }
             // Item quantity change event handler
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
                 var quantity = parseFloat($(this).val()) || 0;
-                // var maxQuantity = parseFloat($(this).data('max-quantity')) || 0;
-
-                // if (quantity > maxQuantity) {
-                //     alert('The quantity cannot exceed the available stock.');
-                //     $(this).val(maxQuantity);
-                //     quantity = maxQuantity;
+                // var minQuantity = parseFloat($(this).data('min-quantity')) || 1;
+                // if (quantity < minQuantity) {
+                //     Swal.fire({
+                //         toast: true,
+                //         position: 'top-end',
+                //         icon: 'warning',
+                //         title: 'The quantity cannot be less than 1.',
+                //         showConfirmButton: false,
+                //         timer: 3000,
+                //         timerProgressBar: true,
+                //         didOpen: (toast) => {
+                //             toast.addEventListener('mouseenter', Swal.stopTimer)
+                //             toast.addEventListener('mouseleave', Swal.resumeTimer)
+                //         }
+                //     });
+                //     $(this).val(minQuantity);
+                //     quantity = minQuantity;
                 // }
 
-                var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
-                var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-
+                // Mengambil nilai unitPrice, taxPrice, quantityDiscount, dan discountPercentage dari elemen HTML
+                var unitPrice = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '').replace(/\./g,
+                    '')) || 0;
+                var taxPrice = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '').replace(/\./g,
+                    '')) || 0;
+                var quantityDiscount = parseFloat(row.find('input[name$="[quantity_discount]"]').val()) ||
+                    0;
+                var discountPercentage = parseFloat(row.find('input[name$="[discount_percentage]"]')
+                    .val()) || 0;
                 var discount = 0;
-                if (quantity > 10) {
-                    discount = unitPrice * 0.05 * quantity; // 5% discount for quantity > 10
-                    row.find('.item-discount').text('Rp ' + discount.toFixed(2));
-                    row.find('.item-subdiscount').val(discount.toFixed(2));
+
+                // Menghitung diskon jika kuantitas memenuhi syarat
+                if (quantity >= quantityDiscount) {
+                    discount = (unitPrice * quantity) * (discountPercentage / 100);
+                    row.find('.item-discount').text(formatRupiah(discount.toFixed(
+                        0))); // Menggunakan toFixed(0) jika tidak menggunakan koma
+                    row.find('.item-subdiscount').val(discount.toFixed(
+                        0)); // Menggunakan toFixed(0) jika tidak menggunakan koma
                     row.find('.item-subdiscountmethod').val('discount');
                 } else {
                     row.find('.item-discount').text('Rp 0');
-                    row.find('.item-subdiscount').val(discount.toFixed(2));
+                    row.find('.item-subdiscount').val('0');
                     row.find('.item-subdiscountmethod').val('nodiscount');
                 }
 
+                // Menghitung totalPrice
                 var totalPrice = (unitPrice + taxPrice) * quantity - discount;
+                row.find('.item-total').text(formatRupiah(totalPrice.toFixed(
+                    0))); // Menggunakan toFixed(0) jika tidak menggunakan koma
+                console.log("Total Price:", totalPrice.toFixed(
+                    0));
+                row.find('.item-subtotal').val(totalPrice.toFixed(
+                    0)); // Menggunakan toFixed(0) jika tidak menggunakan koma
 
-                row.find('.item-total').text('Rp ' + totalPrice.toFixed(2));
-                row.find('.item-subtotal').val(totalPrice.toFixed(2));
+                // Memperbarui grand total
                 updateGrandTotal();
             });
+            var cleaveDiscount = new Cleave('#discount', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                prefix: 'Rp ',
+                delimiter: '.'
+            });
+            var cleaveShipping = new Cleave('#shipping', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                prefix: 'Rp ',
+                delimiter: '.'
+            });
 
+            // Function to get numeric value from a formatted input
+            function getNumericValue(elementId) {
+                var formattedValue = $('#' + elementId).val();
+                var numericValue = formattedValue.replace(/[^\d,]/g, '').replace(',', '.');
+                return parseFloat(numericValue) || 0;
+            }
             // Tax rate, discount, shipping change event handler
             $('#tax_rate, #discount, #shipping').on('input', function() {
                 updateGrandTotal();
@@ -444,33 +486,33 @@
 
                 // Iterate through each row in the product table
                 $('#product-table-body tr').each(function() {
-                    var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '')) || 0;
+                    // Extract and parse the raw numeric value from the item-total text
+                    var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '').replace(
+                        /\./g, '')) || 0;
                     if (!isNaN(total)) {
                         grandTotal += total;
                     }
                 });
-
-                // Get values of tax rate, discount, shipping
-                var discount = parseFloat($('#discount').val()) || 0;
-                var shipping = parseFloat($('#shipping').val()) || 0;
+                var discount = getNumericValue('discount');
+                console.log(discount);
+                var shipping = getNumericValue('shipping');
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
 
+                // Update hidden fields with numeric values
+                $('#discount_value').val(discount);
+                $('#shipping_value').val(shipping);
                 // Calculate tax amount
                 var taxNet = (taxRate / 100) * grandTotal;
                 $('#tax_net').val(taxNet.toFixed(2));
 
                 // Calculate grand total
                 grandTotal = grandTotal - discount + shipping + taxNet;
-
-                // Update displayed values in the summary table
-                $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNet.toFixed(2)); // Order Tax
-                $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
-                $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
-                $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
-
-                // Update hidden fields for backend submission
+                $('#basic-table tr:nth-child(1) th').text(formatRupiah(taxNet.toFixed(0))); // Order Tax
+                $('#basic-table tr:nth-child(2) th').text(formatRupiah(discount.toFixed(0))); // Discount
+                $('#basic-table tr:nth-child(3) th').text(formatRupiah(shipping.toFixed(0))); // Shipping
+                $('#basic-table tr:nth-child(4) th').text(formatRupiah(grandTotal.toFixed(0))); // Grand Total
                 $('#grandTotal').val(grandTotal.toFixed(2));
-                $('#paying_amount').val(grandTotal.toFixed(2));
+                $('#paying_amount').val(formatRupiah(grandTotal.toFixed(0)));
             }
         });
     </script>

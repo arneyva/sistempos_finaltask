@@ -3,8 +3,8 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 @endpush
 @section('pages_title')
-    <h1>{{ $data[0]['brand'] }} {{ $data[0]['name'] }} Detail</h1>
-    <p>Do Something with all your measurement</p>
+    <h1>{{ $data[0]['brand'] }} ~ {{ $data[0]['name'] }} Detail</h1>
+    <p>{{ __('Do Something with your Product') }}</p>
 @endsection
 <style>
     .swiper-button-next,
@@ -41,8 +41,8 @@
                                     <div class="card-body">
                                         <div class="progress-widget">
                                             <div class="progress-detail">
-                                                <p class="mb-2">Stock Alert</p>
                                                 <p class="mb-2">{{ $variant['mag'] }} ~ {{ $variant['variant'] }}</p>
+                                                <p class="mb-2">{{ __('Stock Alert') }}</p>
                                                 <div class="form-group">
                                                     <input type="number"
                                                         name="stock_alert[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
@@ -50,6 +50,33 @@
                                                         class="form-control"
                                                         style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
                                                         value="{{ $variant['stock_alert'] ?? 0 }}" min="0">
+                                                </div>
+                                                <p class="mb-2">{{ __('Discount Threshold') }}</p>
+                                                <div class="form-group input-group">
+                                                    <span class="input-group-text" id="basic-addon1">%</span>
+                                                    <input type="number"
+                                                        name="discount_percentage[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
+                                                        id="discount_percentagevariant{{ $variant['variant'] }}_{{ $variant['mag'] }}"
+                                                        class="form-control"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
+                                                        value="{{ $variant['discount_percentage'] ?? 0 }}" min="0">
+                                                </div>
+                                                <div class="form-group input-group">
+                                                    <span class="input-group-text" id="basic-addon1"><svg
+                                                            xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
+                                                            viewBox="0 0 24 24">
+                                                            <path fill="none" stroke="#3b39d0" stroke-linecap="round"
+                                                                stroke-linejoin="round" stroke-width="2"
+                                                                d="m5 18l14-4M5 14l14-4L5 6" />
+                                                        </svg></span>
+                                                    <input type="number"
+                                                        name="quantity_discount[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
+                                                        id="quantity_discountvariant{{ $variant['variant'] }}_{{ $variant['mag'] }}"
+                                                        class="form-control"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
+                                                        value="{{ $variant['quantity_discount'] ?? 0 }}" min="0">
+                                                    <span class="input-group-text"
+                                                        id="">{{ $data[0]['unit'] }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -64,13 +91,36 @@
                                     <div class="card-body">
                                         <div class="progress-widget">
                                             <div class="progress-detail">
-                                                <p class="mb-2">Stock Alert</p>
                                                 <p class="mb-2">{{ $qty['mag'] }}</p>
+                                                <p class="mb-2">{{ __('Stock Alert') }}</p>
                                                 <div class="form-group">
                                                     <input type="number" name="stock_alert[{{ $qty['mag'] }}]"
                                                         id="stock_alert_qty_{{ $qty['mag'] }}" class="form-control"
                                                         style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
                                                         value="{{ $qty['stock_alert'] ?? 0 }}">
+                                                </div>
+                                                <p class="mb-2">{{ __('Discount Threshold') }}</p>
+                                                <div class="form-group input-group">
+                                                    <span class="input-group-text" id="basic-addon1">%</span>
+                                                    <input type="number" name="discount_percentage[{{ $qty['mag'] }}]"
+                                                        id="discount_percentage{{ $qty['mag'] }}" class="form-control"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
+                                                        value="{{ $qty['discount_percentage'] ?? 0 }}">
+                                                </div>
+                                                <div class="form-group input-group">
+                                                    <span class="input-group-text" id="basic-addon1"><svg
+                                                            xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
+                                                            viewBox="0 0 24 24">
+                                                            <path fill="none" stroke="#3b39d0" stroke-linecap="round"
+                                                                stroke-linejoin="round" stroke-width="2"
+                                                                d="m5 18l14-4M5 14l14-4L5 6" />
+                                                        </svg></span>
+                                                    <input type="number" name="quantity_discount[{{ $qty['mag'] }}]"
+                                                        id="quantity_discount{{ $qty['mag'] }}" class="form-control"
+                                                        style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
+                                                        value="{{ $qty['quantity_discount'] ?? 0 }}">
+                                                    <span class="input-group-text"
+                                                        id="">{{ $data[0]['unit'] }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -92,8 +142,21 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">Product Information</h4>
+                            <h4 class="card-title">{{ __('Product Information') }}</h4>
                         </div>
+                        <span style="text-align: center; vertical-align: middle;margin-top: 30px">
+                            @php
+                                $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
+                                $barcodeData = base64_encode(
+                                    $generatorPNG->getBarcode($data[0]['code'], $generatorPNG::TYPE_CODE_128),
+                                );
+                                $barcodeUrl = 'data:image/png;base64,' . $barcodeData;
+                            @endphp
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <img src="{{ $barcodeUrl }}" alt="Barcode" style="margin-bottom: 5px;">
+                                <span>{{ $data[0]['code'] }}</span>
+                            </div>
+                        </span>
                         <a href="#"><button type="button" class="btn btn-soft-primary">Print</button></a>
                     </div>
                     <div class="card-body">
@@ -101,73 +164,108 @@
                             <table id="basic-table" class="table table-striped mb-0" role="grid">
                                 <tbody>
                                     <tr>
-                                        <td>Product Name</td>
+                                        <td>{{ __('Product Name') }}</td>
                                         <th>{{ $data[0]['name'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Type</td>
+                                        <td>{{ __('Type') }}</td>
                                         <th>{{ $data[0]['type_name'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Code Product</td>
+                                        @if ($data[0]['type'] == 'is_single')
+                                            <td>{{ __('Code') }}</td>
+                                        @else
+                                            <td>{{ __('Code Base Product') }}</td>
+                                        @endif
                                         <th>{{ $data[0]['code'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Category</td>
+                                        <td>{{ __('Category') }}</td>
                                         <th>{{ $data[0]['cateogry'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Brand</td>
+                                        <td>{{ __('Brand') }}</td>
                                         <th>{{ $data[0]['brand'] }}</th>
                                     </tr>
                                     @if ($data[0]['type'] == 'is_single')
                                         <tr>
-                                            <td>Product Cost</td>
+                                            <td>{{ __('Product Cost') }}</td>
                                             <th>{{ $data[0]['cost'] }}</th>
                                         </tr>
                                         <tr>
-                                            <td>Product Price</td>
+                                            <td>{{ __('Product Price') }}</td>
                                             <th>{{ $data[0]['price'] }}</th>
                                         </tr>
                                     @endif
                                     <tr>
-                                        <td>Unit</td>
+                                        <td>{{ __('Unit') }}</td>
                                         <th>{{ $data[0]['unit'] }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Tax</td>
+                                        <td>{{ __('Tax') }}</td>
                                         <th>{{ $data[0]['tax'] }} %</th>
                                     </tr>
                                 </tbody>
                             </table>
                             {{-- handle for variant --}}
-                            @if ($data[0]['is_variant'] == 'Yes')
-                                <table class="table table-hover table-bordered table-sm" style="margin-top: 30px">
-                                    <thead>
-                                        <tr>
-                                            <th>Variant Name</th>
-                                            <th>Variant code</th>
-                                            <th>Variant cost</th>
-                                            <th>Variant price</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($data[0]['products_variants_data'] as $variant)
-                                            <tr>
-                                                <td>{{ $variant['name'] }}</td>
-                                                <td>{{ $variant['code'] }}</td>
-                                                <td>{{ $variant['cost'] }}</td>
-                                                <td>{{ $variant['price'] }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @endif
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        @if ($data[0]['is_variant'] == 'Yes')
+            <div class="col-md-12">
+                <div class="card" data-aos="fade-up" data-aos-delay="800">
+                    <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
+                        <div class="header-title">
+                            <h4 class="card-title">{{ __('Variant Detail') }}</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive mt-4">
+                            <table id="product-table" class="table table-striped mb-0" role="grid">
+                                <thead>
+                                    <tr>
+                                        <th>{{ __('Variant Name') }}</th>
+                                        <th>{{ __('Variant code') }}</th>
+                                        <th>{{ __('Variant cost') }}</th>
+                                        <th>{{ __('Variant price') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($data[0]['products_variants_data'] as $variant)
+                                        <tr>
+                                            <td>{{ $variant['name'] }}</td>
+                                            {{-- <td>{{ $variant['code'] }}</td> --}}
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                @php
+                                                    $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
+                                                    $barcodeData = base64_encode(
+                                                        $generatorPNG->getBarcode(
+                                                            $variant['code'],
+                                                            $generatorPNG::TYPE_CODE_128,
+                                                        ),
+                                                    );
+                                                    $barcodeUrl = 'data:image/png;base64,' . $barcodeData;
+                                                @endphp
+                                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                                    <img src="{{ $barcodeUrl }}" alt="Barcode"
+                                                        style="margin-bottom: 5px;">
+                                                    <span>{{ $variant['code'] }}</span>
+                                                </div>
+                                            </td>
+                                            <td>{{ $variant['cost'] }}</td>
+                                            <td>{{ $variant['price'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
     {{-- part 3 sisi kanan --}}
@@ -191,9 +289,9 @@
                         @if ($data[0]['is_variant'] == 'Yes')
                             <thead>
                                 <tr>
-                                    <th>Warehouse</th>
-                                    <th>Variant</th>
-                                    <th>Qty</th>
+                                    <th>{{ __('Warehouse/Outlet') }}</th>
+                                    <th>{{ __('Variant') }}</th>
+                                    <th>{{ __('Quantity') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -208,8 +306,8 @@
                         @else
                             <thead>
                                 <tr>
-                                    <th>Warehouse</th>
-                                    <th>Qty</th>
+                                    <th>{{ __('Warehouse/Outlet') }}</th>
+                                    <th>{{ __('Quantity') }}</th>
                                 </tr>
                             </thead>
                             <tbody>

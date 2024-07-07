@@ -2,8 +2,8 @@
 
 @section('pages_title')
     <h1>
-        All Sales Return</h1>
-    <p>Look All your sales return</p>
+        {{ __('All Sales Return') }}</h1>
+    <p>{{ __('Look All your sales return') }}</p>
 @endsection
 
 <style>
@@ -22,42 +22,41 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Sales Return
+                    <h4 class="card-title">{{ __('All Sales Return') }}
                     </h4>
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#createModal">Filter</button>
+                        data-bs-target="#createModal">{{ __('Filter') }}</button>
                     <a href="{{ route('sale.return.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
-                    <a href="{{ route('sale.create') }}"><button type="button" class="btn btn-soft-primary">Create
-                            +</button></a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <h5 class="modal-title" id="createModalLabel">{{ __('Filter') }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ route('sale.return.index') }}" method="GET" id="filterForm">
                                         <div class="col mb-3">
-                                            <label class="form-label" for="date">Date *</label>
+                                            <label class="form-label" for="date">{{ __('Date') }}</label>
                                             <input type="date" class="form-control" id="date" name="date"
                                                 value="{{ request()->input('date') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="Ref">Reference*</label>
+                                            <label class="form-label" for="Ref">{{ __('Reference') }}</label>
                                             <input type="text" class="form-control" id="Ref" name="Ref"
-                                                value="{{ request()->input('Ref') }}" placeholder="Input Ref ...">
+                                                value="{{ request()->input('Ref') }}"
+                                                placeholder="{{ __('Input Ref ...') }}">
                                         </div>
                                         @role('superadmin|inventaris')
                                             <div class="col mb-3">
-                                                <label class="form-label" for="warehouse_id">Warehouse/Outlet
+                                                <label class="form-label" for="warehouse_id">{{ __('Warehouse/Outlet') }}
                                                     *</label>
                                                 <select class="form-select" id="warehouse_id" name="warehouse_id">
-                                                    <option selected disabled value="">Choose...</option>
+                                                    <option selected disabled value="">{{ __('Choose...') }}</option>
                                                     @foreach ($warehouse as $wh)
                                                         <option value="{{ $wh->id }}"
                                                             {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -68,10 +67,10 @@
                                             </div>
                                         @endrole
                                         <div class="col mb-3">
-                                            <label class="form-label" for="client_id">Customer
-                                                *</label>
+                                            <label class="form-label" for="client_id">
+                                                {{ __('Customer') }}</label>
                                             <select class="form-select" id="client_id" name="client_id">
-                                                <option selected disabled value="">Choose...</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
                                                 @foreach ($client as $wh)
                                                     <option value="{{ $wh->id }}"
                                                         {{ request()->input('client_id') == $wh->id ? 'selected' : '' }}>
@@ -81,14 +80,14 @@
                                             </select>
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="statut">Status *</label>
+                                            <label class="form-label" for="statut">{{ __('Status') }}</label>
                                             <select class="form-select" id="statut" name="statut">
-                                                <option selected disabled value="">Choose...</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
                                                 <option value="received"
                                                     {{ request()->input('statut') == 'received' ? 'selected' : '' }}>
-                                                    Received</option>
+                                                    {{ __('Received') }}</option>
                                                 <option value="pending"
-                                                    {{ request()->input('statut') == 'pending' ? 'selected' : '' }}>Pending
+                                                    {{ request()->input('statut') == 'pending' ? 'selected' : '' }}>{{ __('Pending') }}
                                                 </option>
                                             </select>
                                         </div>
@@ -110,8 +109,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" onclick="resetFilters()"
-                                        data-bs-dismiss="modal">Reset</button>
-                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                        data-bs-dismiss="modal">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Filter') }}</button>
                                 </div>
                                 </form>
                             </div>
@@ -125,15 +124,15 @@
                     <table id="basic-table" class="table table-striped table-hover mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Reference</th>
-                                <th>Sale Ref</th>
-                                <th>Customer</th>
-                                <th>Warehouse/Outlet</th>
-                                <th>Status</th>
-                                <th>Grand Total</th>
-                                <th>Payment Status</th>
-                                <th>Actions</th>
+                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('Reference') }}</th>
+                                <th>{{ __('Sale Reference') }}</th>
+                                <th>{{ __('Customer') }}</th>
+                                <th>{{ __('Warehouse/Outlet') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Grand Total') }}</th>
+                                <th>{{ __('Payment Status') }}</th>
+                                <th>{{ __('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -146,17 +145,17 @@
                                     <td>{{ $item->warehouse->name }}</td>
                                     <td>
                                         @if ($item->statut == 'received')
-                                            <span class="status-completed">received</span>
+                                            <span class="status-completed">{{ __('Received') }}</span>
                                         @else
-                                            <span class="status-ordered">ordered</span>
+                                            <span class="status-ordered">{{ __('Pending') }}</span>
                                         @endif
                                     </td>
                                     <td>Rp. {{ number_format($item->GrandTotal, 2, ',', '.') }}</td>
                                     <td>
                                         @if ($item->payment_statut == 'paid')
-                                            <span class="payment-paid">paid</span>
+                                            <span class="payment-paid">{{ __('Paid') }}</span>
                                         @else
-                                            <span class="payment-unpaid">unpaid</span>
+                                            <span class="payment-unpaid">{{ __('Unpaid') }}</span>
                                         @endif
                                     </td>
                                     <td> <svg xmlns="http://www.w3.org/2000/svg" width="4em" height="4em"
@@ -183,7 +182,7 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="staticBackdropLabel">
-                                                            {{ $item->Ref }} Payment</h5>
+                                                            {{ $item->Ref }} {{ __('Payment') }}</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -194,10 +193,10 @@
                                                                 <table class="table table-striped mb-0" role="grid">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th>Date</th>
-                                                                            <th>Reference</th>
-                                                                            <th>Montant</th>
-                                                                            <th>Change</th>
+                                                                            <th>{{ __('Date') }}</th>
+                                                                            <th>{{ __('Reference') }}</th>
+                                                                            <th>{{ __('Montant') }}</th>
+                                                                            <th>{{ __('Change Return') }}</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -217,7 +216,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Close</button>
+                                                            data-bs-dismiss="modal">{{ __('Close') }}</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -228,6 +227,7 @@
                                             <div class="m-0 border-0 shadow-none card">
                                                 <div class="p-0 ">
                                                     <ul class="p-0 list-group list-group-flush">
+                                                        @role('dev')
                                                         <li class="iq-sub-card list-group-item"><a class="p-0"
                                                                 href="#">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
@@ -244,13 +244,14 @@
                                                                     </g>
                                                                 </svg> Dwonload Pdf </a>
                                                         </li>
+                                                        @endrole
                                                         <li class="iq-sub-card list-group-item"><a class="p-0"
                                                                 href="#">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
                                                                     height="1.5em" viewBox="0 0 24 24">
                                                                     <path fill="currentColor"
                                                                         d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zm-2 0l-8 5l-8-5zm0 12H4V8l8 5l8-5z" />
-                                                                </svg> Email Notifications </a>
+                                                                </svg> {{ __('Email Notifications') }} </a>
                                                         </li>
                                                         <li class="iq-sub-card list-group-item"><a class="p-0"
                                                                 href="{{ route('sale.return.show', $item->id) }}">
@@ -260,7 +261,7 @@
                                                                         d="M7 7h10v2H7zm0 4h7v2H7z" />
                                                                     <path fill="currentColor"
                                                                         d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
-                                                                </svg> Return Detail </a>
+                                                                </svg> {{ __('Return Detail') }} </a>
                                                         </li>
                                                         @if ($item->payment_statut == 'paid' && $item->statut == 'received')
                                                             <li class="iq-sub-card list-group-item">
@@ -271,7 +272,7 @@
                                                                         fill="red">
                                                                         <path fill="currentColor"
                                                                             d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
-                                                                    </svg> Edit Return
+                                                                    </svg> {{ __('Edit Return') }}
                                                                 </a>
                                                             </li>
                                                         @else
@@ -281,7 +282,7 @@
                                                                         height="1.5em" viewBox="0 0 24 24">
                                                                         <path fill="currentColor"
                                                                             d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
-                                                                    </svg> Edit Return
+                                                                    </svg> {{ __('Edit Return') }}
                                                                 </a>
                                                             </li>
                                                         @endif
@@ -292,7 +293,7 @@
                                                                 height="1.5em" viewBox="0 0 256 256">
                                                                 <path fill="currentColor"
                                                                     d="M128 88a40 40 0 1 0 40 40a40 40 0 0 0-40-40m0 64a24 24 0 1 1 24-24a24 24 0 0 1-24 24m112-96H16a8 8 0 0 0-8 8v128a8 8 0 0 0 8 8h224a8 8 0 0 0 8-8V64a8 8 0 0 0-8-8m-46.35 128H62.35A56.78 56.78 0 0 0 24 145.65v-35.3A56.78 56.78 0 0 0 62.35 72h131.3A56.78 56.78 0 0 0 232 110.35v35.3A56.78 56.78 0 0 0 193.65 184M232 93.37A40.8 40.8 0 0 1 210.63 72H232ZM45.37 72A40.8 40.8 0 0 1 24 93.37V72ZM24 162.63A40.8 40.8 0 0 1 45.37 184H24ZM210.63 184A40.8 40.8 0 0 1 232 162.63V184Z" />
-                                                            </svg> Show Payment
+                                                            </svg> {{ __('Show Payment') }}
                                                         </li>
                                                     </ul>
                                                 </div>

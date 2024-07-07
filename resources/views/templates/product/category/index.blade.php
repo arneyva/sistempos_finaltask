@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>All Product Categories</h1>
-    <p>Do Something with all your product categories</p>
+    <h1>{{ __('All Product Categories') }}</h1>
+    <p>{{ __('Do Something with all your product categories') }}</p>
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Category</h4>
+                    <h4 class="card-title">{{ __('All Category') }}</h4>
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
@@ -28,7 +28,7 @@
                                     stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </span>
-                        <input type="search" class="form-control" placeholder="Search..."
+                        <input type="search" class="form-control" placeholder="{{ __('Search...') }}"
                             value="{{ request()->input('search') }}" name="search">
                     </div>
                 </form>
@@ -36,14 +36,14 @@
                     @role('superadmin|inventaris')
                         <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                             data-bs-target="#createModal">
-                            Create+
+                            {{ __('Create +') }}
                         </button>
                         <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="createModalLabel">Create</h5>
+                                        <h5 class="modal-title" id="createModalLabel">{{ __('Create') }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
@@ -51,19 +51,19 @@
                                         <form action="{{ route('product.category.store') }}" method="POST">
                                             @csrf
                                             <div class="col mb-3">
-                                                <label class="form-label" for="code">Category Code *</label>
+                                                <label class="form-label" for="code">{{ __('Category Code *') }}</label>
                                                 <input type="text" class="form-control" id="code" required
-                                                    placeholder="input category code" name="code">
+                                                    placeholder="{{ __('input category code') }}" name="code">
                                             </div>
                                             <div class="col mb-3">
-                                                <label class="form-label" for="name">Category Name *</label>
+                                                <label class="form-label" for="name">{{ __('Category Name *') }}</label>
                                                 <input type="text" class="form-control" id="name" required
-                                                    placeholder="input category name" name="name">
+                                                    placeholder="{{ __('input category name') }}" name="name">
                                             </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                        <button type="submit" class="btn btn-primary">{{ __('Save changes') }}</button>
                                     </div>
                                     </form>
                                 </div>
@@ -78,10 +78,10 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Category Code</th>
-                                <th>Category Name</th>
+                                <th>{{ __('Category Code') }}</th>
+                                <th>{{ __('Category Name') }}</th>
                                 @role('superadmin|inventaris')
-                                    <th>Actions</th>
+                                    <th>{{ __('Actions') }}</th>
                                 @endrole
                             </tr>
                         </thead>
@@ -116,7 +116,7 @@
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="updateModalLabel">Update</h5>
+                                                                <h5 class="modal-title" id="updateModalLabel">{{ __('Update Category') }}</h5>
                                                                 <button type="button" class="btn-close"
                                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
@@ -128,28 +128,25 @@
                                                                     @csrf
                                                                     <div class="col mb-3">
                                                                         <label class="form-label"
-                                                                            for="editcode{{ $item->id }}">Category Code
-                                                                            *</label>
+                                                                            for="editcode{{ $item->id }}">{{ __('Category Code *') }}</label>
                                                                         <input type="text" class="form-control"
                                                                             id="editcode{{ $item->id }}" required
-                                                                            placeholder="input category code" name="code"
+                                                                            placeholder="{{ __('input category code') }}" name="code"
                                                                             value="{{ $item->code }}">
                                                                     </div>
                                                                     <div class="col mb-3">
                                                                         <label class="form-label"
-                                                                            for="editname{{ $item->id }}">Category Name
-                                                                            *</label>
+                                                                            for="editname{{ $item->id }}">{{ __('Category Name *') }}</label>
                                                                         <input type="text" class="form-control"
                                                                             id="editname{{ $item->id }}" required
-                                                                            placeholder="input category name" name="name"
+                                                                            placeholder="{{ __('input category name') }}" name="name"
                                                                             value="{{ $item->name }}">
                                                                     </div>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-primary">Save
-                                                                    changes</button>
+                                                                    data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                                                <button type="submit" class="btn btn-primary">{{ __('Save changes') }}</button>
                                                             </div>
                                                             </form>
                                                         </div>
@@ -194,18 +191,18 @@
                                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>"Are you sure you want to delete this data?"</p>
+                                                                <p>{{ __('Are you sure you want to delete this data?') }}</p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Close</button>
+                                                                    data-bs-dismiss="modal">{{ __('Close') }}</button>
                                                                 <form
                                                                     action="{{ route('product.category.destroy', $item->id) }}"
                                                                     method="POST" style="display: inline;">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit"
-                                                                        class="btn btn-primary">Delete</button>
+                                                                        class="btn btn-primary">{{ __('Delete') }}</button>
                                                                 </form>
                                                             </div>
                                                         </div>

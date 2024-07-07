@@ -2,8 +2,8 @@
 
 @section('pages_title')
     <h1>
-        Sale ~ Reports</h1>
-    <p>look up your daily report</p>
+        {{ __('Sales') }} ~ {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 <style>
@@ -122,7 +122,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Sale Report</h4>
+                    <h4 class="card-title">{{ __('Sales') }} {{ __('Reports') }}</h4>
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
@@ -134,33 +134,34 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <h5 class="modal-title" id="createModalLabel">{{ __('Filter') }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ route('reports.sale') }}" method="GET" id="filterForm">
                                         <div class="col mb-3">
-                                            <label class="form-label" for="from_date">From Date *</label>
+                                            <label class="form-label" for="from_date">{{ __('From Date') }}</label>
                                             <input type="date" class="form-control" id="from_date" name="from_date"
                                                 value="{{ request()->input('from_date') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="to_date">To Date *</label>
+                                            <label class="form-label" for="to_date">{{ __('To Date') }}</label>
                                             <input type="date" class="form-control" id="to_date" name="to_date"
                                                 value="{{ request()->input('to_date') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="search">Search *</label>
+                                            <label class="form-label" for="search">{{ __('Search') }}</label>
                                             <input type="text" class="form-control" id="search" name="search"
-                                                value="{{ request()->input('search') }}" placeholder="Search ...">
+                                                value="{{ request()->input('search') }}"
+                                                placeholder="{{ __('Search...') }}">
                                         </div>
                                         @role('superadmin|inventaris')
                                             <div class="col mb-3">
-                                                <label class="form-label" for="warehouse_id">Warehouse/Outlet
-                                                    *</label>
+                                                <label class="form-label" for="warehouse_id">{{ __('Warehouse/Outlet') }}
+                                                </label>
                                                 <select class="form-select" id="warehouse_id" name="warehouse_id">
-                                                    <option selected disabled value="">Choose...</option>
+                                                    <option selected disabled value="">{{ __('Choose...') }}</option>
                                                     @foreach ($warehouse as $wh)
                                                         <option value="{{ $wh->id }}"
                                                             {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -171,10 +172,10 @@
                                             </div>
                                         @endrole
                                         <div class="col mb-3">
-                                            <label class="form-label" for="client_id">Customer
-                                                *</label>
+                                            <label class="form-label" for="client_id">{{ __('Customer') }}
+                                            </label>
                                             <select class="form-select" id="client_id" name="client_id">
-                                                <option selected disabled value="">Choose...</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
                                                 @foreach ($client as $wh)
                                                     <option value="{{ $wh->id }}"
                                                         {{ request()->input('client_id') == $wh->id ? 'selected' : '' }}>
@@ -184,35 +185,37 @@
                                             </select>
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="statut">Status *</label>
+                                            <label class="form-label" for="statut">{{ __('Status') }}</label>
                                             <select class="form-select" id="statut" name="statut">
-                                                <option selected disabled value="">Choose...</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
                                                 <option value="completed"
                                                     {{ request()->input('statut') == 'completed' ? 'selected' : '' }}>
-                                                    Completed</option>
+                                                    {{ __('Completed') }}</option>
                                                 <option value="pending"
-                                                    {{ request()->input('statut') == 'pending' ? 'selected' : '' }}>Pending
+                                                    {{ request()->input('statut') == 'pending' ? 'selected' : '' }}>
+                                                    {{ __('Pending') }}
                                                 </option>
                                             </select>
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="payment_statut">Payment Status *</label>
+                                            <label class="form-label" for="payment_statut">{{ __('Payment') }}
+                                                {{ __('Status') }}</label>
                                             <select class="form-select" id="payment_statut" name="payment_statut">
-                                                <option selected disabled value="">Choose...</option>
+                                                <option selected disabled value="">{{ __('Choose...') }}</option>
                                                 <option value="paid"
                                                     {{ request()->input('payment_statut') == 'paid' ? 'selected' : '' }}>
-                                                    Paid</option>
+                                                    {{ __('Paid') }}</option>
                                                 <option value="unpaid"
                                                     {{ request()->input('payment_statut') == 'unpaid' ? 'selected' : '' }}>
-                                                    Unpaid
+                                                    {{ __('Unpaid') }}
                                                 </option>
                                             </select>
                                         </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" onclick="resetFilters()"
-                                        data-bs-dismiss="modal">Reset</button>
-                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                        data-bs-dismiss="modal">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Filter') }}</button>
                                 </div>
                                 </form>
                             </div>
@@ -225,15 +228,15 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Reference</th>
-                                <th>Customer</th>
-                                <th>Warehouse</th>
-                                <th>Status</th>
-                                <th>Grand Total</th>
-                                <th>Paid</th>
-                                <th>Due</th>
-                                <th>Payment Status</th>
+                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('Reference') }}</th>
+                                <th>{{ __('Customer') }}</th>
+                                <th>{{ __('Warehouse/Outlet') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Grand Total') }}</th>
+                                <th>{{ __('Paid') }}</th>
+                                <th>{{ __('Due') }}</th>
+                                <th>{{ __('Payment') }} {{ __('Status') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -245,11 +248,11 @@
                                     <td>{{ $item['warehouse_name'] }}</td>
                                     <td>
                                         @if ($item['statut'] == 'completed')
-                                            <span class="status-completed">completed</span>
+                                            <span class="status-completed">{{ __('Completed') }}</span>
                                         @elseif($item['statut'] == 'ordered')
-                                            <span class="status-ordered">ordered</span>
+                                            <span class="status-ordered">{{ __('Ordered') }}</span>
                                         @else
-                                            <span class="status-pending">pending</span>
+                                            <span class="status-pending">{{ __('Pending') }}</span>
                                         @endif
                                     </td>
                                     <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}</td>
@@ -257,9 +260,9 @@
                                     <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}</td>
                                     <td>
                                         @if ($item['payment_status'] == 'paid')
-                                            <span class="payment-paid">paid</span>
+                                            <span class="payment-paid">{{ __('Paid') }}</span>
                                         @else
-                                            <span class="payment-unpaid">unpaid</span>
+                                            <span class="payment-unpaid">{{ __('Unpaid') }}</span>
                                         @endif
                                     </td>
                                 </tr>

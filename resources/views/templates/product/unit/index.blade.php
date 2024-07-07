@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>All Unit Measurement</h1>
-    <p>Do Something with all your measurement</p>
+    <h1>{{ __('All Unit Measurement') }}</h1>
+    <p>{{ __('Do Something with all your measurement') }}</p>
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">All Unit</h4>
+                    <h4 class="card-title">{{ __('All Unit') }}</h4>
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
@@ -28,22 +28,22 @@
                                     stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </span>
-                        <input type="search" class="form-control" placeholder="Search..."
+                        <input type="search" class="form-control" placeholder="{{ __('Search...') }}."
                             value="{{ request()->input('search') }}" name="search">
                     </div>
                 </form>
-                <div class="header-title">
+                <div class="heaCreate+der-title">
                     @role('superadmin|inventaris')
                         <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                             data-bs-target="#createModal">
-                            Create+
+                            {{ __('Create +') }}
                         </button>
                         <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="createModalLabel">Create</h5>
+                                        <h5 class="modal-title" id="createModalLabel">{{ __('Create Unit') }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
@@ -51,14 +51,15 @@
                                         <form action="{{ route('product.unit.store') }}" method="POST">
                                             @csrf
                                             <div class="col mb-3">
-                                                <label class="form-label" for="createname">Name *</label>
+                                                <label class="form-label" for="createname">{{ __('Name *') }}</label>
                                                 <input type="text" class="form-control" id="createname" required
-                                                    placeholder="input unit name" name="name">
+                                                    placeholder="{{ __('input unit name') }}" name="name">
                                             </div>
                                             <div class="col mb-3">
-                                                <label class="form-label" for="createshortname">Short Name*</label>
+                                                <label class="form-label"
+                                                    for="createshortname">{{ __('Short Name *') }}</label>
                                                 <input type="text" class="form-control" id="createshortname" required
-                                                    placeholder="input short name" name="ShortName">
+                                                    placeholder="{{ __('input short name') }}" name="ShortName">
                                             </div>
                                             <div class="accordion" id="accordioncreate">
                                                 <div class="accordion-item">
@@ -66,16 +67,17 @@
                                                         <button class="accordion-button" type="button"
                                                             data-bs-toggle="collapse" data-bs-target="#collapseOnecreate"
                                                             aria-expanded="true" aria-controls="collapseOne">
-                                                            Base Unit
+                                                            {{ __('Base Unit') }}
                                                         </button>
                                                     </h4>
                                                     <div id="collapseOnecreate" class="accordion-collapse collapse show"
                                                         aria-labelledby="headingOne" data-bs-parent="#accordioncreate">
                                                         <div class="accordion-body">
-                                                            <label for="productunitcreate" class="form-label">Product
-                                                                Unit</label>
+                                                            <label for="productunitcreate"
+                                                                class="form-label">{{ __('Product Unit') }}</label>
                                                             <select class="form-select" id="productunitcreate" name="base_unit">
-                                                                <option value="" selected disabled>Choose...</option>
+                                                                <option value="" selected disabled>{{ __('Choose...') }}
+                                                                </option>
                                                                 @foreach ($unit as $item)
                                                                     <option value="{{ $item->id }}">
                                                                         {{ $item->name }}</option>
@@ -83,17 +85,20 @@
                                                             </select>
                                                         </div>
                                                         <div class="accordion-body">
-                                                            <label for="operatorcreate" class="form-label">Operator</label>
+                                                            <label for="operatorcreate"
+                                                                class="form-label">{{ __('Operator') }}</label>
                                                             <select class="form-select" id="operatorcreate" name="operator">
-                                                                <option selected disabled value="">Choose...</option>
-                                                                <option value="{{ '*' }}">Multiply (*)</option>
-                                                                <option value="{{ '/' }}">Devide (/)</option>
+                                                                <option selected disabled value="">{{ __('Choose...') }}
+                                                                </option>
+                                                                <option value="{{ '*' }}">{{ __('Multiply (*)') }}
+                                                                </option>
+                                                                <option value="{{ '/' }}">{{ __('Devide (/)') }}
+                                                                </option>
                                                             </select>
                                                         </div>
                                                         <div class="accordion-body">
-                                                            <label class="form-label" for="operatorvaluecreate">Operation
-                                                                value
-                                                                *</label>
+                                                            <label class="form-label"
+                                                                for="operatorvaluecreate">{{ __('Operation value *') }}</label>
                                                             <input type="text" class="form-control"
                                                                 id="operatorvaluecreate" placeholder="1"
                                                                 name="operator_value">
@@ -104,8 +109,8 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save</button>
+                                            data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                        <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
                                     </div>
                                     </form>
                                 </div>
@@ -119,13 +124,13 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Short Name</th>
-                                <th>Base Unit</th>
-                                <th>Operator</th>
-                                <th>Operation Value</th>
+                                <th>{{ __('Name') }}</th>
+                                <th>{{ __('Short Name *') }}</th>
+                                <th>{{ __('Base Unit') }}</th>
+                                <th>{{ __('Operator') }}</th>
+                                <th>{{ __('Operation value *') }}</th>
                                 @role('superadmin|inventaris')
-                                    <th>Actions</th>
+                                    <th>{{ __('Actions') }}</th>
                                 @endrole
                             </tr>
                         </thead>
@@ -169,7 +174,8 @@
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="editModalLabel">Update</h5>
+                                                                <h5 class="modal-title" id="editModalLabel">
+                                                                    {{ __('Update Unit') }}</h5>
                                                                 <button type="button" class="btn-close"
                                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
@@ -180,8 +186,7 @@
                                                                     @method('PUT')
                                                                     <div class="col mb-3">
                                                                         <label class="form-label"
-                                                                            for="editname{{ $item->id }}">Name
-                                                                            *</label>
+                                                                            for="editname{{ $item->id }}">{{ __('Name *') }}</label>
                                                                         <input type="text" class="form-control"
                                                                             id="editname{{ $item->id }}" required
                                                                             placeholder="input unit name" name="name"
@@ -189,8 +194,7 @@
                                                                     </div>
                                                                     <div class="col mb-3">
                                                                         <label class="form-label"
-                                                                            for="editshortname{{ $item->id }}">Short
-                                                                            Name*</label>
+                                                                            for="editshortname{{ $item->id }}">{{ __('Short Name *') }}</label>
                                                                         <input type="text" class="form-control"
                                                                             id="editshortname{{ $item->id }}" required
                                                                             placeholder="input short name" name="ShortName"
@@ -206,7 +210,7 @@
                                                                                     data-bs-target="#collapseOneedit{{ $item->id }}"
                                                                                     aria-expanded="true"
                                                                                     aria-controls="collapseOne">
-                                                                                    Base Unit
+                                                                                    {{ __('Base Unit') }}
                                                                                 </button>
                                                                             </h4>
                                                                             <div id="collapseOneedit{{ $item->id }}"
@@ -216,8 +220,7 @@
                                                                                 <div class="accordion-body">
                                                                                     <label
                                                                                         for="productunitedit{{ $item->id }}"
-                                                                                        class="form-label">Product
-                                                                                        Unit</label>
+                                                                                        class="form-label">{{ __('Product Unit') }}</label>
                                                                                     <select class="form-select"
                                                                                         id="productunitedit{{ $item->id }}"
                                                                                         name="base_unit">
@@ -235,7 +238,7 @@
                                                                                 <div class="accordion-body">
                                                                                     <label
                                                                                         for="operatoredit{{ $item->id }}"
-                                                                                        class="form-label">Operator</label>
+                                                                                        class="form-label">{{ __('Operator') }}</label>
                                                                                     <select class="form-select"
                                                                                         id="operatoredit{{ $item->id }}"
                                                                                         name="operator">
@@ -243,16 +246,14 @@
                                                                                             {{ $item->operator }}
                                                                                         </option>
                                                                                         <option value="{{ '*' }}">
-                                                                                            Multiply (*)</option>
+                                                                                            {{ __('Multiply (*)') }}</option>
                                                                                         <option value="{{ '/' }}">
-                                                                                            Devide (/)</option>
+                                                                                            {{ __('Devide (/)') }}</option>
                                                                                     </select>
                                                                                 </div>
                                                                                 <div class="accordion-body">
                                                                                     <label class="form-label"
-                                                                                        for="operatorvalueedit{{ $item->id }}">Operation
-                                                                                        value
-                                                                                        *</label>
+                                                                                        for="operatorvalueedit{{ $item->id }}">{{ __('Operation value *') }}</label>
                                                                                     <input type="text" class="form-control"
                                                                                         id="operatorvalueedit{{ $item->id }}"
                                                                                         placeholder="1" name="operator_value"
@@ -264,9 +265,9 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-primary">Save
-                                                                    changes</button>
+                                                                    data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">{{ __('Save Changes') }}</button>
                                                             </div>
                                                             </form>
                                                         </div>
@@ -311,28 +312,28 @@
                                                             </div>
                                                             @if ($item->base_unit == null)
                                                                 <div class="modal-body">
-                                                                    <p>"Base Unit Cannot be deleted?"</p>
+                                                                    <p>{{ __('Base Unit Cannot be deleted!') }}</p>
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary"
-                                                                        data-bs-dismiss="modal">Close</button>
+                                                                        data-bs-dismiss="modal">{{ __('Close') }}</button>
                                                                     <button type="button" class="btn btn-danger"
-                                                                        disabled>Delete</button>
+                                                                        disabled>{{ __('Delete') }}</button>
                                                                 </div>
                                                             @else
                                                                 <div class="modal-body">
-                                                                    <p>"Are you sure you want to delete this data"</p>
+                                                                    <p>{{ __('Are you sure you want to delete this data?') }}</p>
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary"
-                                                                        data-bs-dismiss="modal">Close</button>
+                                                                        data-bs-dismiss="modal">{{ __('Close') }}</button>
                                                                     <form
                                                                         action="{{ route('product.unit.destroy', $item->id) }}"
                                                                         method="POST" style="display: inline">
                                                                         @csrf
                                                                         @method('DELETE')
                                                                         <button type="submit"
-                                                                            class="btn btn-primary">Delete</button>
+                                                                            class="btn btn-primary">{{ __('Delete') }}</button>
                                                                     </form>
                                                                 </div>
                                                             @endif

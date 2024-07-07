@@ -167,8 +167,10 @@ class TransferController extends Controller
             $order->items = count($request['details']); // mengetahui jumlahnya berapa dari data detail transfer
             $order->tax_rate = $request->transfer['tax_rate'] ? $request->transfer['tax_rate'] : 0;
             $order->TaxNet = $request->transfer['TaxNet'] ? $request->transfer['TaxNet'] : 0;
-            $order->discount = $request->transfer['discount'] ? $request->transfer['discount'] : 0;
-            $order->shipping = $request->transfer['shipping'] ? $request->transfer['shipping'] : 0;
+            // $order->discount = $request->transfer['discount'] ? $request->transfer['discount'] : 0;
+            // $order->shipping = $request->transfer['shipping'] ? $request->transfer['shipping'] : 0;
+            $order->discount = $request->discount_value ? $request->discount_value : 0;
+            $order->shipping = $request->shipping_value ? $request->shipping_value : 0;
             $order->statut = $request->transfer['statut'];
             $order->notes = $request->transfer['notes'];
             $order->GrandTotal = $request['GrandTotal'];
@@ -278,8 +280,8 @@ class TransferController extends Controller
                 $orderDetails['product_variant_id'] = $value['product_variant_id'];
                 $orderDetails['cost'] = $value['Unit_cost'];
                 $orderDetails['TaxNet'] = $value['tax_percent'];
-                $orderDetails['discount'] = 0;
-                $orderDetails['discount_method'] = 'nodiscount';
+                $orderDetails['discount'] = $value['discount'] ? $value['discount'] : 0;
+                $orderDetails['discount_method'] = $value['discount_method'];
                 $orderDetails['total'] = $value['subtotal'];
                 // memasukan data ke database
                 TransferDetail::insert($orderDetails);

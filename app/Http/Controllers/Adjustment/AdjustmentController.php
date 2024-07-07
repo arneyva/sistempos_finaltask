@@ -215,7 +215,96 @@ class AdjustmentController extends Controller
                         }
                     });
             })->get();
+        foreach ($product_warehouse_data as $product_warehouse) { //araay setelah dapat data product warehouse
 
+            if ($product_warehouse->product_variant_id) { //jika memiliki data product_variant_id
+                $item['product_variant_id'] = $product_warehouse->product_variant_id;
+                $item['code'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
+                $item['Variant'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['name'] = '[' . $product_warehouse['productVariant']->name . ']' . $product_warehouse['product']->name; //code ngambil dari relasi productVariant
+                $item['barcode'] = $product_warehouse['productVariant']->code; //code ngambil dari relasi productVariant
+
+                $product_price = $product_warehouse['productVariant']->price; //code ngambil dari relasi productVariant
+            } else { //jika tidak memiliki data product_variant_id
+                $item['product_variant_id'] = null;
+                $item['Variant'] = null;
+                $item['code'] = $product_warehouse['product']->code;
+                $item['name'] = $product_warehouse['product']->name;
+                $item['barcode'] = $product_warehouse['product']->code;
+                $product_price = $product_warehouse['product']->price;
+            }
+
+            $item['id'] = $product_warehouse->product_id;
+            $item['product_type'] = $product_warehouse['product']->type;
+            $item['Type_barcode'] = $product_warehouse['product']->Type_barcode;
+            $firstimage = explode(',', $product_warehouse['product']->image);
+            $item['image'] = $firstimage[0];
+
+            if ($product_warehouse['product']['unitSale']) {
+
+                if ($product_warehouse['product']['unitSale']->operator == '/') {
+                    $item['qty_sale'] = $product_warehouse->qty * $product_warehouse['product']['unitSale']->operator_value;
+                    $price = $product_price / $product_warehouse['product']['unitSale']->operator_value;
+                } else {
+                    $item['qty_sale'] = $product_warehouse->qty / $product_warehouse['product']['unitSale']->operator_value;
+                    $price = $product_price * $product_warehouse['product']['unitSale']->operator_value;
+                }
+            } else {
+                $item['qty_sale'] = $product_warehouse['product']->type != 'is_service' ? $product_warehouse->qty : '---';
+                $price = $product_price;
+            }
+
+            if ($product_warehouse['product']['unitPurchase']) { //memeriksa apakah ada informasi tentang penjualan unit untuk produk di gudang.
+
+                if ($product_warehouse['product']['unitPurchase']->operator == '/') {
+                    $item['qty_purchase'] = round($product_warehouse->qty * $product_warehouse['product']['unitPurchase']->operator_value, 5);
+                } else {
+                    $item['qty_purchase'] = round($product_warehouse->qty / $product_warehouse['product']['unitPurchase']->operator_value, 5);
+                }
+            } else {
+                $item['qty_purchase'] = $product_warehouse->qty;
+            }
+
+            $item['manage_stock'] = $product_warehouse->manage_stock;
+            $item['qty'] = $product_warehouse['product']->type != 'is_service' ? $product_warehouse->qty : '---';
+            $item['unitSale'] = $product_warehouse['product']['unitSale'] ? $product_warehouse['product']['unitSale']->ShortName : '';
+            $item['unitPurchase'] = $product_warehouse['product']['unitPurchase'] ? $product_warehouse['product']['unitPurchase']->ShortName : '';
+
+            if ($product_warehouse['product']->TaxNet !== 0.0) {
+                //Exclusive
+                if ($product_warehouse['product']->tax_method == '1') {
+                    $tax_price = $price * $product_warehouse['product']->TaxNet / 100;
+                    $item['Net_price'] = $price + $tax_price;
+                    // Inxclusive
+                } else {
+                    $item['Net_price'] = $price;
+                }
+            } else {
+                $item['Net_price'] = $price;
+            }
+
+            $data[] = $item;
+        }
+
+        return response()->json($data);
+    }
+
+    public function Avilable_Products_by_Warehouse(request $request, $id)
+    {
+        $data = []; //menyimpan data array
+        $product_warehouse_data = ProductWarehouse::with('warehouse', 'product', 'productVariant')
+            ->where(function ($query) use ($request, $id) {
+                return $query->where('warehouse_id', $id)
+                    ->where('deleted_at', '=', null)
+                    ->where(function ($query) use ($request) {
+                        return $query->whereHas('product', function ($q) use ($request) {
+                            if ($request->is_sale == '1') {
+                                $q->where('not_selling', '=', 0);
+                            }
+                        });
+                    }) // mencari data product warehouse berdasarkan yang sudah dipilih di dropdown warehouse sebelumnya
+                    ->where('qty', '>', 1);
+            })->get();
         foreach ($product_warehouse_data as $product_warehouse) { //araay setelah dapat data product warehouse
 
             if ($product_warehouse->product_variant_id) { //jika memiliki data product_variant_id
@@ -317,13 +406,14 @@ class AdjustmentController extends Controller
 
         $item['is_imei'] = $Product_data['is_imei'];
         $item['not_selling'] = $Product_data['not_selling'];
-        // $item['qty']         = $stock->qty ?? 'cek';
 
         //product single
         if ($Product_data['type'] == 'is_single') {
             $stock = ProductWarehouse::where('product_id', $Product_data['id'])->where('warehouse_id', $warehouse_id)->first();
             $product_price = $Product_data['price'];
             $product_cost = $Product_data['cost'];
+            $item['quantity_discount'] = $stock->quantity_discount;
+            $item['discount_percentage'] = $stock->discount_percentage;
             $item['qty'] = $stock->qty;
             if ($Product_data['unitSale']) {
                 if ($Product_data['unitSale']->operator == '/') {
@@ -345,6 +435,7 @@ class AdjustmentController extends Controller
             }
             $item['code'] = $Product_data['code'];
             $item['name'] = $Product_data['name'];
+            $item['quantity_discount_purchase'] =  $item['quantity_discount'] / $item['qty_product_sale'];
             $item['product_variant_id'] = null;
 
             //product is_variant
@@ -356,6 +447,8 @@ class AdjustmentController extends Controller
 
             $product_price = $product_variant_data['price'];
             $product_cost = $product_variant_data['cost'];
+            $item['quantity_discount'] = $stock->quantity_discount;
+            $item['discount_percentage'] = $stock->discount_percentage;
             $item['qty'] = $stock->qty;
             if ($Product_data['unitSale']) {
                 if ($Product_data['unitSale']->operator == '/') {
@@ -375,6 +468,7 @@ class AdjustmentController extends Controller
             } else {
                 $item['qty_product_purchase'] = floor($stock->qty);
             }
+            $item['quantity_discount_purchase'] =  $item['quantity_discount'] / $item['qty_product_sale'];
             $item['code'] = $product_variant_data['code'];
             $item['name'] = '[' . $product_variant_data['name'] . ']' . $Product_data['name'];
             $item['product_variant_id'] = $variant_id;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Adjustment;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
 use App\Models\Warehouse;
 use Carbon\Carbon;
@@ -18,10 +19,19 @@ class WarehousesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $warehouses = Warehouse::query()->latest()->paginate(1);
-
+        $warehousesQuery = Warehouse::query()->where('deleted_at', '=', null)->latest();
+        if ($request->filled('search')) {
+            $warehousesQuery->where(function ($query) use ($request) {
+                $query->where('name', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('city', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('mobile', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('zip', 'LIKE', '%' . $request->input('search') . '%')
+                    ->orWhere('country', 'LIKE', '%' . $request->input('search') . '%');
+            });
+        }
+        $warehouses = $warehousesQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
         return view('templates.settings.warehouses.index', [
             'warehouses' => $warehouses,
         ]);
@@ -77,7 +87,7 @@ class WarehousesController extends Controller
             $gmaps = $request->input('google_maps');
             $expandedUrl = $this->expandUrl($gmaps);
             $coordinates = $this->extractCoordinates($expandedUrl);
-            if (! $coordinates) {
+            if (!$coordinates) {
                 return back()->with('error', 'Invalid Google Maps URL, Use link from share feature in Google Maps');
             }
 
@@ -98,20 +108,33 @@ class WarehousesController extends Controller
             if ($products) {
                 foreach ($products as $products) {
                     $product_warehouse = [];
-                    // handle product standart
-                    $product_warehouse[] = [
-                        'product_id' => $products->id,
-                        'warehouse_id' => $warehouses->id,
-                        'product_variant_id' => null,
-                        'manage_stock' => 1,
-                        'qty' => 0,
-                    ];
+                    $Product_Variants = ProductVariant::where('product_id', $products->id)
+                        ->where('deleted_at', null)
+                        ->get();
+                    if ($Product_Variants->isNotEmpty()) {
+                        foreach ($Product_Variants as $product_variant) {
+                            $product_warehouse[] = [
+                                'product_id'         => $products->id,
+                                'warehouse_id'       => $warehouses->id,
+                                'product_variant_id' => $product_variant->id,
+                                'manage_stock'       => 1,
+                                'qty' => 0,
+                            ];
+                        }
+                    } else {
+                        // handle product standart
+                        $product_warehouse[] = [
+                            'product_id' => $products->id,
+                            'warehouse_id' => $warehouses->id,
+                            'product_variant_id' => null,
+                            'manage_stock' => 1,
+                            'qty' => 0,
+                        ];
+                    }
                     ProductWarehouse::insert($product_warehouse);
                     DB::commit();
                 }
             }
-
-            // return redirect('/settings/warehouses/index');
             return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouses created successfully');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
@@ -175,7 +198,7 @@ class WarehousesController extends Controller
         $expandedUrl = $this->expandUrl($gmaps);
         $coordinates = $this->extractCoordinates($expandedUrl);
 
-        if (! $coordinates) {
+        if (!$coordinates) {
             return redirect()->back()->with('error', 'Invalid Google Maps URL, Use link from share feature in Google Maps');
         }
 
@@ -204,7 +227,7 @@ class WarehousesController extends Controller
         $adjustment = Adjustment::where('warehouse_id', $id)->first();
         try {
             DB::beginTransaction();
-            if ($warehouses && ! $adjustment) {
+            if ($warehouses && !$adjustment) {
                 $warehouses->delete();
                 ProductWarehouse::where('warehouse_id', $id)->update([
                     'deleted_at' => Carbon::now(),
@@ -232,8 +255,7 @@ class WarehousesController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         $r = curl_exec($ch);
 
-        if (preg_match('/Location: (?P<url>.*)/i', $r, $match))
-        {
+        if (preg_match('/Location: (?P<url>.*)/i', $r, $match)) {
             return $this->expandUrl($match['url']);
         }
 

@@ -1,3 +1,10 @@
+<style>
+    .text-wrap {
+        white-space: normal;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
+</style>
 <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all ">
     <div class="sidebar-header d-flex align-items-center justify-content-start">
         <a href="{{ route('dashboard') }}" class="navbar-brand">
@@ -52,7 +59,7 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Dashboard</span>
+                        <span class="item-name">{{ __('Dashboard') }}</span>
                     </a>
                 </li>
                 <li>
@@ -79,7 +86,7 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Product</span>
+                        <span class="item-name">{{ __('Product') }}</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -102,7 +109,7 @@
                                         </svg>
                                     </i>
                                     <i class="sidenav-mini-icon"> H </i>
-                                    <span class="item-name"> Create Product </span>
+                                    <span class="item-name"> {{ __('Add Product') }} </span>
                                 </a>
                             </li>
                         @endrole
@@ -118,7 +125,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">All Product</span>
+                                <span class="item-name">{{ __('All Products') }}</span>
                             </a>
                         </li>
                         @role('underdev')
@@ -165,7 +172,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Category</span>
+                                <span class="item-name">{{ __('Category') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -180,7 +187,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Brand</span>
+                                <span class="item-name">{{ __('Brand') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -195,7 +202,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Unit</span>
+                                <span class="item-name">{{ __('Unit') }}</span>
                             </a>
                         </li>
                     </ul>
@@ -217,7 +224,7 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Adjustment</span>
+                        <span class="item-name">{{ __('Adjustment') }}</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -239,7 +246,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> B </i>
-                                <span class="item-name">Create Adjustment</span>
+                                <span class="item-name text-wrap">{{ __('Add Adjustment') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -254,7 +261,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> C </i>
-                                <span class="item-name">All Adjustment</span>
+                                <span class="item-name text-wrap">{{ __('All Adjustment') }}</span>
                             </a>
                         </li>
                     </ul>
@@ -276,10 +283,10 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name text-danger" >Purchase</span>
+                        <span class="item-name text-danger">Purchase</span>
                         <i class="right-icon">
-                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -287,7 +294,7 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-auth" data-bs-parent="#sidebar-menu">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('purchases.create')}}">
+                            <a class="nav-link" href="{{ route('purchases.create') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -302,7 +309,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('purchases.index')}}">
+                            <a class="nav-link" href="{{ route('purchases.index') }}">
                                 <i class="icon">
                                     <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
                                         viewBox="0 0 24 24" fill="currentColor">
@@ -347,7 +354,7 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Sales</span>
+                        <span class="item-name">{{ __('Sales') }}</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -369,7 +376,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> U </i>
-                                <span class="item-name">Create Sale</span>
+                                <span class="item-name text-wrap">{{ __('Add Sales') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -384,7 +391,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> A </i>
-                                <span class="item-name">All Sales</span>
+                                <span class="item-name text-wrap">{{ __('All Sales') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -399,7 +406,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> U </i>
-                                <span class="item-name">Shipments</span>
+                                <span class="item-name">{{ __('Shipments') }}</span>
                             </a>
                         </li>
                     </ul>
@@ -421,7 +428,7 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Sales Return</span>
+                        <span class="item-name text-wrap">{{ __('Sales') }} {{ __('Return') }}</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -442,7 +449,8 @@
                                         </g>
                                     </svg>
                                 </i>
-                                <span class="item-name">All Sales Return</span>
+                                <span class="item-name text-wrap">{{ __('All') }} {{ __('Sales') }}
+                                    {{ __('Return') }}</span>
                             </a>
                         </li>
                     </ul>
@@ -466,8 +474,8 @@
                         </i>
                         <span class="item-name text-danger">Purchase Return</span>
                         <i class="right-icon">
-                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -539,8 +547,8 @@
                         </i>
                         <span class="item-name text-danger">HRM</span>
                         <i class="right-icon">
-                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -598,7 +606,7 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Transfer</span>
+                        <span class="item-name">{{ __('Transfer') }}</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -621,7 +629,7 @@
                                         </svg>
                                     </i>
                                     <i class="sidenav-mini-icon"> E </i>
-                                    <span class="item-name">Create Transfer</span>
+                                    <span class="item-name">{{ __('Create Transfer') }}</span>
                                 </a>
                             </li>
                         @endrole
@@ -637,7 +645,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> E </i>
-                                <span class="item-name">All Transfer</span>
+                                <span class="item-name">{{ __('All Transfers') }}</span>
                             </a>
                         </li>
                     </ul>
@@ -661,8 +669,8 @@
                         </i>
                         <span class="item-name text-danger">Expense</span>
                         <i class="right-icon">
-                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -722,8 +730,8 @@
                         </i>
                         <span class="item-name text-danger">People</span>
                         <i class="right-icon">
-                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
                             </svg>
@@ -798,7 +806,7 @@
                                     stroke="currentColor" />
                             </svg>
                         </i>
-                        <span class="item-name">Settings</span>
+                        <span class="item-name text-wrap">{{ __('Settings') }}</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -821,7 +829,7 @@
                                         </svg>
                                     </i>
                                     <i class="sidenav-mini-icon"> B </i>
-                                    <span class="item-name">Warehouse</span>
+                                    <span class="item-name text-wrap">{{ __('Warehouse/Outlet') }}</span>
                                 </a>
                             </li>
                         @endrole
@@ -855,7 +863,7 @@
                                         </svg>
                                     </i>
                                     <i class="sidenav-mini-icon"> C </i>
-                                    <span class="item-name">Membership</span>
+                                    <span class="item-name">{{ __('Membership') }}</span>
                                 </a>
                             </li>
                         @endrole
@@ -872,7 +880,7 @@
                                         </svg>
                                     </i>
                                     <i class="sidenav-mini-icon"> B </i>
-                                    <span class="item-name">Company Setting</span>
+                                    <span class="item-name text-wrap">{{ __('Company') }} {{ __('Settings') }}</span>
                                 </a>
                             </li>
                         @endrole
@@ -894,7 +902,7 @@
                                     fill="currentColor" />
                             </svg>
                         </i>
-                        <span class="item-name">Reports</span>
+                        <span class="item-name">{{ __('Reports') }}</span>
                         <i class="right-icon">
                             <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -916,7 +924,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> S </i>
-                                <span class="item-name">Payments</span>
+                                <span class="item-name">{{ __('Payments') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -931,7 +939,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> O </i>
-                                <span class="item-name">Profit and Loss</span></a>
+                                <span class="item-name text-wrap">{{ __('Profit & Loss') }}</span></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link " href="{{ route('reports.quantity-alerts') }}">
@@ -945,7 +953,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Quantity Alerts</span>
+                                <span class="item-name text-wrap">{{ __('Quantity Alerts') }}</span>
                             </a>
                         </li>
                         {{--  --}}
@@ -961,7 +969,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Stock</span>
+                                <span class="item-name">{{ __('Stock') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -976,7 +984,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Customer</span>
+                                <span class="item-name">{{ __('Customer') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -991,7 +999,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Supplier</span>
+                                <span class="item-name">{{ __('Supplier') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -1006,7 +1014,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Top Selling Product</span>
+                                <span class="item-name text-wrap">{{ __('Top Selling Products') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -1021,7 +1029,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Employee</span>
+                                <span class="item-name">{{ __('Employee') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -1036,7 +1044,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Warehouse & Outlet</span>
+                                <span class="item-name">{{ __('Warehouse/Outlet') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -1051,7 +1059,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Sale</span>
+                                <span class="item-name">{{ __('Sales') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -1066,7 +1074,7 @@
                                     </svg>
                                 </i>
                                 <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">Purchase </span>
+                                <span class="item-name">{{ __('Purchases') }}</span>
                             </a>
                         </li>
                     </ul>

@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Purchases ~ Payments</h1>
-    <p>look up your payments</p>
+    <h1>{{ __('Purchases') }} ~ {{ __('Payments') }}</h1>
+    <p>{{ __('look up your payments') }}</p>
 @endsection
 
 <style>
@@ -87,18 +87,22 @@
                                 <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" role="tab" aria-selected="false">Purchase</a>
+                                        <a class="nav-link active show" role="tab"
+                                            aria-selected="false">{{ __('Purchases') }}</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.payments.sales-returns') }}" role="tab" aria-selected="false">Sales
-                                            Return</a>
+                                        <a class="nav-link" href="{{ route('reports.payments.sales-returns') }}"
+                                            role="tab" aria-selected="false">{{ __('Sales') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.payments.sales') }}" role="tab" aria-selected="false">Sales</a>
+                                        <a class="nav-link" href="{{ route('reports.payments.sales') }}" role="tab"
+                                            aria-selected="false">{{ __('Sales') }}</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('reports.payments.purchases-returns') }}" role="tab" aria-selected="false">Purchase
-                                            Return</a>
+                                        <a class="nav-link" href="{{ route('reports.payments.purchases-returns') }}"
+                                            role="tab" aria-selected="false">{{ __('Purchases') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -120,11 +124,13 @@
                                                         </svg>
                                                     </span>
                                                     <input type="search" class="form-control" name="search"
-                                                        value="{{ request()->input('search') }}" placeholder="Search...">
+                                                        value="{{ request()->input('search') }}"
+                                                        placeholder="{{ __('Search...') }}">
                                                 </div>
                                             </form>
                                             <div class="header-title">
-                                                <button type="button" class="btn btn-soft-danger">Excel</button>
+                                                <a href="{{ route('reports.payments.purchases-export', request()->query()) }}"
+                                                    class="btn btn-soft-danger">Excel</a>
                                             </div>
                                         </div>
                                         <div class="card-body p-0">
@@ -132,12 +138,12 @@
                                                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                                                     <thead>
                                                         <tr>
-                                                            <th>Date</th>
-                                                            <th>Reference</th>
-                                                            <th>Purchase</th>
-                                                            <th>Supplier</th>
-                                                            <th>Paid by</th>
-                                                            <th>Amount</th>
+                                                            <th>{{ __('Date') }}</th>
+                                                            <th>{{ __('Reference') }}</th>
+                                                            <th>{{ __('Purchase') }}</th>
+                                                            <th>{{ __('Supplier') }}</th>
+                                                            <th>{{ __('Payment Method') }}</th>
+                                                            <th>{{ __('Amount') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
