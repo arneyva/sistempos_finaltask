@@ -338,6 +338,7 @@ class TransferController extends Controller
         $transfer['statut'] = $Transfer_data->statut;
         $transfer['notes'] = $Transfer_data->notes;
         $transfer['date'] = $Transfer_data->date;
+
         $transfer['tax_rate'] = $Transfer_data->tax_rate;
         $transfer['TaxNet'] = $Transfer_data->TaxNet;
         $transfer['discount'] = $Transfer_data->discount;
@@ -357,7 +358,8 @@ class TransferController extends Controller
                 $unit = Unit::where('id', $product_unit_purchase_id['unitPurchase']->id)->first();
                 $data['no_unit'] = 0;
             }
-
+            // $data['quantity_discount'] = $detail->quantity_discount;
+            // $data['discount_percentage'] = $detail->discount_percentage;
             // Fetch item_product based on product_variant_id
             if ($detail->product_variant_id) {
                 $item_product = ProductWarehouse::where('product_id', $detail->product_id)
@@ -373,6 +375,8 @@ class TransferController extends Controller
                 $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
                 $data['code'] = $productsVariants->code;
                 $data['product_variant_id'] = $detail->product_variant_id;
+                $quantity_discount =  $item_product->quantity_discount ?? 0;
+                $discount_percentage =  $item_product->discount_percentage ?? 0;
             } else {
                 $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('deleted_at', '=', null)
@@ -383,33 +387,37 @@ class TransferController extends Controller
                 $data['product_variant_id'] = null;
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
+                $quantity_discount =  $item_product->quantity_discount ?? 0;
+                $discount_percentage =  $item_product->discount_percentage ?? 0;
             }
 
             // Calculate stock based on unit operator
             if ($unit && $unit->operator == '/') {
-                $data['stock'] = $item_product ? $item_product->qty * $unit->operator_value : 0;
+                $data['stock'] = floor($item_product ? $item_product->qty * $unit->operator_value : 0);
+                $data['stock_sale'] = $item_product->qty;
             } elseif ($unit && $unit->operator == '*') {
-                $data['stock'] = $item_product ? $item_product->qty / $unit->operator_value : 0;
+                $data['stock'] = floor($item_product ? $item_product->qty / $unit->operator_value : 0);
+                $data['stock_sale'] = $item_product->qty;
             } else {
                 $data['stock'] = 0;
             }
 
             // Calculate initial stock in purchase unit by reversing the transfer quantity operation
             if ($unit && $unit->operator == '/') {
-                $initial_stock_in_base_unit = ($data['stock'] + $detail->quantity) / $unit->operator_value;
+                $initial_stock_in_base_unit = floor(($data['stock'] + $detail->quantity) / $unit->operator_value);
             } elseif ($unit && $unit->operator == '*') {
-                $initial_stock_in_base_unit = ($data['stock'] + $detail->quantity) * $unit->operator_value;
+                $initial_stock_in_base_unit = floor(($data['stock'] + $detail->quantity) * $unit->operator_value);
             } else {
-                $initial_stock_in_base_unit = $data['stock'] + $detail->quantity;
+                $initial_stock_in_base_unit = floor($data['stock'] + $detail->quantity);
             }
 
             // Convert initial stock from base unit to purchase unit
             if ($unit->operator == '*') {
-                $data['initial_stock'] = $initial_stock_in_base_unit / $unit->operator_value;
+                $data['initial_stock'] = floor($initial_stock_in_base_unit / $unit->operator_value);
             } elseif ($unit->operator == '/') {
-                $data['initial_stock'] = $initial_stock_in_base_unit * $unit->operator_value;
+                $data['initial_stock'] = floor($initial_stock_in_base_unit * $unit->operator_value);
             } else {
-                $data['initial_stock'] = $initial_stock_in_base_unit;
+                $data['initial_stock'] = floor($initial_stock_in_base_unit);
             }
 
             // Assigning other data fields
@@ -421,22 +429,28 @@ class TransferController extends Controller
             $data['qty_copy'] = $detail->quantity;
             $data['unitPurchase'] = $unit->ShortName;
             $data['purchase_unit_id'] = $unit->id;
+            $data['total'] = $detail->total;
+            $data['quantity_discount'] = $quantity_discount;
+            $data['quantity_discount_init'] = $quantity_discount / $data['stock_sale'];
+            $data['discount_percentage'] =  $discount_percentage;
+            // $data['total'] = $detail->total;
 
             // Calculate discount and tax
-            if ($detail->discount_method == '2') {
+            if ($detail->discount_method == 'discount') {
                 $data['DiscountNet'] = $detail->discount;
             } else {
                 $data['DiscountNet'] = $detail->cost * $detail->discount / 100;
             }
-            $tax_cost = $detail->TaxNet * (($detail->cost - $data['DiscountNet']) / 100);
+            // $tax_cost = $detail->TaxNet * (($detail->cost - $data['DiscountNet']) / 100);
+            $tax_cost = $detail->TaxNet * ($detail->cost / 100);
             $data['Unit_cost'] = $detail->cost;
             $data['tax_percent'] = $detail->TaxNet;
             $data['tax_method'] = $detail->tax_method;
             $data['discount'] = $detail->discount;
-            $data['discount_Method'] = $detail->discount_method;
+            $data['discount_method'] = $detail->discount_method;
 
             // Calculate net cost and subtotal based on tax method
-            if ($detail->tax_method == '1') {
+            if ($detail->tax_method == 'Exclusive') {
                 $data['Net_cost'] = $detail->cost - $data['DiscountNet'];
                 $data['taxe'] = $tax_cost;
                 $data['subtotal'] = ($data['Net_cost'] * $data['quantity']) + ($tax_cost * $data['quantity']);
@@ -458,7 +472,7 @@ class TransferController extends Controller
             $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
-
+        // return response()->json(['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses]);
         return view('templates.transfer.edit', ['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses]);
     }
 
@@ -712,6 +726,8 @@ class TransferController extends Controller
                     $TransDetail['cost'] = $product_detail['Unit_cost'];
                     $TransDetail['TaxNet'] = $product_detail['tax_percent'];
                     $TransDetail['total'] = $product_detail['subtotal'];
+                    $TransDetail['discount'] = $product_detail['discount'] ? $product_detail['discount'] : 0;
+                    $TransDetail['discount_method'] = $product_detail['discount_method'] ? $product_detail['discount_method'] : 0;
                     if (!isset($product_detail['id']) || !in_array($product_detail['id'], $old_products_id)) {
                         TransferDetail::create($TransDetail);
                     } else {
@@ -729,8 +745,8 @@ class TransferController extends Controller
                 'items' => count($request['details']),
                 'tax_rate' => $Trans['tax_rate'] ? $Trans['tax_rate'] : 0,
                 'TaxNet' => $Trans['TaxNet'] ? $Trans['TaxNet'] : 0,
-                'discount' => $Trans['discount'] ? $Trans['discount'] : 0,
-                'shipping' => $Trans['shipping'] ? $Trans['shipping'] : 0,
+                'discount' => $Trans['discount_value'] ? $Trans['discount_value'] : 0,
+                'shipping' => $Trans['shipping_value'] ? $Trans['shipping_value'] : 0,
                 'GrandTotal' => $request['GrandTotal'],
             ]);
         }, 10);
