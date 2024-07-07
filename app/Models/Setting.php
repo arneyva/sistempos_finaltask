@@ -9,7 +9,7 @@ class Setting extends Model
     protected $fillable = [
         'currency_id', 'email', 'CompanyName', 'CompanyPhone', 'CompanyAdress', 'quotation_with_stock',
         'logo', 'footer', 'developed_by', 'client_id', 'warehouse_id', 'default_language',
-        'is_invoice_footer', 'invoice_footer',
+        'is_invoice_footer', 'invoice_footer', 'server_password',
     ];
 
     protected $casts = [
@@ -18,6 +18,11 @@ class Setting extends Model
         'quotation_with_stock' => 'integer',
         'is_invoice_footer' => 'integer',
         'warehouse_id' => 'integer',
+        'server_password' => 'hashed',
+    ];
+
+    protected $hidden = [
+        'server_password',
     ];
 
     public function Currency()

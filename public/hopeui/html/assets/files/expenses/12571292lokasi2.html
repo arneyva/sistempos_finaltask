@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta dengan Leaflet dan Pencarian Lokasi</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        #map {
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="form-group">
+            <label for="search-location">Cari Lokasi:</label>
+            <input type="text" id="search-location" class="form-control" placeholder="Masukkan lokasi">
+            <button id="search-button" class="btn btn-primary mt-2">Cari</button>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Inisialisasi peta
+            var map = L.map('map').setView([-6.200000, 106.816666], 13); // Koordinat Jakarta
+
+            // Tambahkan layer peta
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Inisialisasi penanda
+            var marker;
+
+            // Fungsi untuk menambahkan penanda ke peta
+            function addMarker(lat, lng) {
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+                marker = L.marker([lat, lng]).addTo(map)
+                    .bindPopup("Koordinat: " + lat + ", " + lng)
+                    .openPopup();
+            }
+
+            // Inisialisasi geocoder
+            var geocoder = L.Control.Geocoder.nominatim();
+
+            // Fungsi pencarian lokasi
+            $('#search-button').click(function() {
+                var location = $('#search-location').val();
+                geocoder.geocode(location, function(results) {
+                    if (results.length > 0) {
+                        var result = results[0];
+                        map.setView(result.center, 13);
+                        addMarker(result.center.lat, result.center.lng);
+                    } else {
+                        alert('Lokasi tidak ditemukan.');
+                    }
+                });
+            });
+
+            // Tambahkan event listener untuk double-click pada peta
+            map.on('dblclick', function(e) {
+                var lat = e.latlng.lat;
+                var lng = e.latlng.lng;
+                addMarker(lat, lng);
+            });
+        });
+    </script>
+</body>
+</html>

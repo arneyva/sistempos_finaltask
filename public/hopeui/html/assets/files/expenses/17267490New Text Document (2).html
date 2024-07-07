@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="map" style="height: 500px;"></div>
+    <div id="result"></div>
+    <script>
+        var map = L.map('map').setView([0, 0], 2); // Inisialisasi peta
+
+        // Tambahkan tile layer ke peta (gunakan provider peta yang valid)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var targetLatLng = L.latLng(-6.200000, 106.816666); // Lokasi target (misalnya, Jakarta)
+
+        // Periksa status izin lokasi
+        navigator.permissions.query({name: 'geolocation'}).then(function(permissionStatus) {
+            if (permissionStatus.state === 'granted') {
+                getUserLocation();
+            } else if (permissionStatus.state === 'prompt') {
+                alert("Aktifkan lokasi dan berikan izin akses lokasi untuk melanjutkan.");
+                getUserLocation();
+            } else {
+                alert("Izin akses lokasi ditolak. Aktifkan izin akses lokasi di pengaturan browser Anda.");
+            }
+        });
+
+        function getUserLocation() {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
+
+                // Tambahkan marker untuk lokasi pengguna
+                L.marker(userLatLng).addTo(map).bindPopup("Lokasi Anda").openPopup();
+
+                // Pusatkan peta ke lokasi pengguna
+                map.setView(userLatLng, 14);
+
+                // Hitung dan tampilkan jarak
+                var distance = userLatLng.distanceTo(targetLatLng);
+                document.getElementById("result").innerHTML = "Jarak ke lokasi target: " + distance.toFixed(2) + " meter.";
+            }, function(error) {
+                alert("Gagal mendapatkan lokasi. Pastikan GPS aktif dan berikan izin akses lokasi.");
+            }, {
+                enableHighAccuracy: true, // Pastikan menggunakan GPS untuk akurasi tinggi
+                timeout: 10000, // Waktu tunggu maksimal
+                maximumAge: 0 // Jangan menggunakan cache lokasi
+            });
+        }
+    </script>
+</body>
+</html>

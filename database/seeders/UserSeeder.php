@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             'firstname' => 'Staff',
             'lastname' => 'biasa',
             'username' => 'user',
-            'email' => 'user@gmail.com',
+            'email' => 'staff@gmail.com',
             'password' => bcrypt('password'),
             'pin' => $this->getPin(),
             'phone' => '089655443322',

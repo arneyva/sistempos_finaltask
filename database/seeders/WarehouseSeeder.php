@@ -19,6 +19,10 @@ class WarehouseSeeder extends Seeder
             'zip' => '56434',
             'email' => 'gudangutama@gmail.com',
             'country' => 'Indonesia',
+            'address' => 'Karangasem,laweyan,ska',
+            'google_maps' => 'https://maps.app.goo.gl/sCJFvsUQmenk75ag9',
+            'latitude' => -7.5623686,
+            'longitude' => 110.8099521,
         ]);
         Warehouse::firstOrCreate([
             'name' => 'Outlet 1',
@@ -27,6 +31,10 @@ class WarehouseSeeder extends Seeder
             'zip' => '56434',
             'email' => 'outletsatu@gmail.com',
             'country' => 'Indonesia',
+            'address' => 'Karangasem,laweyan,ska',
+            'google_maps' => 'https://maps.app.goo.gl/sCJFvsUQmenk75ag9',
+            'latitude' => -7.5623686,
+            'longitude' => 110.8099521,
         ]);
         Warehouse::firstOrCreate([
             'name' => 'Outlet 2',
@@ -35,6 +43,10 @@ class WarehouseSeeder extends Seeder
             'zip' => '56434',
             'email' => 'outletdua@gmail.com',
             'country' => 'Indonesia',
+            'address' => 'Karangasem,laweyan,ska',
+            'google_maps' => 'https://maps.app.goo.gl/sCJFvsUQmenk75ag9',
+            'latitude' => -7.5623686,
+            'longitude' => 110.8099521,
         ]);
     }
 }

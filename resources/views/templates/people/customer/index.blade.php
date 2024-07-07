@@ -64,7 +64,7 @@
                                 <td>{{ $data->email }}</td>
                                 <td>{{ $data->phone }}</td>
                                 <td>{{ $data->score }}</td>
-                                <td>{{ $data->created_at }}</td>
+                                <td>{{ $data->created_at->format('d, F Y') }}</td>
                                 <td>
                                     <div class="inline">
                                         <button class="editBtn" data-id="{{$data['id']}}" data-name="{{$data->name}}" data-email="{{$data->email}}" data-phone="{{$data->phone}}" style="background-color: transparent; border: none; display: inline-block;">

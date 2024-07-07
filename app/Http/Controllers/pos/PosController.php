@@ -9,7 +9,7 @@ use App\Models\PaymentSale;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
-use App\Models\Purchase;
+use App\Models\Sale;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseReturn;
 use App\Models\PurchaseReturnDetails;
@@ -30,17 +30,21 @@ use Spatie\Permission\Models\Role;
 class PosController extends Controller
 {
     public function create() {
-        
+        //ambil user akun ini 
         $user=Auth::user();
+        //ambil warehousenya
         $warehouse = $user->warehouses->first();
 
         // Tanggal hari ini
         $today = Carbon::today()->toDateString();
 
+        //untuk data staff yang akan melakukan kasir
         $staff = User::role('staff')
+                //harus yang warehousenya sesuai dengan akun tersebut jadi satu akun bisa dipakai banyak kasir yang bekerja
                 ->whereHas('warehouses', function ($query) use ($warehouse) {
                     $query->where('id', $warehouse->id);
                 })
+                //untuk mengurangi biar nggak kelamaan nyarinya soalnya seatiap transaksi dipilh terus, saring ke user sedang masuk
                 ->whereHas('attendances', function ($query) use ($today) {
                     $query->where('date', $today)
                             ->whereNull('clock_out')
@@ -52,6 +56,9 @@ class PosController extends Controller
         $clients=Client::all();
         // Ambil semua produk
         $products = Product::all();
+        // Ambil semua sale sesuai warehouse yang dilakukan lewat kasir
+        $sales = Sale::where('warehouse_id', $warehouse->id)
+                        ->where('is_pos', 1);
 
         // Gabungkan data produk dengan 
         $allProduct = $products->map(function($product) {
@@ -73,6 +80,7 @@ class PosController extends Controller
             'clients' => $clients,
             'warehouse' => $warehouse,
             'staff' => $staff,
+            'sales' => $sales,
         ]);
     }
 }

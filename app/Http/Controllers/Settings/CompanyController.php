@@ -15,6 +15,7 @@ class CompanyController extends Controller
     }
     public function update(Request $request, string $id)
     {
+        $company = Setting::where('id', '=', 1)->first();
         $updateRules = $request->validate([
             'CompanyName' => [
                 'required',
@@ -27,11 +28,22 @@ class CompanyController extends Controller
             ],
             'CompanyAdress' => ['required'],
         ]);
+
+        $pass = $company->server_password;
+        if ($request->server_password) {
+            request()->validate([
+                'server_password' => 'min:19'
+            ]);
+
+            $pass = Hash::make($request->server_password);
+        }
+
         $company = Setting::where('id', $id)->update([
             'CompanyName' => $updateRules['CompanyName'],
             'email' => $updateRules['email'],
             'CompanyPhone' => $updateRules['CompanyPhone'],
             'CompanyAdress' => $updateRules['CompanyAdress'],
+            'server_password' => $pass,
         ]);
         return redirect()->route('settings.company.edit')->with('success', 'Company Profile updated successfully');
     }

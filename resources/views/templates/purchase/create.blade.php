@@ -11,34 +11,65 @@
 
 @section('content')
 <style type="text/css">
-    .background {
-        position: fixed; /* atau 'absolute', tergantung kebutuhan */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Warna gelap dengan transparansi */
-        z-index: 1; /* Pastikan lebih tinggi dari elemen lain kecuali modal */
+.send-email {
+    font-family: inherit;
+    font-size: 1.15vw;
+    background: royalblue;
+    color: white;
+    padding: 0.7em 1em;
+    padding-left: 0.9em;
+    display: flex;
+    align-items: center;
+    border: none;
+    border-radius: 3.5px;
+    overflow: hidden;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+
+.send-email span {
+    display: block;
+    margin-left: 0.46em;
+    transition: all 0.27s ease-in-out;
+}
+
+.send-email svg {
+    display: block;
+    transform-origin: center center;
+    transition: transform 0.1s ease-in-out;
+}
+
+.send-email:hover svg {
+    transform: translateX(0em) rotate(45deg) scale(1.1);
+}
+
+.send-email:hover span {
+    transform: translateX(0em);
+}
+
+.send-email.loading .svg-wrapper {
+    animation: fly-1 0.4s ease-in-out infinite alternate;
+}
+
+.send-email.loading svg {
+    transform: translateX(5em) rotate(45deg) scale(1.1);
+}
+
+.send-email.loading span {
+    transform: translateX(12em);
+}
+
+@keyframes fly-1 {
+    from {
+        transform: translateY(-0.1em);
     }
 
-    .overlay {
-        z-index: 2; /* Pastikan lebih tinggi dari elemen lain kecuali modal */
+    to {
+        transform: translateY(0.1em);
     }
+}
 
-    img {
-        display: block;
-        max-width: 100%;
-    }
-
-    .image-container {
-        overflow: hidden;
-        max-width: 510px !important;
-        max-height: 370px !important;
-    }
-
-    .preview {
-        display: none;
-    }
 
     /* Custom CSS to adjust the Bootstrap media query breakpoints */
     @media (min-width: 768px) and (max-width: 1300px) {
@@ -102,16 +133,16 @@
         </div>
         <div class="tab-content">
             <div class="card-body py-5 tab-pane fade active show" id="order">
-            <form method="POST" action="{{ route('purchases.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('purchases.store') }}" id="purchase_order" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <div class="form-group col-sm-4">
                         <label class="form-label" for="name">Date:</label>
-                        <input type="date" value="{{ old('date') }}" class="form-control @error('date') is-invalid @enderror" id="date" name="date" >
+                        <input type="date" value="{{ old('date') }}" class="form-control @error('date') is-invalid @enderror" id="date" name="date" required>
                     </div>
                     <div class="form-group col-sm-4">
                         <label class="form-label"for="location">Supplier:</label>
-                        <select class="form-control" id="supplier" name="supplier">
+                        <select class="form-control" id="supplier" name="supplier" required>
                             <option selected disabled hidden value="">Supplier</option>
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}" {{ old('supplier') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
@@ -120,12 +151,12 @@
                     </div>
                     <div class="form-group col-sm-4">
                         <label class="form-label"for="location">Destination:</label>
-                        <select class="form-control" id="location" name="location">
+                        <select class="form-control" id="location" name="location" required>
                                 <option value="{{ $warehouse->id }}" selected>{{ $warehouse->name }}</option>
                         </select>
                     </div>
                     <div class="form-group col-sm-12 mt-4">
-                        <select id="itemDropdown" name="products[]" style="width: 100%;">
+                        <select id="itemDropdown" style="width: 100%;">
                             <option value=""></option>
                             @foreach($products as $product)
                                 @if ($product['variant']->isEmpty())
@@ -188,10 +219,10 @@
                                 <div class="row">
                                     <div class="form-group" style="display: flex; align-items: center;">
                                         <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Email</label>
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important" required>Email</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float: right;">
-                                            <input type="email" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="email" name="email" >
+                                            <input type="email" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="email" name="email" required>
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
@@ -226,7 +257,7 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Destination Address</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <textarea class="form-control form-control-sm @error('date') is-invalid @enderror" id="address" name="address" >{{ old('address') ?? $warehouse->address }}</textarea>
+                                            <textarea class="form-control form-control-sm @error('date') is-invalid @enderror" id="address" name="address" required>{{ old('address') ?? $warehouse->address }}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
@@ -235,62 +266,6 @@
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
                                             <input type="date" value="{{ old('req_arrive_date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="req_arrive_date" name="req_arrive_date" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Courier</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <select name="courier" id="courier" class="form-control" >
-                                                <option value="" select disabled hidden>Courier</option>
-                                                <option value="jne">JNE</option>
-                                                <option value="j&t">J&T</option>
-                                                <option value="sicepat">SiCepat</option>
-                                                <option value="anteraja">Anteraja</option>
-                                                <option value="posindo">Pos Infonesia</option>
-                                                <option value="own">Own Courier</option>
-                                            </select>                                            
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Driver Contact</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('driver_phone') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="driver_phone" name="driver_phone" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Shipment Number</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('shipment_number') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="shipment_number" name="shipment_number" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Shipment Cost</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('shipment_cost') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="shipment_cost" name="shipment_cost" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Estimate Arrive Date</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="date" value="{{ old('est_arrive_date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="est_arrive_date" name="est_arrive_date" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label custom-file-input" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Delivery File</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="file" onchange="checkFileSize(this)" class="form-control form-control-sm @error('date') is-invalid @enderror" id="delivery_file" name="delivery_file" >
                                         </div>
                                     </div>
                                 </div>
@@ -327,8 +302,8 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Method</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <select name="payment_method" id="payment_method" class="form-control">
-                                                <option value="" select disabled hidden>Payment Method</option>
+                                            <select name="payment_method" id="payment_method" class="form-control" required>
+                                                <option value="" selected disabled hidden>Payment Method</option>
                                                 <option value="bni">BNI</option>
                                                 <option value="bri">BRI</option>
                                                 <option value="mandiri">Mandiri</option>
@@ -342,27 +317,11 @@
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
                                         <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Bank Account</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('supplier_bank_account') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="supplier_bank_account" name="supplier_bank_account" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">E-Walet Number</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('supplier_ewalet') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="supplier_ewalet" name="supplier_ewalet" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Term</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <select name="payment_term" id="payment_term" class="form-control">
-                                                <option value="" select disabled hidden>Payment Term</option>
+                                            <select name="payment_term" id="payment_term" class="form-control" required>
+                                                <option value="" selected disabled hidden>Payment Term</option>
                                                 <option value="on_invoice">Due on invoice</option>
                                                 <option value="7_invoice">7 days after invoice</option>
                                                 <option value="14_invoice">14 Days after Invoice</option>
@@ -424,7 +383,7 @@
                         <textarea  class="form-control @error('date') is-invalid @enderror" id="supplier_notes" name="supplier_notes" >{{ old('supplier_notes') }}</textarea> 
                     </div>
                     <div class="form-group col-sm-12">
-                        <select name="statut" id="statut" class="form-control" >
+                        <select name="statut" id="statut" class="form-control" required>
                             <option value="pending">Pending</option>
                             <option value="ordered">Ordered</option>
                             <option value="shipped">Shipped</option>
@@ -433,16 +392,38 @@
                         </select>   
                     </div>
                 </div>
-                <div class="card-footer" style="float: right;">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                <div class="card-footer d-flex" style="float: right;">
+                    <button type="button" class="send-email" data-send="send_email" id="send-email" autofocus>
+                        <div class="svg-wrapper-1">
+                            <div class="svg-wrapper">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                width="24"
+                                height="24"
+                            >
+                                <path fill="none" d="M0 0h24v24H0z"></path>
+                                <path
+                                fill="currentColor"
+                                d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                                ></path>
+                            </svg>
+                            </div>
+                        </div>
+                        <span>Save and Send Email</span>
+                    </button>
+
+                    <button type="submit" class="btn btn-primary ms-2">Save</button>
                 </div>
             </form>
             </div>
+
             <div class="card-body py-5 tab-pane fade" id="return">
                 <div class="card-footer" style="float: right;">
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
+
             <div class="card-body py-5 tab-pane fade" id="payment">
                 <div class="card-footer" style="float: right;">
                     <button type="submit" class="btn btn-primary">Save</button>
@@ -456,6 +437,67 @@
 @push('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script type="text/javascript" src="{{ asset('hopeui/html/assets/js/multiselect-dropdown.js') }}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#send-email').click(function() {
+            var button = this;
+            button.classList.add('loading');
+            $(button).attr('disabled', true);
+
+            var formData = $('#purchase_order').serialize();
+            var send= $(this).data('send');
+            // Mengirimkan data menggunakan AJAX
+            $.ajax({
+                type: "POST",
+                url: "{{ route('purchases.store') }}",
+                data: formData + '&send=' + send,
+                dataType: "json",
+                success: function(response) {
+                    if (response.errors) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            html: '<ol style="text-align: start">' + response.errors + '</ol>',
+                        });
+                    }
+                    else {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        Toast.fire({
+                            icon: "success",
+                            title: response.success
+                        });
+                        window.location.href = '/people/users/list';
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'company Email or app password not valid'
+                    });
+                    // Log the error for debugging
+                    console.error('Error: ', error);
+                    console.error('Response: ', xhr.responseText);
+                },
+                complete: function() {
+                    $(button).attr('disabled', false);
+                    button.classList.remove('loading');
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {

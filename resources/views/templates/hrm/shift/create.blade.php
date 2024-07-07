@@ -105,11 +105,11 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="{{ $day }}_in">In-Time</label>
-                                        <input type="time" class="form-control" id="{{ $day }}_in" name="{{ $day }}_in">
+                                        <input type="time" class="form-control" id="{{ $day }}_in" name="{{ $day }}_in" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="{{ $day }}_out">Out-Time</label>
-                                        <input type="time" class="form-control" id="{{ $day }}_out" name="{{ $day }}_out">
+                                        <input type="time" class="form-control" id="{{ $day }}_out" name="{{ $day }}_out" required>
                                     </div>
                                 </div>
                             </div>
@@ -136,6 +136,8 @@
         days.forEach(day => {
             const checkbox = document.getElementById(day);
             const times = document.getElementById(day + '-times');
+            const inn = document.getElementById(day + '_in');
+            const out = document.getElementById(day + '_out');
             const wrapper = document.getElementById(day + '-wrapper');
 
             checkbox.addEventListener('change', function() {

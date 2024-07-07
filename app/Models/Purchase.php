@@ -66,6 +66,7 @@ class Purchase extends Model
 
     protected $fillable = [
         'user_id',
+        'email',
         'checked_by',
         'Ref',
         'date',
@@ -94,7 +95,8 @@ class Purchase extends Model
         'barcode',
         'supplier_bank_account',
         'supplier_ewalet',
-        'delivery_file'
+        'delivery_file',
+        'email_pin',
     ];
 
     public function provider()
