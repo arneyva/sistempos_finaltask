@@ -5,6 +5,22 @@
     <p>{{ __('Manage your product transfers easily and efficiently') }}</p>
 @endsection
 <style>
+    /* Custom CSS to ensure proper height */
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        /* Adjust this value as needed */
+    }
+
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        line-height: 38px !important;
+        /* Match this value with the height */
+    }
+
+    .select2-container .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+        /* Match this value with the height */
+    }
+
     .hidden-input {
         display: none;
     }
@@ -55,7 +71,8 @@
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="selectProduct">{{ __('Product *') }}</label>
                                     <select class="form-select" id="selectProduct" disabled>
-                                        <option selected disabled value="">Choose warehouse first...</option>
+                                        <option selected disabled value="">
+                                            {{ __('Scan/Search Product by Code or Name') }}.</option>
                                     </select>
                                 </div>
                                 <div class="col-md-12 mb-3">
@@ -65,7 +82,7 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>{{ __('Product') }}</th>
-                                                    <th>{{ __('Price') }}</th>
+                                                    <th>{{ __('Purchases') }} {{ __('Cost') }}</th>
                                                     <th>{{ __('Initial Stock') }}</th>
                                                     <th>{{ __('Stock') }}</th>
                                                     <th>{{ __('Quantity') }}</th>
@@ -76,48 +93,30 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="product-table-body">
-                                                @foreach ($details as $detail)
+                                                @foreach ($details as $index => $detail)
                                                     <tr>
                                                         <td>#</td>
                                                         <td>{{ $detail['code'] }} {{ $detail['name'] }}</td>
-                                                        <td>{{ $detail['Net_cost'] }}</td>
+                                                        <td>{{ 'Rp ' . number_format($detail['Unit_cost'], 0, ',', '.') }}
                                                         <td>{{ $detail['initial_stock'] }} {{ $detail['unitPurchase'] }}
                                                         </td>
                                                         <td>{{ $detail['stock'] }} {{ $detail['unitPurchase'] }}</td>
                                                         <td>
                                                             <input type="number" class="form-control item-quantity"
-                                                                name="details[{{ $loop->index }}][quantity]"
+                                                                name="details[{{ $index }}][quantity]"
                                                                 value="{{ $detail['quantity'] }}" min="0"
-                                                                data-unit-cost="{{ $detail['Net_cost'] }}"
+                                                                data-unit-cost="{{ $detail['Unit_cost'] }}"
                                                                 data-tax-percent="{{ $detail['tax_percent'] }}"
                                                                 data-tax-method="{{ $detail['tax_method'] }}"
-                                                                max="{{ $detail['initial_stock'] }}">
+                                                                data-max-quantity="{{ $detail['stock'] }}">
                                                         </td>
-                                                        <td>Rp. {{ $detail['DiscountNet'] }}</td>
-                                                        <td>Rp. {{ $detail['taxe'] }}</td>
-                                                        <td class="item-total">Rp. {{ $detail['subtotal'] }}</td>
-                                                        <input type="hidden" class="item-subtotal"
-                                                            name="details[{{ $loop->index }}][subtotal]"
-                                                            value="{{ $detail['subtotal'] }}">
-                                                        <input type="hidden" name="details[{{ $loop->index }}][id]"
-                                                            value="{{ $detail['id'] }}">
-                                                        <input type="hidden" name="details[{{ $loop->index }}][no_unit]"
-                                                            value="{{ $detail['no_unit'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][purchase_unit_id]"
-                                                            value="{{ $detail['purchase_unit_id'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][product_variant_id]"
-                                                            value="{{ $detail['product_variant_id'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][product_id]"
-                                                            value="{{ $detail['product_id'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][Unit_cost]"
-                                                            value="{{ $detail['Unit_cost'] }}">
-                                                        <input type="hidden"
-                                                            name="details[{{ $loop->index }}][tax_percent]"
-                                                            value="{{ $detail['tax_percent'] }}">
+                                                        <td class="item-discount">
+                                                            {{ 'Rp ' . number_format($detail['DiscountNet'], 0, ',', '.') }}
+                                                        </td>
+                                                        <td>{{ 'Rp ' . number_format($detail['taxe'], 0, ',', '.') }}</td>
+                                                        {{-- <td class="item-total">Rp. {{ $detail['subtotal'] }}</td> --}}
+                                                        <td class="item-total">
+                                                            {{ 'Rp ' . number_format($detail['total'], 0, ',', '.') }}</td>
                                                         <td>
                                                             <button type="button"
                                                                 class="btn btn-danger btn-sm delete-row"><svg
@@ -133,6 +132,46 @@
                                                                     </g>
                                                                 </svg>
                                                             </button>
+                                                        </td>
+                                                        <td class="hidden-input">
+                                                            <input type="hidden" class="item-subtotal"
+                                                                name="details[{{ $index }}][subtotal]"
+                                                                value="{{ $detail['total'] }}">
+                                                            <input type="hidden" class="item-subdiscount"
+                                                                name="details[{{ $index }}][discount]"
+                                                                value="{{ $detail['discount'] }}">
+                                                            <input type="hidden" class="item-subdiscountmethod"
+                                                                name="details[{{ $index }}][discount_method]"
+                                                                value="{{ $detail['discount_method'] }}">
+                                                            <input type="hidden" name="details[{{ $index }}][id]"
+                                                                value="{{ $detail['id'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $index }}][no_unit]"
+                                                                value="{{ $detail['no_unit'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $index }}][purchase_unit_id]"
+                                                                value="{{ $detail['purchase_unit_id'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $index }}][product_variant_id]"
+                                                                value="{{ $detail['product_variant_id'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $index }}][product_id]"
+                                                                value="{{ $detail['product_id'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $index }}][Unit_cost]"
+                                                                value="{{ $detail['Unit_cost'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $index }}][tax_percent]"
+                                                                value="{{ $detail['tax_percent'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $index }}][tax_method]"
+                                                                value="{{ $detail['tax_method'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $index }}][quantity_discount]"
+                                                                value="{{ $detail['quantity_discount_init'] }}">
+                                                            <input type="hidden"
+                                                                name="details[{{ $index }}][discount_percentage]"
+                                                                value="{{ $detail['discount_percentage'] }}">
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -192,10 +231,10 @@
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label" for="discount">{{ __('Discount') }}</label>
                                             <div class="form-group input-group">
-                                                <input type="number" class="form-control" id="discount"
+                                                <input type="text" class="form-control" id="discount"
                                                     placeholder="{{ __('input discount') }}" name="transfer[discount]"
                                                     value="{{ $transfer['discount'] }}">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="hidden" id="discount_value" name="transfer[discount_value]">
                                             </div>
                                             @error('transfer.discount')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -210,10 +249,10 @@
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
                                             <div class="form-group input-group">
-                                                <input type="number" class="form-control" id="shipping"
+                                                <input type="text" class="form-control" id="shipping"
                                                     placeholder="{{ __('input shipping') }}" name="transfer[shipping]"
                                                     value="{{ $transfer['shipping'] }}">
-                                                <span class="input-group-text" id="basic-addon1">Rp. </span>
+                                                <input type="hidden" id="shipping_value" name="transfer[shipping_value]">
                                             </div>
                                             @error('transfer.shipping')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -266,25 +305,41 @@
 
 @push('script')
     <script>
-        document.getElementById('selectWarehouse').addEventListener('change', function() {
-            var fromWarehouse = this.value;
-            var toWarehouse = document.getElementById('selectToWarehouse').value;
-            if (fromWarehouse === toWarehouse) {
-                alert('From Warehouse and To Warehouse cannot be the same.');
-                this.value = '';
-            }
-        });
-        document.getElementById('selectToWarehouse').addEventListener('change', function() {
-            var toWarehouse = this.value;
-            var fromWarehouse = document.getElementById('selectWarehouse').value;
-            if (fromWarehouse === toWarehouse) {
-                alert('From Warehouse and To Warehouse cannot be the same.');
-                this.value = '';
-            }
+        $(document).ready(function() {
+            // Initialize Select2 for Warehouse Dropdown
+            $('#selectToWarehouse').select2({
+                placeholder: "Choose a warehouse...",
+                allowClear: true
+            });
+
+            // Custom event listener for Select2 change event
+            $('#selectToWarehouse').on('change', function() {
+                var toWarehouse = $(this).val();
+                var fromWarehouse = $('#selectWarehouse').val();
+                if (fromWarehouse === toWarehouse) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'From Warehouse and To Warehouse cannot be the same.',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    $(this).val(null).trigger('change');
+                }
+            });
         });
     </script>
     <script>
         $(document).ready(function() {
+            function formatRupiah(number) {
+                return 'Rp ' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
             let newIndex = 0;
             // Initial update on page load
             updateGrandTotal();
@@ -303,78 +358,164 @@
                     $('#selectProduct').empty().prop('disabled', true);
                 }
             });
+            $('#selectProduct').select2({
+                placeholder: 'Scan/Search Product by Code or Name',
+                allowClear: true,
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    if (typeof data.text === 'undefined' || typeof $(data.element).data('code') ===
+                        'undefined') {
+                        return null;
+                    }
+                    var term = params.term.toLowerCase();
+                    var text = data.text.toLowerCase();
+                    var code = $(data.element).data('code').toString().toLowerCase();
+
+                    if (text.indexOf(term) > -1 || code.indexOf(term) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
+            });
+
+            // Tambahkan event listener untuk fokus pada input pencarian saat dropdown dibuka
+            $('#selectProduct').on('select2:open', function() {
+                setTimeout(function() {
+                    document.querySelector('.select2-search__field').focus();
+                }, 100); // Penundaan 100ms sebelum fokus pada input pencarian
+            });
+            // Select product event handler
             $('#selectProduct').on('change', function() {
                 var productId = $(this).val();
                 var warehouseId = $('#selectWarehouse').val();
                 var variantId = $(this).find(':selected').data('variant-id') || null;
                 if (productId && warehouseId) {
-                    $.ajax({
-                        url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' +
-                            warehouseId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            var row = '<tr>';
-                            row += '<td>#</td>';
-                            row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
-                            row += '<td>' + 'Rp ' + data.Unit_cost + '</td>';
-                            row += '<td>' + 'New Data' + '</td>';
-                            row += '<td>' + data.qty_product_purchase + ' ' + data
-                                .unitPurchase + '</td>';
-                            row +=
-                                '<td><input type="number" class="form-control item-quantity" name="details[new-' +
-                                newIndex +
-                                '][quantity]" value="0" min="0" data-max-quantity="' + data
-                                .qty_product_purchase +
-                                '" data-unit-cost="' + data.Unit_cost + '" data-tax-percent="' +
-                                data.tax_percent +
-                                '" data-tax-method="' + data.tax_method + '"></td>';
-                            row += '<td class="item-discount">Rp 0</td>';
-                            row += '<td>' + 'Rp ' + data.tax_cost + '</td>';
-                            row += '<td class="item-total">Rp 0</td>';
-                            row +=
-                                '<td><button type="button" class="btn btn-danger btn-sm delete-row">';
-                            row +=
-                                '<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 48 48">';
-                            row +=
-                                '<g fill="none" stroke="#FFFFFF" stroke-linejoin="round" stroke-width="4">';
-                            row += '<path d="M9 10v34h30V10z" />';
-                            row +=
-                                '<path stroke-linecap="round" d="M20 20v13m8-13v13M4 10h40" />';
-                            row += '<path d="m16 10l3.289-6h9.488L32 10z" />';
-                            row += '</g>';
-                            row += '</svg>';
-                            row += '</button></td>';
-                            // Hidden inputs inside a hidden <td>
-                            row += '<td class="hidden-input">';
-                            row += '<input type="hidden" name="details[new-' + newIndex +
-                                '][id]" value="new">';
-                            row += '<input type="hidden" name="details[new-' + newIndex +
-                                '][no_unit]" value="1">';
-                            row += '<input type="hidden" name="details[new-' + newIndex +
-                                '][product_id]" value="' + data.id + '">';
-                            row += '<input type="hidden" name="details[new-' + newIndex +
-                                '][product_variant_id]" value="' + (variantId || '') + '">';
-                            row += '<input type="hidden" name="details[new-' + newIndex +
-                                '][purchase_unit_id]" value="' + data.purchase_unit_id + '">';
-                            row += '<input type="hidden" name="details[new-' + newIndex +
-                                '][Unit_cost]" value="' + data.Unit_cost + '">';
-                            row += '<input type="hidden" name="details[new-' + newIndex +
-                                '][tax_percent]" value="' + data.tax_percent + '">';
-                            row += '<input type="hidden" name="details[new-' + newIndex +
-                                '][tax_method]" value="' + data.tax_method + '">';
-                            row +=
-                                '<input type="hidden" class="item-subtotal" name="details[new-' +
-                                newIndex + '][subtotal]" value="0">';
-                            row += '</td>';
-                            row += '</tr>';
-                            $('#product-table-body').append(row);
-                            newIndex++;
-                            updateGrandTotal();
+                    var isDuplicate = false;
+                    $('#product-table-body tr').each(function() {
+                        var existingProductId = $(this).find('input[name$="[product_id]"]').val();
+                        var existingVariantId = $(this).find('input[name$="[product_variant_id]"]')
+                            .val() || null;
+                        if (existingProductId == productId && existingVariantId == variantId) {
+                            isDuplicate = true;
+                            $('#selectProduct').val('').trigger('change');
+                            return false; // Stop loop
                         }
                     });
+                    if (isDuplicate) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'warning',
+                            title: 'Produk sudah ditambahkan.',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        });
+                    } else {
+                        $.ajax({
+                            url: '/adjustment/show_product_data/' + productId + '/' + variantId +
+                                '/' + warehouseId,
+                            type: "GET",
+                            dataType: "json",
+                            success: function(data) {
+                                var initialQuantity = 1;
+                                var quantityUnit = initialQuantity * data.qty;
+                                var discountawal = data.Unit_cost * (data.discount_percentage /
+                                    100) * initialQuantity;
+                                console.log(discountawal);
+                                var formattedDiscountCost = formatRupiah(discountawal);
+                                console.log("Discount Cost:", formattedDiscountCost);
+                                var initialTotal = initialQuantity * data.Unit_cost +
+                                    initialQuantity * data.tax_cost - discountawal;
+                                var formattedUnitCost = formatRupiah(data.Unit_cost);
+                                var formattedTaxCost = formatRupiah(data.tax_cost);
+                                var formattedInitialTotal = formatRupiah(initialTotal);
+                                var row = '<tr>';
+                                row += '<td>#</td>';
+                                row += '<td>' + data.code + ' ~ ' + data.name + '</td>';
+                                row += '<td>' + formattedUnitCost + '</td>';
+                                row += '<td>' + 'New Data' + '</td>';
+                                row += '<td>' + data.qty_product_purchase + ' ' + data
+                                    .unitPurchase + '</td>';
+                                row +=
+                                    '<td><input type="number" class="form-control item-quantity" name="details[new-' +
+                                    newIndex + '][quantity]" value="' + initialQuantity +
+                                    '" data-min-quantity="1" data-max-quantity="' + data
+                                    .qty_product_purchase +
+                                    '"></td>';
+                                row += '<td class="item-discount">' + formattedDiscountCost +
+                                    '</td>';
+                                row += '<td>' + formattedTaxCost + '</td>';
+                                row += '<td class="item-total">' + formattedInitialTotal +
+                                    '</td>';
+                                row +=
+                                    '<td><button type="button" class="btn btn-danger btn-sm delete-row">';
+                                row +=
+                                    '<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 48 48">';
+                                row +=
+                                    '<g fill="none" stroke="#FFFFFF" stroke-linejoin="round" stroke-width="4">';
+                                row += '<path d="M9 10v34h30V10z" />';
+                                row +=
+                                    '<path stroke-linecap="round" d="M20 20v13m8-13v13M4 10h40" />';
+                                row += '<path d="m16 10l3.289-6h9.488L32 10z" />';
+                                row += '</g>';
+                                row += '</svg>';
+                                row += '</button></td>';
+                                row += '<td class="hidden-input">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][id]" value="new">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][no_unit]" value="1">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][product_id]" value="' + data.id + '">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][product_variant_id]" value="' + (variantId || '') + '">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][purchase_unit_id]" value="' + data.purchase_unit_id +
+                                    '">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][Unit_cost]" value="' + data.Unit_cost + '">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][tax_percent]" value="' + data.tax_percent + '">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][tax_method]" value="' + data.tax_method + '">';
+                                row +=
+                                    '<input type="hidden" class="item-subtotal" name="details[new-' +
+                                    newIndex + '][subtotal]" value="' + formattedInitialTotal +
+                                    '">';
+                                row +=
+                                    '<input type="hidden" class="item-subdiscount" name="details[new-' +
+                                    newIndex + '][discount]" value="0">';
+                                row +=
+                                    '<input type="hidden" class="item-subdiscountmethod" name="details[new-' +
+                                    newIndex + '][discount_method]" value="0">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][quantity_discount]" value="' + data.
+                                quantity_discount_purchase +
+                                    '">';
+                                row += '<input type="hidden" name="details[new-' + newIndex +
+                                    '][discount_percentage]" value="' + data
+                                    .discount_percentage + '">';
+                                row += '</td>';
+                                row += '</tr>';
+
+                                $('#product-table-body').append(row);
+                                newIndex++;
+                                updateGrandTotal();
+                                // Reset dropdown produk setelah menambahkan produk ke tabel
+                                $('#selectProduct').val('').trigger('change');
+                            }
+                        });
+                    }
                 }
             });
+
             function loadProductsByWarehouse(warehouseId) {
                 if (warehouseId) {
                     $.ajax({
@@ -403,60 +544,133 @@
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
                 var quantity = parseFloat($(this).val()) || 0;
+                var maxQuantity = parseFloat($(this).data('max-quantity')) || 0;
+                var minQuantity = parseFloat($(this).data('min-quantity')) || 1;
 
-                var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '')) || 0;
-                var taxCost = parseFloat(row.find('td:eq(6)').text().replace('Rp ', '')) || 0;
-                var totalCost = (unitCost + taxCost) * quantity;
+                if (quantity > maxQuantity) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'The quantity cannot exceed the available stock.',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    $(this).val(maxQuantity);
+                    quantity = maxQuantity;
+                }
+                if (quantity < minQuantity) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'The quantity cannot be less than 1.',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    $(this).val(minQuantity);
+                    quantity = minQuantity;
+                }
+                // Mengambil nilai unitPrice, taxPrice, quantityDiscount, dan discountPercentage dari elemen HTML
+                var unitCost = parseFloat(row.find('td:eq(2)').text().replace('Rp ', '').replace(/\./g,
+                    '')) || 0;
+                var taxCost = parseFloat(row.find('td:eq(7)').text().replace('Rp ', '').replace(/\./g,
+                    '')) || 0;
+                var quantityDiscount = parseFloat(row.find('input[name$="[quantity_discount]"]').val()) ||
+                    0;
+                var discountPercentage = parseFloat(row.find('input[name$="[discount_percentage]"]')
+                    .val()) || 0;
+                var discount = 0;
+                // Menghitung diskon jika kuantitas memenuhi syarat
+                if (quantity >= quantityDiscount) {
+                    discount = (unitCost * quantity) * (discountPercentage / 100);
+                    row.find('.item-discount').text(formatRupiah(discount.toFixed(
+                        0))); // Menggunakan toFixed(0) jika tidak menggunakan koma
+                    row.find('.item-subdiscount').val(discount.toFixed(
+                        0)); // Menggunakan toFixed(0) jika tidak menggunakan koma
+                    row.find('.item-subdiscountmethod').val('discount');
+                } else {
+                    row.find('.item-discount').text('Rp 0');
+                    row.find('.item-subdiscount').val('0');
+                    row.find('.item-subdiscountmethod').val('nodiscount');
+                }
 
-                row.find('.item-total').text('Rp ' + totalCost.toFixed(2));
-                row.find('.item-subtotal').val(totalCost.toFixed(2));
+                var totalCost = (unitCost + taxCost) * quantity - discount;
+                row.find('.item-total').text(formatRupiah(totalCost.toFixed(
+                    0))); // Menggunakan toFixed(0) jika tidak menggunakan koma
+                console.log("Total Cost:", totalCost.toFixed(
+                    0));
+                row.find('.item-subtotal').val(totalCost.toFixed(
+                    0)); // Menggunakan toFixed(0) jika tidak menggunakan koma
+                // Memperbarui grand total
                 updateGrandTotal();
             });
-
+            var cleaveDiscount = new Cleave('#discount', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                prefix: 'Rp ',
+                delimiter: '.'
+            });
+            var cleaveShipping = new Cleave('#shipping', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                prefix: 'Rp ',
+                delimiter: '.'
+            });
+            // Function to get numeric value from a formatted input
+            function getNumericValue(elementId) {
+                var formattedValue = $('#' + elementId).val();
+                var numericValue = formattedValue.replace(/[^\d,]/g, '').replace(',', '.');
+                return parseFloat(numericValue) || 0;
+            }
             $('#tax_rate, #discount, #shipping').on('input', function() {
                 updateGrandTotal();
             });
 
             function updateGrandTotal() {
                 var grandTotal = 0;
-                var taxNet = 0;
+
+                // Iterate through each row in the product table
                 $('#product-table-body tr').each(function() {
-                    var row = $(this);
-                    var quantity = parseFloat(row.find('.item-quantity').val()) || 0;
-                    var unitCost = parseFloat(row.find('.item-quantity').data('unit-cost')) || 0;
-                    var taxPercent = parseFloat(row.find('.item-quantity').data('tax-percent')) || 0;
-                    var taxMethod = row.find('.item-quantity').data('tax-method');
-                    var total = quantity * unitCost;
-                    var tax = 0;
-
-                    if (taxMethod === 'inclusive') {
-                        tax = (total * taxPercent) / (100 + taxPercent);
-                    } else {
-                        tax = (total * taxPercent) / 100;
+                    // Extract and parse the raw numeric value from the item-total text
+                    var total = parseFloat($(this).find('.item-total').text().replace('Rp ', '').replace(
+                        /\./g, '')) || 0;
+                    if (!isNaN(total)) {
+                        grandTotal += total;
                     }
-
-                    var subtotal = total + tax;
-                    row.find('.item-total').text('Rp ' + subtotal.toFixed(2));
-                    row.find('.item-subtotal').val(subtotal.toFixed(2));
-                    grandTotal += subtotal;
-                    taxNet += tax;
                 });
-
-                var discount = parseFloat($('#discount').val()) || 0;
-                var shipping = parseFloat($('#shipping').val()) || 0;
+                var discount = getNumericValue('discount');
+                console.log(discount);
+                var shipping = getNumericValue('shipping');
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
-                var taxNetFromRate = (taxRate / 100) * grandTotal;
 
-                grandTotal = grandTotal - discount + shipping + taxNetFromRate;
-
+                // Update hidden fields with numeric values
+                $('#discount_value').val(discount);
+                $('#shipping_value').val(shipping);
+                // Calculate tax amount
+                var taxNet = (taxRate / 100) * grandTotal;
                 $('#tax_net').val(taxNet.toFixed(2));
+
+                // Calculate grand total
+                grandTotal = grandTotal - discount + shipping + taxNet;
+                $('#basic-table tr:nth-child(1) th').text(formatRupiah(taxNet.toFixed(0))); // Order Tax
+                $('#basic-table tr:nth-child(2) th').text(formatRupiah(discount.toFixed(0))); // Discount
+                $('#basic-table tr:nth-child(3) th').text(formatRupiah(shipping.toFixed(0))); // Shipping
+                $('#basic-table tr:nth-child(4) th').text(formatRupiah(grandTotal.toFixed(0))); // Grand Total
                 $('#grandTotal').val(grandTotal.toFixed(2));
 
-                // Update the displayed values in the table
-                $('#basic-table tr:nth-child(1) th').text('Rp ' + taxNetFromRate.toFixed(2)); // Order Tax
-                $('#basic-table tr:nth-child(2) th').text('Rp ' + discount.toFixed(2)); // Discount
-                $('#basic-table tr:nth-child(3) th').text('Rp ' + shipping.toFixed(2)); // Shipping
-                $('#basic-table tr:nth-child(4) th').text('Rp ' + grandTotal.toFixed(2)); // Grand Total
             }
         });
     </script>
