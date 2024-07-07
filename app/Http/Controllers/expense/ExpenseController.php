@@ -35,10 +35,14 @@ class ExpenseController extends Controller
         $roleName = $roles->first();
         
         if ($roleName === 'staff' || $roleName === 'inventaris') {
-            $expenses = Expense::filter(['search'])->orderBy($orderBy, $order)->where('user_id', $userId)
-                ->orWhereIn('warehouse_id', $warehouseIds)->paginate($show)->withQueryString();
+            $expenses = Expense::filter(['search'])->orderBy($orderBy, $order)
+                                                    ->WhereIn('warehouse_id', $warehouseIds)
+                                                    ->paginate($show)
+                                                    ->withQueryString();
         } else {
-            $expenses = Expense::filter(['search'])->orderBy($orderBy, $order)->paginate($show)->withQueryString();
+            $expenses = Expense::filter(['search'])->orderBy($orderBy, $order)
+                                                    ->paginate($show)
+                                                    ->withQueryString();
         }
 
         return view('templates.expense.index', [

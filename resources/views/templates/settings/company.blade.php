@@ -76,6 +76,23 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label" for="tax">Company Phone</label>
+                                    <div class="form-group input-group">
+                                        <input type="text" class="form-control" id="tax" aria-label="Username"
+                                            aria-describedby="basic-addon1" required placeholder="input tax"
+                                            name="CompanyPhone" value="{{ $company->CompanyPhone }}">
+                                    </div>
+                                    @error('CompanyPhone')
+                                        <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                            role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                            <span style="margin-left: 3px"> {{ $message }}</span>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                                aria-label="Close"
+                                                style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label" for="codebaseproduct">Company Email *</label>
                                     <input type="text" class="form-control" id="codebaseproduct" required
                                         placeholder="input code" name="email" value="{{ $company->email }}">
@@ -89,14 +106,12 @@
                                         </div>
                                     @enderror
                                 </div>
+                                
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="tax">Company Phone</label>
-                                    <div class="form-group input-group">
-                                        <input type="text" class="form-control" id="tax" aria-label="Username"
-                                            aria-describedby="basic-addon1" required placeholder="input tax"
-                                            name="CompanyPhone" value="{{ $company->CompanyPhone }}">
-                                    </div>
-                                    @error('CompanyPhone')
+                                    <label class="form-label" for="codebaseproduct">Email App Password (for server) *</label>
+                                    <input type="password" class="form-control" id="codebaseproduct" required
+                                        placeholder="{{empty($company->server_password) ? "App Password doesn't exist" : "change app password" }}" name="server_password">
+                                    @error('server_password')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
                                             <span style="margin-left: 3px"> {{ $message }}</span>

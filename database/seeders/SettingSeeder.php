@@ -13,7 +13,7 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         Setting::firstOrCreate([
-            'email' => 'projectTA@example.com',
+            'email' => 'tokopedai085179750679@gmail.com',
             'currency_id' => 1,
             'sms_gateway' => 1,
             'is_invoice_footer' => 0,
