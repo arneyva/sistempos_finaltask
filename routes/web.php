@@ -70,7 +70,7 @@ Route::post('/update-alert-stock', [ProductController::class, 'updateAlertStock'
 |--------------------------------------------------------------------------
 */
 Route::get('purchases/receipt/edit/{Ref}', [PurchaseController::class, 'editSupplier'])->name('edit.supplier')->middleware('signed');
-Route::patch('purchases/receipt/update/{Ref}', [PurchaseController::class, 'updateSupplier'])->name('update.supplier')->middleware('signed');
+Route::patch('purchases/receipt/update/{id}', [PurchaseController::class, 'updateSupplier'])->name('update.supplier')->middleware('signed');
 
 Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
