@@ -64,6 +64,13 @@ Route::get('/', [DashboardController::class, 'index'])->middleware(['auth', 'ver
 Route::get('webclock', [ClockController::class, 'index']);
 Route::post('webclock/clocking', [ClockController::class, 'clocking'])->name('webclock.clocking');
 Route::post('/update-alert-stock', [ProductController::class, 'updateAlertStock'])->name('updateAlertStock');
+/*
+|--------------------------------------------------------------------------
+| Landing page from email 
+|--------------------------------------------------------------------------
+*/
+Route::get('purchases/receipt/edit/{Ref}', [PurchaseController::class, 'editSupplier'])->name('edit.supplier')->middleware('signed');
+Route::patch('purchases/receipt/update/{Ref}', [PurchaseController::class, 'updateSupplier'])->name('update.supplier')->middleware('signed');
 
 Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
@@ -294,6 +301,7 @@ Route::prefix('purchases')->middleware(['auth', 'verified'])->name('purchases.')
     Route::get('create', [PurchaseController::class, 'create'])->name('create');
     Route::post('store', [PurchaseController::class, 'store'])->name('store');
     Route::get('detail/{id}', [PurchaseController::class, 'show'])->name('show');
+    Route::get('edit/{id}', [PurchaseController::class, 'edit'])->name('edit');
     Route::patch('update/{id}', [PurchaseController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [PurchaseController::class, 'destroy'])->name('destroy');
     Route::post('scanner/{code}', [PurchaseController::class, 'getFromScanner']);
