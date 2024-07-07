@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('purchases', function (Blueprint $table) {
+        Schema::table('settings', function (Blueprint $table) {
             $table->dropColumn(['server_password']);
         });
     }
