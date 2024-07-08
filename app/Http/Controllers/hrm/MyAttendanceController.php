@@ -13,6 +13,34 @@ class MyAttendanceController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+        // Ambil instance OfficeShift yang terhubung dengan user
+        $officeShift = $user->office_shifts->first();
+    
+        // Periksa apakah semua waktu shift adalah null
+        $shifts = [
+            'monday_in', 'monday_out', 'tuesday_in', 'tuesday_out',
+            'wednesday_in', 'wednesday_out', 'thursday_in', 'thursday_out',
+            'friday_in', 'friday_out', 'saturday_in', 'saturday_out',
+            'sunday_in', 'sunday_out'
+        ];
+    
+        $allShiftsNull = true;
+        if ($officeShift) {
+            foreach ($shifts as $shift) {
+                if (!is_null($officeShift->$shift)) {
+                    $allShiftsNull = false;
+                    break;
+                }
+            }
+        }
+    
+        // Jika semua null, kirim pesan ke view
+        if ($allShiftsNull) {
+            $message = "You doesn't have shift yet";
+            return view('templates.hrm.attendance.my-attendance.index', compact('message'));
+        }
+    
         return view('templates.hrm.attendance.my-attendance.index');
     }
 
@@ -63,7 +91,7 @@ class MyAttendanceController extends Controller
             }
 
             $attendanceData[] = [
-                'date' => $date->toDateString(),
+                'date' => $date->format('d'),
                 'day' => $date->format('l'),
                 'schedule_in' => $scheduleIn,
                 'schedule_out' => $scheduleOut,
@@ -73,7 +101,11 @@ class MyAttendanceController extends Controller
             ];
         }
 
+
         // Tampilkan hasil ke Blade
-        return view('templates.hrm.attendance.my-attendance.index', ['attendances' => $attendanceData]);
+        return view('templates.hrm.attendance.my-attendance.index', [
+            'attendances' => $attendanceData,
+            'month' => $month,
+        ]);
     }
 }

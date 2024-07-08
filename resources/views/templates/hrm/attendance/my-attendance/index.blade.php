@@ -5,12 +5,16 @@
 </head>
 <body>
 
-<form action="{{ route('hrm.myattendances.check') }}" method="POST">
-    @csrf
-    <label for="month">Pilih Bulan:</label>
-    <input type="month" id="month" name="month" required>
-    <button type="submit">Cek</button>
-</form>
+@if(isset($message))
+    <h2>{{ $message }}</h2>
+@else
+    <form action="{{ route('hrm.myattendances.check') }}" method="POST">
+        @csrf
+        <label for="month">Pilih Bulan:</label>
+        <input value="@if(isset($month)){{ $month }}@endif" type="month" id="month" name="month" required>
+        <button type="submit">Cek</button>
+    </form>
+@endif
 
 @if(isset($attendances))
     <table border="1">
