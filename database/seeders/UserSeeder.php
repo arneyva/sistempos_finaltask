@@ -79,6 +79,8 @@ class UserSeeder extends Seeder
         $staffs->each(function ($staff) {
             // Menetapkan peran superadmin
             $staff->assignRole('staff');
+            // Menyinkronkan semua gudang
+            $staff->warehouses()->attach(2);
         });
     }
 

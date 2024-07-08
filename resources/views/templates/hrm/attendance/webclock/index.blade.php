@@ -440,7 +440,7 @@
                 <div class="" id="map"></div>
             </div>
             <div  style="display:flex; justify-content:center; margin-bottom:2.2vw;">
-                <input type="tel" id="numeric-input" class="form-control password-input" style="caret-color: transparent;" placeholder="Enter your PIN here" name="pin" autocomplete="off">
+                <input type="tel" id="numeric-input" class="password-input" style="caret-color: transparent;" placeholder="Enter your PIN here" name="pin" autocomplete="off">
             </div>
             <div  style="display:flex; justify-content:center;" class="ButtonContainer">
                 <button id="btn-clockin" data-method="clockin" class="verifyButton" type="button">Clock-In</button>
@@ -600,6 +600,14 @@
             var method = $(this).data("method");
             var pin = $('input[name="pin"]').val().toUpperCase(); // Pastikan pin diubah menjadi huruf besar
             updateLocationAndSendRequest(method, pin);
+        });
+    </script>
+
+    <script>
+        document.getElementById('numeric-input').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
         });
     </script>
 
