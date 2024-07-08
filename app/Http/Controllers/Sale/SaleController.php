@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Js;
 use Maatwebsite\Excel\Facades\Excel;
 
 class SaleController extends Controller
@@ -29,24 +30,26 @@ class SaleController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
     {
         $user_auth = auth()->user();
         $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
-        //  berdasarkan role user yang login
+
+        // Based on the role of the logged-in user
         if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
-            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales', 'shipment'])->where('deleted_at', '=', null)->latest();
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales', 'shipment', 'details'])->where('deleted_at', '=', null)->latest();
         } else {
-            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales', 'shipment'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
+            $saleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales', 'shipment', 'details'])->where('deleted_at', '=', null)->whereIn('warehouse_id', $warehouses_id)->latest();
         }
-        // filtering
+
+        // Filtering
         if ($request->filled('date')) {
             $saleQuery->whereDate('date', '=', $request->input('date'));
         }
         if ($request->filled('Ref')) {
             $saleQuery->where('Ref', 'like', '%' . $request->input('Ref') . '%');
         }
-
         if ($request->filled('warehouse_id')) {
             $saleQuery->where('warehouse_id', '=', $request->input('warehouse_id'));
         }
@@ -62,23 +65,153 @@ class SaleController extends Controller
         if ($request->filled('shipping_status')) {
             $saleQuery->where('shipping_status', '=', $request->input('shipping_status'));
         }
-        // menampilkan data hasil filtering dan dipaginasi
+
+        // Get the filtered and paginated results
         $sale = $saleQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
-        // mendapatkan data warehouse berdasarkan role user yang login
+
+        // Get warehouses based on the role of the logged-in user
         if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
             $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         } else {
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
-        // mendapatkan data clinet berdasarkan role user yang login
-        $client = Client::where('deleted_at', '=', null)->get(['id', 'name']);
-        // mengirim data ke frontend
+
+        // Get clients
+        $clients = Client::where('deleted_at', '=', null)->get(['id', 'name']);
+
+        // Invoice processing
+        $details = [];
+        foreach ($sale as $saleItem) {
+            foreach ($saleItem->details as $detail) {
+                $data = [];
+                if ($detail->sale_unit_id !== null) {
+                    $unit = Unit::where('id', $detail->sale_unit_id)->first();
+                } else {
+                    $product_unit_sale_id = Product::with('unitSale')
+                        ->where('id', $detail->product_id)
+                        ->first();
+                    if ($product_unit_sale_id->unitSale) {
+                        $unit = Unit::where('id', $product_unit_sale_id->unitSale->id)->first();
+                    } else {
+                        $unit = null;
+                    }
+                }
+
+                if ($detail->product_variant_id) {
+                    $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+                        ->where('id', $detail->product_variant_id)->first();
+                    $data['code'] = $productsVariants->code;
+                    $data['name'] = '[' . $productsVariants->name . ']' . $detail->product->name;
+                    $data['Unit_price'] = 'Rp ' . number_format($productsVariants->price, 2, ',', '.');
+                } else {
+                    $data['code'] = $detail->product->code;
+                    $data['name'] = $detail->product->name;
+                    $data['Unit_price'] = 'Rp ' . number_format($detail->product->price, 2, ',', '.');
+                }
+                if ($detail->discount_method == 'discount') {
+                    $data['DiscountNet'] = $detail->discount;
+                } else {
+                    $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+                }
+                $tax_price = $detail->TaxNet * ($detail->price / 100);
+                $taxe_total = $tax_price * $detail->quantity;
+                if ($detail->tax_method == 'Exclusive') {
+                    $data['Net_price'] = $detail->price - $data['DiscountNet'];
+                    $data['taxe'] = $tax_price;
+                    $data['taxe_total'] = $taxe_total;
+                }
+                $data['quantity'] = $detail->quantity;
+                $data['discount'] = $detail->discount;
+                $data['total'] = 'Rp ' . number_format($detail->total, 2, ',', '.');
+                $data['unit_sale'] = $unit ? $unit->ShortName : '';
+                $data['is_imei'] = $detail->product->is_imei;
+                $data['imei_number'] = $detail->imei_number;
+                $data['sale_id'] = $saleItem->id; // Add sale_id to the data
+
+                $details[] = $data;
+            }
+        }
+
+        // Send data to the frontend
         return view('templates.sale.index', [
             'sale' => $sale,
             'warehouse' => $warehouses,
-            'client' => $client,
+            'client' => $clients,
+            'details' => $details
         ]);
     }
+
+    // public function Print_Invoice_POS(Request $request, $id)
+    // {
+    //     $details = array();
+
+    //     $sale = Sale::with('details.product.unitSale')
+    //         ->where('deleted_at', '=', null)
+    //         ->findOrFail($id);
+
+    //     $item['id'] = $sale->id;
+    //     $item['Ref'] = $sale->Ref;
+    //     $item['date'] = $sale->date;
+    //     $item['discount'] = number_format($sale->discount, 2, '.', '');
+    //     $item['shipping'] = number_format($sale->shipping, 2, '.', '');
+    //     $item['taxe'] =     number_format($sale->TaxNet, 2, '.', '');
+    //     $item['tax_rate'] = $sale->tax_rate;
+    //     $item['client_name'] = $sale['client']->name;
+    //     $item['warehouse_name'] = $sale['warehouse']->name;
+    //     $item['GrandTotal'] = number_format($sale->GrandTotal, 2, '.', '');
+    //     $item['paid_amount'] = number_format($sale->paid_amount, 2, '.', '');
+
+    //     foreach ($sale['details'] as $detail) {
+
+    //         //check if detail has sale_unit_id Or Null
+    //         if ($detail->sale_unit_id !== null) {
+    //             $unit = Unit::where('id', $detail->sale_unit_id)->first();
+    //         } else {
+    //             $product_unit_sale_id = Product::with('unitSale')
+    //                 ->where('id', $detail->product_id)
+    //                 ->first();
+    //             if ($product_unit_sale_id['unitSale']) {
+    //                 $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
+    //             } {
+    //                 $unit = NULL;
+    //             }
+    //         }
+
+    //         if ($detail->product_variant_id) {
+
+    //             $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+    //                 ->where('id', $detail->product_variant_id)->first();
+
+    //             $data['code'] = $productsVariants->code;
+    //             $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+    //         } else {
+    //             $data['code'] = $detail['product']['code'];
+    //             $data['name'] = $detail['product']['name'];
+    //         }
+    //         $data['quantity'] = number_format($detail->quantity, 2, '.', '');
+    //         $data['total'] = number_format($detail->total, 2, '.', '');
+    //         $data['unit_sale'] = $unit ? $unit->ShortName : '';
+
+    //         $data['is_imei'] = $detail['product']['is_imei'];
+    //         $data['imei_number'] = $detail->imei_number;
+
+    //         $details[] = $data;
+    //     }
+
+    //     $payments = PaymentSale::with('sale')
+    //         ->where('sale_id', $id)
+    //         ->orderBy('id', 'DESC')
+    //         ->get();
+    //     $settings = Setting::where('deleted_at', '=', null)->first();
+    //     return view('sale.invoice_modal', compact('payments', 'settings', 'item', 'details'));
+    //     return response()->json([
+    //         'payments' => $payments,
+    //         'setting' => $settings,
+    //         'sale' => $item,
+    //         'details' => $details,
+    //     ]);
+    // }
+
 
     public function export(Request $request)
     {

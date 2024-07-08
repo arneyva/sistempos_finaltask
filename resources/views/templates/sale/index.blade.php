@@ -4,6 +4,7 @@
     <h1>{{ __('All Sales') }}</h1>
     <p>{{ __('Look All your sales') }}</p>
 @endsection
+
 <style>
     .status-completed {
         padding: 7px;
@@ -123,6 +124,7 @@
     }
 </style>
 @section('content')
+
     <div class="col-sm-12">
         <div class="mt-3" style="justify-content-center">
             <!-- @include('templates.alert') -->
@@ -403,14 +405,16 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col mb-3">
-                                                                <label class="form-label" for="delivered_to">{{ __('Delivered To *') }}</label>
+                                                                <label class="form-label"
+                                                                    for="delivered_to">{{ __('Delivered To *') }}</label>
                                                                 <input type="text" class="form-control"
                                                                     id="delivered_to" required name="delivered_to"
                                                                     value="{{ $item->shipment ? $item->shipment->delivered_to : '' }}"
                                                                     placeholder="{{ __('Input...') }}">
                                                             </div>
                                                             <div class="col mb-3">
-                                                                <label class="form-label" for="shipping_address">{{ __('Address *') }}</label>
+                                                                <label class="form-label"
+                                                                    for="shipping_address">{{ __('Address *') }}</label>
                                                                 <input type="text" class="form-control"
                                                                     id="shipping_address" required name="shipping_address"
                                                                     value="{{ $item->shipment ? $item->shipment->shipping_address : '' }}"
@@ -428,12 +432,144 @@
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal">{{ __('Close') }}</button>
-                                                        <button type="submit" class="btn btn-primary">{{ __('Save changes')  }}</button>
+                                                        <button type="submit"
+                                                            class="btn btn-primary">{{ __('Save changes') }}</button>
                                                     </div>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="modal fade" id="invoiceModal{{ $item->id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="invoiceModalLabel">Invoice POS</h5>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="invoice-content"
+                                                            style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); padding: 15px;">
+                                                            <p class="mb-0" style="margin-bottom: 5px;">Date:
+                                                                {{ $item['date'] }}</p>
+                                                            <p class="mb-0" style="margin-bottom: 5px;">Warehouse:
+                                                                {{ $item['warehouse']['name'] }}</p>
+                                                            <p class="mb-0" style="margin-bottom: 5px;">Client:
+                                                                {{ $item['client']['name'] }}</p>
+                                                            <p class="mb-0" style="margin-bottom: 10px;">Reference:
+                                                                {{ $item['Ref'] }}</p>
+                                                        </div>
+                                                        <div class="invoice-content" style="padding: 15px;">
+                                                            <ul style="list-style-type: none; padding: 0;">
+                                                                @foreach ($details as $detail)
+                                                                    {{-- @if ($detail['sale_id'] == $item->id)
+                                                                        <li
+                                                                            style="border-bottom: 1px solid #ddd; padding: 5px 0;">
+                                                                            <strong>{{ $detail['name'] }}</strong>
+                                                                            ({{ $detail['code'] }})
+                                                                            <br>
+                                                                            {{ $detail['quantity'] }}
+                                                                            {{ $detail['unit_sale'] }} x
+                                                                            {{ $detail['Unit_price'] }}
+                                                                            <br>
+                                                                            <strong>Discount</strong>
+                                                                            {{ 'Rp ' . number_format($detail['discount'], 2, ',', '.') }}
+                                                                            <br>
+                                                                            <strong>Tax</strong>
+                                                                            {{ 'Rp ' . number_format($detail['taxe_total'], 2, ',', '.') }}
+                                                                            <br>
+                                                                            <strong>Total</strong>
+                                                                            {{ $detail['total'] }}
+
+                                                                        </li>
+                                                                    @endif --}}
+                                                                    @if ($detail['sale_id'] == $item->id)
+                                                                        <table id="basic-table"
+                                                                            class="table table-hover table-bordered table-sm"
+                                                                            role="grid">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>Product Information</td>
+                                                                                    <th> <strong>{{ $detail['name'] }}</strong>
+                                                                                        ({{ $detail['code'] }})
+                                                                                    </th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Quantity</td>
+                                                                                    <th> {{ $detail['quantity'] }}
+                                                                                        {{ $detail['unit_sale'] }} x
+                                                                                        {{ $detail['Unit_price'] }}</th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Discount</td>
+                                                                                    <th>{{ 'Rp ' . number_format($detail['discount'], 2, ',', '.') }}</th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Tax</td>
+                                                                                    <th>{{ 'Rp ' . number_format($detail['taxe_total'], 2, ',', '.') }}</th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Total</td>
+                                                                                    <th>{{$detail['total'] }}</th>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    @endif
+                                                                @endforeach
+                                                            </ul>
+                                                        </div>
+                                                        <div class="invoice-content"
+                                                            style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); padding: 15px;">
+                                                            <p class="mb-0" style="margin-bottom: 5px;">Discount:
+                                                                {{ 'Rp ' . number_format($item['discount'], 2, ',', '.') }}
+                                                            </p>
+                                                            <p class="mb-0" style="margin-bottom: 5px;">Shipping:
+                                                                {{ 'Rp ' . number_format($item['shipping'], 2, ',', '.') }}
+                                                            </p>
+                                                            <p class="mb-0" style="margin-bottom: 5px;">Tax:
+                                                                {{ 'Rp ' . number_format($item['TaxNet'], 2, ',', '.') }}
+                                                                ~
+                                                                {{ $item['tax_rate'] }} %</p>
+                                                            <p class="mb-0" style="margin-bottom: 10px;">Grand Total:
+                                                                {{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}
+                                                            </p>
+                                                        </div>
+                                                        <div class="invoice-content" style="padding: 15px;">
+                                                            <table id="product-table" class="table table-striped mb-0"
+                                                                role="grid">
+                                                                <thead>
+                                                                    <tr>
+
+                                                                        <th>{{ __('Reference') }}</th>
+                                                                        <th>{{ __('Montant') }}</th>
+                                                                        <th>{{ __('Change Return') }}</th>
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th>{{ $item['paymentSales']['Ref'] }}</th>
+                                                                        {{-- <th>{{ $item['paymentSales']['montant'] }}</th> --}}
+                                                                        <th> {{ 'Rp ' . number_format($item['paymentSales']['montant'], 2, ',', '.') }}
+                                                                        </th>
+                                                                        <th> {{ 'Rp ' . number_format($item['paymentSales']['change'], 2, ',', '.') }}
+                                                                        </th>
+                                                                        {{-- <th>{{ $item['paymentSales']['change'] }}</th> --}}
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        {{-- <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Close</button> --}}
+                                                        <button type="button"
+                                                            class="btn btn-primary btn-print">Print</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="p-0 sub-drop dropdown-menu dropdown-menu-end"
                                             aria-labelledby="dropdownMenuButton{{ $item->id }}"
                                             style="  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
@@ -487,22 +623,25 @@
                                                                 </div>
                                                             @endif
                                                         </li>
-                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                href="#">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                    height="1.5em" viewBox="0 0 24 24">
-                                                                    <g fill="none" stroke="currentColor"
-                                                                        stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="1.5" color="currentColor">
-                                                                        <path
-                                                                            d="M20.016 2C18.903 2 18 4.686 18 8h2.016c.972 0 1.457 0 1.758-.335c.3-.336.248-.778.144-1.661C21.64 3.67 20.894 2 20.016 2" />
-                                                                        <path
-                                                                            d="M18 8.054v10.592c0 1.511 0 2.267-.462 2.565c-.755.486-1.922-.534-2.509-.904c-.485-.306-.727-.458-.996-.467c-.291-.01-.538.137-1.062.467l-1.911 1.205c-.516.325-.773.488-1.06.488s-.545-.163-1.06-.488l-1.91-1.205c-.486-.306-.728-.458-.997-.467c-.291-.01-.538.137-1.062.467c-.587.37-1.754 1.39-2.51.904C2 20.913 2 20.158 2 18.646V8.054c0-2.854 0-4.28.879-5.167C3.757 2 5.172 2 8 2h12" />
-                                                                        <path
-                                                                            d="M10 8c-1.105 0-2 .672-2 1.5s.895 1.5 2 1.5s2 .672 2 1.5s-.895 1.5-2 1.5m0-6c.87 0 1.612.417 1.886 1M10 8V7m0 7c-.87 0-1.612-.417-1.886-1M10 14v1" />
-                                                                    </g>
-                                                                </svg> {{ __('Invoice POS') }} </a>
+                                                        <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
+                                                            data-bs-target="#invoiceModal{{ $item->id }}"
+                                                            style="color: #546DEB;">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                height="1.5em" viewBox="0 0 24 24">
+                                                                <g fill="none" stroke="currentColor"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="1.5" color="currentColor">
+                                                                    <path
+                                                                        d="M20.016 2C18.903 2 18 4.686 18 8h2.016c.972 0 1.457 0 1.758-.335c.3-.336.248-.778.144-1.661C21.64 3.67 20.894 2 20.016 2" />
+                                                                    <path
+                                                                        d="M18 8.054v10.592c0 1.511 0 2.267-.462 2.565c-.755.486-1.922-.534-2.509-.904c-.485-.306-.727-.458-.996-.467c-.291-.01-.538.137-1.062.467l-1.911 1.205c-.516.325-.773.488-1.06.488s-.545-.163-1.06-.488l-1.91-1.205c-.486-.306-.728-.458-.997-.467c-.291-.01-.538.137-1.062.467c-.587.37-1.754 1.39-2.51.904C2 20.913 2 20.158 2 18.646V8.054c0-2.854 0-4.28.879-5.167C3.757 2 5.172 2 8 2h12" />
+                                                                    <path
+                                                                        d="M10 8c-1.105 0-2 .672-2 1.5s.895 1.5 2 1.5s2 .672 2 1.5s-.895 1.5-2 1.5m0-6c.87 0 1.612.417 1.886 1M10 8V7m0 7c-.87 0-1.612-.417-1.886-1M10 14v1" />
+                                                                </g>
+                                                            </svg> {{ __('Invoice POS') }}
+                                                            </a>
                                                         </li>
+
                                                         <li class="iq-sub-card list-group-item"><a class="p-0"
                                                                 href="#">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
@@ -613,6 +752,29 @@
 @push('script')
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}">
     </script>
+    {{-- <script>
+        $(document).ready(function() {
+            $('a[href*="{{ route('sale.print_invoice', '') }}"]').on('click', function(e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#invoiceModal .modal-body').html(response);
+                        $('#invoiceModal').modal('show');
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText); // Debugging error
+                        alert('Something went wrong!');
+                    }
+                });
+            });
+        });
+    </script> --}}
+
+
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
             const payButtons = document.querySelectorAll('.pay-button');
