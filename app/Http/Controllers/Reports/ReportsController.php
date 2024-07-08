@@ -2308,7 +2308,7 @@ class ReportsController extends Controller
         $data = array();
 
         $PurchasesQuery = Purchase::select('purchases.*')
-            ->with('facture', 'provider', 'warehouse')
+            ->with('payment_purchases', 'provider', 'warehouse')
             ->join('providers', 'purchases.provider_id', '=', 'providers.id')
             ->where('purchases.deleted_at', '=', null)->latest();
         // ->whereBetween('purchases.date', array($request->from, $request->to));
