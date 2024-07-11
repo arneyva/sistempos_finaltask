@@ -234,27 +234,60 @@
                                                     </path>
                                                 </svg>
                                             </a>
-                                            <a href="hapus.html" style="pointer-events: none;">
+                                            <button type="button" data-bs-toggle="modal"
+                                                data-bs-target="#modaldelete{{ $item['id'] }}"
+                                                style="border: none; background: none; padding: 0; margin: 0;color:red">
                                                 <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M14.737 2.76196H7.979C5.919 2.76196 4.25 4.43196 4.25 6.49096V17.34C4.262 19.439 5.973 21.13 8.072 21.117C8.112 21.117 8.151 21.116 8.19 21.115H16.073C18.141 21.094 19.806 19.409 19.802 17.34V8.03996L14.737 2.76196Z"
-                                                        stroke="red" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
                                                     <path
                                                         d="M14.4736 2.75024V5.65924C14.4736 7.07924 15.6216 8.23024 17.0416 8.23424H19.7966"
-                                                        stroke="red" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round"></path>
-                                                    <path d="M13.5759 14.6481L10.1099 11.1821" stroke="red"
+                                                    <path d="M13.5759 14.6481L10.1099 11.1821" stroke="currentColor"
                                                         stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round">
                                                     </path>
-                                                    <path d="M10.1108 14.6481L13.5768 11.1821" stroke="red"
+                                                    <path d="M10.1108 14.6481L13.5768 11.1821" stroke="currentColor"
                                                         stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round">
                                                     </path>
                                                 </svg>
-                                            </a>
+                                            </button>
+                                            <div class="modal fade" id="modaldelete{{ $item['id'] }}"
+                                                data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                aria-labelledby="staticBackdropLabel{{ $item['id'] }}"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                id="staticBackdropLabel{{ $item['id'] }}">
+                                                            </h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>{{ __('Are you sure you want to delete this data?') }}
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                                            <form action="{{ route('adjustment.destroy', $item['id']) }}"
+                                                                method="POST" style="display: inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="btn btn-danger">{{ __('Delete') }}</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
