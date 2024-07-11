@@ -149,148 +149,153 @@ class TransferController extends Controller
      */
     public function store(Request $request)
     {
-        // rules untuk validasi transfer
-        request()->validate([
-            'transfer.from_warehouse' => 'required',
-            'transfer.to_warehouse' => 'required',
-        ], [
-            'transfer.from_warehouse.required' => 'Gudang asal harus dipilih.',
-            'transfer.to_warehouse.required' => 'Gudang tujuan harus dipilih.',
-        ]);
-        // proses transaksi transfer
-        \DB::transaction(function () use ($request) {
-            $order = new Transfer;
-            $order->date = $request->transfer['date'];
-            $order->Ref = $this->getNumbertransferValue();
-            $order->from_warehouse_id = $request->transfer['from_warehouse'];
-            $order->to_warehouse_id = $request->transfer['to_warehouse'];
-            $order->items = count($request['details']); // mengetahui jumlahnya berapa dari data detail transfer
-            $order->tax_rate = $request->transfer['tax_rate'] ? $request->transfer['tax_rate'] : 0;
-            $order->TaxNet = $request->transfer['TaxNet'] ? $request->transfer['TaxNet'] : 0;
-            // $order->discount = $request->transfer['discount'] ? $request->transfer['discount'] : 0;
-            // $order->shipping = $request->transfer['shipping'] ? $request->transfer['shipping'] : 0;
-            $order->discount = $request->discount_value ? $request->discount_value : 0;
-            $order->shipping = $request->shipping_value ? $request->shipping_value : 0;
-            $order->statut = $request->transfer['statut'];
-            $order->notes = $request->transfer['notes'];
-            $order->GrandTotal = $request['GrandTotal'];
-            $order->user_id = Auth::user()->id;
-            $order->save();
-            // proses penyimpanan detail transfer
-            $data = $request['details'];
-            foreach ($data as $key => $value) {
-                $unit = Unit::where('id', $value['purchase_unit_id'])->first();
-                if ($request->transfer['statut'] == 'completed') {
-                    if ($value['product_variant_id'] !== null) {
-                        //--------- menghapus quantity ''from_warehouse''--------------\\
-                        $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
-                            ->where('warehouse_id', $request->transfer['from_warehouse'])
-                            ->where('product_id', $value['product_id'])
-                            ->where('product_variant_id', $value['product_variant_id'])
-                            ->first();
-                        if ($unit && $product_warehouse_from) {
-                            if ($unit->operator == '/') {
-                                $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
-                            } else {
-                                $product_warehouse_from->qty -= $value['quantity'] * $unit->operator_value;
+        try {
+            // rules untuk validasi transfer
+            request()->validate([
+                'transfer.from_warehouse' => 'required',
+                'transfer.to_warehouse' => 'required',
+            ], [
+                'transfer.from_warehouse.required' => 'Gudang asal harus dipilih.',
+                'transfer.to_warehouse.required' => 'Gudang tujuan harus dipilih.',
+            ]);
+            // proses transaksi transfer
+            \DB::transaction(function () use ($request) {
+                $order = new Transfer;
+                $order->date = $request->transfer['date'];
+                $order->Ref = $this->getNumbertransferValue();
+                $order->from_warehouse_id = $request->transfer['from_warehouse'];
+                $order->to_warehouse_id = $request->transfer['to_warehouse'];
+                $order->items = count($request['details']); // mengetahui jumlahnya berapa dari data detail transfer
+                $order->tax_rate = $request->transfer['tax_rate'] ? $request->transfer['tax_rate'] : 0;
+                $order->TaxNet = $request->transfer['TaxNet'] ? $request->transfer['TaxNet'] : 0;
+                // $order->discount = $request->transfer['discount'] ? $request->transfer['discount'] : 0;
+                // $order->shipping = $request->transfer['shipping'] ? $request->transfer['shipping'] : 0;
+                $order->discount = $request->discount_value ? $request->discount_value : 0;
+                $order->shipping = $request->shipping_value ? $request->shipping_value : 0;
+                $order->statut = $request->transfer['statut'];
+                $order->notes = $request->transfer['notes'];
+                $order->GrandTotal = $request['GrandTotal'];
+                $order->user_id = Auth::user()->id;
+                $order->save();
+                // proses penyimpanan detail transfer
+                $data = $request['details'];
+                foreach ($data as $key => $value) {
+                    $unit = Unit::where('id', $value['purchase_unit_id'])->first();
+                    if ($request->transfer['statut'] == 'completed') {
+                        if ($value['product_variant_id'] !== null) {
+                            //--------- menghapus quantity ''from_warehouse''--------------\\
+                            $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
+                                ->where('warehouse_id', $request->transfer['from_warehouse'])
+                                ->where('product_id', $value['product_id'])
+                                ->where('product_variant_id', $value['product_variant_id'])
+                                ->first();
+                            if ($unit && $product_warehouse_from) {
+                                if ($unit->operator == '/') {
+                                    $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
+                                } else {
+                                    $product_warehouse_from->qty -= $value['quantity'] * $unit->operator_value;
+                                }
+                                $product_warehouse_from->save();
                             }
-                            $product_warehouse_from->save();
-                        }
-                        //--------- menambah quantity ''TO_warehouse''------------------\\
-                        $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
-                            ->where('warehouse_id', $request->transfer['to_warehouse'])
-                            ->where('product_id', $value['product_id'])
-                            ->where('product_variant_id', $value['product_variant_id'])
-                            ->first();
-                        if ($unit && $product_warehouse_to) {
-                            if ($unit->operator == '/') {
-                                $product_warehouse_to->qty += $value['quantity'] / $unit->operator_value;
-                            } else {
-                                $product_warehouse_to->qty += $value['quantity'] * $unit->operator_value;
+                            //--------- menambah quantity ''TO_warehouse''------------------\\
+                            $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
+                                ->where('warehouse_id', $request->transfer['to_warehouse'])
+                                ->where('product_id', $value['product_id'])
+                                ->where('product_variant_id', $value['product_variant_id'])
+                                ->first();
+                            if ($unit && $product_warehouse_to) {
+                                if ($unit->operator == '/') {
+                                    $product_warehouse_to->qty += $value['quantity'] / $unit->operator_value;
+                                } else {
+                                    $product_warehouse_to->qty += $value['quantity'] * $unit->operator_value;
+                                }
+                                $product_warehouse_to->save();
                             }
-                            $product_warehouse_to->save();
-                        }
-                    } else {
-                        //---------menghapus quantity ''from_warehouse''--------------\\
-                        $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
-                            ->where('warehouse_id', $request->transfer['from_warehouse'])
-                            ->where('product_id', $value['product_id'])->first();
-                        if ($unit && $product_warehouse_from) {
-                            if ($unit->operator == '/') {
-                                $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
-                            } else {
-                                $product_warehouse_from->qty -= $value['quantity'] * $unit->operator_value;
+                        } else {
+                            //---------menghapus quantity ''from_warehouse''--------------\\
+                            $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
+                                ->where('warehouse_id', $request->transfer['from_warehouse'])
+                                ->where('product_id', $value['product_id'])->first();
+                            if ($unit && $product_warehouse_from) {
+                                if ($unit->operator == '/') {
+                                    $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
+                                } else {
+                                    $product_warehouse_from->qty -= $value['quantity'] * $unit->operator_value;
+                                }
+                                $product_warehouse_from->save();
                             }
-                            $product_warehouse_from->save();
-                        }
 
-                        //--------- menambah quantity ''TO_warehouse''------------------\\
-                        $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
-                            ->where('warehouse_id', $request->transfer['to_warehouse'])
-                            ->where('product_id', $value['product_id'])->first();
+                            //--------- menambah quantity ''TO_warehouse''------------------\\
+                            $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
+                                ->where('warehouse_id', $request->transfer['to_warehouse'])
+                                ->where('product_id', $value['product_id'])->first();
 
-                        if ($unit && $product_warehouse_to) {
-                            if ($unit->operator == '/') {
-                                $product_warehouse_to->qty += $value['quantity'] / $unit->operator_value;
-                            } else {
-                                $product_warehouse_to->qty += $value['quantity'] * $unit->operator_value;
+                            if ($unit && $product_warehouse_to) {
+                                if ($unit->operator == '/') {
+                                    $product_warehouse_to->qty += $value['quantity'] / $unit->operator_value;
+                                } else {
+                                    $product_warehouse_to->qty += $value['quantity'] * $unit->operator_value;
+                                }
+                                $product_warehouse_to->save();
                             }
-                            $product_warehouse_to->save();
+                        }
+                    } elseif ($request->transfer['statut'] == 'sent') {
+
+                        if ($value['product_variant_id'] !== null) {
+
+                            $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
+                                ->where('warehouse_id', $request->transfer['from_warehouse'])
+                                ->where('product_id', $value['product_id'])
+                                ->where('product_variant_id', $value['product_variant_id'])
+                                ->first();
+
+                            if ($unit && $product_warehouse_from) {
+                                if ($unit->operator == '/') {
+                                    $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
+                                } else {
+                                    $product_warehouse_from->qty -= $value['quantity'] * $unit->operator_value;
+                                }
+                                $product_warehouse_from->save();
+                            }
+                        } else {
+
+                            $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
+                                ->where('warehouse_id', $request->transfer['from_warehouse'])
+                                ->where('product_id', $value['product_id'])->first();
+
+                            if ($unit && $product_warehouse_from) {
+                                if ($unit->operator == '/') {
+                                    $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
+                                } else {
+                                    $product_warehouse_from->qty -= $value['quantity'] * $unit->operator_value;
+                                }
+                                $product_warehouse_from->save();
+                            }
                         }
                     }
-                } elseif ($request->transfer['statut'] == 'sent') {
 
-                    if ($value['product_variant_id'] !== null) {
-
-                        $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
-                            ->where('warehouse_id', $request->transfer['from_warehouse'])
-                            ->where('product_id', $value['product_id'])
-                            ->where('product_variant_id', $value['product_variant_id'])
-                            ->first();
-
-                        if ($unit && $product_warehouse_from) {
-                            if ($unit->operator == '/') {
-                                $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
-                            } else {
-                                $product_warehouse_from->qty -= $value['quantity'] * $unit->operator_value;
-                            }
-                            $product_warehouse_from->save();
-                        }
-                    } else {
-
-                        $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
-                            ->where('warehouse_id', $request->transfer['from_warehouse'])
-                            ->where('product_id', $value['product_id'])->first();
-
-                        if ($unit && $product_warehouse_from) {
-                            if ($unit->operator == '/') {
-                                $product_warehouse_from->qty -= $value['quantity'] / $unit->operator_value;
-                            } else {
-                                $product_warehouse_from->qty -= $value['quantity'] * $unit->operator_value;
-                            }
-                            $product_warehouse_from->save();
-                        }
-                    }
+                    $orderDetails['transfer_id'] = $order->id;
+                    $orderDetails['quantity'] = $value['quantity'];
+                    $orderDetails['purchase_unit_id'] = $value['purchase_unit_id'];
+                    $orderDetails['product_id'] = $value['product_id'];
+                    $orderDetails['product_variant_id'] = $value['product_variant_id'];
+                    $orderDetails['cost'] = $value['Unit_cost'];
+                    $orderDetails['TaxNet'] = $value['tax_percent'];
+                    $orderDetails['Tax_method'] = 'Exclusive';
+                    $orderDetails['discount'] = $value['discount'] ? $value['discount'] : 0;
+                    $orderDetails['discount_method'] = $value['discount_method'];
+                    $orderDetails['total'] = $value['subtotal'];
+                    // memasukan data ke database
+                    TransferDetail::insert($orderDetails);
                 }
+            }, 10);
 
-                $orderDetails['transfer_id'] = $order->id;
-                $orderDetails['quantity'] = $value['quantity'];
-                $orderDetails['purchase_unit_id'] = $value['purchase_unit_id'];
-                $orderDetails['product_id'] = $value['product_id'];
-                $orderDetails['product_variant_id'] = $value['product_variant_id'];
-                $orderDetails['cost'] = $value['Unit_cost'];
-                $orderDetails['TaxNet'] = $value['tax_percent'];
-                $orderDetails['Tax_method'] = 'Exclusive';
-                $orderDetails['discount'] = $value['discount'] ? $value['discount'] : 0;
-                $orderDetails['discount_method'] = $value['discount_method'];
-                $orderDetails['total'] = $value['subtotal'];
-                // memasukan data ke database
-                TransferDetail::insert($orderDetails);
-            }
-        }, 10);
-
-        return redirect()->route('transfer.index')->with('success', 'Transfer created successfully');
-        // return response()->json(['success' => true]);
+            return redirect()->route('transfer.index')->with('success', 'Transfer created successfully');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Transfer created failed');
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
     /**
@@ -481,276 +486,281 @@ class TransferController extends Controller
      */
     public function update(Request $request, $id)
     {
-
-        request()->validate([
-            'transfer.to_warehouse' => 'required',
-            'transfer.from_warehouse' => 'required',
-        ]);
-        // dd($request->all());
-        \DB::transaction(function () use ($request, $id) {
-
-            $current_Transfer = Transfer::findOrFail($id);
-            $Old_Details = TransferDetail::where('transfer_id', $id)->get();
-            $data = $request['details'];
-            $Trans = $request->transfer;
-            $length = count($data);
-            $new_products_id = [];
-            foreach ($data as $new_detail) {
-                $new_products_id[] = $new_detail['id'];
-            }
-            $old_products_id = [];
-            foreach ($Old_Details as $key => $value) {
-                //check if detail has purchase_unit_id Or Null
-                if ($value['purchase_unit_id'] !== null) {
-                    $unit = Unit::where('id', $value['purchase_unit_id'])->first();
-                } else {
-                    $product_unit_purchase_id = Product::with('unitPurchase')
-                        ->where('id', $value['product_id'])
-                        ->first();
-                    $unit = Unit::where('id', $product_unit_purchase_id['unitPurchase']->id)->first();
-                }
-
-                $old_products_id[] = $value->id;
-
-                if ($value['purchase_unit_id'] !== null) {
-
-                    if ($current_Transfer->statut == 'completed') {
-                        if ($value['product_variant_id'] !== null) {
-
-                            $warehouse_from_variant = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $current_Transfer->from_warehouse_id)
-                                ->where('product_id', $value['product_id'])
-                                ->where('product_variant_id', $value['product_variant_id'])
-                                ->first();
-
-                            if ($unit && $warehouse_from_variant) {
-                                if ($unit->operator == '/') {
-                                    $warehouse_from_variant->qty += $value['quantity'] / $unit->operator_value;
-                                } else {
-                                    $warehouse_from_variant->qty += $value['quantity'] * $unit->operator_value;
-                                }
-                                $warehouse_from_variant->save();
-                            }
-
-                            $warehouse_To_variant = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $current_Transfer->to_warehouse_id)
-                                ->where('product_id', $value['product_id'])
-                                ->where('product_variant_id', $value['product_variant_id'])
-                                ->first();
-
-                            if ($unit && $warehouse_To_variant) {
-                                if ($unit->operator == '/') {
-                                    $warehouse_To_variant->qty -= $value['quantity'] / $unit->operator_value;
-                                } else {
-                                    $warehouse_To_variant->qty -= $value['quantity'] * $unit->operator_value;
-                                }
-                                $warehouse_To_variant->save();
-                            }
-                        } else {
-                            $warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $current_Transfer->from_warehouse_id)
-                                ->where('product_id', $value['product_id'])->first();
-
-                            if ($unit && $warehouse_from) {
-                                if ($unit->operator == '/') {
-                                    $warehouse_from->qty += $value['quantity'] / $unit->operator_value;
-                                } else {
-                                    $warehouse_from->qty += $value['quantity'] * $unit->operator_value;
-                                }
-                                $warehouse_from->save();
-                            }
-
-                            $warehouse_To = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $current_Transfer->to_warehouse_id)
-                                ->where('product_id', $value['product_id'])->first();
-
-                            if ($unit && $warehouse_To) {
-                                if ($unit->operator == '/') {
-                                    $warehouse_To->qty -= $value['quantity'] / $unit->operator_value;
-                                } else {
-                                    $warehouse_To->qty -= $value['quantity'] * $unit->operator_value;
-                                }
-                                $warehouse_To->save();
-                            }
-                        }
-                    } elseif ($current_Transfer->statut == 'sent') {
-                        if ($value['product_variant_id'] !== null) {
-
-                            $Sent_variant_To = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $current_Transfer->from_warehouse_id)
-                                ->where('product_id', $value['product_id'])
-                                ->where('product_variant_id', $value['product_variant_id'])
-                                ->first();
-
-                            if ($unit && $Sent_variant_To) {
-                                if ($unit->operator == '/') {
-                                    $Sent_variant_To->qty += $value['quantity'] / $unit->operator_value;
-                                } else {
-                                    $Sent_variant_To->qty += $value['quantity'] * $unit->operator_value;
-                                }
-                                $Sent_variant_To->save();
-                            }
-                        } else {
-                            $Sent_variant_From = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $current_Transfer->from_warehouse_id)
-                                ->where('product_id', $value['product_id'])->first();
-
-                            if ($unit && $Sent_variant_From) {
-                                if ($unit->operator == '/') {
-                                    $Sent_variant_From->qty += $value['quantity'] / $unit->operator_value;
-                                } else {
-                                    $Sent_variant_From->qty += $value['quantity'] * $unit->operator_value;
-                                }
-                                $Sent_variant_From->save();
-                            }
-                        }
-                    }
-
-                    // Delete Detail
-                    if (!in_array($old_products_id[$key], $new_products_id)) {
-                        $TransferDetail = TransferDetail::findOrFail($value->id);
-                        $TransferDetail->delete();
-                    }
-                }
-            }
-
-            // Update Data with New request
-            foreach ($data as $key => $product_detail) {
-
-                if ($product_detail['no_unit'] !== 0) {
-                    $unit = Unit::where('id', $product_detail['purchase_unit_id'])->first();
-                    if ($Trans['statut'] == 'completed') {
-                        if ($product_detail['product_variant_id'] !== null) {
-
-                            //--------- eliminate the quantity ''from_warehouse''--------------\\
-                            $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $Trans['from_warehouse'])
-                                ->where('product_id', $product_detail['product_id'])
-                                ->where('product_variant_id', $product_detail['product_variant_id'])
-                                ->first();
-
-                            if ($unit && $product_warehouse_from) {
-                                if ($unit->operator == '/') {
-                                    $product_warehouse_from->qty -= $product_detail['quantity'] / $unit->operator_value;
-                                } else {
-                                    $product_warehouse_from->qty -= $product_detail['quantity'] * $unit->operator_value;
-                                }
-                                $product_warehouse_from->save();
-                            }
-
-                            //--------- ADD the quantity ''TO_warehouse''------------------\\
-                            $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $Trans['to_warehouse'])
-                                ->where('product_id', $product_detail['product_id'])
-                                ->where('product_variant_id', $product_detail['product_variant_id'])
-                                ->first();
-
-                            if ($unit && $product_warehouse_to) {
-                                if ($unit->operator == '/') {
-                                    $product_warehouse_to->qty += $product_detail['quantity'] / $unit->operator_value;
-                                } else {
-                                    $product_warehouse_to->qty += $product_detail['quantity'] * $unit->operator_value;
-                                }
-                                $product_warehouse_to->save();
-                            }
-                        } else {
-
-                            //--------- eliminate the quantity ''from_warehouse''--------------\\
-                            $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $Trans['from_warehouse'])
-                                ->where('product_id', $product_detail['product_id'])->first();
-
-                            if ($unit && $product_warehouse_from) {
-                                if ($unit->operator == '/') {
-                                    $product_warehouse_from->qty -= $product_detail['quantity'] / $unit->operator_value;
-                                } else {
-                                    $product_warehouse_from->qty -= $product_detail['quantity'] * $unit->operator_value;
-                                }
-                                $product_warehouse_from->save();
-                            }
-
-                            //--------- ADD the quantity ''TO_warehouse''------------------\\
-                            $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $Trans['to_warehouse'])
-                                ->where('product_id', $product_detail['product_id'])->first();
-
-                            if ($unit && $product_warehouse_to) {
-                                if ($unit->operator == '/') {
-                                    $product_warehouse_to->qty += $product_detail['quantity'] / $unit->operator_value;
-                                } else {
-                                    $product_warehouse_to->qty += $product_detail['quantity'] * $unit->operator_value;
-                                }
-                                $product_warehouse_to->save();
-                            }
-                        }
-                    } elseif ($Trans['statut'] == 'sent') {
-
-                        if ($product_detail['product_variant_id'] !== null) {
-
-                            $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $Trans['from_warehouse'])
-                                ->where('product_id', $product_detail['product_id'])
-                                ->where('product_variant_id', $product_detail['product_variant_id'])
-                                ->first();
-
-                            if ($unit && $product_warehouse_from) {
-                                if ($unit->operator == '/') {
-                                    $product_warehouse_from->qty -= $product_detail['quantity'] / $unit->operator_value;
-                                } else {
-                                    $product_warehouse_from->qty -= $product_detail['quantity'] * $unit->operator_value;
-                                }
-                                $product_warehouse_from->save();
-                            }
-                        } else {
-
-                            $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
-                                ->where('warehouse_id', $Trans['from_warehouse'])
-                                ->where('product_id', $product_detail['product_id'])->first();
-
-                            if ($unit && $product_warehouse_from) {
-                                if ($unit->operator == '/') {
-                                    $product_warehouse_from->qty -= $product_detail['quantity'] / $unit->operator_value;
-                                } else {
-                                    $product_warehouse_from->qty -= $product_detail['quantity'] * $unit->operator_value;
-                                }
-                                $product_warehouse_from->save();
-                            }
-                        }
-                    }
-
-                    $TransDetail['transfer_id'] = $id;
-                    $TransDetail['quantity'] = $product_detail['quantity'];
-                    $TransDetail['purchase_unit_id'] = $product_detail['purchase_unit_id'];
-                    $TransDetail['product_id'] = $product_detail['product_id'];
-                    $TransDetail['product_variant_id'] = $product_detail['product_variant_id'];
-                    $TransDetail['cost'] = $product_detail['Unit_cost'];
-                    $TransDetail['TaxNet'] = $product_detail['tax_percent'];
-                    $TransDetail['total'] = $product_detail['subtotal'];
-                    $TransDetail['discount'] = $product_detail['discount'] ? $product_detail['discount'] : 0;
-                    $TransDetail['discount_method'] = $product_detail['discount_method'] ? $product_detail['discount_method'] : 0;
-                    if (!isset($product_detail['id']) || !in_array($product_detail['id'], $old_products_id)) {
-                        TransferDetail::create($TransDetail);
-                    } else {
-                        TransferDetail::where('id', $product_detail['id'])->update($TransDetail);
-                    }
-                }
-            }
-
-            $current_Transfer->update([
-                'to_warehouse_id' => $Trans['to_warehouse'],
-                'from_warehouse_id' => $Trans['from_warehouse'],
-                'date' => $Trans['date'],
-                'notes' => $Trans['notes'],
-                'statut' => $Trans['statut'],
-                'items' => count($request['details']),
-                'tax_rate' => $Trans['tax_rate'] ? $Trans['tax_rate'] : 0,
-                'TaxNet' => $Trans['TaxNet'] ? $Trans['TaxNet'] : 0,
-                'discount' => $Trans['discount_value'] ? $Trans['discount_value'] : 0,
-                'shipping' => $Trans['shipping_value'] ? $Trans['shipping_value'] : 0,
-                'GrandTotal' => $request['GrandTotal'],
+        try {
+            request()->validate([
+                'transfer.to_warehouse' => 'required',
+                'transfer.from_warehouse' => 'required',
             ]);
-        }, 10);
-        return redirect()->route('transfer.index')->with('success', 'Transfer updated successfully');
+            // dd($request->all());
+            \DB::transaction(function () use ($request, $id) {
+
+                $current_Transfer = Transfer::findOrFail($id);
+                $Old_Details = TransferDetail::where('transfer_id', $id)->get();
+                $data = $request['details'];
+                $Trans = $request->transfer;
+                $length = count($data);
+                $new_products_id = [];
+                foreach ($data as $new_detail) {
+                    $new_products_id[] = $new_detail['id'];
+                }
+                $old_products_id = [];
+                foreach ($Old_Details as $key => $value) {
+                    //check if detail has purchase_unit_id Or Null
+                    if ($value['purchase_unit_id'] !== null) {
+                        $unit = Unit::where('id', $value['purchase_unit_id'])->first();
+                    } else {
+                        $product_unit_purchase_id = Product::with('unitPurchase')
+                            ->where('id', $value['product_id'])
+                            ->first();
+                        $unit = Unit::where('id', $product_unit_purchase_id['unitPurchase']->id)->first();
+                    }
+
+                    $old_products_id[] = $value->id;
+
+                    if ($value['purchase_unit_id'] !== null) {
+
+                        if ($current_Transfer->statut == 'completed') {
+                            if ($value['product_variant_id'] !== null) {
+
+                                $warehouse_from_variant = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $current_Transfer->from_warehouse_id)
+                                    ->where('product_id', $value['product_id'])
+                                    ->where('product_variant_id', $value['product_variant_id'])
+                                    ->first();
+
+                                if ($unit && $warehouse_from_variant) {
+                                    if ($unit->operator == '/') {
+                                        $warehouse_from_variant->qty += $value['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $warehouse_from_variant->qty += $value['quantity'] * $unit->operator_value;
+                                    }
+                                    $warehouse_from_variant->save();
+                                }
+
+                                $warehouse_To_variant = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $current_Transfer->to_warehouse_id)
+                                    ->where('product_id', $value['product_id'])
+                                    ->where('product_variant_id', $value['product_variant_id'])
+                                    ->first();
+
+                                if ($unit && $warehouse_To_variant) {
+                                    if ($unit->operator == '/') {
+                                        $warehouse_To_variant->qty -= $value['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $warehouse_To_variant->qty -= $value['quantity'] * $unit->operator_value;
+                                    }
+                                    $warehouse_To_variant->save();
+                                }
+                            } else {
+                                $warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $current_Transfer->from_warehouse_id)
+                                    ->where('product_id', $value['product_id'])->first();
+
+                                if ($unit && $warehouse_from) {
+                                    if ($unit->operator == '/') {
+                                        $warehouse_from->qty += $value['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $warehouse_from->qty += $value['quantity'] * $unit->operator_value;
+                                    }
+                                    $warehouse_from->save();
+                                }
+
+                                $warehouse_To = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $current_Transfer->to_warehouse_id)
+                                    ->where('product_id', $value['product_id'])->first();
+
+                                if ($unit && $warehouse_To) {
+                                    if ($unit->operator == '/') {
+                                        $warehouse_To->qty -= $value['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $warehouse_To->qty -= $value['quantity'] * $unit->operator_value;
+                                    }
+                                    $warehouse_To->save();
+                                }
+                            }
+                        } elseif ($current_Transfer->statut == 'sent') {
+                            if ($value['product_variant_id'] !== null) {
+
+                                $Sent_variant_To = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $current_Transfer->from_warehouse_id)
+                                    ->where('product_id', $value['product_id'])
+                                    ->where('product_variant_id', $value['product_variant_id'])
+                                    ->first();
+
+                                if ($unit && $Sent_variant_To) {
+                                    if ($unit->operator == '/') {
+                                        $Sent_variant_To->qty += $value['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $Sent_variant_To->qty += $value['quantity'] * $unit->operator_value;
+                                    }
+                                    $Sent_variant_To->save();
+                                }
+                            } else {
+                                $Sent_variant_From = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $current_Transfer->from_warehouse_id)
+                                    ->where('product_id', $value['product_id'])->first();
+
+                                if ($unit && $Sent_variant_From) {
+                                    if ($unit->operator == '/') {
+                                        $Sent_variant_From->qty += $value['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $Sent_variant_From->qty += $value['quantity'] * $unit->operator_value;
+                                    }
+                                    $Sent_variant_From->save();
+                                }
+                            }
+                        }
+
+                        // Delete Detail
+                        if (!in_array($old_products_id[$key], $new_products_id)) {
+                            $TransferDetail = TransferDetail::findOrFail($value->id);
+                            $TransferDetail->delete();
+                        }
+                    }
+                }
+
+                // Update Data with New request
+                foreach ($data as $key => $product_detail) {
+
+                    if ($product_detail['no_unit'] !== 0) {
+                        $unit = Unit::where('id', $product_detail['purchase_unit_id'])->first();
+                        if ($Trans['statut'] == 'completed') {
+                            if ($product_detail['product_variant_id'] !== null) {
+
+                                //--------- eliminate the quantity ''from_warehouse''--------------\\
+                                $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $Trans['from_warehouse'])
+                                    ->where('product_id', $product_detail['product_id'])
+                                    ->where('product_variant_id', $product_detail['product_variant_id'])
+                                    ->first();
+
+                                if ($unit && $product_warehouse_from) {
+                                    if ($unit->operator == '/') {
+                                        $product_warehouse_from->qty -= $product_detail['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $product_warehouse_from->qty -= $product_detail['quantity'] * $unit->operator_value;
+                                    }
+                                    $product_warehouse_from->save();
+                                }
+
+                                //--------- ADD the quantity ''TO_warehouse''------------------\\
+                                $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $Trans['to_warehouse'])
+                                    ->where('product_id', $product_detail['product_id'])
+                                    ->where('product_variant_id', $product_detail['product_variant_id'])
+                                    ->first();
+
+                                if ($unit && $product_warehouse_to) {
+                                    if ($unit->operator == '/') {
+                                        $product_warehouse_to->qty += $product_detail['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $product_warehouse_to->qty += $product_detail['quantity'] * $unit->operator_value;
+                                    }
+                                    $product_warehouse_to->save();
+                                }
+                            } else {
+
+                                //--------- eliminate the quantity ''from_warehouse''--------------\\
+                                $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $Trans['from_warehouse'])
+                                    ->where('product_id', $product_detail['product_id'])->first();
+
+                                if ($unit && $product_warehouse_from) {
+                                    if ($unit->operator == '/') {
+                                        $product_warehouse_from->qty -= $product_detail['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $product_warehouse_from->qty -= $product_detail['quantity'] * $unit->operator_value;
+                                    }
+                                    $product_warehouse_from->save();
+                                }
+
+                                //--------- ADD the quantity ''TO_warehouse''------------------\\
+                                $product_warehouse_to = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $Trans['to_warehouse'])
+                                    ->where('product_id', $product_detail['product_id'])->first();
+
+                                if ($unit && $product_warehouse_to) {
+                                    if ($unit->operator == '/') {
+                                        $product_warehouse_to->qty += $product_detail['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $product_warehouse_to->qty += $product_detail['quantity'] * $unit->operator_value;
+                                    }
+                                    $product_warehouse_to->save();
+                                }
+                            }
+                        } elseif ($Trans['statut'] == 'sent') {
+
+                            if ($product_detail['product_variant_id'] !== null) {
+
+                                $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $Trans['from_warehouse'])
+                                    ->where('product_id', $product_detail['product_id'])
+                                    ->where('product_variant_id', $product_detail['product_variant_id'])
+                                    ->first();
+
+                                if ($unit && $product_warehouse_from) {
+                                    if ($unit->operator == '/') {
+                                        $product_warehouse_from->qty -= $product_detail['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $product_warehouse_from->qty -= $product_detail['quantity'] * $unit->operator_value;
+                                    }
+                                    $product_warehouse_from->save();
+                                }
+                            } else {
+
+                                $product_warehouse_from = ProductWarehouse::where('deleted_at', '=', null)
+                                    ->where('warehouse_id', $Trans['from_warehouse'])
+                                    ->where('product_id', $product_detail['product_id'])->first();
+
+                                if ($unit && $product_warehouse_from) {
+                                    if ($unit->operator == '/') {
+                                        $product_warehouse_from->qty -= $product_detail['quantity'] / $unit->operator_value;
+                                    } else {
+                                        $product_warehouse_from->qty -= $product_detail['quantity'] * $unit->operator_value;
+                                    }
+                                    $product_warehouse_from->save();
+                                }
+                            }
+                        }
+
+                        $TransDetail['transfer_id'] = $id;
+                        $TransDetail['quantity'] = $product_detail['quantity'];
+                        $TransDetail['purchase_unit_id'] = $product_detail['purchase_unit_id'];
+                        $TransDetail['product_id'] = $product_detail['product_id'];
+                        $TransDetail['product_variant_id'] = $product_detail['product_variant_id'];
+                        $TransDetail['cost'] = $product_detail['Unit_cost'];
+                        $TransDetail['TaxNet'] = $product_detail['tax_percent'];
+                        $TransDetail['total'] = $product_detail['subtotal'];
+                        $TransDetail['discount'] = $product_detail['discount'] ? $product_detail['discount'] : 0;
+                        $TransDetail['discount_method'] = $product_detail['discount_method'] ? $product_detail['discount_method'] : 0;
+                        if (!isset($product_detail['id']) || !in_array($product_detail['id'], $old_products_id)) {
+                            TransferDetail::create($TransDetail);
+                        } else {
+                            TransferDetail::where('id', $product_detail['id'])->update($TransDetail);
+                        }
+                    }
+                }
+
+                $current_Transfer->update([
+                    'to_warehouse_id' => $Trans['to_warehouse'],
+                    'from_warehouse_id' => $Trans['from_warehouse'],
+                    'date' => $Trans['date'],
+                    'notes' => $Trans['notes'],
+                    'statut' => $Trans['statut'],
+                    'items' => count($request['details']),
+                    'tax_rate' => $Trans['tax_rate'] ? $Trans['tax_rate'] : 0,
+                    'TaxNet' => $Trans['TaxNet'] ? $Trans['TaxNet'] : 0,
+                    'discount' => $Trans['discount_value'] ? $Trans['discount_value'] : 0,
+                    'shipping' => $Trans['shipping_value'] ? $Trans['shipping_value'] : 0,
+                    'GrandTotal' => $request['GrandTotal'],
+                ]);
+            }, 10);
+            return redirect()->route('transfer.index')->with('success', 'Transfer updated successfully');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Transfer updated failed');
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
     public function updateForStaff(Request $request, $id)
     {

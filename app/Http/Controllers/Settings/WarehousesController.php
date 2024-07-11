@@ -224,7 +224,7 @@ class WarehousesController extends Controller
     public function destroy(string $id)
     {
         $warehouses = Warehouse::where('id', $id)->first();
-        $adjustment = Adjustment::where('warehouse_id', $id)->first();
+        $adjustment = ProductWarehouse::where('warehouse_id', $id)->first();
         try {
             DB::beginTransaction();
             if ($warehouses && !$adjustment) {
@@ -237,7 +237,7 @@ class WarehousesController extends Controller
 
                 return redirect()->route('settings.warehouses.index')->with('success', 'Data Warehouse deleted successfully');
             } else {
-                return redirect()->back()->with('error', 'Warehouse cannot be deleted because it is used in adjustments !!');
+                return redirect()->back()->with('error', 'Warehouse cannot be deleted because it is used in another data !!');
             }
         } catch (\Throwable $th) {
             DB::rollBack();

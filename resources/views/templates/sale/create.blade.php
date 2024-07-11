@@ -704,7 +704,7 @@
                 var discount = 0;
 
                 // Menghitung diskon jika kuantitas memenuhi syarat
-                if (quantity >= quantityDiscount) {
+                if (quantityDiscount > 0 && quantity >= quantityDiscount) {
                     discount = (unitPrice * quantity) * (discountPercentage / 100);
                     row.find('.item-discount').text(formatRupiah(discount.toFixed(
                         0))); // Menggunakan toFixed(0) jika tidak menggunakan koma

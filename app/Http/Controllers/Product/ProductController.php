@@ -23,6 +23,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class ProductController extends Controller
 {
@@ -52,11 +53,12 @@ class ProductController extends Controller
             $productsQuery->where('brand_id', '=', $request->input('brand_id'));
         }
         // proses penyimpanan data product
-        $products = $productsQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $products = $productsQuery->paginate($request->input('limit', 15))->appends($request->except('page'));
         $items = [];
         foreach ($products as $product) {
             $item['id'] = $product->id;
             $item['code'] = $product->code;
+            $item['image'] = $product->image ?? 'no-image.png';
             $item['category'] = $product['category']->name;
             $item['brand'] = $product['brand']->name;
             $item['TaxNet'] = $product->TaxNet;
@@ -375,7 +377,26 @@ class ProductController extends Controller
                 $productValue->price = 0;
                 $productValue->is_variant = 1;
             }
+            //handle image
+            if ($request->input('avatar') !== null) {
+
+                $avatarBase64 = $request->input('avatar');
+
+                $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
+                $filename = $request['name'] . '_' . uniqid() . '.png';
+
+                $tempFilePath = public_path('/hopeui/html/assets/images/products/temp/' . $filename);
+                file_put_contents($tempFilePath, $avatarBinaryData);
+
+                $image_resize = Image::make($tempFilePath);
+                $image_resize->resize(305, 305);
+                $image_resize->save(public_path('/hopeui/html/assets/images/products/' . $filename));
+                unlink($tempFilePath);
+            } else {
+                $filename = 'no-image.png';
+            }
             $productValue->name = $request['name'];
+            $productValue->image = $filename;
             $productValue->code = $request['code'];
             $productValue->Type_barcode = 'CODE128';
             $productValue->tax_method = 'Exclusive';
@@ -443,6 +464,7 @@ class ProductController extends Controller
                 }
             }
             ProductWarehouse::insert($product_warehouse);
+            // dd($request->all());
             DB::commit(); //jika tidak terjadi masalah dari awal sampai akhir maka commit
             return redirect()->route('product.index')->with('success', 'Product created successfully');
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -461,6 +483,7 @@ class ProductController extends Controller
         // proses penyimpanan data untuk nanti digunakan di blade
         $item['id'] = $product->id;
         $item['type'] = $product->type;
+        $item['image'] = $product->image ?? 'no-image.png';
         $item['code'] = $product->code;
         $item['Type_barcode'] = $product->Type_barcode;
         $item['name'] = $product->name;
@@ -504,6 +527,7 @@ class ProductController extends Controller
                         ->first();
                     $war_var['mag'] = $warehouse->name;
                     $war_var['variant'] = $variant->name;
+                    $war_var['variant-id'] = $variant->id;
                     $war_var['qte'] = $product_warehouse->sum;
                     $war_var['stock_alert'] = $product_warehouse->stock_alert;
                     $war_var['quantity_discount'] = $product_warehouse->quantity_discount; // Tambahkan stock_alert
@@ -538,7 +562,7 @@ class ProductController extends Controller
         }
 
         $data[] = $item;
-
+        //  return response()->json($data);
         return view('templates.product.show', [
             'data' => $data,
         ]);
@@ -555,7 +579,8 @@ class ProductController extends Controller
         if ($product->is_variant) {
             foreach ($stock_alerts as $variant_name => $warehouseData) {
                 foreach ($warehouseData as $warehouse_name => $stock_alert) {
-                    $variant = ProductVariant::where('name', $variant_name)->first();
+                    // dd($variant_name);
+                    $variant = ProductVariant::where('id', $variant_name)->first();
                     $warehouse = Warehouse::where('name', $warehouse_name)->first();
 
                     if ($variant && $warehouse) {
@@ -595,6 +620,7 @@ class ProductController extends Controller
                 }
             }
         }
+        // dd($request->all());
         return redirect()->route('product.index')->with('success', 'Stock Alert and Discount Threshold updated successfully.');
     }
     /**
@@ -609,6 +635,7 @@ class ProductController extends Controller
         $item['code'] = $Product->code;
         $item['Type_barcode'] = $Product->Type_barcode;
         $item['name'] = $Product->name;
+        $item['image'] = $Product->image ?? 'no-image.png';
         if ($Product->category_id) { //logika untuk mengecek apakah data product memiliki category_id
             if (Category::where('id', $Product->category_id)
                 ->where('deleted_at', '=', null)
@@ -771,6 +798,34 @@ class ProductController extends Controller
                 $Product->TaxNet = $request['TaxNet'];
                 $Product->tax_method = 'Exclusive';
                 $Product->note = $request['note'];
+                // 
+                $currentAvatar = $Product->image;
+                if ($request->avatar != null) {
+
+                    $avatarBase64 = $request->input('avatar');
+
+                    $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
+                    $filename = $request['name'] . '_' . uniqid() . '.png';
+
+                    $tempFilePath = public_path('/hopeui/html/assets/images/products/temp/' . $filename);
+                    file_put_contents($tempFilePath, $avatarBinaryData);
+
+                    $image_resize = Image::make($tempFilePath);
+                    $image_resize->resize(305, 305);
+                    $image_resize->save(public_path('/hopeui/html/assets/images/products/' . $filename));
+                    unlink($tempFilePath);
+
+                    $path = public_path('/hopeui/html/assets/images/products/');
+                    $currentPhotoPath = $path . $currentAvatar;
+                    if (file_exists($currentPhotoPath)) {
+                        if ($currentAvatar != 'no-image.png') {
+                            @unlink($currentPhotoPath);
+                        }
+                    }
+                } else {
+                    $filename = $currentAvatar;
+                }
+                $Product->image = $filename;
                 //-- update data type single
                 if ($request['type'] == 'is_single') {
                     $Product->price = $request['price'];
@@ -862,20 +917,6 @@ class ProductController extends Controller
                         return redirect()->route('product.edit', $id)->with('error', 'No new variants provided');
                     }
                 }
-                if ($request['images'] === null) {
-                    if ($Product->image !== null) {
-                        foreach (explode(',', $Product->image) as $img) {
-                            $pathIMG = public_path() . '/images/products/' . $img;
-                            if (file_exists($pathIMG)) {
-                                if ($img != 'no-image.png') {
-                                    @unlink($pathIMG);
-                                }
-                            }
-                        }
-                    }
-                    $filename = 'no-image.png';
-                }
-                $Product->image = $filename;
                 $Product->save();
             }, 10);
             // dd($request->all());

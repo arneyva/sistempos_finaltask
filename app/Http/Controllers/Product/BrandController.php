@@ -7,6 +7,7 @@ use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class BrandController extends Controller
 {
@@ -23,7 +24,7 @@ class BrandController extends Controller
                     ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
-        $brands = $brandQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        $brands = $brandQuery->paginate($request->input('limit', 10))->appends($request->except('page'));
 
         return view('templates.product.brand.index', [
             'brands' => $brands,
@@ -51,17 +52,27 @@ class BrandController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg',
             'description' => 'nullable',
         ]);
-        $file = $request->file('image');
-        if ($file) {
-            $fileName = time() . '.' . $request->image->extension();
-            $path = $file->storeAs('images/brand', $fileName, 'public');
+        if ($request->input('avatar') !== null) {
+
+            $avatarBase64 = $request->input('avatar');
+
+            $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
+            $filename = $request['name'] . '_' . uniqid() . '.png';
+
+            $tempFilePath = public_path('/hopeui/html/assets/images/brands/temp/' . $filename);
+            file_put_contents($tempFilePath, $avatarBinaryData);
+
+            $image_resize = Image::make($tempFilePath);
+            $image_resize->resize(128, 128);
+            $image_resize->save(public_path('/hopeui/html/assets/images/brands/' . $filename));
+            unlink($tempFilePath);
         } else {
-            $path = null;
+            $filename = 'image.png';
         }
 
         $brands = Brand::create([
             'name' => $validated['name'],
-            'image' => $path,
+            'image' => $filename,
             'description' => $validated['description'],
         ]);
 
@@ -90,17 +101,47 @@ class BrandController extends Controller
     public function update(Request $request, string $id)
     {
         if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+            $brand = Brand::where('id', $id)
+                ->where('deleted_at', '=', null)
+                ->first();
             $validated = $request->validate([
                 'name' => [
                     'required',
-                    Rule::unique(Brand::class, 'name')->whereNull('deleted_at'),
+                    Rule::unique(Brand::class, 'name')->whereNull('deleted_at')->ignore($id),
                 ],
                 'image' => 'nullable|image|mimes:jpeg,png,jpg',
                 'description' => 'nullable',
             ]);
+            $currentAvatar = $brand->image;
+            if ($request->avatar != null) {
+
+                $avatarBase64 = $request->input('avatar');
+
+                $avatarBinaryData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $avatarBase64));
+                $filename = $request['name'] . '_' . uniqid() . '.png';
+
+                $tempFilePath = public_path('/hopeui/html/assets/images/brands/temp/' . $filename);
+                file_put_contents($tempFilePath, $avatarBinaryData);
+
+                $image_resize = Image::make($tempFilePath);
+                $image_resize->resize(128, 128);
+                $image_resize->save(public_path('/hopeui/html/assets/images/brands/' . $filename));
+                unlink($tempFilePath);
+
+                $path = public_path('/hopeui/html/assets/images/brands/');
+                $currentPhotoPath = $path . $currentAvatar;
+                if (file_exists($currentPhotoPath)) {
+                    if ($currentAvatar != 'image.png') {
+                        @unlink($currentPhotoPath);
+                    }
+                }
+            } else {
+                $filename = $currentAvatar;
+            }
             $newvalue = [
                 'name' => $request->input('name'),
                 'description' => $request->input('description'),
+                'image' => $filename
             ];
             Brand::where('id', $id)->update($newvalue);
 

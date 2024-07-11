@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Hash;
 
 class CompanyController extends Controller
 {

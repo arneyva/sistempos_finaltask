@@ -45,8 +45,8 @@
                                                 <p class="mb-2">{{ __('Stock Alert') }}</p>
                                                 <div class="form-group">
                                                     <input type="number"
-                                                        name="stock_alert[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
-                                                        id="stock_alert_variant_{{ $variant['variant'] }}_{{ $variant['mag'] }}"
+                                                        name="stock_alert[{{ $variant['variant-id'] }}][{{ $variant['mag'] }}]"
+                                                        id="stock_alert_variant_{{ $variant['variant-id'] }}_{{ $variant['mag'] }}"
                                                         class="form-control"
                                                         style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
                                                         value="{{ $variant['stock_alert'] ?? 0 }}" min="0">
@@ -55,11 +55,11 @@
                                                 <div class="form-group input-group">
                                                     <span class="input-group-text" id="basic-addon1">%</span>
                                                     <input type="number"
-                                                        name="discount_percentage[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
-                                                        id="discount_percentagevariant{{ $variant['variant'] }}_{{ $variant['mag'] }}"
+                                                        name="discount_percentage[{{ $variant['variant-id'] }}][{{ $variant['mag'] }}]"
+                                                        id="discount_percentagevariant{{ $variant['variant-id'] }}_{{ $variant['mag'] }}"
                                                         class="form-control"
                                                         style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
-                                                        value="{{ $variant['discount_percentage'] ?? 0 }}" min="0">
+                                                        value="{{ $variant['discount_percentage'] ?? 0 }}" min="0" max="100">
                                                 </div>
                                                 <div class="form-group input-group">
                                                     <span class="input-group-text" id="basic-addon1"><svg
@@ -70,8 +70,8 @@
                                                                 d="m5 18l14-4M5 14l14-4L5 6" />
                                                         </svg></span>
                                                     <input type="number"
-                                                        name="quantity_discount[{{ $variant['variant'] }}][{{ $variant['mag'] }}]"
-                                                        id="quantity_discountvariant{{ $variant['variant'] }}_{{ $variant['mag'] }}"
+                                                        name="quantity_discount[{{ $variant['variant-id'] }}][{{ $variant['mag'] }}]"
+                                                        id="quantity_discountvariant{{ $variant['variant-id'] }}_{{ $variant['mag'] }}"
                                                         class="form-control"
                                                         style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
                                                         value="{{ $variant['quantity_discount'] ?? 0 }}" min="0">
@@ -97,7 +97,7 @@
                                                     <input type="number" name="stock_alert[{{ $qty['mag'] }}]"
                                                         id="stock_alert_qty_{{ $qty['mag'] }}" class="form-control"
                                                         style="padding: 7px; border-radius: 7px; background-color: #ffefef; color: #F24D4D;"
-                                                        value="{{ $qty['stock_alert'] ?? 0 }}">
+                                                        value="{{ $qty['stock_alert'] ?? 0 }}" min="0">
                                                 </div>
                                                 <p class="mb-2">{{ __('Discount Threshold') }}</p>
                                                 <div class="form-group input-group">
@@ -105,7 +105,7 @@
                                                     <input type="number" name="discount_percentage[{{ $qty['mag'] }}]"
                                                         id="discount_percentage{{ $qty['mag'] }}" class="form-control"
                                                         style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
-                                                        value="{{ $qty['discount_percentage'] ?? 0 }}">
+                                                        value="{{ $qty['discount_percentage'] ?? 0 }}" min="0" max="100">
                                                 </div>
                                                 <div class="form-group input-group">
                                                     <span class="input-group-text" id="basic-addon1"><svg
@@ -118,7 +118,7 @@
                                                     <input type="number" name="quantity_discount[{{ $qty['mag'] }}]"
                                                         id="quantity_discount{{ $qty['mag'] }}" class="form-control"
                                                         style="padding: 7px; border-radius: 7px; background-color: #eff3ff; color: #3b39d0;"
-                                                        value="{{ $qty['quantity_discount'] ?? 0 }}">
+                                                        value="{{ $qty['quantity_discount'] ?? 0 }}" min="0">
                                                     <span class="input-group-text"
                                                         id="">{{ $data[0]['unit'] }}</span>
                                                 </div>
@@ -276,8 +276,8 @@
                     <div class="pb-4 border-0 card-header">
                         <div class="p-4 border border-white rounded primary-gradient-card">
                             <div class="d-flex justify-content-between align-items-center">
-                                <img src="{{ asset('hopeui/html/assets/images/truck.png') }}" alt=""
-                                    style="max-width: 100%;max-height: 100%;">
+                                <img src="{{ asset('hopeui/html/assets/images/products/' . $data[0]['image']) }}"
+                                    alt="" style="width: 100%;height: 100%;">
                             </div>
                         </div>
                     </div>
