@@ -461,27 +461,6 @@
                                                         <div class="invoice-content" style="padding: 15px;">
                                                             <ul style="list-style-type: none; padding: 0;">
                                                                 @foreach ($details as $detail)
-                                                                    {{-- @if ($detail['sale_id'] == $item->id)
-                                                                        <li
-                                                                            style="border-bottom: 1px solid #ddd; padding: 5px 0;">
-                                                                            <strong>{{ $detail['name'] }}</strong>
-                                                                            ({{ $detail['code'] }})
-                                                                            <br>
-                                                                            {{ $detail['quantity'] }}
-                                                                            {{ $detail['unit_sale'] }} x
-                                                                            {{ $detail['Unit_price'] }}
-                                                                            <br>
-                                                                            <strong>Discount</strong>
-                                                                            {{ 'Rp ' . number_format($detail['discount'], 2, ',', '.') }}
-                                                                            <br>
-                                                                            <strong>Tax</strong>
-                                                                            {{ 'Rp ' . number_format($detail['taxe_total'], 2, ',', '.') }}
-                                                                            <br>
-                                                                            <strong>Total</strong>
-                                                                            {{ $detail['total'] }}
-
-                                                                        </li>
-                                                                    @endif --}}
                                                                     @if ($detail['sale_id'] == $item->id)
                                                                         <table id="basic-table"
                                                                             class="table table-hover table-bordered table-sm"
@@ -501,15 +480,17 @@
                                                                                 </tr>
                                                                                 <tr>
                                                                                     <td>Discount</td>
-                                                                                    <th>{{ 'Rp ' . number_format($detail['discount'], 2, ',', '.') }}</th>
+                                                                                    <th>{{ 'Rp ' . number_format($detail['discount'], 2, ',', '.') }}
+                                                                                    </th>
                                                                                 </tr>
                                                                                 <tr>
                                                                                     <td>Tax</td>
-                                                                                    <th>{{ 'Rp ' . number_format($detail['taxe_total'], 2, ',', '.') }}</th>
+                                                                                    <th>{{ 'Rp ' . number_format($detail['taxe_total'], 2, ',', '.') }}
+                                                                                    </th>
                                                                                 </tr>
                                                                                 <tr>
                                                                                     <td>Total</td>
-                                                                                    <th>{{$detail['total'] }}</th>
+                                                                                    <th>{{ $detail['total'] }}</th>
                                                                                 </tr>
                                                                             </tbody>
                                                                         </table>
@@ -548,16 +529,29 @@
                                                                 <tbody>
                                                                     <tr>
                                                                         <th>{{ $item['paymentSales']['Ref'] }}</th>
-                                                                        {{-- <th>{{ $item['paymentSales']['montant'] }}</th> --}}
                                                                         <th> {{ 'Rp ' . number_format($item['paymentSales']['montant'], 2, ',', '.') }}
                                                                         </th>
                                                                         <th> {{ 'Rp ' . number_format($item['paymentSales']['change'], 2, ',', '.') }}
                                                                         </th>
-                                                                        {{-- <th>{{ $item['paymentSales']['change'] }}</th> --}}
                                                                         <th></th>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
+                                                        </div>
+                                                        <div class="invoice-content" style="padding: 15px;">
+                                                            {{-- <td style="text-align: center; vertical-align: middle;"> --}}
+                                                                @php
+                                                                    $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
+                                                                    $barcodeData = base64_encode(
+                                                                        $generatorPNG->getBarcode($item['Ref'], $generatorPNG::TYPE_CODE_128),
+                                                                    );
+                                                                    $barcodeUrl = 'data:image/png;base64,' . $barcodeData;
+                                                                @endphp
+                                                                {{-- <div style="display: flex; flex-direction: column; align-items: center;"> --}}
+                                                                    <img src="{{ $barcodeUrl }}" alt="Barcode" style="margin-bottom: 5px;">
+                                                                    {{-- <span>{{ $item['Ref'] }}</span> --}}
+                                                                {{-- </div> --}}
+                                                            {{-- </td> --}}
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">

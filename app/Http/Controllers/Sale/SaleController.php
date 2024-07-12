@@ -985,7 +985,7 @@ class SaleController extends Controller
                         }
                     }
                     // Initialize $updateData array
-                    $payment_method = $request->payment_method;
+                    $payment_method = $request['payment_method'] ? $request['payment_method'] : $current_Sale->payment_method;
                     $updateData = [
                         'date' => $request['date'],
                         'client_id' => $request['client_id'],
@@ -1008,19 +1008,20 @@ class SaleController extends Controller
                         if ($transaction) {
                             $transaction->update([
                                 'montant' => $request->GrandTotal,
-                                'change' => $request->change_return ?? 0,
+                                'change' => $request->change_return_value ?? 0,
                                 'Reglement' => 'pending',
                                 'status' => 'pending',
                             ]);
                         }
-                    } else {
+                    } elseif ($statut == 'completed') {
                         if ($payment_method == 'cash') {
                             $updateData['paid_amount'] = $request['GrandTotal'];
                             $updateData['payment_statut'] = 'paid';
+                            $updateData['payment_method'] = 'cash';
                             if ($transaction) {
                                 $transaction->update([
                                     'montant' => $request->GrandTotal,
-                                    'change' => $request->change_return ?? 0,
+                                    'change' => $request->change_return_value ?? 0,
                                     'Reglement' => 'cash',
                                     'status' => 'success',
                                 ]);
@@ -1054,6 +1055,8 @@ class SaleController extends Controller
                             }
                         }
                     }
+                    // dd($updateData);
+                    // dd($request->all());
                     $current_Sale->update($updateData);
                 }
             }, 10);
