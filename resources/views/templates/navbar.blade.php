@@ -265,7 +265,11 @@
                         <div class="caption ms-3 d-none d-md-block ">
                             <h6 class="mb-0 caption-title">{{ Auth::user()->lastname }}</h6>
                             {{-- <h6 class="mb-0 caption-title">User</h6> --}}
-                            <p class="mb-0 caption-sub-title">Marketing Administrator</p>
+                            @if (Auth::user()->hasRole(['superadmin', 'inventaris']))
+                            <p class="mb-0 caption-sub-title">{{ Auth::user()->getRoleNames()->implode(', ') }}</p>
+                            @else
+                            <p class="mb-0 caption-sub-title">{{ Auth::user()->getRoleNames()->first() }} {{ Auth::user()->warehouses->pluck('name')->implode(', ') }}</p>
+                            @endif
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

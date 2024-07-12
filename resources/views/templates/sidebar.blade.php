@@ -269,65 +269,67 @@
                 <li>
                     <hr class="hr-horizontal">
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-auth" role="button"
-                        aria-expanded="false" aria-controls="sidebar-user">
-                        <i class="icon">
-                            <svg class="icon-20 text-danger" width="20" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path opacity="0.4"
-                                    d="M12.0865 22C11.9627 22 11.8388 21.9716 11.7271 21.9137L8.12599 20.0496C7.10415 19.5201 6.30481 18.9259 5.68063 18.2336C4.31449 16.7195 3.5544 14.776 3.54232 12.7599L3.50004 6.12426C3.495 5.35842 3.98931 4.67103 4.72826 4.41215L11.3405 2.10679C11.7331 1.96656 12.1711 1.9646 12.5707 2.09992L19.2081 4.32684C19.9511 4.57493 20.4535 5.25742 20.4575 6.02228L20.4998 12.6628C20.5129 14.676 19.779 16.6274 18.434 18.1581C17.8168 18.8602 17.0245 19.4632 16.0128 20.0025L12.4439 21.9088C12.3331 21.9686 12.2103 21.999 12.0865 22Z"
-                                    fill="currentColor"></path>
-                                <path
-                                    d="M11.3194 14.3209C11.1261 14.3219 10.9328 14.2523 10.7838 14.1091L8.86695 12.2656C8.57097 11.9793 8.56795 11.5145 8.86091 11.2262C9.15387 10.9369 9.63207 10.934 9.92906 11.2193L11.3083 12.5451L14.6758 9.22479C14.9698 8.93552 15.448 8.93258 15.744 9.21793C16.041 9.50426 16.044 9.97004 15.751 10.2574L11.8519 14.1022C11.7049 14.2474 11.5127 14.3199 11.3194 14.3209Z"
-                                    fill="currentColor"></path>
-                            </svg>
-                        </i>
-                        <span class="item-name text-danger">Purchase</span>
-                        <i class="right-icon">
-                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
-                            </svg>
-                        </i>
-                    </a>
-                    <ul class="sub-nav collapse" id="sidebar-auth" data-bs-parent="#sidebar-menu">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('purchases.create') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> L </i>
-                                <span class="item-name">Create Purchase</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('purchases.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> R </i>
-                                <span class="item-name">All Purchase</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <hr class="hr-horizontal">
-                </li>
+                @unless (auth()->user()->hasRole('staff'))
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-auth" role="button"
+                            aria-expanded="false" aria-controls="sidebar-user">
+                            <i class="icon">
+                                <svg class="icon-20 text-danger" width="20" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.4"
+                                        d="M12.0865 22C11.9627 22 11.8388 21.9716 11.7271 21.9137L8.12599 20.0496C7.10415 19.5201 6.30481 18.9259 5.68063 18.2336C4.31449 16.7195 3.5544 14.776 3.54232 12.7599L3.50004 6.12426C3.495 5.35842 3.98931 4.67103 4.72826 4.41215L11.3405 2.10679C11.7331 1.96656 12.1711 1.9646 12.5707 2.09992L19.2081 4.32684C19.9511 4.57493 20.4535 5.25742 20.4575 6.02228L20.4998 12.6628C20.5129 14.676 19.779 16.6274 18.434 18.1581C17.8168 18.8602 17.0245 19.4632 16.0128 20.0025L12.4439 21.9088C12.3331 21.9686 12.2103 21.999 12.0865 22Z"
+                                        fill="currentColor"></path>
+                                    <path
+                                        d="M11.3194 14.3209C11.1261 14.3219 10.9328 14.2523 10.7838 14.1091L8.86695 12.2656C8.57097 11.9793 8.56795 11.5145 8.86091 11.2262C9.15387 10.9369 9.63207 10.934 9.92906 11.2193L11.3083 12.5451L14.6758 9.22479C14.9698 8.93552 15.448 8.93258 15.744 9.21793C16.041 9.50426 16.044 9.97004 15.751 10.2574L11.8519 14.1022C11.7049 14.2474 11.5127 14.3199 11.3194 14.3209Z"
+                                        fill="currentColor"></path>
+                                </svg>
+                            </i>
+                            <span class="item-name text-danger">Purchase</span>
+                            <i class="right-icon">
+                                <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </i>
+                        </a>
+                        <ul class="sub-nav collapse" id="sidebar-auth" data-bs-parent="#sidebar-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('purchases.create') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> L </i>
+                                    <span class="item-name">Create Purchase</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('purchases.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> R </i>
+                                    <span class="item-name">All Purchase</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <hr class="hr-horizontal">
+                    </li>
+                @endunless
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-user" role="button"
                         aria-expanded="false" aria-controls="sidebar-user">
@@ -458,80 +460,82 @@
                 <li>
                     <hr class="hr-horizontal">
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-widget" role="button"
-                        aria-expanded="false" aria-controls="sidebar-widget">
-                        <i class="icon">
-                            <svg class="icon-20 text-danger" width="20" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path opacity="0.4"
-                                    d="M21.25 13.4764C20.429 13.4764 19.761 12.8145 19.761 12.001C19.761 11.1865 20.429 10.5246 21.25 10.5246C21.449 10.5246 21.64 10.4463 21.78 10.3076C21.921 10.1679 22 9.97864 22 9.78146L21.999 7.10415C21.999 4.84102 20.14 3 17.856 3H6.144C3.86 3 2.001 4.84102 2.001 7.10415L2 9.86766C2 10.0648 2.079 10.2541 2.22 10.3938C2.36 10.5325 2.551 10.6108 2.75 10.6108C3.599 10.6108 4.239 11.2083 4.239 12.001C4.239 12.8145 3.571 13.4764 2.75 13.4764C2.336 13.4764 2 13.8093 2 14.2195V16.8949C2 19.158 3.858 21 6.143 21H17.857C20.142 21 22 19.158 22 16.8949V14.2195C22 13.8093 21.664 13.4764 21.25 13.4764Z"
-                                    fill="currentColor"></path>
-                                <path
-                                    d="M15.4303 11.5887L14.2513 12.7367L14.5303 14.3597C14.5783 14.6407 14.4653 14.9177 14.2343 15.0837C14.0053 15.2517 13.7063 15.2727 13.4543 15.1387L11.9993 14.3737L10.5413 15.1397C10.4333 15.1967 10.3153 15.2267 10.1983 15.2267C10.0453 15.2267 9.89434 15.1787 9.76434 15.0847C9.53434 14.9177 9.42134 14.6407 9.46934 14.3597L9.74734 12.7367L8.56834 11.5887C8.36434 11.3907 8.29334 11.0997 8.38134 10.8287C8.47034 10.5587 8.70034 10.3667 8.98134 10.3267L10.6073 10.0897L11.3363 8.61268C11.4633 8.35868 11.7173 8.20068 11.9993 8.20068H12.0013C12.2843 8.20168 12.5383 8.35968 12.6633 8.61368L13.3923 10.0897L15.0213 10.3277C15.2993 10.3667 15.5293 10.5587 15.6173 10.8287C15.7063 11.0997 15.6353 11.3907 15.4303 11.5887Z"
-                                    fill="currentColor"></path>
-                            </svg>
-                        </i>
-                        <span class="item-name text-danger">Purchase Return</span>
-                        <i class="right-icon">
-                            <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
-                            </svg>
-                        </i>
-                    </a>
-                    <ul class="sub-nav collapse" id="sidebar-widget" data-bs-parent="#sidebar-menu">
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/widget/widgetbasic.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> W </i>
-                                <span class="item-name">Widget Basic</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/widget/widgetchart.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> W </i>
-                                <span class="item-name">Widget Chart</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/widget/widgetcard.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> W </i>
-                                <span class="item-name">Widget Card</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <hr class="hr-horizontal">
-                </li>
+                @unless (auth()->user()->hasRole('staff'))
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-widget" role="button"
+                            aria-expanded="false" aria-controls="sidebar-widget">
+                            <i class="icon">
+                                <svg class="icon-20 text-danger" width="20" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.4"
+                                        d="M21.25 13.4764C20.429 13.4764 19.761 12.8145 19.761 12.001C19.761 11.1865 20.429 10.5246 21.25 10.5246C21.449 10.5246 21.64 10.4463 21.78 10.3076C21.921 10.1679 22 9.97864 22 9.78146L21.999 7.10415C21.999 4.84102 20.14 3 17.856 3H6.144C3.86 3 2.001 4.84102 2.001 7.10415L2 9.86766C2 10.0648 2.079 10.2541 2.22 10.3938C2.36 10.5325 2.551 10.6108 2.75 10.6108C3.599 10.6108 4.239 11.2083 4.239 12.001C4.239 12.8145 3.571 13.4764 2.75 13.4764C2.336 13.4764 2 13.8093 2 14.2195V16.8949C2 19.158 3.858 21 6.143 21H17.857C20.142 21 22 19.158 22 16.8949V14.2195C22 13.8093 21.664 13.4764 21.25 13.4764Z"
+                                        fill="currentColor"></path>
+                                    <path
+                                        d="M15.4303 11.5887L14.2513 12.7367L14.5303 14.3597C14.5783 14.6407 14.4653 14.9177 14.2343 15.0837C14.0053 15.2517 13.7063 15.2727 13.4543 15.1387L11.9993 14.3737L10.5413 15.1397C10.4333 15.1967 10.3153 15.2267 10.1983 15.2267C10.0453 15.2267 9.89434 15.1787 9.76434 15.0847C9.53434 14.9177 9.42134 14.6407 9.46934 14.3597L9.74734 12.7367L8.56834 11.5887C8.36434 11.3907 8.29334 11.0997 8.38134 10.8287C8.47034 10.5587 8.70034 10.3667 8.98134 10.3267L10.6073 10.0897L11.3363 8.61268C11.4633 8.35868 11.7173 8.20068 11.9993 8.20068H12.0013C12.2843 8.20168 12.5383 8.35968 12.6633 8.61368L13.3923 10.0897L15.0213 10.3277C15.2993 10.3667 15.5293 10.5587 15.6173 10.8287C15.7063 11.0997 15.6353 11.3907 15.4303 11.5887Z"
+                                        fill="currentColor"></path>
+                                </svg>
+                            </i>
+                            <span class="item-name text-danger">Purchase Return</span>
+                            <i class="right-icon">
+                                <svg class="icon-18 text-danger" xmlns="http://www.w3.org/2000/svg" width="18"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </i>
+                        </a>
+                        <ul class="sub-nav collapse" id="sidebar-widget" data-bs-parent="#sidebar-menu">
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/widget/widgetbasic.html">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> W </i>
+                                    <span class="item-name">Widget Basic</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/widget/widgetchart.html">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> W </i>
+                                    <span class="item-name">Widget Chart</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/widget/widgetcard.html">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> W </i>
+                                    <span class="item-name">Widget Card</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <hr class="hr-horizontal">
+                    </li>
+                @endunless
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-maps" role="button"
                         aria-expanded="false" aria-controls="sidebar-maps">
@@ -792,103 +796,105 @@
                 <li>
                     <hr class="hr-horizontal">
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-settings" role="button"
-                        aria-expanded="false" aria-controls="sidebar-settings">
-                        <i class="icon">
-                            <svg class="icon-20" xmlns="http://www.w3.org/2000/svg" width="20"
-                                viewBox="0 0 24 24" fill="none">
-                                <path
-                                    d="M2 5C2 4.44772 2.44772 4 3 4H8.66667H21C21.5523 4 22 4.44772 22 5V8H15.3333H8.66667H2V5Z"
-                                    fill="currentColor" stroke="currentColor" />
-                                <path
-                                    d="M6 8H2V11M6 8V20M6 8H14M6 20H3C2.44772 20 2 19.5523 2 19V11M6 20H14M14 8H22V11M14 8V20M14 20H21C21.5523 20 22 19.5523 22 19V11M2 11H22M2 14H22M2 17H22M10 8V20M18 8V20"
-                                    stroke="currentColor" />
-                            </svg>
-                        </i>
-                        <span class="item-name text-wrap">{{ __('Settings') }}</span>
-                        <i class="right-icon">
-                            <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
-                            </svg>
-                        </i>
-                    </a>
-                    <ul class="sub-nav collapse" id="sidebar-settings" data-bs-parent="#sidebar-menu">
-                        @role('superadmin|inventaris')
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('settings.warehouses.index') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> B </i>
-                                    <span class="item-name text-wrap">{{ __('Warehouse/Outlet') }}</span>
-                                </a>
-                            </li>
-                        @endrole
-                        @role('developer')
-                            <li class="nav-item">
-                                <a class="nav-link "href="{{ route('settings.currency.index') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> C </i>
-                                    <span class="item-name">Currency</span>
-                                </a>
-                            </li>
-                        @endrole
-                        @role('superadmin')
-                            <li class="nav-item">
-                                <a class="nav-link "href="{{ route('settings.membership.index') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> C </i>
-                                    <span class="item-name">{{ __('Membership') }}</span>
-                                </a>
-                            </li>
-                        @endrole
-                        @role('superadmin')
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('settings.company.edit') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> B </i>
-                                    <span class="item-name text-wrap">{{ __('Company') }} {{ __('Settings') }}</span>
-                                </a>
-                            </li>
-                        @endrole
-                    </ul>
-                </li>
-                <li>
-                    <hr class="hr-horizontal">
-                </li>
+                @unless (auth()->user()->hasRole('staff'))
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-settings" role="button"
+                            aria-expanded="false" aria-controls="sidebar-settings">
+                            <i class="icon">
+                                <svg class="icon-20" xmlns="http://www.w3.org/2000/svg" width="20"
+                                    viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M2 5C2 4.44772 2.44772 4 3 4H8.66667H21C21.5523 4 22 4.44772 22 5V8H15.3333H8.66667H2V5Z"
+                                        fill="currentColor" stroke="currentColor" />
+                                    <path
+                                        d="M6 8H2V11M6 8V20M6 8H14M6 20H3C2.44772 20 2 19.5523 2 19V11M6 20H14M14 8H22V11M14 8V20M14 20H21C21.5523 20 22 19.5523 22 19V11M2 11H22M2 14H22M2 17H22M10 8V20M18 8V20"
+                                        stroke="currentColor" />
+                                </svg>
+                            </i>
+                            <span class="item-name text-wrap">{{ __('Settings') }}</span>
+                            <i class="right-icon">
+                                <svg class="icon-18" xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </i>
+                        </a>
+                        <ul class="sub-nav collapse" id="sidebar-settings" data-bs-parent="#sidebar-menu">
+                            @role('superadmin|inventaris')
+                                <li class="nav-item">
+                                    <a class="nav-link " href="{{ route('settings.warehouses.index') }}">
+                                        <i class="icon">
+                                            <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                                viewBox="0 0 24 24" fill="currentColor">
+                                                <g>
+                                                    <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                    </circle>
+                                                </g>
+                                            </svg>
+                                        </i>
+                                        <i class="sidenav-mini-icon"> B </i>
+                                        <span class="item-name text-wrap">{{ __('Warehouse/Outlet') }}</span>
+                                    </a>
+                                </li>
+                            @endrole
+                            @role('developer')
+                                <li class="nav-item">
+                                    <a class="nav-link "href="{{ route('settings.currency.index') }}">
+                                        <i class="icon">
+                                            <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                                viewBox="0 0 24 24" fill="currentColor">
+                                                <g>
+                                                    <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                    </circle>
+                                                </g>
+                                            </svg>
+                                        </i>
+                                        <i class="sidenav-mini-icon"> C </i>
+                                        <span class="item-name">Currency</span>
+                                    </a>
+                                </li>
+                            @endrole
+                            @role('superadmin')
+                                <li class="nav-item">
+                                    <a class="nav-link "href="{{ route('settings.membership.index') }}">
+                                        <i class="icon">
+                                            <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                                viewBox="0 0 24 24" fill="currentColor">
+                                                <g>
+                                                    <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                    </circle>
+                                                </g>
+                                            </svg>
+                                        </i>
+                                        <i class="sidenav-mini-icon"> C </i>
+                                        <span class="item-name">{{ __('Membership') }}</span>
+                                    </a>
+                                </li>
+                            @endrole
+                            @role('superadmin')
+                                <li class="nav-item">
+                                    <a class="nav-link " href="{{ route('settings.company.edit') }}">
+                                        <i class="icon">
+                                            <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                                viewBox="0 0 24 24" fill="currentColor">
+                                                <g>
+                                                    <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                    </circle>
+                                                </g>
+                                            </svg>
+                                        </i>
+                                        <i class="sidenav-mini-icon"> B </i>
+                                        <span class="item-name text-wrap">{{ __('Company') }} {{ __('Settings') }}</span>
+                                    </a>
+                                </li>
+                            @endrole
+                        </ul>
+                    </li>
+                    <li>
+                        <hr class="hr-horizontal">
+                    </li>
+                @endunless
                 <li class="nav-item mb-5">
                     <a class="nav-link" data-bs-toggle="collapse" href="#sidebar-icons" role="button"
                         aria-expanded="false" aria-controls="sidebar-icons">
@@ -912,141 +918,147 @@
                         </i>
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-icons" data-bs-parent="#sidebar-menu">
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.payments.sales') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> S </i>
-                                <span class="item-name">{{ __('Payments') }}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.profit-loss') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> O </i>
-                                <span class="item-name text-wrap">{{ __('Profit & Loss') }}</span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.quantity-alerts') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name text-wrap">{{ __('Quantity Alerts') }}</span>
-                            </a>
-                        </li>
-                        {{--  --}}
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.stock.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">{{ __('Stock') }}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.customers.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">{{ __('Customer') }}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.supplier.index') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">{{ __('Supplier') }}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.top-selling-product') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name text-wrap">{{ __('Top Selling Products') }}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="../dashboard/icons/dual-tone.html">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">{{ __('Employee') }}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.warehouse.sales') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">{{ __('Warehouse/Outlet') }}</span>
-                            </a>
-                        </li>
+                        @role('superadmin|inventaris')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('reports.payments.sales') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> S </i>
+                                    <span class="item-name">{{ __('Payments') }}</span>
+                                </a>
+                            </li>
+                        @endrole
+                        @role('superadmin')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('reports.profit-loss') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> O </i>
+                                    <span class="item-name text-wrap">{{ __('Profit & Loss') }}</span></a>
+                            </li>
+                        @endrole
+                        @role('superadmin|inventaris')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('reports.quantity-alerts') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name text-wrap">{{ __('Quantity Alerts') }}</span>
+                                </a>
+                            </li>
+                            {{--  --}}
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('reports.stock.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">{{ __('Stock') }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('reports.customers.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">{{ __('Customer') }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('reports.supplier.index') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">{{ __('Supplier') }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('reports.top-selling-product') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name text-wrap">{{ __('Top Selling Products') }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="../dashboard/icons/dual-tone.html">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">{{ __('Employee') }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('reports.warehouse.sales') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">{{ __('Warehouse/Outlet') }}</span>
+                                </a>
+                            </li>
+                        @endrole
                         <li class="nav-item">
                             <a class="nav-link " href="{{ route('reports.sale') }}">
                                 <i class="icon">
@@ -1062,21 +1074,23 @@
                                 <span class="item-name">{{ __('Sales') }}</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="{{ route('reports.purchase') }}">
-                                <i class="icon">
-                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                        viewBox="0 0 24 24" fill="currentColor">
-                                        <g>
-                                            <circle cx="12" cy="12" r="8" fill="currentColor">
-                                            </circle>
-                                        </g>
-                                    </svg>
-                                </i>
-                                <i class="sidenav-mini-icon"> D </i>
-                                <span class="item-name">{{ __('Purchases') }}</span>
-                            </a>
-                        </li>
+                        @role('superadmin|inventaris')
+                            <li class="nav-item">
+                                <a class="nav-link " href="{{ route('reports.purchase') }}">
+                                    <i class="icon">
+                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <g>
+                                                <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                </circle>
+                                            </g>
+                                        </svg>
+                                    </i>
+                                    <i class="sidenav-mini-icon"> D </i>
+                                    <span class="item-name">{{ __('Purchases') }}</span>
+                                </a>
+                            </li>
+                        @endrole
                     </ul>
                 </li>
             </ul>

@@ -15,7 +15,7 @@ class Sale extends Model
     protected $fillable = [
         'date', 'Ref', 'is_pos', 'client_id', 'GrandTotal', 'qte_retturn', 'TaxNet', 'tax_rate', 'notes',
         'total_retturn', 'warehouse_id', 'user_id', 'statut', 'discount', 'shipping',
-        'paid_amount', 'payment_statut', 'created_at', 'updated_at', 'deleted_at', 'shipping_status',
+        'paid_amount', 'payment_statut', 'created_at', 'updated_at', 'deleted_at', 'shipping_status','payment_method'
     ];
 
     protected $casts = [

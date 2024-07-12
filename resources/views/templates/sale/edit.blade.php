@@ -348,6 +348,7 @@
                                                     placeholder="input change return" id="change_return"
                                                     name="change_return" value="{{ Session::get('change_return') }}"
                                                     readonly>
+                                                <input type="hidden" id="change_return_hidden" name="change_return_value">
                                             </div>
                                             @error('change_return')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -454,6 +455,8 @@
                 var paying = getNumericValue('paying_amount');
                 var change = received - paying;
                 document.getElementById('change_return').value = formatRupiah(change >= 0 ? change : 0);
+                // Set numeric value in hidden input
+                document.getElementById('change_return_hidden').value = change >= 0 ? change : 0;
             }
 
             // Event listener untuk perubahan nilai pada input received amount dan paying amount
@@ -610,14 +613,14 @@
                                     '][tax_method]" value="' + data.tax_method + '">';
                                 row +=
                                     '<input type="hidden" class="item-subtotal" name="details[new-' +
-                                    newIndex + '][subtotal]" value="' + formattedInitialTotal +
+                                    newIndex + '][subtotal]" value="' + initialTotal +
                                     '">';
                                 row +=
                                     '<input type="hidden" class="item-subdiscount" name="details[new-' +
                                     newIndex + '][discount]" value="0">';
                                 row +=
                                     '<input type="hidden" class="item-subdiscountmethod" name="details[new-' +
-                                    newIndex + '][discount_method]" value="0">';
+                                    newIndex + '][discount_method]" value="nodiscount">';
                                 row += '<input type="hidden" name="details[new-' + newIndex +
                                     '][quantity_discount]" value="' + data.quantity_discount +
                                     '">';
