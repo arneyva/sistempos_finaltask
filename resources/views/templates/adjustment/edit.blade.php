@@ -242,8 +242,9 @@
                                 row += '<td>' + 'New Data' + '</td>';
                                 row += '<td>' + data.qty + ' ' + data.unit + '</td>';
                                 row +=
-                                    '<td><input type="number" class="form-control" name="details[new-' +
-                                    newIndex + '][quantity]" value="0" min="0"></td>';
+                                    '<td><input type="number" class="form-control item-quantity" name="details[new-' +
+                                    newIndex + '][quantity]" value="' + initialQuantity +
+                                    '" data-min-quantity="1"></td>';
                                 row += '<td><select class="form-select" name="details[new-' +
                                     newIndex +
                                     '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';

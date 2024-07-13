@@ -24,13 +24,14 @@
                     <h4 class="card-title">{{ __('All Adjustment') }}</h4>
                 </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-soft-warning" data-bs-toggle="modal"
                         data-bs-target="#createModal">{{ __('Filter') }}</button>
-                    <a href="{{ route('adjustment.pdf', request()->query()) }}"
-                        class="btn btn-soft-success">{{ __('PDF') }}</a>
-                    <a href="{{ route('adjustment.export', request()->query()) }}"
-                        class="btn btn-soft-danger">{{ __('Excel') }}</a>
-                    <button type="button" class="btn btn-soft-gray">{{ __('Import Product') }}</button>
+                    @role('superadmin|inventaris')
+                        <a href="{{ route('adjustment.pdf', request()->query()) }}"
+                            class="btn btn-soft-success">{{ __('PDF') }}</a>
+                        <a href="{{ route('adjustment.export', request()->query()) }}"
+                            class="btn btn-soft-danger">{{ __('Excel') }}</a>
+                    @endrole
                     <a href="{{ route('adjustment.create') }}" class="btn btn-soft-primary">{{ __('+create') }}</a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
@@ -129,8 +130,7 @@
                                                     <circle cx="12" cy="12" r="3" fill="#130F26">
                                                     </circle>
                                                 </mask>
-                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5"
-                                                    fill="white">
+                                                <circle opacity="0.89" cx="13.5" cy="10.5" r="1.5" fill="white">
                                                 </circle>
                                             </svg>
                                             <div class="modal fade" id="detailModal{{ $item['id'] }}" tabindex="-1"

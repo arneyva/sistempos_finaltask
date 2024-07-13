@@ -498,7 +498,7 @@
                 var warehouseId = $(this).val();
                 if (warehouseId) {
                     $.ajax({
-                        url: '/adjustment/get_Available_Products_by_warehouse/' + warehouseId,
+                        url: '/adjustment/Sale_get_Available_Products_by_warehouse/' + warehouseId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
