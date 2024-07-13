@@ -90,7 +90,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">{{ __('Detail Product') }}</h4>
+                            <h4 class="card-title">{{ __('Product') }} {{ __('Details') }}</h4>
                         </div>
                     </div>
                     <form method="POST" action="{{ route('product.update', $product['id']) }}"
@@ -314,7 +314,7 @@
                             @endif
                         </div>
                         <div class="form-group mt-2">
-                            <button class="btn btn-primary" type="submit">Update</button>
+                            <button class="btn btn-primary" type="submit">{{ __('Update') }}</button>
                         </div>
 
                     </div>

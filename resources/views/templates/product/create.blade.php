@@ -90,7 +90,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">{{ __('Product Detail') }}</h4>
+                            <h4 class="card-title">{{ __('Product') }} {{ __('Details') }}</h4>
                         </div>
                     </div>
                     <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data" id="form"

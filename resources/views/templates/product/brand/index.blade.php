@@ -108,7 +108,7 @@
                                                     placeholder="{{ __('input brands') }}" name="name">
                                             </div>
                                             <div class="col mb-3">
-                                                <label class="form-label" for="description">{{ __('Description*') }}</label>
+                                                <label class="form-label" for="description">{{ __('Description') }}*</label>
                                                 <input type="text" class="form-control" id="description" required
                                                     placeholder="{{ __('input description') }}" name="description">
                                             </div>
@@ -269,7 +269,7 @@
                                                                     </div>
                                                                     <div class="col mb-3">
                                                                         <label class="form-label"
-                                                                            for="editdescription{{ $item->id }}">{{ __('Description*') }}
+                                                                            for="editdescription{{ $item->id }}">{{ __('Description') }}*
                                                                         </label>
                                                                         <input type="text" class="form-control"
                                                                             id="editdescription{{ $item->id }}" required
