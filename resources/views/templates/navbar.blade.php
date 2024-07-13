@@ -250,7 +250,7 @@
                 <li class="nav-item dropdown">
                     <a class="py-0 nav-link d-flex align-items-center" href="#" id="navbarDropdown"
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{{ asset('hopeui/html/assets/images/avatars/01.png') }}" alt="User-Profile"
+                        <img src="{{ asset('hopeui/html/assets/images/avatars/' . Auth::user()->avatar) }}" alt="User-Profile"
                             class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded">
                         <img src="{{ asset('hopeui/html/assets/images/avatars/avtar_1.png') }}" alt="User-Profile"
                             class="theme-color-purple-img img-fluid avatar avatar-50 avatar-rounded">

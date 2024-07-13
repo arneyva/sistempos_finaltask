@@ -18,8 +18,10 @@
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">{{ __('Filter') }}</button>
-                    <a href="{{ route('product.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
-                    <a href="{{ route('product.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    @role('superadmin|inventaris')
+                        <a href="{{ route('product.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                        <a href="{{ route('product.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    @endrole
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
@@ -213,7 +215,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary"
-                                                src="{{ asset('hopeui/html/assets/images/products/'.$item['image']) }}"
+                                                src="{{ asset('hopeui/html/assets/images/products/' . $item['image']) }}"
                                                 alt="profile">
                                             <div class="d-flex flex-column">
                                                 @if ($item['type'] === 'Variant Product')
@@ -227,7 +229,13 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $item['type'] }}</td>
+                                    <td>
+                                        @if ($item['type'] === 'Variant Product')
+                                            {{ __('Product') }} {{ __('Variant') }}
+                                        @else
+                                            {{ __('Product') }} {{ __('Single') }}
+                                        @endif
+                                    </td>
                                     <td style="text-align: center; vertical-align: middle;">
                                         @php
                                             $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
