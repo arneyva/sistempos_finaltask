@@ -137,6 +137,7 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
 });
 Route::get('/sale/payment/success/{transaction}', [SaleController::class, 'success'])->name('sale.payment.success');
 Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(function () {
+    Route::get('print-invoice/{id}', [SaleController::class, 'printInvoice'])->name('print-invoice');
     Route::get('list', [SaleController::class, 'index'])->name('index');
     Route::get('shipments', [ShipmentController::class, 'index'])->name('shipments');
     Route::get('detail/{id}', [SaleController::class, 'show'])->name('show');

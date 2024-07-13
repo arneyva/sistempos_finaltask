@@ -599,6 +599,115 @@ class SaleController extends Controller
             ]
         );
     }
+    public function printInvoice(Request $request, $id)
+    {
+        // mendpaatkan data berdasarkan id
+        $sale_data = Sale::with('details.product.unitSale')
+            ->where('deleted_at', '=', null)
+            ->findOrFail($id);
+
+        $details = []; //menyimpan data detail sale
+        // proses mendapatkan data detail sale
+        $sale_details['Ref'] = $sale_data->Ref;
+        $sale_details['PaymentRef'] = $sale_data->paymentSales->Ref;
+        $sale_details['PaymentStatus'] = $sale_data->paymentSales->status;
+        $sale_details['PaymentCharge'] = 'Rp ' . number_format($sale_data->paymentSales->change, 2, ',', '.');
+        $a = $sale_data->paymentSales->change + $sale_data->paymentSales->montant;
+        $sale_details['PaymentBayar'] = 'Rp ' . number_format($a, 2, ',', '.');
+        $sale_details['date'] = $sale_data->date;
+        $sale_details['note'] = $sale_data->notes;
+        $sale_details['statut'] = $sale_data->statut;
+        $sale_details['warehouse'] = $sale_data['warehouse']->name;
+        $sale_details['discount'] = $sale_data->discount;
+        $sale_details['shipping'] = $sale_data->shipping;
+        $sale_details['tax_rate'] = $sale_data->tax_rate;
+        $sale_details['TaxNet'] = $sale_data->TaxNet;
+        $sale_details['client_name'] = $sale_data['client']->name;
+        $sale_details['client_phone'] = $sale_data['client']->phone;
+        $sale_details['client_adr'] = $sale_data['client']->adresse;
+        $sale_details['client_email'] = $sale_data['client']->email;
+        $sale_details['client_tax'] = $sale_data['client']->tax_number;
+        $sale_details['GrandTotal'] = number_format($sale_data->GrandTotal, 2, '.', '');
+        $sale_details['paid_amount'] = number_format($sale_data->paid_amount, 2, '.', '');
+        $sale_details['due'] = number_format($sale_details['GrandTotal'] - $sale_details['paid_amount'], 2, '.', '');
+        $sale_details['payment_status'] = $sale_data->payment_statut;
+        // pengecekan apakah ada data sale return berdasarkan id sale
+        if (SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->exists()) {
+            $sellReturn = SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->first();
+            $sale_details['salereturn_id'] = $sellReturn->id;
+            $sale_details['sale_has_return'] = 'yes';
+        } else {
+            $sale_details['sale_has_return'] = 'no';
+        }
+
+        foreach ($sale_data['details'] as $detail) {
+
+            //check if detail has sale_unit_id Or Null
+            if ($detail->sale_unit_id !== null) {
+                $unit = Unit::where('id', $detail->sale_unit_id)->first();
+            } else {
+                $product_unit_sale_id = Product::with('unitSale')
+                    ->where('id', $detail->product_id)
+                    ->first();
+
+                if ($product_unit_sale_id['unitSale']) {
+                    $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
+                }
+                $unit = null;
+            }
+
+            if ($detail->product_variant_id) {
+
+                $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+                    ->where('id', $detail->product_variant_id)->first();
+
+                $data['code'] = $productsVariants->code;
+                $data['name'] = '[' . $productsVariants->name . ']' . $detail['product']['name'];
+            } else {
+                $data['code'] = $detail['product']['code'];
+                $data['name'] = $detail['product']['name'];
+            }
+
+            $data['quantity'] = $detail->quantity;
+            $data['total'] = $detail->total;
+            $data['price'] = $detail->price;
+            $data['unit_sale'] = $unit ? $unit->ShortName : '';
+
+            if ($detail->discount_method == 'discount') {
+                $data['DiscountNet'] = $detail->discount;
+            } else {
+                $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+            }
+
+            $tax_price = $detail->TaxNet * ($detail->price / 100);
+            $taxe_total = $tax_price * $detail->quantity;
+            $data['Unit_price'] = $detail->price;
+            $data['discount'] = $detail->discount;
+
+            if ($detail->tax_method == 'Exclusive') {
+                $data['Net_price'] = $detail->price - $data['DiscountNet'];
+                $data['taxe'] = $tax_price;
+                $data['taxe_total'] = $taxe_total;
+            } else {
+                $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
+                $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
+                $data['taxe_total'] = $taxe_total;
+            }
+            $data['is_imei'] = $detail['product']['is_imei'];
+            $data['imei_number'] = $detail->imei_number;
+
+            $details[] = $data;
+        }
+        $company = Setting::where('deleted_at', '=', null)->first(); //mengambil data setting company
+        return view(
+            'export.invoice-sale',
+            [
+                'details' => $details,
+                'sale' => $sale_details,
+                'company' => $company,
+            ]
+        );
+    }
 
     public function Payments_Sale(Request $request, $id)
     {

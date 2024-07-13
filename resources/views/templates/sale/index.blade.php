@@ -540,17 +540,21 @@
                                                         </div>
                                                         <div class="invoice-content" style="padding: 15px;">
                                                             {{-- <td style="text-align: center; vertical-align: middle;"> --}}
-                                                                @php
-                                                                    $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
-                                                                    $barcodeData = base64_encode(
-                                                                        $generatorPNG->getBarcode($item['Ref'], $generatorPNG::TYPE_CODE_128),
-                                                                    );
-                                                                    $barcodeUrl = 'data:image/png;base64,' . $barcodeData;
-                                                                @endphp
-                                                                {{-- <div style="display: flex; flex-direction: column; align-items: center;"> --}}
-                                                                    <img src="{{ $barcodeUrl }}" alt="Barcode" style="margin-bottom: 5px;">
-                                                                    {{-- <span>{{ $item['Ref'] }}</span> --}}
-                                                                {{-- </div> --}}
+                                                            @php
+                                                                $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
+                                                                $barcodeData = base64_encode(
+                                                                    $generatorPNG->getBarcode(
+                                                                        $item['Ref'],
+                                                                        $generatorPNG::TYPE_CODE_128,
+                                                                    ),
+                                                                );
+                                                                $barcodeUrl = 'data:image/png;base64,' . $barcodeData;
+                                                            @endphp
+                                                            {{-- <div style="display: flex; flex-direction: column; align-items: center;"> --}}
+                                                            <img src="{{ $barcodeUrl }}" alt="Barcode"
+                                                                style="margin-bottom: 5px;">
+                                                            {{-- <span>{{ $item['Ref'] }}</span> --}}
+                                                            {{-- </div> --}}
                                                             {{-- </td> --}}
                                                         </div>
                                                     </div>
@@ -617,7 +621,7 @@
                                                                 </div>
                                                             @endif
                                                         </li>
-                                                        <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
+                                                        {{-- <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
                                                             data-bs-target="#invoiceModal{{ $item->id }}"
                                                             style="color: #546DEB;">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
@@ -634,8 +638,17 @@
                                                                 </g>
                                                             </svg> {{ __('Invoice POS') }}
                                                             </a>
+                                                        </li> --}}
+                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                href="{{ route('sale.print-invoice', $item->id) }}">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                    height="1.5em" viewBox="0 0 24 24">
+                                                                    <path fill="currentColor"
+                                                                        d="M7 7h10v2H7zm0 4h7v2H7z" />
+                                                                    <path fill="currentColor"
+                                                                        d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
+                                                                </svg> {{ __('Invoice POS') }} </a>
                                                         </li>
-
                                                         <li class="iq-sub-card list-group-item"><a class="p-0"
                                                                 href="#">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
