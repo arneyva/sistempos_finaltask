@@ -81,7 +81,7 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>{{ __('Product') }}</th>
-                                                    <th>{{ __('Purchase') }} {{ __('Cost') }}</th>
+                                                    <th>{{ __('Purchases') }} {{ __('Cost') }}</th>
                                                     <th>{{ __('Stock') }}</th>
                                                     <th>{{ __('Quantity') }}</th>
                                                     <th>{{ __('Discount') }}</th>

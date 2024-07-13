@@ -118,6 +118,7 @@ Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.
     //
     Route::get('get_Products_by_warehouse/{id}', [AdjustmentController::class, 'Products_by_Warehouse'])->name('get_Warehouses');
     Route::get('get_Available_Products_by_warehouse/{id}', [AdjustmentController::class, 'Avilable_Products_by_Warehouse'])->name('get_Available_Warehouses');
+    Route::get('Sale_get_Available_Products_by_warehouse/{id}', [AdjustmentController::class, 'Sale_Avilable_Products_by_Warehouse'])->name('Sale_get_Available_Warehouses');
     Route::get('show_product_data/{id}/{variant_id}/{warehouse_id}', [AdjustmentController::class, 'show_product_data']);
     //
     Route::get('export', [AdjustmentController::class, 'export'])->name('export');

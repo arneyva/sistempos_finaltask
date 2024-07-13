@@ -487,14 +487,14 @@
                                     '][tax_method]" value="' + data.tax_method + '">';
                                 row +=
                                     '<input type="hidden" class="item-subtotal" name="details[new-' +
-                                    newIndex + '][subtotal]" value="' + formattedInitialTotal +
+                                    newIndex + '][subtotal]" value="' + initialTotal +
                                     '">';
                                 row +=
                                     '<input type="hidden" class="item-subdiscount" name="details[new-' +
                                     newIndex + '][discount]" value="0">';
                                 row +=
                                     '<input type="hidden" class="item-subdiscountmethod" name="details[new-' +
-                                    newIndex + '][discount_method]" value="0">';
+                                    newIndex + '][discount_method]" value="nodiscount">';
                                 row += '<input type="hidden" name="details[new-' + newIndex +
                                     '][quantity_discount]" value="' + data.
                                 quantity_discount_purchase +
@@ -519,7 +519,7 @@
             function loadProductsByWarehouse(warehouseId) {
                 if (warehouseId) {
                     $.ajax({
-                        url: '/adjustment/get_Products_by_warehouse/' + warehouseId,
+                        url: '/adjustment/get_Available_Products_by_warehouse/' + warehouseId,
                         type: "GET",
                         dataType: "json",
                         success: function(data) {

@@ -356,6 +356,12 @@ class TransferController extends Controller
             if ($detail->purchase_unit_id !== null) {
                 $unit = Unit::where('id', $detail->purchase_unit_id)->first();
                 $data['no_unit'] = 1;
+                if ($unit->operator == '/') {
+                    // $item['qty_product_purchase'] = floor($stock->qty * $Product_data['unitPurchase']->operator_value);
+                } else {
+                    // $item['qty_product_purchase'] = floor($stock->qty / $Product_data['unitPurchase']->operator_value);
+                    $data['unitPurchaseOperatorValue'] = $unit['operator_value'];
+                }
             } else {
                 $product_unit_purchase_id = Product::with('unitPurchase')
                     ->where('id', $detail->product_id)
@@ -436,7 +442,8 @@ class TransferController extends Controller
             $data['purchase_unit_id'] = $unit->id;
             $data['total'] = $detail->total;
             $data['quantity_discount'] = $quantity_discount;
-            $data['quantity_discount_init'] = $quantity_discount / $data['stock_sale'];
+            $data['quantity_discount_init'] = $quantity_discount / $data['unitPurchaseOperatorValue'];
+            // $data['quantity_discount_init'] = $detail->discount;
             $data['discount_percentage'] =  $discount_percentage;
             // $data['total'] = $detail->total;
 
@@ -730,6 +737,7 @@ class TransferController extends Controller
                         $TransDetail['product_variant_id'] = $product_detail['product_variant_id'];
                         $TransDetail['cost'] = $product_detail['Unit_cost'];
                         $TransDetail['TaxNet'] = $product_detail['tax_percent'];
+                        $TransDetail['tax_method'] = 'Exclusive';
                         $TransDetail['total'] = $product_detail['subtotal'];
                         $TransDetail['discount'] = $product_detail['discount'] ? $product_detail['discount'] : 0;
                         $TransDetail['discount_method'] = $product_detail['discount_method'] ? $product_detail['discount_method'] : 0;

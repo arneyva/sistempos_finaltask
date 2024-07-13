@@ -25,12 +25,14 @@
                     </h4>
                 </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-soft-warning" data-bs-toggle="modal"
                         data-bs-target="#createModal">{{ __('Filter') }}</button>
-                    <a href="{{ route('transfer.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
-                    <a href="{{ route('transfer.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
-                    <a href="{{ route('transfer.create') }}"><button type="button"
-                            class="btn btn-soft-primary">{{ __('Create +') }}</button></a>
+                    @role('superadmin|inventaris')
+                        <a href="{{ route('transfer.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                        <a href="{{ route('transfer.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                        <a href="{{ route('transfer.create') }}"><button type="button"
+                                class="btn btn-soft-primary">{{ __('Create +') }}</button></a>
+                    @endrole
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
