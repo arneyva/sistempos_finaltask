@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Edit sale</h1>
-    <p>Look All your sale</p>
+    <h1>{{ __('Edit Sales') }}</h1>
+    <p>{{ __('Manage your product sales easily and efficiently') }}</p>
 @endsection
 <style>
     /* Custom CSS to ensure proper height */
@@ -37,7 +37,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">{{ __('Edit Sale') }}</h4>
+                            <h4 class="card-title">{{ __('Edit Sales') }}</h4>
                         </div>
                     </div>
                     {{--  --}}
@@ -186,19 +186,19 @@
                                         role="grid">
                                         <tbody>
                                             <tr>
-                                                <td>Order Tax</td>
+                                                <td>{{ __('Order Tax') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Discount</td>
+                                                <td>{{ __('Discount') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Shipping</td>
+                                                <td>{{ __('Shipping') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
-                                                <td>Grand Total</td>
+                                                <td>{{ __('Grand Total') }}</td>
                                                 <th></th>
                                             </tr>
                                         </tbody>
@@ -207,7 +207,7 @@
                                 <div class="col-md-12 mb-3">
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="tax_rate">Order Tax *</label>
+                                            <label class="form-label" for="tax_rate">{{ __('Order Tax') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="tax_rate"
                                                     placeholder="input tax" name="tax_rate"
@@ -229,7 +229,7 @@
                                         <input class="" type="hidden" id="grandTotal" name="GrandTotal"
                                             value="{{ $sale['GrandTotal'] }}">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="discount">Discount *</label>
+                                            <label class="form-label" for="discount">{{ __('Discount') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="text" class="form-control" id="discount"
                                                     placeholder="input discount" name="discount"
@@ -247,7 +247,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="shipping">Shipping *</label>
+                                            <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="text" class="form-control" id="shipping"
                                                     placeholder="input shipping" name="shipping"
@@ -265,14 +265,14 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="typeStatus">Status</label>
+                                            <label class="form-label" for="typeStatus">{{ __('Status *') }}</label>
                                             <select class="form-select select2" id="typeStatus" required name="statut"
                                                 data-placeholder="Select a Status">
                                                 <option value="completed"
-                                                    {{ $sale['statut'] == 'completed' ? 'selected' : '' }}>Completed
+                                                    {{ $sale['statut'] == 'completed' ? 'selected' : '' }}>{{ __('Completed') }}
                                                 </option>
                                                 <option value="pending"
-                                                    {{ $sale['statut'] == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                    {{ $sale['statut'] == 'pending' ? 'selected' : '' }}>{{ __('Pending') }}</option>
                                             </select>
                                             @error('brand_id')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -285,13 +285,13 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="paymentMethod">
-                                            <label class="form-label" for="payment_method">Payment Method</label>
+                                            <label class="form-label" for="payment_method">{{ __('Payment Method *') }}</label>
                                             <select class="form-select select2" name="payment_method" id="payment_method"
                                                 data-placeholder="Select a payment_method">
                                                 <option value="cash"
-                                                    {{ $sale['payment_method'] == 'cash' ? 'selected' : '' }}>Cash</option>
+                                                    {{ $sale['payment_method'] == 'cash' ? 'selected' : '' }}>{{ __('Cash') }}</option>
                                                 <option value="midtrans"
-                                                    {{ $sale['payment_method'] == 'midtrans' ? 'selected' : '' }}>Other
+                                                    {{ $sale['payment_method'] == 'midtrans' ? 'selected' : '' }}>{{ __('Via Midtrans') }}
                                                 </option>
                                             </select>
                                             @error('payment_method')
@@ -305,7 +305,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="receivedAmount">
-                                            <label class="form-label" for="received_amount">Received Amount *</label>
+                                            <label class="form-label" for="received_amount">{{ __('Received Amount') }}</label>
                                             <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
@@ -323,7 +323,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="payingAmount">
-                                            <label class="form-label" for="paying_amount">Paying Amount *</label>
+                                            <label class="form-label" for="paying_amount">{{ __('Paying Amount') }}</label>
                                             <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
@@ -341,7 +341,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="changeReturn">
-                                            <label class="form-label" for="change_return">Change Return *</label>
+                                            <label class="form-label" for="change_return">{{ __('Change Return') }}</label>
                                             <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
@@ -363,12 +363,12 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="exampleFormControlTextarea1">Note</label>
+                                    <label class="form-label" for="exampleFormControlTextarea1">{{ __('Note') }}</label>
                                     <input type="text" class="form-control" id="exampleFormControlTextarea1"
                                         rows="3" name="notes" value="{{ $sale['notes'] }}">
                                 </div>
                                 <div class="col-md-12">
-                                    <button type="submit" class="btn btn-primary">Update sale</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Submit form') }}</button>
                                 </div>
                             </div>
                         </form>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Sale;
 
+use App\Exports\ShipmentsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Sale;
 use App\Models\Shipment;
@@ -9,6 +10,7 @@ use App\Models\UserWarehouse;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ShipmentController extends Controller
 {
@@ -81,5 +83,12 @@ class ShipmentController extends Controller
             'shipments' => $shipments,
             'warehouse' => $warehouses,
         ]);
+    }
+    public function shipmentsExport(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "shipments_{$timestamp}.xlsx";
+
+        return Excel::download(new ShipmentsExport($request), $filename);
     }
 }

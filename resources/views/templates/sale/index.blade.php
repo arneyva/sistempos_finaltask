@@ -212,12 +212,16 @@
                                                 for="shipping_status">{{ __('Shipping Status') }}</label>
                                             <select class="form-select" id="shipping_status" name="shipping_status">
                                                 <option selected disabled value="">{{ __('Choose...') }}</option>
-                                                <option value="completed"
-                                                    {{ request()->input('shipping_status') == 'completed' ? 'selected' : '' }}>
-                                                    {{ __('Completed') }}</option>
-                                                <option value="sent"
-                                                    {{ request()->input('shipping_status') == 'pending' ? 'selected' : '' }}>
-                                                    {{ __('Pending') }}
+                                                <option value="shipped"
+                                                    {{ request()->input('shipping_status') == 'shipped' ? 'selected' : '' }}>
+                                                    {{ __('Shipped') }}</option>
+                                                <option value="delivered"
+                                                    {{ request()->input('shipping_status') == 'delivered' ? 'selected' : '' }}>
+                                                    {{ __('Delivered') }}
+                                                </option>
+                                                <option value="cancelled"
+                                                    {{ request()->input('shipping_status') == 'cancelled' ? 'selected' : '' }}>
+                                                    {{ __('Cancelled') }}
                                                 </option>
                                             </select>
                                         </div>
@@ -641,24 +645,41 @@
                                                             </svg> {{ __('Invoice POS') }}
                                                             </a>
                                                         </li> --}}
-                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                href="{{ route('sale.print-invoice', $item->id) }}">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                    height="1.5em" viewBox="0 0 24 24">
-                                                                    <path fill="currentColor"
-                                                                        d="M7 7h10v2H7zm0 4h7v2H7z" />
-                                                                    <path fill="currentColor"
-                                                                        d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
-                                                                </svg> {{ __('Invoice POS') }} </a>
-                                                        </li>
-                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                href="#">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                    height="1.5em" viewBox="0 0 24 24">
-                                                                    <path fill="currentColor"
-                                                                        d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zm-2 0l-8 5l-8-5zm0 12H4V8l8 5l8-5z" />
-                                                                </svg> {{ __('Email Notifications') }} </a>
-                                                        </li>
+                                                        @if ($item->payment_statut == 'paid' && $item->statut == 'completed')
+                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                    href="{{ route('sale.print-invoice', $item->id) }}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M7 7h10v2H7zm0 4h7v2H7z" />
+                                                                        <path fill="currentColor"
+                                                                            d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
+                                                                    </svg> {{ __('Invoice POS') }} </a>
+                                                            </li>
+                                                        @else
+                                                            <li class="iq-sub-card list-group-item">
+                                                                <a class="p-0 text-danger" href="javascript:void(0)"
+                                                                    style="pointer-events: none;">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M7 7h10v2H7zm0 4h7v2H7z" />
+                                                                        <path fill="currentColor"
+                                                                            d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
+                                                                    </svg> {{ __('Invoice POS') }} </a>
+                                                                </a>
+                                                            </li>
+                                                        @endif
+                                                        @role('underdev')
+                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                    href="#">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zm-2 0l-8 5l-8-5zm0 12H4V8l8 5l8-5z" />
+                                                                    </svg> {{ __('Email Notifications') }} </a>
+                                                            </li>
+                                                        @endrole
                                                         @if ($item->payment_statut == 'unpaid')
                                                             <li class="iq-sub-card list-group-item">
                                                                 <a class="p-0 text-danger" href="javascript:void(0)"

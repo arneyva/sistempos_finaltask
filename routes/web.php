@@ -141,6 +141,7 @@ Route::prefix('sale')->middleware(['auth', 'verified'])->name('sale.')->group(fu
     Route::get('print-invoice/{id}', [SaleController::class, 'printInvoice'])->name('print-invoice');
     Route::get('list', [SaleController::class, 'index'])->name('index');
     Route::get('shipments', [ShipmentController::class, 'index'])->name('shipments');
+    Route::get('shipments-export', [ShipmentController::class, 'shipmentsExport'])->name('shipments-export');
     Route::get('detail/{id}', [SaleController::class, 'show'])->name('show');
     Route::get('create', [SaleController::class, 'create'])->name('create');
     Route::post('store', [SaleController::class, 'store'])->name('store');
