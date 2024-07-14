@@ -105,7 +105,7 @@
                                                         <td class="hidden-input">
                                                             <input type="hidden" class="item-subtotal"
                                                                 name="details[{{ $loop->index }}][subtotal]"
-                                                                value="{{ $detail['total'] }}">
+                                                                value="0">
                                                             <input type="hidden" class="item-subdiscount"
                                                                 name="details[{{ $loop->index }}][discount]"
                                                                 value="{{ $detail['discount'] }}">

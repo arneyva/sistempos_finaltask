@@ -28,7 +28,9 @@
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">{{ __('Filter') }}</button>
-                    <a href="{{ route('sale.return.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    @role('superadmin|inventaris')
+                        <a href="{{ route('sale.return.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    @endrole
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
@@ -87,7 +89,8 @@
                                                     {{ request()->input('statut') == 'received' ? 'selected' : '' }}>
                                                     {{ __('Received') }}</option>
                                                 <option value="pending"
-                                                    {{ request()->input('statut') == 'pending' ? 'selected' : '' }}>{{ __('Pending') }}
+                                                    {{ request()->input('statut') == 'pending' ? 'selected' : '' }}>
+                                                    {{ __('Pending') }}
                                                 </option>
                                             </select>
                                         </div>
@@ -228,31 +231,32 @@
                                                 <div class="p-0 ">
                                                     <ul class="p-0 list-group list-group-flush">
                                                         @role('dev')
-                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                href="#">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                    height="1.5em" viewBox="0 0 24 24">
-                                                                    <g fill="none" stroke="currentColor"
-                                                                        stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="1.5" color="currentColor">
-                                                                        <path
-                                                                            d="M20.016 2C18.903 2 18 4.686 18 8h2.016c.972 0 1.457 0 1.758-.335c.3-.336.248-.778.144-1.661C21.64 3.67 20.894 2 20.016 2" />
-                                                                        <path
-                                                                            d="M18 8.054v10.592c0 1.511 0 2.267-.462 2.565c-.755.486-1.922-.534-2.509-.904c-.485-.306-.727-.458-.996-.467c-.291-.01-.538.137-1.062.467l-1.911 1.205c-.516.325-.773.488-1.06.488s-.545-.163-1.06-.488l-1.91-1.205c-.486-.306-.728-.458-.997-.467c-.291-.01-.538.137-1.062.467c-.587.37-1.754 1.39-2.51.904C2 20.913 2 20.158 2 18.646V8.054c0-2.854 0-4.28.879-5.167C3.757 2 5.172 2 8 2h12" />
-                                                                        <path
-                                                                            d="M10 8c-1.105 0-2 .672-2 1.5s.895 1.5 2 1.5s2 .672 2 1.5s-.895 1.5-2 1.5m0-6c.87 0 1.612.417 1.886 1M10 8V7m0 7c-.87 0-1.612-.417-1.886-1M10 14v1" />
-                                                                    </g>
-                                                                </svg> Dwonload Pdf </a>
-                                                        </li>
+                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                    href="#">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <g fill="none" stroke="currentColor"
+                                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                                            stroke-width="1.5" color="currentColor">
+                                                                            <path
+                                                                                d="M20.016 2C18.903 2 18 4.686 18 8h2.016c.972 0 1.457 0 1.758-.335c.3-.336.248-.778.144-1.661C21.64 3.67 20.894 2 20.016 2" />
+                                                                            <path
+                                                                                d="M18 8.054v10.592c0 1.511 0 2.267-.462 2.565c-.755.486-1.922-.534-2.509-.904c-.485-.306-.727-.458-.996-.467c-.291-.01-.538.137-1.062.467l-1.911 1.205c-.516.325-.773.488-1.06.488s-.545-.163-1.06-.488l-1.91-1.205c-.486-.306-.728-.458-.997-.467c-.291-.01-.538.137-1.062.467c-.587.37-1.754 1.39-2.51.904C2 20.913 2 20.158 2 18.646V8.054c0-2.854 0-4.28.879-5.167C3.757 2 5.172 2 8 2h12" />
+                                                                            <path
+                                                                                d="M10 8c-1.105 0-2 .672-2 1.5s.895 1.5 2 1.5s2 .672 2 1.5s-.895 1.5-2 1.5m0-6c.87 0 1.612.417 1.886 1M10 8V7m0 7c-.87 0-1.612-.417-1.886-1M10 14v1" />
+                                                                        </g>
+                                                                    </svg> Dwonload Pdf </a>
+                                                            </li>
+
+                                                            <li class="iq-sub-card list-group-item"><a class="p-0"
+                                                                    href="#">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                        height="1.5em" viewBox="0 0 24 24">
+                                                                        <path fill="currentColor"
+                                                                            d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zm-2 0l-8 5l-8-5zm0 12H4V8l8 5l8-5z" />
+                                                                    </svg> {{ __('Email Notifications') }} </a>
+                                                            </li>
                                                         @endrole
-                                                        <li class="iq-sub-card list-group-item"><a class="p-0"
-                                                                href="#">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                    height="1.5em" viewBox="0 0 24 24">
-                                                                    <path fill="currentColor"
-                                                                        d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zm-2 0l-8 5l-8-5zm0 12H4V8l8 5l8-5z" />
-                                                                </svg> {{ __('Email Notifications') }} </a>
-                                                        </li>
                                                         <li class="iq-sub-card list-group-item"><a class="p-0"
                                                                 href="{{ route('sale.return.show', $item->id) }}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
@@ -263,29 +267,31 @@
                                                                         d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2m0 14H6.667L4 18V4h16z" />
                                                                 </svg> {{ __('Return Detail') }} </a>
                                                         </li>
-                                                        @if ($item->payment_statut == 'paid' && $item->statut == 'received')
-                                                            <li class="iq-sub-card list-group-item">
-                                                                <a class="p-0 text-danger" href="javascript:void(0)"
-                                                                    style="pointer-events: none;">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                        height="1.5em" viewBox="0 0 24 24"
-                                                                        fill="red">
-                                                                        <path fill="currentColor"
-                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
-                                                                    </svg> {{ __('Edit Return') }}
-                                                                </a>
-                                                            </li>
-                                                        @else
-                                                            <li class="iq-sub-card list-group-item">
-                                                                <a class="p-0" href="#">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
-                                                                        height="1.5em" viewBox="0 0 24 24">
-                                                                        <path fill="currentColor"
-                                                                            d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
-                                                                    </svg> {{ __('Edit Return') }}
-                                                                </a>
-                                                            </li>
-                                                        @endif
+                                                        @role('underdev')
+                                                            @if ($item->payment_statut == 'paid' && $item->statut == 'received')
+                                                                <li class="iq-sub-card list-group-item">
+                                                                    <a class="p-0 text-danger" href="javascript:void(0)"
+                                                                        style="pointer-events: none;">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                            height="1.5em" viewBox="0 0 24 24"
+                                                                            fill="red">
+                                                                            <path fill="currentColor"
+                                                                                d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                        </svg> {{ __('Edit Return') }}
+                                                                    </a>
+                                                                </li>
+                                                            @else
+                                                                <li class="iq-sub-card list-group-item">
+                                                                    <a class="p-0" href="#">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.5em"
+                                                                            height="1.5em" viewBox="0 0 24 24">
+                                                                            <path fill="currentColor"
+                                                                                d="M21 12a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 0 0-1-1m-15 .76V17a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .71-.29l6.92-6.93L21.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71m10.76-8.35l2.83 2.83l-1.42 1.42l-2.83-2.83ZM8 13.17l5.93-5.93l2.83 2.83L10.83 16H8Z" />
+                                                                        </svg> {{ __('Edit Return') }}
+                                                                    </a>
+                                                                </li>
+                                                            @endif
+                                                        @endrole
                                                         <li class="iq-sub-card list-group-item" data-bs-toggle="modal"
                                                             data-bs-target="#staticBackdrop{{ $item->id }}"
                                                             style="color: #546DEB;">

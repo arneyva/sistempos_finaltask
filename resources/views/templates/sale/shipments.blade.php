@@ -91,7 +91,9 @@
                     @role('dev')
                         <button type="button" class="btn btn-soft-success">PDF</button>
                     @endrole
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    @role('superadmin|inventaris')
+                    <a href="{{ route('sale.shipments-export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    @endrole
                 </div>
             </div>
 

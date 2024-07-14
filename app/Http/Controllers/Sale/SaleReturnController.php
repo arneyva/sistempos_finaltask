@@ -70,6 +70,7 @@ class SaleReturnController extends Controller
 
     public function create_sell_return(Request $request, $id)
     {
+
         $cek = SaleReturn::where('sale_id', $id)->first();
         if ($cek) {
             return redirect()->back()->with('error', 'Sale Return Already Created');
@@ -228,101 +229,107 @@ class SaleReturnController extends Controller
 
     public function store(request $request)
     {
-        request()->validate([
-            'client_id' => 'required',
-            'warehouse_id' => 'required',
-            'statut' => 'required',
-        ]);
+        try {
+            request()->validate([
+                'client_id' => 'required',
+                'warehouse_id' => 'required',
+                'statut' => 'required',
+            ]);
 
-        \DB::transaction(function () use ($request) {
-            $order = new SaleReturn();
+            \DB::transaction(function () use ($request) {
+                $order = new SaleReturn();
 
-            $order->date = $request->date;
-            $order->Ref = $this->getNumberOrder();
-            $order->client_id = $request->client_id;
-            $order->sale_id = $request->sale_id;
-            $order->warehouse_id = $request->warehouse_id;
-            $order->tax_rate = $request->tax_rate;
-            $order->TaxNet = $request->TaxNet;
-            $order->discount = $request->discount_value;
-            $order->shipping = $request->shipping_value;
-            $order->GrandTotal = $request->GrandTotal;
-            $order->paid_amount = $request->GrandTotal;
-            $order->statut = $request->statut;
-            $order->payment_statut = 'paid';
-            $order->notes = $request->notes;
-            $order->user_id = Auth::user()->id;
+                $order->date = $request->date;
+                $order->Ref = $this->getNumberOrder();
+                $order->client_id = $request->client_id;
+                $order->sale_id = $request->sale_id;
+                $order->warehouse_id = $request->warehouse_id;
+                $order->tax_rate = $request->tax_rate;
+                $order->TaxNet = $request->TaxNet;
+                $order->discount = $request->discount_value;
+                $order->shipping = $request->shipping_value;
+                $order->GrandTotal = $request->GrandTotal;
+                $order->paid_amount = $request->GrandTotal;
+                $order->statut = $request->statut;
+                $order->payment_statut = 'paid';
+                $order->notes = $request->notes;
+                $order->user_id = Auth::user()->id;
 
-            $order->save();
+                $order->save();
 
-            $data = $request['details'];
-            foreach ($data as $key => $value) {
-                $unit = Unit::where('id', $value['sale_unit_id'])->first();
+                $data = $request['details'];
+                foreach ($data as $key => $value) {
+                    $unit = Unit::where('id', $value['sale_unit_id'])->first();
 
-                $orderDetails[] = [
-                    'sale_return_id' => $order->id,
-                    'quantity' => $value['quantity'],
-                    'price' => $value['Unit_price'],
-                    'sale_unit_id' => $value['sale_unit_id'],
-                    'TaxNet' => $value['tax_percent'],
-                    'tax_method' => 'Exclusive',
-                    'discount' => $value['discount'] ? $value['discount'] : 0,
-                    'discount_method' => $value['discount_method'],
-                    'product_id' => $value['product_id'],
-                    'product_variant_id' => $value['product_variant_id'],
-                    'total' => $value['subtotal'],
-                    // 'imei_number' => $value['imei_number'],
-                ];
+                    $orderDetails[] = [
+                        'sale_return_id' => $order->id,
+                        'quantity' => $value['quantity'],
+                        'price' => $value['Unit_price'],
+                        'sale_unit_id' => $value['sale_unit_id'],
+                        'TaxNet' => $value['tax_percent'],
+                        'tax_method' => 'Exclusive',
+                        'discount' => $value['discount'] ? $value['discount'] : 0,
+                        'discount_method' => $value['discount_method'],
+                        'product_id' => $value['product_id'],
+                        'product_variant_id' => $value['product_variant_id'],
+                        'total' => $value['subtotal'],
+                        // 'imei_number' => $value['imei_number'],
+                    ];
 
-                if ($order->statut == 'received') {
-                    if ($value['product_variant_id'] !== null) {
-                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
-                            ->where('warehouse_id', $order->warehouse_id)
-                            ->where('product_id', $value['product_id'])
-                            ->where('product_variant_id', $value['product_variant_id'])
-                            ->first();
+                    if ($order->statut == 'received') {
+                        if ($value['product_variant_id'] !== null) {
+                            $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                                ->where('warehouse_id', $order->warehouse_id)
+                                ->where('product_id', $value['product_id'])
+                                ->where('product_variant_id', $value['product_variant_id'])
+                                ->first();
 
-                        if ($unit && $product_warehouse) {
-                            if ($unit->operator == '/') {
-                                $product_warehouse->qty += $value['quantity'] / $unit->operator_value;
-                            } else {
-                                $product_warehouse->qty += $value['quantity'] * $unit->operator_value;
+                            if ($unit && $product_warehouse) {
+                                if ($unit->operator == '/') {
+                                    $product_warehouse->qty += $value['quantity'] / $unit->operator_value;
+                                } else {
+                                    $product_warehouse->qty += $value['quantity'] * $unit->operator_value;
+                                }
+
+                                $product_warehouse->save();
                             }
+                        } else {
+                            $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
+                                ->where('warehouse_id', $order->warehouse_id)
+                                ->where('product_id', $value['product_id'])
+                                ->first();
 
-                            $product_warehouse->save();
-                        }
-                    } else {
-                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
-                            ->where('warehouse_id', $order->warehouse_id)
-                            ->where('product_id', $value['product_id'])
-                            ->first();
+                            if ($unit && $product_warehouse) {
+                                if ($unit->operator == '/') {
+                                    $product_warehouse->qty += $value['quantity'] / $unit->operator_value;
+                                } else {
+                                    $product_warehouse->qty += $value['quantity'] * $unit->operator_value;
+                                }
 
-                        if ($unit && $product_warehouse) {
-                            if ($unit->operator == '/') {
-                                $product_warehouse->qty += $value['quantity'] / $unit->operator_value;
-                            } else {
-                                $product_warehouse->qty += $value['quantity'] * $unit->operator_value;
+                                $product_warehouse->save();
                             }
-
-                            $product_warehouse->save();
                         }
                     }
                 }
-            }
-            SaleReturnDetails::insert($orderDetails);
-            // paymnents
-            $transaction = PaymentSaleReturns::create([
-                'user_id' => $order->user_id,
-                'date' => $order->date,
-                'Ref' => $this->getNumberOrderPayement(),
-                'sale_return_id' => $order->id,
-                'montant' => $order->GrandTotal,
-                'change' =>  0,
-                'Reglement' => 'cash',
-            ]);
-        }, 10);
-
-        return redirect()->route('sale.return.index')->with('success', 'Sale created successfully');
+                SaleReturnDetails::insert($orderDetails);
+                // paymnents
+                $transaction = PaymentSaleReturns::create([
+                    'user_id' => $order->user_id,
+                    'date' => $order->date,
+                    'Ref' => $this->getNumberOrderPayement(),
+                    'sale_return_id' => $order->id,
+                    'montant' => $order->GrandTotal,
+                    'change' =>  0,
+                    'Reglement' => 'cash',
+                ]);
+                // dd($request->all());
+            }, 10);
+            return redirect()->route('sale.return.index')->with('success', 'Sale created successfully');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Sale Returns created failed');
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
     public function show(Request $request, $id)

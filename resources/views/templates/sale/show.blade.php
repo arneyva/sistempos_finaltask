@@ -51,7 +51,7 @@
                                         <tr>
                                             <td>{{ $item['name'] }}</td>
                                             <th>Rp. {{ number_format($item['Unit_price'], 2, ',', '.') }}</th>
-                                            <td>{{ $item['quantity'] }}</td>
+                                            <td>{{ $item['quantity'] }} {{ $item['unit_sale'] }}</td>
                                             <th>Rp. {{ number_format($item['DiscountNet'], 2, ',', '.') }}</th>
                                             <th>Rp. {{ number_format($item['taxe_total'], 2, ',', '.') }}</th>
                                             <th>Rp. {{ number_format($item['total'], 2, ',', '.') }}</th>
