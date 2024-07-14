@@ -27,7 +27,7 @@ class SalesExport implements FromQuery, WithHeadings, WithMapping
         if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
             $SaleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->latest();
         } else {
-            $SaleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->where('to_warehouse_id', $warehouses_id)->latest();
+            $SaleQuery = Sale::query()->with(['user', 'warehouse', 'client', 'paymentSales'])->where('deleted_at', '=', null)->where('warehouse_id', $warehouses_id)->latest();
         }
         // Terapkan filter berdasarkan parameter yang diterima dari request
         if ($this->request->has('date') && $this->request->filled('date')) {
@@ -85,7 +85,7 @@ class SalesExport implements FromQuery, WithHeadings, WithMapping
         return [
             $Sale->date,
             $Sale->Ref,
-            $Sale->user->username ?? 'deleted',
+            $Sale->user->firstname ?? 'deleted',
             $Sale->client->name ?? 'deleted',
             $Sale->warehouse->name ?? 'deleted',
             $Sale->statut,

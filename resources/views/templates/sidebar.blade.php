@@ -918,7 +918,7 @@
                         </i>
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-icons" data-bs-parent="#sidebar-menu">
-                        @role('superadmin|inventaris')
+                        {{-- @role('superadmin|inventaris') --}}
                             <li class="nav-item">
                                 <a class="nav-link " href="{{ route('reports.payments.sales') }}">
                                     <i class="icon">
@@ -934,8 +934,8 @@
                                     <span class="item-name">{{ __('Payments') }}</span>
                                 </a>
                             </li>
-                        @endrole
-                        @role('superadmin')
+                        {{-- @endrole --}}
+                        {{-- @role('superadmin') --}}
                             <li class="nav-item">
                                 <a class="nav-link " href="{{ route('reports.profit-loss') }}">
                                     <i class="icon">
@@ -950,8 +950,8 @@
                                     <i class="sidenav-mini-icon"> O </i>
                                     <span class="item-name text-wrap">{{ __('Profit & Loss') }}</span></a>
                             </li>
-                        @endrole
-                        @role('superadmin|inventaris')
+                        {{-- @endrole --}}
+                        {{-- @role('superadmin|inventaris') --}}
                             <li class="nav-item">
                                 <a class="nav-link " href="{{ route('reports.quantity-alerts') }}">
                                     <i class="icon">
@@ -1058,7 +1058,7 @@
                                     <span class="item-name">{{ __('Warehouse/Outlet') }}</span>
                                 </a>
                             </li>
-                        @endrole
+                        {{-- @endrole --}}
                         <li class="nav-item">
                             <a class="nav-link " href="{{ route('reports.sale') }}">
                                 <i class="icon">

@@ -140,7 +140,7 @@
                                                         <tr>
                                                             <th>{{ __('Date') }}</th>
                                                             <th>{{ __('Reference') }}</th>
-                                                            <th>{{ __('Purchase') }}</th>
+                                                            <th>{{ __('Purchases') }}</th>
                                                             <th>{{ __('Supplier') }}</th>
                                                             <th>{{ __('Payment Method') }}</th>
                                                             <th>{{ __('Amount') }}</th>

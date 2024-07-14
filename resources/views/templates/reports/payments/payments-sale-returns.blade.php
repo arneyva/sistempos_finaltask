@@ -94,6 +94,7 @@
                                         <a class="nav-link" href="{{ route('reports.payments.sales') }}"
                                             role="tab" aria-selected="false">{{ __('Sales') }}</a>
                                     </li>
+                                    @role('superadmin|inventaris')
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.payments.purchases') }}" role="tab"
                                             aria-selected="false">{{ __('Purchases') }}</a>
@@ -103,6 +104,7 @@
                                             role="tab" aria-selected="false">{{ __('Purchases') }}
                                             {{ __('Return') }}</a>
                                     </li>
+                                    @endrole
                                 </ul>
                             </div>
                             <div class="col-lg-12">
@@ -126,10 +128,12 @@
                                                         value="{{ request()->input('search') }}" placeholder="{{ __('Search...') }}">
                                                 </div>
                                             </form>
+                                            @role('superadmin|inventaris')
                                             <div class="header-title">
                                                 <a href="{{ route('reports.payments.sales-returns-export', request()->query()) }}"
                                                     class="btn btn-soft-danger">Excel</a>
                                             </div>
+                                            @endrole
                                         </div>
                                         <div class="card-body p-0">
                                             <div class="table-responsive mt-4">
@@ -138,7 +142,7 @@
                                                         <tr>
                                                             <th>{{ __('Date') }}</th>
                                                             <th>{{ __('Reference') }}</th>
-                                                            <th>{{ __('Return') }}</th>
+                                                            <th>{{ __('Return') }} {{ __('Reference')  }}</th>
                                                             <th>{{ __('Customer') }}</th>
                                                             <th>{{ __('Payment Method') }}</th>
                                                             <th>{{ __('Amount') }}</th>

@@ -257,7 +257,9 @@
                                                 </a>
                                                 @if ($item['statut'] !== 'completed')
                                                 @endif
-                                                <a href="#" style="pointer-events: none; color: red; cursor: default;">
+                                                <button type="button" data-bs-toggle="modal"
+                                                    data-bs-target="#modaldeleteTransfer{{ $item['id'] }}"
+                                                    style="border: none; background: none; padding: 0; margin: 0;color:red">
                                                     <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                         xmlns="http://www.w3.org/2000/svg">
                                                         <path fill-rule="evenodd" clip-rule="evenodd"
@@ -277,7 +279,38 @@
                                                             stroke-linejoin="round">
                                                         </path>
                                                     </svg>
-                                                </a>
+                                                </button>
+                                                <div class="modal fade" id="modaldeleteTransfer{{ $item['id'] }}"
+                                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                    aria-labelledby="staticBackdropLabelTransfer{{ $item['id'] }}"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title"
+                                                                    id="staticBackdropLabelTransfer{{ $item['id'] }}">
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>{{ __('Are you sure you want to delete this data?') }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                                                <form action="{{ route('transfer.destroy', $item['id']) }}"
+                                                                    method="POST" style="display: inline;">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit"
+                                                                        class="btn btn-danger">{{ __('Delete') }}</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             @endrole
                                             @role('staff')
                                                 <button type="button" data-bs-toggle="modal"

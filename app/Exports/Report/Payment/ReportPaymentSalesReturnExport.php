@@ -48,11 +48,11 @@ class ReportPaymentSalesReturnExport implements FromQuery, WithHeadings, WithMap
 
         // proses filtering
         if ($this->request->has('search') && $this->request->filled('search')) {
-            $search = $this->request->input('search');
-            $paymentsQuery->where(function ($query) use ($search) {
-                $query->orWhere('payment_sale_returns.Ref', 'LIKE', $search)
-                    ->orWhere('clients.name', 'LIKE', $search)
-                    ->orWhere('payment_sale_returns.Reglement', 'LIKE', $search);
+            $searchTerm  = '%' . $this->request->input('search') . '%';
+            $paymentsQuery->where(function ($query) use ($searchTerm) {
+                $query->orWhere('payment_sale_returns.Ref', 'LIKE', $searchTerm)
+                    ->orWhere('clients.name', 'LIKE', $searchTerm)
+                    ->orWhere('payment_sale_returns.Reglement', 'LIKE', $searchTerm);
             });
         }
 
@@ -65,7 +65,7 @@ class ReportPaymentSalesReturnExport implements FromQuery, WithHeadings, WithMap
             'Client Name',
             'Date',
             'Reference',
-            'Sale Reference',
+            'Sale Return Reference',
             'Montant',
         ];
     }

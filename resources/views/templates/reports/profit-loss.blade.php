@@ -62,19 +62,19 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" onclick="resetFilters()"
-                                        data-bs-dismiss="modal">Reset</button>
-                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                        data-bs-dismiss="modal">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Filter') }}</button>
                                 </div>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
-                <script>
+                {{-- <script>
                     function resetFilters() {
                         document.getElementById('filterForm').reset();
                     }
-                </script>
+                </script> --}}
 
             </div>
             <div class="card-header d-flex justify-content-between">
@@ -100,23 +100,25 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <div class="swiper-slide card card-slide">
-                                            <div class="card-body">
-                                                <div class="progress-widget">
-                                                    <div
-                                                        class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                        <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
-                                                            alt="purchase" style="max-height: 70px;max-width: 70px">
-                                                    </div>
-                                                    <div class="progress-detail">
-                                                        <p class="mb-2">{{ $data['purchases_count'] }} Purchases</p>
-                                                        <h4 class="counter">{{ $data['purchases_sum'] }}</h4>
+                                    @role('superadmin|inventaris')
+                                        <div class="col-md-4 mb-3">
+                                            <div class="swiper-slide card card-slide">
+                                                <div class="card-body">
+                                                    <div class="progress-widget">
+                                                        <div
+                                                            class="text-center circle-progress-01 circle-progress circle-progress-primary">
+                                                            <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
+                                                                alt="purchase" style="max-height: 70px;max-width: 70px">
+                                                        </div>
+                                                        <div class="progress-detail">
+                                                            <p class="mb-2">{{ $data['purchases_count'] }} Purchases</p>
+                                                            <h4 class="counter">{{ $data['purchases_sum'] }}</h4>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    @endrole
                                     <div class="col-md-4 mb-3">
                                         <div class="swiper-slide card card-slide">
                                             <div class="card-body">
@@ -135,24 +137,26 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <div class="swiper-slide card card-slide">
-                                            <div class="card-body">
-                                                <div class="progress-widget">
-                                                    <div
-                                                        class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                        <img src="{{ asset('hopeui/html/assets/images/purchase-return.png') }}"
-                                                            alt="purchase" style="max-height: 70px;max-width: 70px">
-                                                    </div>
-                                                    <div class="progress-detail">
-                                                        <p class="mb-2">{{ $data['returns_purchases_count'] }} Purchases
-                                                            Return</p>
-                                                        <h4 class="counter">{{ $data['returns_purchases_sum'] }}</h4>
+                                    @role('superadmin|inventaris')
+                                        <div class="col-md-4 mb-3">
+                                            <div class="swiper-slide card card-slide">
+                                                <div class="card-body">
+                                                    <div class="progress-widget">
+                                                        <div
+                                                            class="text-center circle-progress-01 circle-progress circle-progress-primary">
+                                                            <img src="{{ asset('hopeui/html/assets/images/purchase-return.png') }}"
+                                                                alt="purchase" style="max-height: 70px;max-width: 70px">
+                                                        </div>
+                                                        <div class="progress-detail">
+                                                            <p class="mb-2">{{ $data['returns_purchases_count'] }} Purchases
+                                                                Return</p>
+                                                            <h4 class="counter">{{ $data['returns_purchases_sum'] }}</h4>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    @endrole
                                     <div class="col-md-4 mb-3">
                                         <div class="swiper-slide card card-slide">
                                             <div class="card-body">
@@ -163,7 +167,7 @@
                                                             alt="purchase" style="max-height: 70px;max-width: 70px">
                                                     </div>
                                                     <div class="progress-detail">
-                                                        <p class="mb-2">Expenses</p>
+                                                        <p class="mb-2">{{ $data['expenses_count'] }} Expenses</p>
                                                         <h4 class="counter">{{ $data['expenses_sum'] }}</h4>
                                                     </div>
                                                 </div>
@@ -282,4 +286,16 @@
     </div>
 @endsection
 @push('script')
+    <script>
+        function resetFilters() {
+            // Reset nilai-nilai input dari formulir
+            document.getElementById('form_date').value = '';
+            document.getElementById('to_date').value = '';
+            document.getElementById('category_id').value = '';
+            document.getElementById('warehouse_id').value = '';
+
+            // Submit formulir secara otomatis untuk menghapus filter
+            document.getElementById('filterForm').submit();
+        }
+    </script>
 @endpush

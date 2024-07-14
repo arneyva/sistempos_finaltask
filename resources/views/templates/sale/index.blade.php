@@ -136,10 +136,12 @@
                     </h4>
                 </div>
                 <div class="header-title">
-                    <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-soft-warning" data-bs-toggle="modal"
                         data-bs-target="#createModal">{{ __('Filter') }}</button>
-                    <a href="{{ route('sale.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
-                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    @role('superadmin|inventaris')
+                        <a href="{{ route('sale.pdf', request()->query()) }}" class="btn btn-soft-success">PDF</a>
+                        <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    @endrole
                     <a href="{{ route('sale.create') }}"><button type="button"
                             class="btn btn-soft-primary">{{ __('Create +') }}</button></a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
