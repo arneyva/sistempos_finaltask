@@ -48,7 +48,7 @@ class ReportPaymentPurchasesExport implements FromQuery, WithHeadings, WithMappi
 
         // proses filtering
         if ($this->request->has('search') && $this->request->filled('search')) {
-            $search = $this->request->input('search');
+            $search = '%' . $this->request->input('search') . '%';
             $paymentsQuery->where(function ($query) use ($search) {
                 $query->orWhere('payment_purchases.Ref', 'LIKE', $search)
                     ->orWhere('providers.name', 'LIKE', $search)

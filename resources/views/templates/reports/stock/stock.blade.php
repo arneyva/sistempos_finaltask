@@ -40,34 +40,55 @@
                 </div>
             </div>
             <div class="card-header d-flex justify-content-between">
-                <div class="col-md-4 mb-3">
-                    <form action="{{ route('reports.stock.index') }}" method="GET">
-                        <select class="form-select" id="selectWarehouse" name="warehouse_id">
-                            <option value="">{{ __('All Warehouse/Outlet') }}</option>
-                            @foreach ($warehouses as $wh)
-                                <option value="{{ $wh->id }}"
-                                    {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
-                                    {{ $wh->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="input-group search-input">
-                        <span class="input-group-text d-inline" id="search-input">
-                            <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round"></circle>
-                                <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </span>
-                        <input type="search" class="form-control" name="search" value="{{ request()->input('search') }}"
-                            placeholder="{{ __('Search...') }}">
+                @role('superadmin|inventaris')
+                    <div class="col-md-4 mb-3">
+                        <form action="{{ route('reports.stock.index') }}" method="GET">
+                            <select class="form-select" id="selectWarehouse" name="warehouse_id">
+                                <option value="">{{ __('All Warehouse/Outlet') }}</option>
+                                @foreach ($warehouses as $wh)
+                                    <option value="{{ $wh->id }}"
+                                        {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
+                                        {{ $wh->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                     </div>
-                </div>
-                </form>
+                    <div class="col-md-4 mb-3">
+                        <div class="input-group search-input">
+                            <span class="input-group-text d-inline" id="search-input">
+                                <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round"></circle>
+                                    <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </span>
+                            <input type="search" class="form-control" name="search" value="{{ request()->input('search') }}"
+                                placeholder="{{ __('Search...') }}">
+                        </div>
+                    </div>
+                    </form>
+                @endrole
+                @role('staff')
+                    <div class="col-md-4 mb-3">
+                        <form action="{{ route('reports.stock.index') }}" method="GET">
+                            <div class="input-group search-input">
+                                <span class="input-group-text d-inline" id="search-input">
+                                    <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor"
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></circle>
+                                        <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                </span>
+                                <input type="search" class="form-control" name="search"
+                                    value="{{ request()->input('search') }}" placeholder="{{ __('Search...') }}">
+                            </div>
+                        </form>
+                    </div>
+                @endrole
                 <div class="header-title">
                     {{-- <button type="button" class="btn btn-soft-success">PDF</button> --}}
                     <button type="button" class="btn btn-soft-danger">Excel</button>

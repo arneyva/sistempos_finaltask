@@ -820,6 +820,20 @@ class TransferController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        if (Auth::user()->hasAnyRole(['superadmin', 'inventaris'])) {
+            $transfer = Transfer::find($id);
+
+            if (!$transfer) {
+                return redirect()->back()->with('error', 'transfer not found.');
+            }
+            // handle untuk mencegah pernghapusan
+            if ($transfer->from_warehouse()->exists()) {
+                return redirect()->back()->with('error', 'transfer cannot be deleted because it is already used in another data.');
+            }
+            $transfer->delete();
+            return redirect()->route('transfer.index')->with('success', 'adjustment deleted successfully');
+        } else {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk melakukan tindakan ini');
+        }
     }
 }

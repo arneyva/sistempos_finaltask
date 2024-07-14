@@ -45,7 +45,7 @@
                 <tr>
                     <td>{{ $Sale->date }}</td>
                     <td>{{ $Sale->Ref }}</td>
-                    <td>{{ $Sale->user->username ?? 'deleted' }}</td>
+                    <td>{{ $Sale->user->firstname ?? 'deleted' }}</td>
                     <td>{{ $Sale->client->name ?? 'deleted' }}</td>
                     <td>{{ $Sale->warehouse->name ?? 'deleted' }}</td>
                     <td>{{ $Sale->statut }}</td>

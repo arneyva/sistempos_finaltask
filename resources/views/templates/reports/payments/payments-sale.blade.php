@@ -94,6 +94,7 @@
                                         <a class="nav-link" href="{{ route('reports.payments.sales-returns') }}"
                                             role="tab" aria-selected="false">{{ __('Sales') }} {{ __('Return') }}</a>
                                     </li>
+                                    @role('superadmin|inventaris')
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.payments.purchases') }}" role="tab"
                                             aria-selected="false">{{ __('Purchases') }}</a>
@@ -103,6 +104,7 @@
                                             role="tab" aria-selected="false">{{ __('Purchases') }}
                                             {{ __('Return') }}</a>
                                     </li>
+                                    @endrole
                                 </ul>
                             </div>
                             <div class="col-lg-12">
@@ -127,10 +129,12 @@
                                                         placeholder="{{ __('Search...') }}">
                                                 </div>
                                             </form>
+                                            @role('superadmin|inventaris')
                                             <div class="header-title">
                                                 <a href="{{ route('reports.payments.sales-export', request()->query()) }}"
                                                     class="btn btn-soft-danger">Excel</a>
                                             </div>
+                                            @endrole
                                         </div>
                                         <div class="card-body p-0">
                                             <div class="table-responsive mt-4">

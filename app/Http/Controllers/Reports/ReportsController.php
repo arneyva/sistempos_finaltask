@@ -493,11 +493,12 @@ class ReportsController extends Controller
             })
 
             ->select(
-                DB::raw('SUM(amount) AS sum')
+                DB::raw('SUM(amount) AS sum'),
+                DB::raw("count(*) as nmbr")
             )->first();
 
         $item['expenses_sum'] =   'Rp ' . number_format($report_total_expenses->sum, 2, ',', '.');
-
+        $item['expenses_count'] =   $report_total_expenses->nmbr;
         //calcule COGS and average cost
         $cogs_average_data = $this->CalculeCogsAndAverageCost($start_date, $end_date, $warehouse_id, $array_warehouses_id);
 
@@ -836,8 +837,11 @@ class ReportsController extends Controller
                     });
             });
         }
+        // Filter khusus untuk staff berdasarkan gudang
+
 
         $products = $products_dataQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+        // return response()->json($products);
 
         foreach ($products as $product) {
             if ($product->type != 'is_service') {
@@ -845,18 +849,24 @@ class ReportsController extends Controller
                 $item['code'] = $product->code;
                 $item['name'] = $product->name;
                 $item['category'] = $product['category']->name;
+                $current_stock_query = ProductWarehouse::where('product_id', $product->id)
+                    ->where('deleted_at', '=', null);
 
-                $current_stock = ProductWarehouse::where('product_id', $product->id)
-                    ->where('deleted_at', '=', null)
-                    ->where(function ($query) use ($request) {
-                        return $query->when($request->filled('warehouse_id'), function ($query) use ($request) {
-                            return $query->where('warehouse_id', $request->warehouse_id);
-                        });
-                    })
-                    ->sum('qty');
+                // Jika role user adalah staff, tambahkan filter berdasarkan warehouse_ids
+                if ($user_auth->hasRole('staff')) {
+                    $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+                    $current_stock_query->whereIn('warehouse_id', $warehouses_id);
+                } else {
+                    // Jika ada warehouse_id di request, tambahkan filter
+                    if ($request->filled('warehouse_id')) {
+                        $current_stock_query->where('warehouse_id', $request->warehouse_id);
+                    }
+                }
+
+                // Hitung total stok
+                $current_stock = $current_stock_query->sum('qty');
 
                 $item['quantity'] = $current_stock . ' ' . $product['unit']->ShortName;
-
                 $data[] = $item;
             } else {
                 $item['id'] = $product->id;
@@ -876,6 +886,7 @@ class ReportsController extends Controller
     }
     public function stockDetailSales(Request $request, $id)
     {
+        $user_auth = auth()->user();
         $product = Product::where('deleted_at', '=', null)->findOrFail($id);
         $sale_details_dataQuery = SaleDetail::with('product', 'sale', 'sale.client', 'sale.warehouse')
             ->where('product_id', $id)->latest();
@@ -900,7 +911,13 @@ class ReportsController extends Controller
                     });
             });
         }
-
+        // Filter khusus untuk staff berdasarkan gudang
+        if ($user_auth->hasRole('staff')) {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $sale_details_dataQuery->whereHas('sale', function ($query) use ($warehouses_id) {
+                $query->whereIn('warehouse_id', $warehouses_id);
+            });
+        }
         $sale_details = $sale_details_dataQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
 
         $data = [];
@@ -952,6 +969,7 @@ class ReportsController extends Controller
             $a['qty'] = $value->qty;
             $a['unit'] = $value->product->unit->ShortName;
             $b[] = $a;
+            
         }
         return view('templates.reports.stock.stock-detail-sales', [
             'sales' => $data,
@@ -962,6 +980,7 @@ class ReportsController extends Controller
     }
     public function stockDetailSalesReturn(request $request, $id)
     {
+        $user_auth = auth()->user();
         $product = Product::where('deleted_at', '=', null)->findOrFail($id);
         $Sale_Return_details_data = SaleReturnDetails::with('product', 'SaleReturn', 'SaleReturn.client', 'SaleReturn.warehouse')
             ->where('quantity', '>', 0)
@@ -980,6 +999,13 @@ class ReportsController extends Controller
                     ->orWhereHas('product', function ($q) use ($request) {
                         $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
                     });
+            });
+        }
+        // Filter khusus untuk staff berdasarkan gudang
+        if ($user_auth->hasRole('staff')) {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $Sale_Return_details_data->whereHas('SaleReturn', function ($query) use ($warehouses_id) {
+                $query->whereIn('warehouse_id', $warehouses_id);
             });
         }
         $Sale_Return_details = $Sale_Return_details_data->paginate($request->input('limit', 5))->appends($request->except('page'));
@@ -1191,6 +1217,7 @@ class ReportsController extends Controller
     }
     public function stockDetailAdjustment(request $request, $id)
     {
+        $user_auth = auth()->user();
         $product = Product::where('deleted_at', '=', null)->findOrFail($id);
         $adjustment_details_data = AdjustmentDetail::with('product', 'adjustment', 'adjustment.warehouse')
             ->where('product_id', $id)
@@ -1209,7 +1236,12 @@ class ReportsController extends Controller
                     });
             });
         }
-
+        if ($user_auth->hasRole('staff')) {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $adjustment_details_data->whereHas('adjustment', function ($query) use ($warehouses_id) {
+                $query->whereIn('warehouse_id', $warehouses_id);
+            });
+        }
         $adjustment_details = $adjustment_details_data->paginate($request->input('limit', 5))->appends($request->except('page'));
         $data = [];
         foreach ($adjustment_details as $detail) {
@@ -1247,6 +1279,7 @@ class ReportsController extends Controller
     }
     public function stockDetailTransfer(request $request, $id)
     {
+        $user_auth = auth()->user();
         $product = Product::where('deleted_at', '=', null)->findOrFail($id);
         $transfer_details_data = TransferDetail::with('product', 'transfer', 'transfer.from_warehouse', 'transfer.to_warehouse')
             ->where('product_id', $id)
@@ -1268,7 +1301,12 @@ class ReportsController extends Controller
                     });
             });
         }
-
+        if ($user_auth->hasRole('staff')) {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+            $transfer_details_data->whereHas('transfer', function ($query) use ($warehouses_id) {
+                $query->whereIn('to_warehouse_id', $warehouses_id);
+            });
+        }
         $transfer_details = $transfer_details_data->paginate($request->input('limit', 5))->appends($request->except('page'));
         $data = [];
         foreach ($transfer_details as $detail) {
@@ -1820,6 +1858,7 @@ class ReportsController extends Controller
 
     public function topSellingProduct(Request $request)
     {
+        $user_auth = auth()->user();
         $productsQuery = SaleDetail::join('sales', 'sale_details.sale_id', '=', 'sales.id')
             ->join('products', 'sale_details.product_id', '=', 'products.id')
             ->whereNull('sales.deleted_at');
@@ -1836,7 +1875,11 @@ class ReportsController extends Controller
                     ->orWhere('products.code', 'LIKE', '%' . $request->input('search') . '%');
             });
         }
-
+        // Filter khusus untuk staff berdasarkan gudang
+        if ($user_auth->hasRole('staff')) {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+            $productsQuery->whereIn('sales.warehouse_id', $warehouses_id); // Filter berdasarkan warehouse_id pada tabel sales
+        }
         // Hilangkan paginasi
         $products = $productsQuery->select(
             DB::raw('products.name as name'),
@@ -2215,6 +2258,7 @@ class ReportsController extends Controller
     //----------------- Sale Report-----------------------\\
     public function sale(request $request)
     {
+        $user_auth = auth()->user();
         $saleQuery = Sale::select('sales.*')
             ->with('facture', 'client', 'warehouse')
             ->join('clients', 'sales.client_id', '=', 'clients.id')
@@ -2254,6 +2298,11 @@ class ReportsController extends Controller
         if ($request->filled('payment_statut')) {
             $saleQuery->where('payment_statut', '=', $request->input('payment_statut'));
         }
+        // Filter khusus untuk staff berdasarkan gudang
+        if ($user_auth->hasRole('staff')) {
+            $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
+            $saleQuery->whereIn('warehouse_id', $warehouses_id);
+        }
         $sales = $saleQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
         $totalPaid = $sales->sum('paid_amount');
         $totalAmount = $sales->sum('GrandTotal');
@@ -2283,7 +2332,7 @@ class ReportsController extends Controller
         }
 
         $customers = client::where('deleted_at', '=', null)->get(['id', 'name']);
-        $user_auth = auth()->user();
+
         if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
             $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         } else {
