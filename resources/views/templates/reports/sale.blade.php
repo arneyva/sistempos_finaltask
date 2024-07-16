@@ -127,8 +127,10 @@
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
-                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
-                    </button></a>
+                    @role('superadmin|inventaris')
+                        <a href="{{ route('reports.sale-export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    @endrole
+                    {{-- </button></a> --}}
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">

@@ -172,7 +172,7 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
         Route::get('sales/export', [ReportsController::class, 'exportPaymentSale'])->name('sales-export');
         Route::get('sales-returns', [ReportsController::class, 'paymentSaleReturns'])->name('sales-returns');
         Route::get('sales-returns/export', [ReportsController::class, 'exportPaymentReturnSale'])->name('sales-returns-export');
-        Route::get('purchases', [ReportsController::class, 'paymentPurchases'])->name('purchases');
+        Route::get('purchases', [ReportsController::class, 'paymentPurchases'])->name('purchases')->middleware('role:superadmin|inventaris');
         Route::get('purchases/export', [ReportsController::class, 'exportPaymentPurchases'])->name('purchases-export');
         Route::get('purchases-returns', [ReportsController::class, 'paymentPurchaseReturns'])->name('purchases-returns');
         Route::get('purchases-returns/export', [ReportsController::class, 'exportPaymentPurchasesReturn'])->name('purchases-returns-export');
@@ -209,15 +209,21 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     });
     Route::get('top-selling-product', [ReportsController::class, 'topSellingProduct'])->name('top-selling-product');
     Route::get('top-selling-product/export', [ReportsController::class, 'topSellingProductExport'])->name('top-selling-product-export');
-    Route::prefix('/warehouse')->name('warehouse.')->group(function () {
+    Route::prefix('/warehouse')->name('warehouse.')->middleware('role:superadmin|inventaris')->group(function () {
         Route::get('sales', [ReportsController::class, 'warehouseSales'])->name('sales');
+        Route::get('export-sales', [ReportsController::class, 'exportwarehouseSales'])->name('export-sales');
         Route::get('expenses', [ReportsController::class, 'warehouseExpenses'])->name('expenses');
+        Route::get('export-expenses', [ReportsController::class, 'exportwarehouseExpenses'])->name('export-expenses');
         Route::get('sales-returns', [ReportsController::class, 'warehouseSalesReturns'])->name('sales-returns');
+        Route::get('export-sales-returns', [ReportsController::class, 'exportwarehouseSalesReturns'])->name('export-sales-returns');
         Route::get('purchase', [ReportsController::class, 'warehousePurchase'])->name('purchase');
         Route::get('purchase-returns', [ReportsController::class, 'warehousePurchaseReturns'])->name('purchase-returns');
+        Route::get('export-purchase-returns', [ReportsController::class, 'exportwarehousePurchaseReturns'])->name('export-purchase-returns');
     });
     Route::get('sale', [ReportsController::class, 'sale'])->name('sale');
-    Route::get('purchase', [ReportsController::class, 'purchase'])->name('purchase');
+    Route::get('sale-export', [ReportsController::class, 'saleExport'])->name('sale-export');
+    Route::get('purchase', [ReportsController::class, 'purchase'])->name('purchase')->middleware('role:superadmin|inventaris');
+    Route::get('purchase-export', [ReportsController::class, 'exportReportPurchase'])->name('purchase-export');
 });
 Route::prefix('settings')->middleware(['auth', 'verified'])->name('settings.')->group(function () {
     Route::patch('company/update/{id}', [CompanyController::class, 'update'])->name('company.update');

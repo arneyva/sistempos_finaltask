@@ -105,11 +105,11 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="{{ $day }}_in">In-Time</label>
-                                        <input type="time" class="form-control" id="{{ $day }}_in" name="{{ $day }}_in" required>
+                                        <input type="time" class="form-control" id="{{ $day }}_in" name="{{ $day }}_in" >
                                     </div>
                                     <div class="col-md-6">
                                         <label for="{{ $day }}_out">Out-Time</label>
-                                        <input type="time" class="form-control" id="{{ $day }}_out" name="{{ $day }}_out" required>
+                                        <input type="time" class="form-control" id="{{ $day }}_out" name="{{ $day }}_out" >
                                     </div>
                                 </div>
                             </div>

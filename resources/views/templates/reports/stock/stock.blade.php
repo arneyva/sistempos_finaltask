@@ -1,7 +1,7 @@
 @extends('templates.main')
 @section('pages_title')
     <h1>{{ __('Stock') }} ~ {{ __('Reports') }}</h1>
-    <p>{{ __('look up your daily report') }}</p>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 <style>
@@ -89,10 +89,12 @@
                         </form>
                     </div>
                 @endrole
+                @role('superadmin|inventaris')
                 <div class="header-title">
                     {{-- <button type="button" class="btn btn-soft-success">PDF</button> --}}
                     <button type="button" class="btn btn-soft-danger">Excel</button>
                 </div>
+                @endrole
             </div>
 
             <div class="card-body p-0">
@@ -104,7 +106,9 @@
                                 <th>{{ __('Product Name') }}</th>
                                 <th>{{ __('Category') }}</th>
                                 <th>{{ __('Current Stock') }}</th>
+                                @role('superadmin|inventaris')
                                 <th>{{ __('Actions') }}</th>
+                                @endrole
                             </tr>
                         </thead>
                         <tbody>
@@ -114,6 +118,7 @@
                                     <td>{{ $item['name'] }}</td>
                                     <td>{{ $item['category'] }}</td>
                                     <td>{{ $item['quantity'] }}</td>
+                                    @role('superadmin|inventaris')
                                     <td>
                                         <a href="{{ route('reports.stock.sales', $item['id']) }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
@@ -124,6 +129,7 @@
                                             </svg>
                                         </a>
                                     </td>
+                                    @endrole
                                 </tr>
                             @endforeach
 

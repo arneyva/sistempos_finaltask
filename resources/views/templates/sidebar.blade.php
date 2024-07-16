@@ -919,130 +919,131 @@
                     </a>
                     <ul class="sub-nav collapse" id="sidebar-icons" data-bs-parent="#sidebar-menu">
                         {{-- @role('superadmin|inventaris') --}}
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('reports.payments.sales') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> S </i>
-                                    <span class="item-name">{{ __('Payments') }}</span>
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ route('reports.payments.sales') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> S </i>
+                                <span class="item-name">{{ __('Payments') }}</span>
+                            </a>
+                        </li>
                         {{-- @endrole --}}
                         {{-- @role('superadmin') --}}
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('reports.profit-loss') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> O </i>
-                                    <span class="item-name text-wrap">{{ __('Profit & Loss') }}</span></a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ route('reports.profit-loss') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> O </i>
+                                <span class="item-name text-wrap">{{ __('Profit & Loss') }}</span></a>
+                        </li>
                         {{-- @endrole --}}
                         {{-- @role('superadmin|inventaris') --}}
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('reports.quantity-alerts') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> D </i>
-                                    <span class="item-name text-wrap">{{ __('Quantity Alerts') }}</span>
-                                </a>
-                            </li>
-                            {{--  --}}
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('reports.stock.index') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> D </i>
-                                    <span class="item-name">{{ __('Stock') }}</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('reports.customers.index') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> D </i>
-                                    <span class="item-name">{{ __('Customer') }}</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('reports.supplier.index') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> D </i>
-                                    <span class="item-name">{{ __('Supplier') }}</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " href="{{ route('reports.top-selling-product') }}">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> D </i>
-                                    <span class="item-name text-wrap">{{ __('Top Selling Products') }}</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " href="../dashboard/icons/dual-tone.html">
-                                    <i class="icon">
-                                        <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <g>
-                                                <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                </circle>
-                                            </g>
-                                        </svg>
-                                    </i>
-                                    <i class="sidenav-mini-icon"> D </i>
-                                    <span class="item-name">{{ __('Employee') }}</span>
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ route('reports.quantity-alerts') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> D </i>
+                                <span class="item-name text-wrap">{{ __('Quantity Alerts') }}</span>
+                            </a>
+                        </li>
+                        {{--  --}}
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ route('reports.stock.index') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> D </i>
+                                <span class="item-name">{{ __('Stock') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ route('reports.customers.index') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> D </i>
+                                <span class="item-name">{{ __('Customer') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ route('reports.supplier.index') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> D </i>
+                                <span class="item-name">{{ __('Supplier') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ route('reports.top-selling-product') }}">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> D </i>
+                                <span class="item-name text-wrap">{{ __('Top Selling Products') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="../dashboard/icons/dual-tone.html">
+                                <i class="icon">
+                                    <svg class="icon-10" xmlns="http://www.w3.org/2000/svg" width="10"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <g>
+                                            <circle cx="12" cy="12" r="8" fill="currentColor">
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </i>
+                                <i class="sidenav-mini-icon"> D </i>
+                                <span class="item-name">{{ __('Employee') }}</span>
+                            </a>
+                        </li>
+                        @role('superadmin|inventaris')
                             <li class="nav-item">
                                 <a class="nav-link " href="{{ route('reports.warehouse.sales') }}">
                                     <i class="icon">
@@ -1058,6 +1059,7 @@
                                     <span class="item-name">{{ __('Warehouse/Outlet') }}</span>
                                 </a>
                             </li>
+                        @endrole
                         {{-- @endrole --}}
                         <li class="nav-item">
                             <a class="nav-link " href="{{ route('reports.sale') }}">

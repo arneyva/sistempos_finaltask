@@ -10,10 +10,18 @@ use App\Exports\Report\Payment\ReportPaymentPurchasesExport;
 use App\Exports\Report\Payment\ReportPaymentPurchasesReturnExport;
 use App\Exports\Report\Payment\ReportPaymentSalesExport;
 use App\Exports\Report\Payment\ReportPaymentSalesReturnExport;
+use App\Exports\Report\ProfitLossExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesPaymentExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesReturnExport;
+use App\Exports\Report\ReportPurchasesExport;
+use App\Exports\Report\ReportSalesExport;
 use App\Exports\Report\TopSellingProductExport;
+use App\Exports\Report\Warehouse\ReportExpensesWarehouse as WarehouseReportExpensesWarehouse;
+use App\Exports\Report\Warehouse\ReportPurchasesReturnWarehouse;
+use App\Exports\Report\Warehouse\ReportSaleReturnWarehouse;
+use App\Exports\Report\Warehouse\ReportSaleWarehouse;
+use App\Exports\ReportExpensesWarehouse;
 use App\Http\Controllers\Controller;
 use App\Models\AdjustmentDetail;
 use App\Models\Client;
@@ -499,18 +507,6 @@ class ReportsController extends Controller
 
         $item['expenses_sum'] =   'Rp ' . number_format($report_total_expenses->sum, 2, ',', '.');
         $item['expenses_count'] =   $report_total_expenses->nmbr;
-        //calcule COGS and average cost
-        $cogs_average_data = $this->CalculeCogsAndAverageCost($start_date, $end_date, $warehouse_id, $array_warehouses_id);
-
-        $cogs = $cogs_average_data['total_cogs_products'];
-        $total_average_cost = $cogs_average_data['total_average_cost'];
-
-        $item['product_cost_fifo'] = 'Rp ' . number_format($cogs, 2, ',', '.');
-        $item['averagecost'] = 'Rp ' . number_format($total_average_cost, 2, ',', '.');
-
-        $item['profit_fifo'] = 'Rp ' . number_format($report_total_sales->sum - $cogs, 2, ',', '.');
-        $item['profit_average_cost'] = 'Rp ' . number_format($report_total_sales->sum - $total_average_cost, 2, ',', '.');
-
         $item['payment_received'] = 'Rp ' . number_format($report_total_paiement_sales->sum  + $report_total_PaymentPurchaseReturns->sum, 2, ',', '.');
         $item['payment_sent'] = 'Rp ' . number_format($report_total_paiement_purchases->sum + $report_total_PaymentSaleReturns->sum + $report_total_expenses->sum, 2, ',', '.');
         $item['paiement_net'] = 'Rp ' . number_format(($report_total_paiement_sales->sum  + $report_total_PaymentPurchaseReturns->sum) - ($report_total_paiement_purchases->sum + $report_total_PaymentSaleReturns->sum + $report_total_expenses->sum), 2, ',', '.');
@@ -526,287 +522,35 @@ class ReportsController extends Controller
             'warehouses' => $warehouses,
         ]);
     }
-    public function CalculeCogsAndAverageCost($start_date, $end_date, $warehouse_id, $array_warehouses_id)
+    public function quantityAlerts(Request $request)
     {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
 
-        // Initialize variable to store total COGS averageCost and for all products
-        $total_cogs_products = 0;
-        $total_average_cost = 0;
-
-        // Get all distinct product IDs for sales between start and end date
-        $productIds = SaleDetail::with('sale')
-            ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
-                if ($warehouse_id !== 0) {
-                    return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
-                        $q->where('warehouse_id', $warehouse_id)->where('statut', 'completed');
-                    });
-                } else {
-                    return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
-                        $q->whereIn('warehouse_id', $array_warehouses_id)->where('statut', 'completed');
-                    });
-                }
-            })->whereBetween('date', array($start_date, $end_date))
-            ->select('product_id', 'product_variant_id')
-            ->distinct()
-            ->get();
-
-        // Loop through each product
-        foreach ($productIds as $productId) {
-
-            // $productId = 1011;
-            $totalCogs = 0;
-            $average_cost = 0;
-            $tax_shipping = 0;
-
-            // Get the total cost and quantity for all adjustments of the product
-            $adjustments = AdjustmentDetail::with('adjustment')
-                ->where(function ($query) use ($warehouse_id, $array_warehouses_id, $end_date) {
-                    if ($warehouse_id !== 0) {
-                        return $query->whereHas('adjustment', function ($q) use ($array_warehouses_id, $warehouse_id, $end_date) {
-                            $q->where('warehouse_id', $warehouse_id)
-                                ->where('date', '<=', $end_date);
-                        });
-                    } else {
-                        return $query->whereHas('adjustment', function ($q) use ($array_warehouses_id, $warehouse_id, $end_date) {
-                            $q->whereIn('warehouse_id', $array_warehouses_id)
-                                ->where('date', '<=', $end_date);
-                        });
-                    }
-                })
-                ->where('product_id', $productId['product_id'])
-                ->where('product_variant_id', $productId['product_variant_id'])
-                ->get();
-
-            $adjustment_quantity = 0;
-            foreach ($adjustments as $adjustment) {
-                if ($adjustment->type == 'add') {
-                    $adjustment_quantity += $adjustment->quantity;
-                } else {
-                    $adjustment_quantity -= $adjustment->quantity;
-                }
-            }
-
-
-            // Get total quantity sold before start date
-            $totalQuantitySold = SaleDetail::with('sale')
-                ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
-                    if ($warehouse_id !== 0) {
-                        return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
-                            $q->where('warehouse_id', $warehouse_id)->where('statut', 'completed');
-                        });
-                    } else {
-                        return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
-                            $q->whereIn('warehouse_id', $array_warehouses_id)->where('statut', 'completed');
-                        });
-                    }
-                })->where('product_id', $productId['product_id'])
-                ->where('product_variant_id', $productId['product_variant_id'])
-                ->where('date', '<', $start_date)
-                ->orderBy('date', 'asc')
-                ->sum('quantity');
-
-
-            // Get purchase details for current product, ordered by date in ascending date
-            $purchases = PurchaseDetail::where('product_id',  $productId['product_id'])
-                ->where('product_variant_id', $productId['product_variant_id'])
-                ->join('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
-                ->where('purchases.statut', 'received')
-                ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
-                    if ($warehouse_id !== 0) {
-                        return  $query->where('purchases.warehouse_id', $warehouse_id)->where('purchases.statut', 'received');
-                    } else {
-                        return  $query->whereIn('purchases.warehouse_id', $array_warehouses_id)->where('purchases.statut', 'received');
-                    }
-                })
-                ->orderBy('purchases.date', 'asc')
-                ->select(
-                    'purchase_details.quantity as quantity',
-                    'purchase_details.cost as cost',
-                    'purchase_details.total as total',
-                    'purchases.GrandTotal as purchase_total',
-                    'purchase_details.purchase_id as purchase_id'
-                )
-                ->get();
-
-
-            if (count($purchases) > 0) {
-                $purchases_to_array = $purchases->toArray();
-                $purchases_sum_qty = array_sum(array_column($purchases_to_array, 'quantity'));
-            } else {
-                $purchases_sum_qty = 0;
-            }
-
-            // Get sale details for current product between start and end date, ordered by date in ascending order
-            $sales = SaleDetail::with('sale')
-                ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
-                    if ($warehouse_id !== 0) {
-                        return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
-                            $q->where('warehouse_id', $warehouse_id)->where('statut', 'completed');
-                        });
-                    } else {
-                        return $query->whereHas('sale', function ($q) use ($array_warehouses_id, $warehouse_id) {
-                            $q->whereIn('warehouse_id', $array_warehouses_id)->where('statut', 'completed');
-                        });
-                    }
-                })->where('product_id', $productId['product_id'])
-                ->where('product_variant_id', $productId['product_variant_id'])
-                ->whereBetween('date', array($start_date, $end_date))
-                ->orderBy('date', 'asc')
-                ->get();
-
-
-            $sales_to_array = $sales->toArray();
-            $sales_sum_qty = array_sum(array_column($sales_to_array, 'quantity'));
-
-            $total_sum_sales = $totalQuantitySold + $sales_sum_qty;
-
-
-            //calcule average Cost
-            $average_cost = $this->averageCost($productId['product_id'], $start_date, $end_date, $warehouse_id, $array_warehouses_id);
-
-            if ($total_sum_sales > $purchases_sum_qty) {
-                // Handle adjustments only case
-                $totalCogs += $sales_sum_qty * $average_cost;
-                $total_average_cost += $sales_sum_qty * $average_cost;
-            } else {
-
-                foreach ($sales as $sale) {
-
-                    $saleQuantity = $sale->quantity;
-                    $total_average_cost += $average_cost * $sale->quantity;
-
-                    while ($saleQuantity > 0) {
-                        $purchase = $purchases->first();
-                        if ($purchase->quantity > 0) {
-                            $totalQuantitySold += $saleQuantity;
-                            if ($purchase->quantity >= $totalQuantitySold) {
-                                $totalCogs += $saleQuantity * $purchase->cost;
-                                $purchase->quantity -= $totalQuantitySold;
-                                $saleQuantity = 0;
-                                $totalQuantitySold = 0;
-                                if ($purchase->quantity == 0) {
-                                    $purchase->quantity = 0;
-                                    $saleQuantity = 0;
-                                    $totalQuantitySold = 0;
-                                    $purchases->shift();
-                                }
-                            } else {
-
-
-                                $diff = round($totalQuantitySold - $saleQuantity, 4);
-                                if ($purchase->quantity > $diff) {
-
-                                    $rest = $purchase->quantity - $diff;
-                                    if ($rest <= $saleQuantity) {
-                                        $saleQuantity -= $rest;
-                                        $totalCogs += $rest * $purchase->cost;
-                                        $totalQuantitySold =  0;
-                                        $purchase->quantity = 0;
-                                        $purchases->shift();
-                                    } else {
-                                        $totalQuantitySold -=  $saleQuantity;
-                                        $purchase->quantity = $purchase->quantity - $totalQuantitySold;
-                                        $totalCogs += $purchase->quantity * $purchase->cost;
-                                        $saleQuantity -= $purchase->quantity;
-                                        $purchase->quantity = 0;
-                                        $purchases->shift();
-                                    }
-                                } else {
-                                    $totalQuantitySold -=  $saleQuantity;
-                                    $totalQuantitySold -= $purchase->quantity;
-                                    $purchase->quantity = 0;
-                                    $purchases->shift();
-                                }
-                            }
-                        } else {
-                            $purchases->shift();
-                        }
-                    }
-                }
-            }
-            $total_cogs_products += $totalCogs;
-        }
-
-        return [
-            'total_cogs_products' => $total_cogs_products,
-            'total_average_cost'  => $total_average_cost
-        ];
-    }
-    public function averageCost($product_id, $start_date, $end_date, $warehouse_id, $array_warehouses_id)
-    {
-        // Get the cost of the product from the products table
-        $product = Product::find($product_id);
-        $product_cost = $product->cost;
-
-        $purchases = PurchaseDetail::where('product_id', $product_id)
-            ->join('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
-            ->where('purchases.statut', 'received')
-            ->where(function ($query) use ($warehouse_id, $array_warehouses_id) {
-                if ($warehouse_id !== 0) {
-                    return  $query->where('purchases.warehouse_id', $warehouse_id)->where('purchases.statut', 'received');
-                } else {
-                    return  $query->whereIn('purchases.warehouse_id', $array_warehouses_id)->where('purchases.statut', 'received');
-                }
-            })
-            ->where('purchases.date', '<=', $end_date)
-            ->select(
-                'purchase_details.quantity as quantity',
-                'purchase_details.total as total',
-                'purchase_details.cost as cost',
-                'purchases.GrandTotal as purchase_total'
-            )
-            ->get();
-
-        $purchase_cost = 0;
-        $purchase_quantity = 0;
-        foreach ($purchases as $purchase) {
-            $purchase_cost += $purchase->quantity * $purchase->cost;
-            $purchase_quantity += $purchase->quantity;
-        }
-
-        // Get the total cost and quantity for all adjustments of the product
-        $adjustments = AdjustmentDetail::with('adjustment')
-            ->where(function ($query) use ($warehouse_id, $array_warehouses_id, $start_date, $end_date) {
-                if ($warehouse_id !== 0) {
-                    return $query->whereHas('adjustment', function ($q) use ($array_warehouses_id, $warehouse_id, $start_date, $end_date) {
-                        $q->where('warehouse_id', $warehouse_id)
-                            ->where('date', '<=', $end_date);
-                    });
-                } else {
-                    return $query->whereHas('adjustment', function ($q) use ($array_warehouses_id, $warehouse_id, $start_date, $end_date) {
-                        $q->whereIn('warehouse_id', $array_warehouses_id)
-                            ->where('date', '<=', $end_date);
-                    });
-                }
-            })
-            ->where('product_id', $product_id)->get();
-
-        $adjustment_cost = 0;
-        $adjustment_quantity = 0;
-        foreach ($adjustments as $adjustment) {
-            if ($adjustment->type == 'add') {
-                $adjustment_cost += $adjustment->quantity * $product_cost;
-                $adjustment_quantity += $adjustment->quantity;
-            } else {
-                $adjustment_cost -= $adjustment->quantity * $product_cost;
-                $adjustment_quantity -= $adjustment->quantity;
-            }
-        }
-
-        // Calculate the average cost
-        $total_cost = $purchase_cost + $adjustment_cost;
-        $total_quantity = $purchase_quantity + $adjustment_quantity;
-        if ($total_quantity === 0 || $total_quantity == 0 || $total_quantity == '0') {
-            $average_cost = $product_cost;
+        // Mengambil warehouse yang relevan berdasarkan peran pengguna
+        if ($user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+            $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         } else {
-            $average_cost = $total_cost / $total_quantity;
+            $warehouses = Warehouse::where('deleted_at', '=', null)
+                ->whereIn('id', $warehouses_id)
+                ->get(['id', 'name']);
         }
 
-        return $average_cost;
-    }
-    public function quantityAlerts()
-    {
-        return view('templates.reports.quantity-alerts');
+        // Mengambil produk yang sesuai dengan alert stock
+        $products_alertsQuery = ProductWarehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
+            ->whereRaw('qty <= stock_alert')
+            ->when($request->filled('warehouse_id'), function ($query) use ($request) {
+                return $query->where('warehouse_id', $request->input('warehouse_id'));
+            })
+            ->when(!$user_auth->hasRole(['superadmin', 'inventaris']), function ($query) use ($warehouses_id) {
+                return $query->whereIn('warehouse_id', $warehouses_id);
+            })
+            ->paginate($request->input('limit', 5))->appends($request->except('page'));
+
+        return view('templates.reports.quantity-alerts', [
+            'stockalert' => $products_alertsQuery,
+            'warehouses' => $warehouses,
+        ]);
     }
     public function stockDetail($id)
     {
@@ -969,7 +713,6 @@ class ReportsController extends Controller
             $a['qty'] = $value->qty;
             $a['unit'] = $value->product->unit->ShortName;
             $b[] = $a;
-            
         }
         return view('templates.reports.stock.stock-detail-sales', [
             'sales' => $data,
@@ -1343,8 +1086,81 @@ class ReportsController extends Controller
         ]);
     }
     //----------------- Customers Report -----------------------\\
+    // public function customers(Request $request)
+    // {
+    //     $clientsQuery = Client::where('deleted_at', '=', null)->latest();
+    //     if ($request->filled('search')) {
+    //         $clientsQuery->where(function ($query) use ($request) {
+    //             $query->orWhere('name', 'like', '%' . $request->input('search') . '%')
+    //                 ->orWhere('phone', 'like', '%' . $request->input('search') . '%');
+    //         });
+    //     }
+    //     $clients = $clientsQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
+    //     $data = array();
+    //     // Initialize totals
+    //     $totalSales = 0;
+    //     $totalAmount = 0;
+    //     $totalPaid = 0;
+    //     $totalDue = 0;
+    //     $totalReturnDue = 0;
+    //     foreach ($clients as $client) {
+    //         $item['total_sales'] = DB::table('sales')
+    //             ->where('deleted_at', '=', null)
+    //             ->where('client_id', $client->id)
+    //             ->count();
+
+    //         $item['total_amount'] = DB::table('sales')
+    //             ->where('deleted_at', '=', null)
+    //             ->where('client_id', $client->id)
+    //             ->sum('GrandTotal');
+
+    //         $item['total_paid'] = DB::table('sales')
+    //             ->where('sales.deleted_at', '=', null)
+    //             ->where('sales.client_id', $client->id)
+    //             ->sum('paid_amount');
+
+    //         $item['due'] = $item['total_amount'] - $item['total_paid'];
+
+    //         $item['total_amount_return'] = DB::table('sale_returns')
+    //             ->where('deleted_at', '=', null)
+    //             ->where('client_id', $client->id)
+    //             ->sum('GrandTotal');
+
+    //         $item['total_paid_return'] = DB::table('sale_returns')
+    //             ->where('sale_returns.deleted_at', '=', null)
+    //             ->where('sale_returns.client_id', $client->id)
+    //             ->sum('paid_amount');
+
+    //         $item['return_Due'] = $item['total_amount_return'] - $item['total_paid_return'];
+
+    //         $item['name'] = $client->name;
+    //         $item['phone'] = $client->phone;
+    //         $item['code'] = $client->code;
+    //         $item['id'] = $client->id;
+
+    //         $data[] = $item;
+    //         // Add to totals
+    //         $totalSales += $item['total_sales'];
+    //         $totalAmount += $item['total_amount'];
+    //         $totalPaid += $item['total_paid'];
+    //         $totalDue += $item['due'];
+    //         $totalReturnDue += $item['return_Due'];
+    //     }
+    //     return view('templates.reports.customers.customers', [
+    //         'report' => $data,
+    //         'clients' => $clients,
+    //         'total_sales' => $totalSales,
+    //         'total_amount' => $totalAmount,
+    //         'total_paid' => $totalPaid,
+    //         'total_due' => $totalDue,
+    //         'total_return_due' => $totalReturnDue,
+    //     ]);
+    // }
     public function customers(Request $request)
     {
+        $user_auth = auth()->user();
+        $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
+
         $clientsQuery = Client::where('deleted_at', '=', null)->latest();
         if ($request->filled('search')) {
             $clientsQuery->where(function ($query) use ($request) {
@@ -1360,33 +1176,34 @@ class ReportsController extends Controller
         $totalPaid = 0;
         $totalDue = 0;
         $totalReturnDue = 0;
+        $totalPaidReturn = 0;
+
         foreach ($clients as $client) {
-            $item['total_sales'] = DB::table('sales')
+            $salesQuery = DB::table('sales')
                 ->where('deleted_at', '=', null)
-                ->where('client_id', $client->id)
-                ->count();
+                ->where('client_id', $client->id);
 
-            $item['total_amount'] = DB::table('sales')
+            $salesReturnQuery = DB::table('sale_returns')
                 ->where('deleted_at', '=', null)
-                ->where('client_id', $client->id)
-                ->sum('GrandTotal');
+                ->where('client_id', $client->id);
 
-            $item['total_paid'] = DB::table('sales')
-                ->where('sales.deleted_at', '=', null)
-                ->where('sales.client_id', $client->id)
-                ->sum('paid_amount');
+            // Apply warehouse filtering for staff
+            if (!$user_auth->hasAnyRole(['superadmin', 'inventaris'])) {
+                $salesQuery->whereIn('warehouse_id', $warehouses_id);
+                $salesReturnQuery->whereIn('warehouse_id', $warehouses_id);
+            }
+
+            $item['total_sales'] = $salesQuery->count();
+
+            $item['total_amount'] = $salesQuery->sum('GrandTotal');
+
+            $item['total_paid'] = $salesQuery->sum('paid_amount');
 
             $item['due'] = $item['total_amount'] - $item['total_paid'];
 
-            $item['total_amount_return'] = DB::table('sale_returns')
-                ->where('deleted_at', '=', null)
-                ->where('client_id', $client->id)
-                ->sum('GrandTotal');
+            $item['total_amount_return'] = $salesReturnQuery->sum('GrandTotal');
 
-            $item['total_paid_return'] = DB::table('sale_returns')
-                ->where('sale_returns.deleted_at', '=', null)
-                ->where('sale_returns.client_id', $client->id)
-                ->sum('paid_amount');
+            $item['total_paid_return'] = $salesReturnQuery->sum('paid_amount');
 
             $item['return_Due'] = $item['total_amount_return'] - $item['total_paid_return'];
 
@@ -1400,19 +1217,23 @@ class ReportsController extends Controller
             $totalSales += $item['total_sales'];
             $totalAmount += $item['total_amount'];
             $totalPaid += $item['total_paid'];
-            $totalDue += $item['due'];
+            $totalPaidReturn += $item['total_amount_return'];
+            // $totalDue += $item['due'];
             $totalReturnDue += $item['return_Due'];
         }
+
         return view('templates.reports.customers.customers', [
             'report' => $data,
             'clients' => $clients,
             'total_sales' => $totalSales,
             'total_amount' => $totalAmount,
             'total_paid' => $totalPaid,
+            'total_paid_return' => $totalPaidReturn,
             'total_due' => $totalDue,
             'total_return_due' => $totalReturnDue,
         ]);
     }
+
     public function customersDetailSales(Request $request, $id)
     {
         // Find the client or fail if not found
@@ -1958,9 +1779,6 @@ class ReportsController extends Controller
         if ($request->filled('search')) {
             $salesQuery->where(function ($query) use ($request) {
                 $query->where('Ref', 'like', '%' . $request->input('search') . '%')
-                    ->orWhere('statut', 'like', '%' . $request->input('search') . '%')
-                    ->orWhere('GrandTotal', $request->input('search'))
-                    ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
                     ->orWhere(function ($query) use ($request) {
                         $query->whereHas('client', function ($q) use ($request) {
                             $q->where('name', 'like', '%' . $request->input('search') . '%');
@@ -1996,6 +1814,13 @@ class ReportsController extends Controller
             'sales' => $sales,
             'warehouses' => $warehouses,
         ]);
+    }
+    public function exportwarehouseSales(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "warehouseSales_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportSaleWarehouse($request), $filename);
     }
     public function warehouseSalesReturns(Request $request)
     {
@@ -2040,9 +1865,6 @@ class ReportsController extends Controller
         if ($request->filled('search')) {
             $saleReturnQuery->where(function ($query) use ($request) {
                 $query->where('Ref', 'LIKE', '%' . $request->input('search') . '%')
-                    ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
-                    ->orWhere('GrandTotal', $request->input('search'))
-                    ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
                     ->orWhere(function ($query) use ($request) {
                         $query->whereHas('sale', function ($q) use ($request) {
                             $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
@@ -2055,9 +1877,7 @@ class ReportsController extends Controller
                     });
             });
         }
-
-        $saleReturns = $saleReturnQuery->paginate($request->input('limit', 1))->appends($request->except('page'));
-
+        $saleReturns = $saleReturnQuery->paginate($request->input('limit', 5))->appends($request->except('page'));
         $return_data = [];
         foreach ($saleReturns as $saleReturn) {
             $item = [
@@ -2088,6 +1908,13 @@ class ReportsController extends Controller
             'saleReturns' => $saleReturns,
             'saleReturns_data' => $return_data
         ]);
+    }
+    public function exportwarehouseSalesReturns(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "warehouseSalesReturns_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportSaleReturnWarehouse($request), $filename);
     }
     public function warehousePurchaseReturns(Request $request)
     {
@@ -2134,7 +1961,6 @@ class ReportsController extends Controller
                     $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
                 })
                     ->orWhere('Ref', 'LIKE', '%' . $request->input('search') . '%')
-                    ->orWhere('statut', 'LIKE', '%' . $request->input('search') . '%')
                     ->orWhere('GrandTotal', $request->input('search'))
                     ->orWhere('payment_statut', 'like', '%' . $request->input('search') . '%')
                     ->orWhere(function ($query) use ($request) {
@@ -2179,6 +2005,13 @@ class ReportsController extends Controller
             'purchase_return_data' => $purchase_return_data
         ]);
     }
+    public function exportwarehousePurchaseReturns(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "warehousePurchaseReturns_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportPurchasesReturnWarehouse($request), $filename);
+    }
     public function warehouseExpenses(Request $request)
     {
         $saleQuery = Sale::where('deleted_at', '=', null);
@@ -2221,7 +2054,6 @@ class ReportsController extends Controller
         if ($request->filled('search')) {
             $expenseQuery->where(function ($query) use ($request) {
                 $query->where('Ref', 'LIKE', '%' . $request->input('search') . '%')
-                    ->orWhere('date', 'LIKE', '%' . $request->input('search') . '%')
                     ->orWhere('details', 'LIKE', '%' . $request->input('search') . '%')
                     ->orWhere(function ($query) use ($request) {
                         $query->whereHas('expense_category', function ($q) use ($request) {
@@ -2252,6 +2084,13 @@ class ReportsController extends Controller
             'expenses' => $expenses,
             'expenses_data' => $expenses_data
         ]);
+    }
+    public function exportwarehouseExpenses(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "warehouseExpenses_{$timestamp}.xlsx";
+
+        return Excel::download(new WarehouseReportExpensesWarehouse($request), $filename);
     }
     //----------------- Warehouse Report-----------------------\\
 
@@ -2349,6 +2188,13 @@ class ReportsController extends Controller
             'total_amount' => $totalAmount,
         ]);
     }
+    public function saleExport(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-sales_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportSalesExport($request), $filename);
+    }
     //----------------- Sale Report-----------------------\\
 
 
@@ -2441,5 +2287,12 @@ class ReportsController extends Controller
             'total_due' => $totalDue,
             'total_amount' => $totalAmount,
         ]);
+    }
+    public function exportReportPurchase(Request $request)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "report-purchases_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportPurchasesExport($request), $filename);
     }
 }

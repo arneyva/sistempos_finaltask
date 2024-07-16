@@ -782,29 +782,6 @@
 @push('script')
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}">
     </script>
-    {{-- <script>
-        $(document).ready(function() {
-            $('a[href*="{{ route('sale.print_invoice', '') }}"]').on('click', function(e) {
-                e.preventDefault();
-                var url = $(this).attr('href');
-
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function(response) {
-                        $('#invoiceModal .modal-body').html(response);
-                        $('#invoiceModal').modal('show');
-                    },
-                    error: function(xhr) {
-                        console.log(xhr.responseText); // Debugging error
-                        alert('Something went wrong!');
-                    }
-                });
-            });
-        });
-    </script> --}}
-
-
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
             const payButtons = document.querySelectorAll('.pay-button');
