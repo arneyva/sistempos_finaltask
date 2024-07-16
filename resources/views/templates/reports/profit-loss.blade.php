@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>Profit & Loss ~ Reports</h1>
-    <p>look up your daily report</p>
+    <h1>{{ __('Profit & Loss') }} ~ {{ __('Reports') }}</h1>
+    <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
 <style>
@@ -18,38 +18,39 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Profit & Loss Report</h4>
+                    <h4 class="card-title">{{ __('Profit & Loss') }} {{ __('Reports') }}</h4>
                 </div>
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
-                        data-bs-target="#createModal">Filter</button>
-                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                        data-bs-target="#createModal">{{ __('Filter') }}</button>
+                    {{-- <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a> --}}
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">Filter</h5>
+                                    <h5 class="modal-title" id="createModalLabel">{{ __('Filter') }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ route('reports.profit-loss') }}" method="GET" id="filterForm">
                                         <div class="col mb-3">
-                                            <label class="form-label" for="from_date">From Date *</label>
+                                            <label class="form-label" for="from_date">{{ __('From Date') }}</label>
                                             <input type="date" class="form-control" id="from_date" name="from"
                                                 value="{{ request()->input('from', '2024-02-12') }}">
                                         </div>
                                         <div class="col mb-3">
-                                            <label class="form-label" for="to_date">To Date *</label>
+                                            <label class="form-label" for="to_date">{{ __('To Date') }}</label>
                                             <input type="date" class="form-control" id="to_date" name="to"
                                                 value="{{ request()->input('to', now()->format('Y-m-d')) }}">
                                         </div>
                                         @role('superadmin|inventaris')
                                             <div class="col mb-3">
-                                                <label class="form-label" for="warehouse_id">Warehouse/Outlet *</label>
+                                                <label class="form-label"
+                                                    for="warehouse_id">{{ __('Warehouse/Outlet') }}</label>
                                                 <select class="form-select" id="warehouse_id" name="warehouse_id">
-                                                    <option selected disabled value="">Choose...</option>
+                                                    <option value="">{{ __('All Warehouse/Outlet') }}</option>
                                                     @foreach ($warehouses as $wh)
                                                         <option value="{{ $wh->id }}"
                                                             {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -93,7 +94,8 @@
                                                             alt="purchase" style="max-height: 70px;max-width: 70px">
                                                     </div>
                                                     <div class="progress-detail">
-                                                        <p class="mb-2">{{ $data['sales_count'] }} Sales</p>
+                                                        <p class="mb-2">{{ $data['sales_count'] }} {{ __('Sales') }}
+                                                        </p>
                                                         <h4 class="counter">{{ $data['sales_sum'] }}</h4>
                                                     </div>
                                                 </div>
@@ -111,7 +113,8 @@
                                                                 alt="purchase" style="max-height: 70px;max-width: 70px">
                                                         </div>
                                                         <div class="progress-detail">
-                                                            <p class="mb-2">{{ $data['purchases_count'] }} Purchases</p>
+                                                            <p class="mb-2">{{ $data['purchases_count'] }}
+                                                                {{ __('Purchases') }}</p>
                                                             <h4 class="counter">{{ $data['purchases_sum'] }}</h4>
                                                         </div>
                                                     </div>
@@ -129,7 +132,8 @@
                                                             alt="purchase" style="max-height: 70px;max-width: 70px">
                                                     </div>
                                                     <div class="progress-detail">
-                                                        <p class="mb-2">{{ $data['returns_sales_count'] }} Sales Return
+                                                        <p class="mb-2">{{ $data['returns_sales_count'] }}
+                                                            {{ __('Sales') }} {{ __('Return') }}
                                                         </p>
                                                         <h4 class="counter">{{ $data['returns_sales_sum'] }}</h4>
                                                     </div>
@@ -148,8 +152,8 @@
                                                                 alt="purchase" style="max-height: 70px;max-width: 70px">
                                                         </div>
                                                         <div class="progress-detail">
-                                                            <p class="mb-2">{{ $data['returns_purchases_count'] }} Purchases
-                                                                Return</p>
+                                                            <p class="mb-2">{{ $data['returns_purchases_count'] }}
+                                                                {{ __('Purchases') }} {{ __('Return') }}</p>
                                                             <h4 class="counter">{{ $data['returns_purchases_sum'] }}</h4>
                                                         </div>
                                                     </div>
@@ -167,7 +171,8 @@
                                                             alt="purchase" style="max-height: 70px;max-width: 70px">
                                                     </div>
                                                     <div class="progress-detail">
-                                                        <p class="mb-2">{{ $data['expenses_count'] }} Expenses</p>
+                                                        <p class="mb-2">{{ $data['expenses_count'] }}
+                                                            {{ __('Expenses') }}</p>
                                                         <h4 class="counter">{{ $data['expenses_sum'] }}</h4>
                                                     </div>
                                                 </div>
@@ -184,8 +189,10 @@
                                                             alt="purchase" style="max-height: 70px;max-width: 70px">
                                                     </div>
                                                     <div class="progress-detail">
-                                                        <p class="mb-2">Revenue</p>
+                                                        <p class="mb-2">{{ __('Total Revenue') }}</p>
                                                         <h4 class="counter">{{ $data['total_revenue'] }}</h4>
+                                                        <p class="counter">{{ __('Sales') }} - {{ __('Sales') }}
+                                                            {{ __('Return') }}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -201,42 +208,9 @@
                                                             alt="purchase" style="max-height: 70px;max-width: 70px">
                                                     </div>
                                                     <div class="progress-detail">
-                                                        <p class="mb-2">Profit Net (Using FIFO METHOD)</p>
-                                                        <h4 class="counter">{{ $data['profit_fifo'] }}</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <div class="swiper-slide card card-slide">
-                                            <div class="card-body">
-                                                <div class="progress-widget">
-                                                    <div
-                                                        class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                        <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
-                                                            alt="purchase" style="max-height: 70px;max-width: 70px">
-                                                    </div>
-                                                    <div class="progress-detail">
-                                                        <p class="mb-2">Profit Net (Using Average Cost)</p>
-                                                        <h4 class="counter">{{ $data['profit_average_cost'] }}</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <div class="swiper-slide card card-slide">
-                                            <div class="card-body">
-                                                <div class="progress-widget">
-                                                    <div
-                                                        class="text-center circle-progress-01 circle-progress circle-progress-primary">
-                                                        <img src="{{ asset('hopeui/html/assets/images/purchase.png') }}"
-                                                            alt="purchase" style="max-height: 70px;max-width: 70px">
-                                                    </div>
-                                                    <div class="progress-detail">
-                                                        <p class="mb-2">Payments Received</p>
+                                                        <p class="mb-2">{{ __('Payments') }} {{ __('Received') }}</p>
                                                         <h4 class="counter">{{ $data['payment_received'] }}</h4>
+                                                        <p class="counter">{{ __('Sales') }} + {{ __('Purchases') }} {{ __('Return')  }}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -252,8 +226,9 @@
                                                             alt="purchase" style="max-height: 70px;max-width: 70px">
                                                     </div>
                                                     <div class="progress-detail">
-                                                        <p class="mb-2">Payments Sent</p>
+                                                        <p class="mb-2">{{ __('Payments') }} {{ __('Sent') }}</p>
                                                         <h4 class="counter">{{ $data['payment_sent'] }}</h4>
+                                                        <p class="counter">{{ __('Expenses') }} + {{ __('Purchases') }} + {{ __('Sales') }} {{ __('Return')  }}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -269,8 +244,9 @@
                                                             alt="purchase" style="max-height: 70px;max-width: 70px">
                                                     </div>
                                                     <div class="progress-detail">
-                                                        <p class="mb-2">Payments Net</p>
+                                                        <p class="mb-2">{{ __('Payments Net') }}</p>
                                                         <h4 class="counter">{{ $data['paiement_net'] }}</h4>
+                                                        <hp class="counter">{{ __('Payments') }} {{ __('Received')  }} - {{ __('Payments') }} {{ __('Sent') }}</hp>
                                                     </div>
                                                 </div>
                                             </div>

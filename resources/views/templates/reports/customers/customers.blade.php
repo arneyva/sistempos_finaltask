@@ -58,9 +58,11 @@
                                 <th>{{ __('Total') }} {{ __('Sales') }}</th>
                                 <th>{{ __('Total') }} {{ __('Amount') }}</th>
                                 <th>{{ __('Total') }} {{ __('Paid') }}</th>
-                                <th>{{ __('Total') }} {{ __('Due') }}</th>
-                                <th>{{ __('Total') }} {{ __('Return') }} {{ __('Due') }}</th>
+                                {{-- <th>{{ __('Total') }} {{ __('Due') }}</th> --}}
+                                <th>{{ __('Total') }} {{ __('Return') }}</th>
+                                @role('superadmin|inventaris')
                                 <th>{{ __('Actions') }}</th>
+                                @endrole
                             </tr>
                         </thead>
                         <tbody>
@@ -71,8 +73,9 @@
                                     <td>{{ $item['total_sales'] }}</td>
                                     <td>{{ 'Rp ' . number_format($item['total_amount'], 2, ',', '.') }}</td>
                                     <td>{{ 'Rp ' . number_format($item['total_paid'], 2, ',', '.') }}</td>
-                                    <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}</td>
-                                    <td>{{ 'Rp ' . number_format($item['return_Due'], 2, ',', '.') }}</td>
+                                    {{-- <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}</td> --}}
+                                    <td>{{ 'Rp ' . number_format($item['total_amount_return'], 2, ',', '.') }}</td>
+                                    @role('superadmin|inventaris')
                                     <td>
                                         <a href="{{ route('reports.customers.sales', $item['id']) }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
@@ -83,6 +86,7 @@
                                             </svg>
                                         </a>
                                     </td>
+                                    @endrole
                                 </tr>
                             @endforeach
                         </tbody>
@@ -93,8 +97,8 @@
                                 <td>{{ $total_sales }}</td>
                                 <td style="font-weight: bold">{{ 'Rp ' . number_format($total_amount, 2, ',', '.') }}</td>
                                 <td style="font-weight: bold">{{ 'Rp ' . number_format($total_paid, 2, ',', '.') }}</td>
-                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_due, 2, ',', '.') }}</td>
-                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_return_due, 2, ',', '.') }}
+                                {{-- <td style="font-weight: bold">{{ 'Rp ' . number_format($total_due, 2, ',', '.') }}</td> --}}
+                                <td style="font-weight: bold">{{ 'Rp ' . number_format($total_paid_return, 2, ',', '.') }}
                                 </td>
                                 <td style="font-weight: bold"></td>
                             </tr>

@@ -34,20 +34,20 @@ class PurchaseController extends Controller
         $this->middleware('role:superadmin|inventaris');
     }
 
-    public function index() {
+    public function index()
+    {
         $orderBy = 'created_at';
         $order = 'desc';
 
         $show = request('show') ?? '10';
-
-        
     }
 
-    public function create() {
+    public function create()
+    {
         //ambil gudang utama
         $warehouse = Warehouse::findOrFail(1);
         //ambil supplier
-        $suppliers=Provider::all();
+        $suppliers = Provider::all();
         // Ambil semua produk
         $products = Product::all();
         //ambil data produk warehouse
@@ -55,19 +55,19 @@ class PurchaseController extends Controller
 
         // Ambil semua purchase yang berstatus pending, ordered, shipped, atau arrived dan milik warehouse tertentu
         $purchases = Purchase::where('warehouse_id', 1)
-                                ->whereIn('statut', ['pending', 'ordered', 'shipped', 'arrived'])
-                                ->pluck('id');
+            ->whereIn('statut', ['pending', 'ordered', 'shipped', 'arrived'])
+            ->pluck('id');
         // Ambil detail purchase dari purchase yang sudah diambil sebelumnya
         $purchaseDetails = PurchaseDetail::whereIn('purchase_id', $purchases)->get();
 
 
         // Gabungkan data produk dengan 
-        $allProduct = $products->map(function($product) use ($purchaseDetails, $productWarehouse) {
+        $allProduct = $products->map(function ($product) use ($purchaseDetails, $productWarehouse) {
             $quantityOnOrder = $purchaseDetails->where('product_id', $product->id)->sum('quantity');
             // Ambil quantity available dari tabel product_warehouse
             $quantityAvailable = $productWarehouse->where('product_id', $product->id)->sum('qty');
             // Ambil nama varian dari tabel product_variants
-            $variants = ProductVariant::where('product_id', $product->id)->get()->map(function($variant) use ($purchaseDetails, $productWarehouse) {
+            $variants = ProductVariant::where('product_id', $product->id)->get()->map(function ($variant) use ($purchaseDetails, $productWarehouse) {
                 $variantOnOrder = $purchaseDetails->where('product_variant_id', $variant->id)->sum('quantity');
                 // Ambil quantity available dari tabel product_warehouse
                 $variantAvailable = $productWarehouse->where('product_variant_id', $variant->id)->sum('qty');
@@ -78,7 +78,7 @@ class PurchaseController extends Controller
                     'variantAvailable' => $variantAvailable,
                 ];
             });
-            
+
             return [
                 'productData' => $product,
                 'quantity_on_order' => $quantityOnOrder,
@@ -94,7 +94,8 @@ class PurchaseController extends Controller
         ]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
 
         $user = Auth::user();
         $validator = Validator::make($request->all(), [
@@ -119,8 +120,8 @@ class PurchaseController extends Controller
 
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        
-        if ($request->input('products_with_variant')== "{}" && $request->input('products') == "{}") {
+
+        if ($request->input('products_with_variant') == "{}" && $request->input('products') == "{}") {
             if ($request->ajax()) {
                 // Jika validasi gagal, kembalikan pesan error
                 return response()->json([
@@ -160,23 +161,23 @@ class PurchaseController extends Controller
         do {
             $ean13 = $this->generateEAN13();
         } while (Purchase::where('barcode', $ean13)->exists());
-        
+
         $purchase_Ref = $this->getNumberOrder();
         $purchase_email_pin = $this->getPin();
-        
+
         if ($request->send == 'send_email') {
             //nama instansi supplier
             $email['supplier_name'] = Provider::where('id', $request->supplier)->first()->name;
             //alamat instansi supplier
             $email['supplier_adresse'] = Provider::where('id', $request->supplier)->first()->adresse;
             //tanggal purchase
-                $date=$request->date;
-                // Ubah tanggal menjadi instance Carbon
-                $carbonDate = Carbon::parse($date);
-                // Format tanggal
+            $date = $request->date;
+            // Ubah tanggal menjadi instance Carbon
+            $carbonDate = Carbon::parse($date);
+            // Format tanggal
             $email['date'] = $carbonDate->translatedFormat('d, F Y');
             //ref purchase
-            $email['purchase_ref']=$purchase_Ref;
+            $email['purchase_ref'] = $purchase_Ref;
 
             //cek company setting, karena ini berpengaruh dengan sistem mailing
             $settings = Setting::where('deleted_at', '=', null)->first();
@@ -200,32 +201,28 @@ class PurchaseController extends Controller
             }
 
             //nama company
-            $email['company_name']=$settings->CompanyName;
+            $email['company_name'] = $settings->CompanyName;
             if (!$email['company_name']) {
                 return response()->json([
                     "error" => trans("Youe haven't set up your company name")
                 ]);
             }
             //pin email
-            $email['email_pin']=$purchase_email_pin;
+            $email['email_pin'] = $purchase_email_pin;
             //status purchase
-            $email['status']=$request->statut;
+            $email['status'] = $request->statut;
 
             //subject email
             if ($request->statut == 'pending') {
-                $email['subject']= $purchase_Ref." New Order waiting to be confirmed ";
-            }
-            elseif ($request->statut == 'ordered') {
-                $email['subject']= $purchase_Ref." Verify delivery when finished processing the goods";
-            }
-            elseif ($request->statut == 'shipped') {
-                $email['subject']= $purchase_Ref." This is email for affirmation about purchase shipping";
-            }
-            elseif ($request->statut == 'arrived') {
-                $email['subject']= $purchase_Ref." Purchase has arrive";
-            }
-            elseif ($request->statut == 'complete') {
-                $email['subject']= $purchase_Ref." Purchase is completed";
+                $email['subject'] = $purchase_Ref . " New Order waiting to be confirmed ";
+            } elseif ($request->statut == 'ordered') {
+                $email['subject'] = $purchase_Ref . " Verify delivery when finished processing the goods";
+            } elseif ($request->statut == 'shipped') {
+                $email['subject'] = $purchase_Ref . " This is email for affirmation about purchase shipping";
+            } elseif ($request->statut == 'arrived') {
+                $email['subject'] = $purchase_Ref . " Purchase has arrive";
+            } elseif ($request->statut == 'complete') {
+                $email['subject'] = $purchase_Ref . " Purchase is completed";
             };
 
             //set mailing
@@ -238,27 +235,27 @@ class PurchaseController extends Controller
         }
 
         Purchase::create([
-                'user_id' => $user->id,
-                'Ref' => $purchase_Ref,
-                'date' => $request->date,
-                'email' => $request->email,
-                'provider_id' => $request->supplier,
-                'warehouse_id' => $request->location,
-                'tax_rate' => $request->tax ?? 0,
-                'TaxNet' => $request->order_tax_input ?? 0,
-                'discount' => $request->discount ?? 0,
-                'GrandTotal' => $request->order_total_input,
-                'subtotal' => $request->order_subtotal_input,
-                'statut' => $request->statut,
-                'payment_statut' => 'unpaid',
-                'notes' => $request->notes,
-                'payment_method' => $request->payment_method,
-                'payment_term' => $request->payment_term,
-                'down_payment' => $request->down_payment,
-                'req_arrive_date' => $request->req_arrive_date,
-                'barcode' => $ean13,
-                'email_pin' => $purchase_email_pin
-            
+            'user_id' => $user->id,
+            'Ref' => $purchase_Ref,
+            'date' => $request->date,
+            'email' => $request->email,
+            'provider_id' => $request->supplier,
+            'warehouse_id' => $request->location,
+            'tax_rate' => $request->tax ?? 0,
+            'TaxNet' => $request->order_tax_input ?? 0,
+            'discount' => $request->discount ?? 0,
+            'GrandTotal' => $request->order_total_input,
+            'subtotal' => $request->order_subtotal_input,
+            'statut' => $request->statut,
+            'payment_statut' => 'unpaid',
+            'notes' => $request->notes,
+            'payment_method' => $request->payment_method,
+            'payment_term' => $request->payment_term,
+            'down_payment' => $request->down_payment,
+            'req_arrive_date' => $request->req_arrive_date,
+            'barcode' => $ean13,
+            'email_pin' => $purchase_email_pin
+
         ]);
 
         //ambil purchase
@@ -268,22 +265,22 @@ class PurchaseController extends Controller
         if ($request->input('products') != null && $request->input('products') !== "{}") {
             // Ambil array ID user dari request
             $productsToInput = json_decode($request->input('products'), true);
-    
-            foreach ($productsToInput as $product=>$qty) {
+
+            foreach ($productsToInput as $product => $qty) {
 
                 //temukan purchase unit
                 $product_purchase_unit = Product::findOrFail($product)->unit_purchase_id;
                 //temukan cost
                 $cost = ProductVariant::findOrFail($product)->cost;
 
-                $qty=(float)$qty;
+                $qty = (float)$qty;
 
                 PurchaseDetail::create([
                     'cost' => $cost,
                     'purchase_unit_id' => $product_purchase_unit,
                     'purchase_id' => $purchase->id,
                     'product_id' => $product,
-                    'total' => $cost*$qty,
+                    'total' => $cost * $qty,
                     'quantity' => $qty,
                 ]);
             }
@@ -293,14 +290,14 @@ class PurchaseController extends Controller
             // Ambil array ID product dari request
             $productsToInput = json_decode($request->input('products_with_variant'), true);
 
-            foreach ($productsToInput as $product=>$qty) {
+            foreach ($productsToInput as $product => $qty) {
                 //temukan produk id
                 $product_id = ProductVariant::findOrFail($product)->product_id;
                 $product_purchase_unit = Product::findOrFail($product_id)->unit_purchase_id;
                 //temukan cost
                 $cost = ProductVariant::findOrFail($product)->cost;
 
-                $qty=(float)$qty;
+                $qty = (float)$qty;
 
                 PurchaseDetail::create([
                     'cost' => $cost,
@@ -308,7 +305,7 @@ class PurchaseController extends Controller
                     'purchase_id' => $purchase->id,
                     'product_id' => $product_id,
                     'product_variant_id' => $product,
-                    'total' => $cost*$qty,
+                    'total' => $cost * $qty,
                     'quantity' => $qty,
                 ]);
             }
@@ -322,14 +319,15 @@ class PurchaseController extends Controller
         return redirect()->route('people.users.index')->with('success', 'Purchase berhasil ditambahkan');
     }
 
-    public function show(String $id) {
-
+    public function show(String $id)
+    {
     }
 
-    public function edit(String $id) {
-
+    public function edit(String $id)
+    {
     }
-    public function editSupplier(String $Ref) {
+    public function editSupplier(String $Ref)
+    {
         $purchase = Purchase::where('Ref', $Ref)->first();
         $warehouse = Warehouse::where('id', $purchase->warehouse_id)->first();
         $products = PurchaseDetail::where('purchase_id', $purchase->id)->get();
@@ -345,20 +343,21 @@ class PurchaseController extends Controller
         ]);
     }
 
-    public function update(Request $request, String $id) {
-
+    public function update(Request $request, String $id)
+    {
     }
-    
-    public function updateSupplier(Request $request, String $id) {
+
+    public function updateSupplier(Request $request, String $id)
+    {
         $purchase = Purchase::findOrFail($id);
-
     }
 
-    public function destroy(Request $request, String $id) {
-
+    public function destroy(Request $request, String $id)
+    {
     }
 
-    public function getFromScanner(String $code) {
+    public function getFromScanner(String $code)
+    {
         //product
         $product = Product::where('code', $code)->first();
         $product_variant = ProductVariant::where('code', $code)->first();
@@ -378,7 +377,8 @@ class PurchaseController extends Controller
         }
     }
 
-    public function getSupplier(String $id) {
+    public function getSupplier(String $id)
+    {
         //supplier
         $supplier = Provider::findOrFail($id);
         if ($supplier) {
@@ -436,7 +436,7 @@ class PurchaseController extends Controller
                 $variabelDiformat = $inMsg;
             }
 
-            $code = $nwMsg[0].'_'.$variabelDiformat;
+            $code = $nwMsg[0] . '_' . $variabelDiformat;
         } else {
             $code = 'PRC_0001';
         }
@@ -451,7 +451,7 @@ class PurchaseController extends Controller
         $config = array(
             'driver' => 'smtp',
             'host' => 'smtp.gmail.com',
-            'port' => '587',
+            'port' => '465',
             'from' => array('address' => $settings->email, 'name' => $settings->CompanyName),
             'encryption' => 'tls',
             'username' => $settings->email,
@@ -467,7 +467,6 @@ class PurchaseController extends Controller
             ],
         );
         Config::set('mail', $config);
-        
     }
 
     public function getPin()
@@ -475,14 +474,14 @@ class PurchaseController extends Controller
         $isUnique = false;
         $uniqueCode = '';
 
-        while (! $isUnique) {
+        while (!$isUnique) {
             // Generate a random number between 0 and 999999, then pad it with zeros to ensure it is 6 digits
             $randomCode = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
             // Check if the code is unique (assuming 'pin' is the column where the unique codes are stored)
             $codeExists = Purchase::where('email_pin', $randomCode)->exists();
 
-            if (! $codeExists) {
+            if (!$codeExists) {
                 $isUnique = true;
                 $uniqueCode = $randomCode;
             }

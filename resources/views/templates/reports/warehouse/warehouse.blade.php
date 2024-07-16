@@ -180,12 +180,12 @@
                                             role="tab" aria-selected="false">{{ __('Sales') }}
                                             {{ __('Return') }}</a>
                                     </li>
-                                    @role('dev')
+                                    {{-- @role('dev')
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('reports.warehouse.purchase') }}" role="tab"
                                                 aria-selected="false">{{ __('Purchases') }}</a>
                                         </li>
-                                    @endrole
+                                    @endrole --}}
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.warehouse.purchase-returns') }}"
                                             role="tab" aria-selected="false">{{ __('Purchases') }}
@@ -219,7 +219,8 @@
                                             </div>
                                             </form>
                                             <div class="header-title">
-                                                <button type="button" class="btn btn-soft-danger">Excel</button>
+                                                <a href="{{ route('reports.warehouse.export-sales', request()->query()) }}"
+                                                    class="btn btn-soft-danger">Excel</a>
                                             </div>
                                         </div>
                                         <div class="card-body p-0">

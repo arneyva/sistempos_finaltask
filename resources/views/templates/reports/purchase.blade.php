@@ -86,7 +86,8 @@
                 <div class="header-title">
                     <button type="button" class="btn btn-soft-primary" data-bs-toggle="modal"
                         data-bs-target="#createModal">Filter</button>
-                    <a href="{{ route('sale.export', request()->query()) }}" class="btn btn-soft-danger">Excel</a>
+                    <a href="{{ route('reports.purchase-export', request()->query()) }}"
+                        class="btn btn-soft-danger">Excel</a>
                     </button></a>
                     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                         aria-hidden="true">
@@ -252,13 +253,18 @@
 @endsection
 @push('script')
     <script>
-        $(function() {
-            $('input[name="daterange"]').daterangepicker({
-                opens: 'left'
-            }, function(start, end, label) {
-                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end
-                    .format('YYYY-MM-DD'));
-            });
-        });
+        function resetFilters() {
+            // Reset nilai-nilai input dari formulir
+            document.getElementById('from_date').value = '';
+            document.getElementById('to_date').value = '';
+            document.getElementById('search').value = '';
+            document.getElementById('warehouse_id').value = '';
+            document.getElementById('provider_id').value = '';
+            document.getElementById('statut').value = '';
+            document.getElementById('payment_statut').value = '';
+
+            // Submit formulir secara otomatis untuk menghapus filter
+            document.getElementById('filterForm').submit();
+        }
     </script>
 @endpush

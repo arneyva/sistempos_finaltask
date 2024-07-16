@@ -41,10 +41,12 @@
                             placeholder="{{ __('Search...') }}">
                     </div>
                 </form>
+                @role('superadmin|inventaris')
                 <div class="header-title">
                     <a href="{{ route('reports.top-selling-product-export', ['search' => request('search')]) }}"
                         class="btn btn-soft-danger">Excel</a>
                 </div>
+                @endrole
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive mt-4">
