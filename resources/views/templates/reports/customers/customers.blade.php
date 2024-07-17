@@ -100,7 +100,7 @@
                                 {{-- <td style="font-weight: bold">{{ 'Rp ' . number_format($total_due, 2, ',', '.') }}</td> --}}
                                 <td style="font-weight: bold">{{ 'Rp ' . number_format($total_paid_return, 2, ',', '.') }}
                                 </td>
-                                <td style="font-weight: bold"></td>
+                                {{-- <td style="font-weight: bold"></td> --}}
                             </tr>
                         </tfoot>
                     </table>

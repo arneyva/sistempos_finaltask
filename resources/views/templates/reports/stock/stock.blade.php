@@ -90,9 +90,10 @@
                     </div>
                 @endrole
                 @role('superadmin|inventaris')
+                {{-- export-product-stock --}}
                 <div class="header-title">
-                    {{-- <button type="button" class="btn btn-soft-success">PDF</button> --}}
-                    <button type="button" class="btn btn-soft-danger">Excel</button>
+                    <a href="{{ route('reports.stock.export-product-stock', request()->query()) }}"
+                        class="btn btn-soft-danger">Excel</a>
                 </div>
                 @endrole
             </div>

@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>{{ __('Supplier') }} ~ {{ __('Return') }} {{ __('Reports') }}</h1>
+    <h1>{{ __('Supplier') }} ~ {{ __('Purchases')  }} {{ __('Return') }} {{ __('Reports') }}</h1>
     <p>{{ __('look up your daily reports') }}</p>
 @endsection
 
