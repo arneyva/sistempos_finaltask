@@ -179,12 +179,18 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
     });
     Route::get('profit-loss', [ReportsController::class, 'profitLoss'])->name('profit-loss');
     Route::get('quantity-alerts', [ReportsController::class, 'quantityAlerts'])->name('quantity-alerts');
+    Route::get('export-quantity-alerts', [ReportsController::class, 'ReportProductAlerts'])->name('export-quantity-alerts');
     Route::prefix('/stock')->name('stock.')->group(function () {
         Route::get('list', [ReportsController::class, 'stock'])->name('index');
+        Route::get('export-product-stock', [ReportsController::class, 'exportReportStock'])->name('export-product-stock');
         Route::get('sales/{id}', [ReportsController::class, 'stockDetailSales'])->name('sales');
+        Route::get('sales-export/{id}', [ReportsController::class, 'exportstockSales'])->name('sales-export');
         Route::get('sales-returns/{id}', [ReportsController::class, 'stockDetailSalesReturn'])->name('sales-returns');
+        Route::get('sales-returns-export/{id}', [ReportsController::class, 'exportstockSalesReturn'])->name('sales-returns-export');
         Route::get('adjustment/{id}', [ReportsController::class, 'stockDetailAdjustment'])->name('adjustment');
+        Route::get('adjustment-export/{id}', [ReportsController::class, 'exportstockAdjustment'])->name('adjustment-export');
         Route::get('transfer/{id}', [ReportsController::class, 'stockDetailTransfer'])->name('transfer');
+        Route::get('transfer-export/{id}', [ReportsController::class, 'exportstockTransfer'])->name('transfer-export');
         Route::get('purchases/{id}', [ReportsController::class, 'stockDetailPurchases'])->name('purchases');
         Route::get('purchases-returns/{id}', [ReportsController::class, 'stockDetailPurchasesReturn'])->name('purchases-returns');
     });
@@ -198,7 +204,7 @@ Route::prefix('reports')->middleware(['auth', 'verified'])->name('reports.')->gr
         Route::get('payments/{id}', [ReportsController::class, 'customersDetailPayments'])->name('payments');
         Route::get('payments/export/{id}', [ReportsController::class, 'customersDetailSalesPaymentExport'])->name('payments-export');
     });
-    Route::prefix('/supplier')->name('supplier.')->group(function () {
+    Route::prefix('/supplier')->name('supplier.')->middleware('role:superadmin|inventaris')->group(function () {
         Route::get('list', [ReportsController::class, 'supplier'])->name('index');
         Route::get('purchases/{id}', [ReportsController::class, 'Purchases_Provider'])->name('purchases');
         Route::get('purchases/export/{id}', [ReportsController::class, 'providerDetailPurchasesExport'])->name('purchases-export');

@@ -14,8 +14,15 @@ use App\Exports\Report\ProfitLossExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesPaymentExport;
 use App\Exports\Report\Provider\ReportProviderPurchasesReturnExport;
+use App\Exports\Report\ReportProductAlerts;
 use App\Exports\Report\ReportPurchasesExport;
+use App\Exports\Report\ReportQuantityAlert;
 use App\Exports\Report\ReportSalesExport;
+use App\Exports\Report\Stock\ReportAdjustmentStock;
+use App\Exports\Report\Stock\ReportProductStock;
+use App\Exports\Report\Stock\ReportSalesReturnStock;
+use App\Exports\Report\Stock\ReportSalesStock;
+use App\Exports\Report\Stock\ReportTransferStock;
 use App\Exports\Report\TopSellingProductExport;
 use App\Exports\Report\Warehouse\ReportExpensesWarehouse as WarehouseReportExpensesWarehouse;
 use App\Exports\Report\Warehouse\ReportPurchasesReturnWarehouse;
@@ -552,6 +559,20 @@ class ReportsController extends Controller
             'warehouses' => $warehouses,
         ]);
     }
+    public function exportProductAlerts(Request $request)
+    {
+        $user_auth = auth()->user();
+        $warehouses_id = Warehouse::pluck('id')->toArray(); // Anda mungkin perlu menyesuaikan ini
+
+        return Excel::download(new ReportQuantityAlert($request, $user_auth, $warehouses_id), 'product_alerts.xlsx');
+    }
+    public function ReportProductAlerts(Request $request)
+    {
+        $user_auth = auth()->user();
+        $warehouses_id = Warehouse::pluck('id')->toArray(); // Anda mungkin perlu menyesuaikan ini
+
+        return Excel::download(new ReportProductAlerts($request, $user_auth, $warehouses_id), 'product_alerts.xlsx');
+    }
     public function stockDetail($id)
     {
         return view('templates.reports.stock.stock-detail');
@@ -628,6 +649,14 @@ class ReportsController extends Controller
             'warehouses' => $warehouses,
         ]);
     }
+    public function exportReportStock(Request $request)
+    {
+        $user_auth = auth()->user();
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "exportReportStock_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportProductStock($request, $user_auth), $filename);
+    }
     public function stockDetailSales(Request $request, $id)
     {
         $user_auth = auth()->user();
@@ -681,6 +710,7 @@ class ReportsController extends Controller
             }
 
             $product_name = $detail->product->name;
+            // dd($product_name);
             if ($detail->product_variant_id) {
                 $productVariant = ProductVariant::where('product_id', $detail->product_id)
                     ->where('id', $detail->product_variant_id)->first();
@@ -706,7 +736,11 @@ class ReportsController extends Controller
 
             $data[] = $item;
         }
+        //  $product_name = $detail->product->name;
         $product_stock = ProductWarehouse::where('product_id', $id)->where('deleted_at', '=', null)->get();
+        if ($product->product_variant_id) {
+            $product_stock = ProductWarehouse::where('product_id', $id)->where('product_variant_id', $product->product_variant_id ?? '')->where('deleted_at', '=', null)->get();
+        }
         $b = [];
         foreach ($product_stock as $value) {
             $a['warehouse'] = $value->warehouse->name;
@@ -721,6 +755,34 @@ class ReportsController extends Controller
             'b' => $b
         ]);
     }
+    public function exportstockSales(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "exportstockSales_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportSalesStock($request, $id), $filename);
+    }
+    public function exportstockSalesReturn(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "exportstockSalesReturn_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportSalesReturnStock($request, $id), $filename);
+    }
+    public function exportstockAdjustment(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "exportstockAdjustment_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportAdjustmentStock($request, $id), $filename);
+    }
+    public function exportstockTransfer(Request $request, $id)
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = "exportstockTransfer_{$timestamp}.xlsx";
+
+        return Excel::download(new ReportTransferStock($request, $id), $filename);
+    }
     public function stockDetailSalesReturn(request $request, $id)
     {
         $user_auth = auth()->user();
@@ -733,9 +795,6 @@ class ReportsController extends Controller
                 $query->orWhereHas('SaleReturn.client', function ($q) use ($request) {
                     $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
                 })
-                    ->orWhereHas('SaleReturn.warehouse', function ($q) use ($request) {
-                        $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
-                    })
                     ->orWhereHas('SaleReturn', function ($q) use ($request) {
                         $q->where('Ref', 'LIKE', '%' . $request->input('search') . '%');
                     })
@@ -805,6 +864,7 @@ class ReportsController extends Controller
             'b' => $b
         ]);
     }
+
     public function stockDetailPurchases(request $request, $id)
     {
         $product = Product::where('deleted_at', '=', null)->findOrFail($id);

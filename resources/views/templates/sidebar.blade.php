@@ -1028,6 +1028,7 @@
                                 <span class="item-name text-wrap">{{ __('Top Selling Products') }}</span>
                             </a>
                         </li>
+                        @role('underdev')
                         <li class="nav-item">
                             <a class="nav-link " href="../dashboard/icons/dual-tone.html">
                                 <i class="icon">
@@ -1043,6 +1044,7 @@
                                 <span class="item-name">{{ __('Employee') }}</span>
                             </a>
                         </li>
+                        @endrole
                         @role('superadmin|inventaris')
                             <li class="nav-item">
                                 <a class="nav-link " href="{{ route('reports.warehouse.sales') }}">

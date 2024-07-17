@@ -41,7 +41,8 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.sales-returns', $product->id) }}"
-                                            role="tab" aria-selected="false">{{ __('Sales') }} {{ __('Return') }}</a>
+                                            role="tab" aria-selected="false">{{ __('Sales') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.purchases', $product->id) }}"
@@ -50,7 +51,8 @@
                                     <li class="nav-item">
                                         <a class="nav-link"
                                             href="{{ route('reports.stock.purchases-returns', $product->id) }}"
-                                            role="tab" aria-selected="false">{{ __('Purchases') }} {{ __('Return') }}</a>
+                                            role="tab" aria-selected="false">{{ __('Purchases') }}
+                                            {{ __('Return') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('reports.stock.adjustment', $product->id) }}"
@@ -80,11 +82,13 @@
                                                         </svg>
                                                     </span>
                                                     <input type="search" class="form-control" name="search"
-                                                        value="{{ request()->input('search') }}" placeholder="{{ __('Search...') }}">
+                                                        value="{{ request()->input('search') }}"
+                                                        placeholder="{{ __('Search...') }}">
                                                 </div>
                                             </form>
                                             <div class="header-title">
-                                                <button type="button" class="btn btn-soft-danger">Excel</button>
+                                                <a href="{{ route('reports.stock.sales-export', ['id' => $product->id] + request()->query()) }}"
+                                                    class="btn btn-soft-danger">Excel</a>
                                             </div>
                                         </div>
                                         <div class="card-body p-0">

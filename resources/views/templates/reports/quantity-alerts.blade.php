@@ -40,8 +40,8 @@
                         </form>
                     </div>
                     <div class="header-title">
-                        {{-- <button type="button" class="btn btn-soft-success">PDF</button> --}}
-                        <button type="button" class="btn btn-soft-danger">Excel</button>
+                        <a href="{{ route('reports.export-quantity-alerts', request()->query()) }}"
+                            class="btn btn-soft-danger">Excel</a>
                     </div>
                 @endrole
             </div>
