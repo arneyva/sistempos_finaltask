@@ -210,12 +210,12 @@
             font-weight:600 !important;
         }
 
-        .for-customer-button:focus {
+        .for-customer-button:active {
         background-size: 100% auto;
         background-position: center;
         background-image: linear-gradient(6deg, #0400ff, #4ce3f7);
         }
-        .for-pay-button:focus {
+        .for-pay-button:active {
         background-image: linear-gradient(6deg, #c0e9cc, #9ddd89) !important;
         }
 
@@ -241,8 +241,8 @@
         }
 
 
-        .col-staff .select2-container--default .select2-selection--single .select2-selection__rendered 
-        ..search-product .select2-container--default .select2-selection--single .select2-selection__rendered {
+        .col-staff .select2-container--default .select2-selection--single .select2-selection__rendered ,
+        .search-product .select2-container--default .select2-selection--single .select2-selection__rendered {
             line-height: normal; /* Atur line-height agar teks berada di tengah */
             display: flex;
             align-items: center; /* Atur posisi vertikal konten ke tengah */
@@ -280,11 +280,44 @@
         .select2-selection__placeholder {
             color:black !important;
         }
-        
+
+        #selectedItemsTable th, #selectedItemsTable td {
+            padding-top: 0.5vw; /* Mengurangi padding */
+            padding-bottom: 0.5vw; /* Mengurangi padding */
+        }
+
+        .for-sale {
+            border-radius: 0.3vw 0.3vw 0px 0px !important;
+            background-color: rgba(255, 255, 255, 1) !important;
+        }
+        .for-client {
+            border-radius: 0vw 0vw 0px 0px !important;
+            background-color: rgba(255, 255, 255, 1) !important;
+            padding-top:0.6vw !important; 
+        }
+        .card .card-body.card-body-scroll {
+            height: 19vw !important; /* Atur tinggi maksimal sesuai kebutuhan Anda */
+            overflow-y: auto !important;
+        }
+        .card .for-customer-header {
+            flex-shrink: 0; /* Pastikan header tidak menyusut */
+            max-height: 21%; /* Tetapkan tinggi maksimum untuk header, misalnya 50% dari card */
+            overflow: hidden; /* Sembunyikan overflow jika teks terlalu banyak */
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2; /* Batas jumlah baris (ganti sesuai kebutuhan) */
+            text-overflow: ellipsis;
+            white-space: normal;
+            color:#000000;
+            background-color:#fff;
+            padding: 1vw 0vw 0vw 1.3vw;
+            border-radius: 0.3vw 0.3vw 0px 0px !important;
+        }
     </style>
 </head>
 <body>
-    <div class="row full-height">
+    <form class="row full-height" method="POST" action="{{ route('cashier.store') }}" id="pos_sale" enctype="multipart/form-data">
+    @csrf
         <div class="col-7 full-height d-flex  justify-content-center card-left">
             <div class="card">
                 <div class="card-header for-information d-flex  justify-content-center p-0 mb-3">
@@ -295,11 +328,17 @@
                             alt="">
                             <h3 class="logo-title">Project TA</h3>
                         </div>
+                        
                         <div class="col col-custom mx-2 px-0  background-color-1">
                             <div class="col col-custom-header"><p class="mb-0">Staff</p></div>
                                 <div class="col col-staff background-color-1">
                                     <select id="staffDropdown" class="form-control" name="staff" style="width: 100%;">
                                         <option value=""></option>
+                                            <option 
+                                                value="{{$user->id}}" 
+                                                data-avatar="{{$user->avatar}}">
+                                                {{$user->firstname}} {{$user->lastname}}
+                                            </option>
                                         @foreach($staff as $data)
                                             <option 
                                                 value="{{$data->id}}" 
@@ -313,8 +352,9 @@
                         <div class="col col-custom px-0 background-color-1">
                             <div class="col col-custom-header">Transaction Code</div>
                             <div class="col col-staff d-flex align-items-center ps-3" style="color:black;">
-                                Konten Kolom 4
+                                {{$ref}}
                             </div>
+                            <input type="hidden" id="ref" name="ref">
                         </div>
                     </div>
                 </div>
@@ -325,20 +365,18 @@
                             @if ($product['variant']->isEmpty())
                                 <option 
                                     value="{{ $product['productData']->id}}" 
-                                    data-image="{{ $product['productData']->image }}" 
-                                    data-unit="{{ $product['productData']->unitPurchase->ShortName ?? '' }}" 
+                                    data-unit="{{ $product['productData']->unitSale->ShortName ?? '' }}" 
                                     data-code="{{$product['productData']->code}}" 
-                                    data-cost="{{$product['productData']->cost }}">
+                                    data-price="{{$product['productData']->price }}">
                                 {{ $product['productData']->name }}
                                 </option>
                             @else
                                 @foreach($product['variant'] as $variant)
                                     <option 
                                         value="{{ $product['productData']->id}}" 
-                                        data-image="{{ $product['productData']->image }}" 
                                         data-unit="{{ $product['productData']->unitSale->ShortName ?? '' }}" 
                                         data-code="{{$variant['variantData']->code}}" 
-                                        data-cost="{{ $variant['variantData']->cost }}"
+                                        data-price="{{ $variant['variantData']->price }}"
                                         data-id="{{ $variant['variantData']->id}}">
                                     {{ $product['productData']->name }} {{  $variant['variantData']->name }}
                                     </option>
@@ -352,7 +390,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="card-table-wrapper">
-                        <table id="selectedItemsTable" class="table table-bordered for-table-product ">
+                        <table id="selectedItemsTable" class="table table-bordered for-table-product mb-0">
                             <thead>
                                 <tr class="for-header-product text-center ">
                                     <th class="col-6">Product Info</th>
@@ -364,13 +402,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Data 1</td>
-                                    <td>Data 2</td>
-                                    <td>Data 3</td>
-                                    <td></td>
-                                </tr>
-                                <!-- Tambahkan baris lain jika perlu -->
                             </tbody>
                         </table>
                     </div>
@@ -384,7 +415,7 @@
                         <div class="col col-custom for-calculation px-0">
                             <div class="for-text-calculation d-flex justify-content-between">
                                 <p style="font-size:1.17vw; margin-bottom:0.5vw;margin-top:1.5vw;" >subtotal</p>
-                                <p id="order_subtotal" style="font-size:2.8vw;">Rp 40.000</p>
+                                <p id="order_subtotal" style="font-size:2.8vw;"></p>
                                 <input type="hidden" name="order_subtotal_input" id="order_subtotal_input">
                             </div>
                             <div class="for-text-calculation d-flex justify-content-between">
@@ -394,12 +425,12 @@
                             </div>
                             <div class="for-text-calculation d-flex justify-content-between">
                                 <p style="font-size:1.17vw;margin-bottom:0.1vw;">discount</p>
-                                <p id="order_discount" style="font-size:1.17vw;margin-bottom:0.1vw;">Rp 25.000</p>
+                                <p id="order_discount" style="font-size:1.17vw;margin-bottom:0.1vw;"></p>
                                 <input type="hidden" name="order_discount_input" id="order_dicount_input">
                             </div>
                             <div class="for-text-calculation d-flex justify-content-between">
                                 <p style="font-size:1.17vw;margin-bottom:0.7vw;margin-top:0.64vw;">grandtotal</p>
-                                <p id="order_total" style="font-size:1.8vw;margin-bottom:0.7vw;">Rp 70.000</p>
+                                <p id="order_total" style="font-size:1.8vw;margin-bottom:0.7vw;"></p>
                                 <input type="hidden" name="order_total_input" id="order_total_input">
                             </div>
                         </div>
@@ -418,17 +449,17 @@
                 <div class="card-header for-pay d-flex  justify-content-center p-0 mb-2">
                     <div class="row no-gutters full-height full-width p-0 ">
                         <div class="col col-custom px-0">
-                            <button type="button" class="full-height full-width for-customer-button for-pay-button" data-bs-toggle="modal" data-bs-target="#addClient">PAY</button>
+                            <button type="button" class="full-height full-width for-customer-button for-pay-button" data-bs-toggle="modal" data-bs-target="#pay">PAY</button>
                         </div>
                     </div>
                 </div>
                 <div class="card-header for-sales d-flex  justify-content-center p-0 mb-2">
                     <div class="row no-gutters full-height full-width p-0 ">
                         <div class="col col-custom me-2 px-0">
-                            <button type="button" class="full-height full-width for-customer-button for-pay-button" data-bs-toggle="modal" data-bs-target="#addClient">New Sale</button>
+                            <button type="button" class="full-height full-width for-customer-button for-pay-button" data-bs-toggle="modal" data-bs-target="#newSale">New Sale</button>
                         </div>
                         <div class="col col-custom ms-2 px-0">
-                            <button type="button" class="full-height full-width for-customer-button for-pay-button" data-bs-toggle="modal" data-bs-target="#addClient">All Sales</button>
+                            <button type="button" class="full-height full-width for-customer-button for-pay-button" data-bs-toggle="modal" data-bs-target="#allSale">All Sales</button>
                         </div>
                     </div>
                 </div>
@@ -449,7 +480,7 @@
             </div>
         </div>
     </div>
-
+</form>
 <div class="modal fade" id="addClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
         <div class="modal-content">
@@ -458,7 +489,145 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <input type="text" placeholder="Search Customer" class="card card-body px-3 py-0" style="background-color: rgba(255, 255, 255, 0.5) ;">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-10">
+                        <div class="row">
+                            @foreach ($clients as $client)
+                            @continue ($client->id == 1)
+                            <div class="col-4 py-4">
+                                <div class="card card-list">
+                                    <h5 class="for-customer-header"> {{$client->name}} </h5>
+                                    <div class="card-body for-client card-body-list mt-0 py-0 px-3">
+                                        <div class="d-flex">
+                                            <div class="col-3">
+                                                <p class="mb-1">Email</p>
+                                            </div>
+                                            <div class="col-9">
+                                                <p class="mb-1">: {{$client->email}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="col-3">
+                                                <p class="mb-1">Phone</p>
+                                            </div>
+                                            <div class="col-9">
+                                                <p class="mb-1">: {{$client->phone}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="col-3">
+                                                <p class="mb-1">Score</p>
+                                            </div>
+                                            <div class="col-9 mb-1">
+                                                : {{$client->score}}
+                                                @if ($client->is_poin_activated == 1)
+                                                    <span class="badge bg-success" style="margin-left:0.5vw">redeemed</span>
+                                                @else
+                                                    <span class="badge bg-secondary" style="margin-left:0.5vw">unredeemed</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer pb-0 pt-0">   
+                                        <div class="d-flex flex-wrap align-items-center" style="float: right;">
+                                            <a class="button-edit mb-3 mt-1" href="">
+                                                <p class="mb-0 mt-0">
+                                                    Edit
+                                                </p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="pay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Pay</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
                 
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="allSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">All POS Sales</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-10">
+                        <input type="text" placeholder="Search Sale by Code or Product Name/Code" class="card card-body px-3 py-0" style="background-color: rgba(255, 255, 255, 0.5) ;">
+                    </div>
+                    <div class="col-2 p-0">
+                    <div class="d-flex justify-content-left">
+                    <ul class=" nav nav-pills mb-0 text-center profile-tab " style="background-color:transparent" data-toggle="slider-tab" id="profile-pills-tab" role="tablist">
+                        <li class="nav-item" >
+                            <a class="nav-link active show" data-bs-toggle="tab" href="#pending" role="tab" aria-selected="false">pending</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#complete" role="tab" aria-selected="false">complete</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-10 tab-pane fade active show" id="pending">
+                        <div class="row">
+                            @foreach ($sales as $sale)
+                            <div class="col-4 py-4">
+                                <p class="mb-0" style="color:black"><strong>{{$sale->Ref}}</strong></p>
+                                <div class="card card-list">
+                                    <div class="card-body for-sale card-body-scroll card-body-list mt-0 py-0 px-2">
+                                        <ul class="list-group list-group-flush">  
+                                            <ul class="list-group list-group-flush mx-0 mt-2">
+                                            @foreach ($sale->details as $detail)
+                                                <pre class="mb-2">{{ $detail->product->name ?? '' }}{{ $detail->product_variant_id ? ' '.$detail->product_variant->name : '' }}</pre>
+                                                @endforeach
+                                            </ul>
+                                        </ul>
+                                    </div>
+                                    <div class="card-footer pb-0 pt-0">   
+                                        <div class="d-flex flex-wrap align-items-center" style="float: right;">
+                                            <a class="button-edit mb-3 mt-1" href="">
+                                                <p class="mb-0 mt-0">
+                                                    Edit
+                                                </p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="col-10 tab-pane fade " id="complete">
+                        
+                    </div>
+                    <div class="col-2"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -555,52 +724,58 @@
 <script>
     $(document).ready(function() {
         var subtotal = 0;
+        var grandtotal = 0;
         var tax = 0;
         var discount = 0;
-        var grandtotal = 0;
-        var downPayment = 0;
+
+        function numberFormat(number) {
+            return number.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        setTablePayment();
 
         function setTablePayment() {
-            // 1. Akumulasi nilai dari setiap .subtotal
-            subtotal = 0;
-            $('.subtotal').each(function() {
-                var value = parseFloat($(this).text());
-                subtotal += isNaN(value) ? 0 : value;
-            });
+            setTimeout(function() {
+                // 1. Akumulasi nilai dari setiap .subtotal
+                subtotal = 0;
+                $('.subtotal').each(function() {
+                    var value = parseFloat($(this).text());
+                    subtotal += isNaN(value) ? 0 : value;
+                });
 
-            // 2. Hitung nilai pajak (tax) dari subtotal
-            var taxValue = parseFloat($('#tax').val());
-            var taxPercentage = isNaN(taxValue) ? 0 : taxValue / 100;
-            tax = subtotal * taxPercentage;
+                // 2. Hitung nilai pajak (tax) dari subtotal
+                tax = subtotal * 0.1;
 
-            // 3. Ambil nilai diskon
-            var discountValue = parseFloat($('#discount').val());
-            discount = isNaN(discountValue) ? 0 : discountValue;
+                // 3. Ambil nilai diskon
+                var discountValue = parseFloat($('#discount').val());
+                discount = isNaN(discountValue) ? 0 : discountValue;
 
-            // 4. Hitung grandtotal
-            grandtotal = subtotal + tax - discount;
+                // 4. Hitung grandtotal
+                grandtotal = subtotal + tax - discount ;
 
-            if (grandtotal < 0) {
-                grandtotal = 0;
-            };
+                if (grandtotal < 0) {
+                    grandtotal = 0;
+                };
 
-            // 5. Hitung down payment (dp) dari grandtotal
-            var downPaymentValue = parseFloat($('#down_payment').val());
-            var downPaymentPercentage = isNaN(downPaymentValue) ? 0 : downPaymentValue / 100;
-            downPayment = grandtotal * downPaymentPercentage
 
-            $('#order_down_payment').text('Rp ' + downPayment);
-            $('#order_subtotal').text('Rp ' + subtotal);
-            $('#order_discount').text('Rp ' + discount);
-            $('#order_tax').text('Rp ' + tax);
-            $('#order_total').text('Rp ' + grandtotal);
-            
-            $('#order_down_payment_input_input').val(downPayment);
-            $('#order_subtotal_input').val(subtotal);
-            $('#order_discount_input').val(discount);
-            $('#order_tax_input').val(tax);
-            $('#order_total_input').val(grandtotal);
+                $('#order_discount').text('Rp ' + numberFormat(discount));
+                $('#order_total').text('Rp ' + numberFormat(grandtotal));
+                $('#order_subtotal').text('Rp ' + numberFormat(subtotal));
+                
+                $('#order_subtotal_input').val(subtotal);
+                $('#order_discount_input').val(discount);
+                $('#order_total_input').val(grandtotal);
+            }, 320); // Jeda 0,7 detik
         };
+        $('#productDropdown').change(function() {
+        setTablePayment();
+        });
+        $(document).on('change', '.qty', function() {
+            setTablePayment();
+        });
+        $(document).on('click', '.delete', function() {
+            setTablePayment();
+        });
     });
 </script>
 
@@ -611,15 +786,14 @@
         var productsObj = {};
         var productsWithVariantObj = {};
 
-        $('#itemDropdown').change(function() {
+        $('#productDropdown').change(function() {
             var selectedValue = $(this).val();
             if (selectedValue) {
-                var name = $('#itemDropdown option:selected').text();
-                var image = $('#itemDropdown option:selected').data('image');
-                var code = $('#itemDropdown option:selected').data('code');
-                var cost = $('#itemDropdown option:selected').data('cost');
-                var unit = $('#itemDropdown option:selected').data('unit');
-                var id = $('#itemDropdown option:selected').data('id');
+                var name = $('#productDropdown option:selected').text();
+                var code = $('#productDropdown option:selected').data('code');
+                var cost = $('#productDropdown option:selected').data('price');
+                var unitsale = $('#productDropdown option:selected').data('unit');
+                var id = $('#productDropdown option:selected').data('id');
                 if ( $('#barcode_variant_id').val().trim() !== '') {
                     id = $('#barcode_variant_id').val();
                 }
@@ -631,20 +805,22 @@
                             '<div style="margin-bottom: 5px; word-wrap: break-word; word-break: break-all;white-space: normal;">'+
                             '<h6>' + name + '</h6>'+
                             '</div> <div>' + code +
-                            '</div></div></div></td>'
+                            '<td class="cost" hidden>' + cost + '</td>'+
+                            '</div></div></div></td>';
+
                         if (id) {
                             newRow += '<td class="variant-id" data-variant="'+id+'" style="display:none;" hidden></td>';
                         }
-                    newRow += '<td style="text-align: center;">' +
-                            '<button type="button" class="btn btn-sm btn-danger subtract" style="float: left;"><h5 style="color:white;">-</h5></button> ' +
-                            '<span class="qty">1</span> ' +
-                            '<span>' + unit + '</span> ' +
-                            '<button type="button" class="btn btn-sm btn-primary add" style="float: right;"><h5 style="color:white;">+</h5></button>' +
+
+                    newRow += 
+                            '<td style="text-align: start;">' +
+                                '<input type="number" class="form-control qty px-0" value="1" style="width: 5vw; display: inline-block; text-align: center;background-color: transparent; border-color: grey; color: black;"> ' +
+                                '<span>' + unitsale + '</span> ' +
                             '</td>' +
                             '<td class="subtotal">' + cost + '</td>' +
                             '<td>' +
                             '<div class="flex align-items-center list-user-action"> ' +
-                            '<a class="btn btn-sm btn-icon btn-danger delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-value="'+selectedValue+'" data-code="'+code+'">' +
+                            '<a class="btn btn-sm btn-icon delete" data-value="' +selectedValue+ '" style="background-color: #dbdbdb; color: darkgoldenrod;" data-code="'+code+'">' +
                             '<span class="btn-inner"><svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor"><path d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M20.708 6.23975H3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>' +
                             '</a>' +
                             '</div>' +
@@ -660,11 +836,10 @@
                     if (rowCode == code) {
                         var qtyElement = $(this).find('.qty');
                         var subtotalElement = $(this).find('.subtotal');
-                        var pastQty = parseInt(qtyElement.text());
                         var pastElement = parseFloat(subtotalElement.text());
-                        //jika ada tambahkan qty dengan 1
-                        qtyElement.text(pastQty + 1);
-                        //jika ada tambahkan elemen dengan cost
+                        var currentValue = parseFloat(qtyElement.val()); // Ambil nilai saat ini dari input dan konversi ke integer
+                        qtyElement.val(currentValue + 1); // Tambah satu nilai ke input
+                        //jika ada tambahkan subtotal dengan cost karena plus satu jadinya sama dengan cost
                         subtotalElement.text(pastElement + parseFloat(cost));
                         // parameter menjadi true
                         itemExists = true;
@@ -702,6 +877,7 @@
 
                 //mengacu jika parameter false maka masukan ke tabel
                 if (!itemExists) {
+
                     $('#selectedItemsTable tbody').append(newRow);
                     if (!id){
                         products.push({ key: selectedValue, value: 1 });
@@ -716,86 +892,42 @@
                         })
                         $('#products_with_variant').val(JSON.stringify(productsWithVariantObj));
                     }
+
                 }
-                //set table info hasil perhitungan
-                setTablePayment();
-                $('#itemDropdown').val(null).trigger('change');
+                $('#productDropdown').val(null).trigger('change');
             console.log(JSON.stringify(productsObj));
             console.log(JSON.stringify(productsWithVariantObj));
             }
         });
 
-        $(document).on('click', '.add', function() {
+        $(document).on('change', '.qty', function() {
+            var currentQty=parseFloat($(this).val());
             var row = $(this).closest('tr');
-            var qtyElement = $(this).siblings('.qty');
-            var pastQty = parseInt(qtyElement.text());
             var cost = $(this).closest('tr').find('.cost').text();
             var subtotalElement = $(this).closest('tr').find('.subtotal');
             var value = row.find('.delete').data('value');
             var variant = row.find('.variant-id').data('variant');
 
-            currentQty= pastQty+1;
-            if (currentQty > 0) {
-                qtyElement.text(currentQty);
-                subtotalElement.text(cost * currentQty);
-
-                if (!variant) {
-                    for (var i = 0; i < products.length; i++) {
-                        if (products[i].key == value) {
-                            products[i].value = currentQty;
-                                $.each(products, function (i, value) {
-                                productsObj[value.key] = value.value;
-                            })
-                            break;
-                        }
-                    }
-                $('#products').val(JSON.stringify(productsObj));
-                } else {
-                    for (var i = 0; i < products_with_variant.length; i++) {
-                        if (products_with_variant[i].key == variant) {
-                            products_with_variant[i].value = currentQty;
-                            $.each(products_with_variant, function (i, value) {
-                                productsWithVariantObj[value.key] = value.value;
-                            })
-                            break;
-                        }
-                    }
-                $('#products_with_variant').val(JSON.stringify(productsWithVariantObj));
-                }
+            //kalau isnan, berarti untuk menagani input kosong 
+            if (isNaN(currentQty) || currentQty == 0) {
+                $(this).val(1);
+                currentQty = 1;
             }
-            //set table info hasil perhitungan
-            setTablePayment();
-            console.log(JSON.stringify(productsObj));
-            console.log(JSON.stringify(productsWithVariantObj));
-        });
+            subtotalElement.text(cost * currentQty);
 
-        $(document).on('click', '.subtract', function() {
-            var row = $(this).closest('tr');
-            var qtyElement = $(this).siblings('.qty');
-            var pastQty = parseInt(qtyElement.text());
-            var cost = row.find('.cost').text();
-            var subtotalElement = row.find('.subtotal');
-            var value = row.find('.delete').data('value');
-            var variant = row.find('.variant-id').data('variant');
-
-            currentQty= pastQty-1;
-            if (currentQty > 0) {
-                qtyElement.text(currentQty);
-                subtotalElement.text(cost * currentQty);
-
-                if (!variant) {
-                    for (var i = 0; i < products.length; i++) {
+            if (!variant) {
+                for (var i = 0; i < products.length; i++) {
                     if (products[i].key == value) {
                         products[i].value = currentQty;
-                        $.each(products, function (i, value) {
+                            $.each(products, function (i, value) {
                             productsObj[value.key] = value.value;
                         })
                         break;
                     }
                 }
-                $('#products').val(JSON.stringify(productsObj));
-                } else {
-                    for (var i = 0; i < products_with_variant.length; i++) {
+            $('#products').val(JSON.stringify(productsObj));
+            } else {
+                for (var i = 0; i < products_with_variant.length; i++) {
                     if (products_with_variant[i].key == variant) {
                         products_with_variant[i].value = currentQty;
                         $.each(products_with_variant, function (i, value) {
@@ -804,59 +936,16 @@
                         break;
                     }
                 }
-                $('#products_with_variant').val(JSON.stringify(productsWithVariantObj));
-                }
-            } 
-            else {
-                //hapus item di tabel
-                row.remove();
-                if(!variant) {
-                    for (var i = 0; i < products.length; i++) {
-                    if (products[i].key == value) {
-                        products.splice(i, 1);
-                        $.each(products, function (i, value) {
-                            productsObj[value.key] = value.value;
-                        })
-                        // Menghapus key dari productsObj yang tidak ada di products
-                        Object.keys(productsObj).forEach(function(key) {
-                        if (!products.some(product => product.key === key)) {
-                            delete productsObj[key];
-                        }
-                        });
-                        break;
-                    }
-                }
-                $('#products').val(JSON.stringify(productsObj));
-                } else {
-                    for (var i = 0; i < products_with_variant.length; i++) {
-                        if (products_with_variant[i].key == variant) {
-                            products_with_variant.splice(i, 1);
-                            $.each(products_with_variant, function (i, value) {
-                                productsWithVariantObj[value.key] = value.value;
-                            })
-                            // Menghapus key dari productsWithVariantObj yang tidak ada di products_with_variant
-                            Object.keys(productsWithVariantObj).forEach(function(key) {
-                            if (!products_with_variant.some(product => product.key === key)) {
-                                delete productsWithVariantObj[key];
-                            }
-                            });
-                            break;
-                        }
-                    }
-                    $('#products_with_variant').val(JSON.stringify(productsWithVariantObj));
-                }
-
+            $('#products_with_variant').val(JSON.stringify(productsWithVariantObj));
             }
-            //set table info hasil perhitungan
-            setTablePayment();
             console.log(JSON.stringify(productsObj));
             console.log(JSON.stringify(productsWithVariantObj));
         });
 
+
         $('#selectedItemsTable').on('click', '.delete', function() {
             var row = $(this).closest('tr');
             var value = $(this).data('value');
-            var qty = row.find('.qty').text()
             var variant = row.find('.variant-id').data('variant');
 
             //hapus item di tabel
@@ -869,9 +958,7 @@
                         break;
                     }
                 }
-                $.each(products, function (i, value) {
-                    productsObj[value.key] = value.value;
-                })
+
                 // Menghapus key dari productsObj yang tidak ada di products
                 Object.keys(productsObj).forEach(function(key) {
                     if (!products.some(product => product.key === key)) {
@@ -879,8 +966,9 @@
                     }
                 });
                 $('#products').val(JSON.stringify(productsObj));
+
             } else {
-                // Menghapus produk dengan varian tertentu dari array products_with_variant
+                // Menghapus produk bervarian dari array products_with_variant
                 for (var i = 0; i < products_with_variant.length; i++) {
                     if (products_with_variant[i].key == variant) {
                         products_with_variant.splice(i, 1);
@@ -888,20 +976,15 @@
                     }
                 }
 
-                // Mengisi objek productsWithVariantObj dengan nilai dari array yang telah dimodifikasi
-                $.each(products_with_variant, function (i, value) {
-                    productsWithVariantObj[value.key] = value.value;
-                });
                 // Menghapus key dari productsWithVariantObj yang tidak ada di products_with_variant
                 Object.keys(productsWithVariantObj).forEach(function(key) {
-                if (!products_with_variant.some(product => product.key === key)) {
-                    delete productsWithVariantObj[key];
-                }
+                    if (!products_with_variant.some(product => product.key === key)) {
+                        delete productsWithVariantObj[key];
+                    }
                 });
                 $('#products_with_variant').val(JSON.stringify(productsWithVariantObj));
             }
-            //set table info hasil perhitungan
-            setTablePayment();
+
             console.log(JSON.stringify(productsObj));
             console.log(JSON.stringify(productsWithVariantObj));
         });
@@ -929,13 +1012,13 @@
         //kirim ajax untuk mendapatkan id produk
         //habis itu trigger change itemsdropdown dengan value id yang didapat 
         $.ajax({
-            url: `/purchases/scanner/${scanned_barcode}`,
+            url: `/cashier/scanner/${scanned_barcode}`,
             type: 'post',
             dataType: 'json',
             data: {
             },
             headers: { 
-                'X-CSRF-TOKEN': csrfToken
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') 
             },
             success: function (response) {
                 if (response.error) {
@@ -958,9 +1041,9 @@
                     if (response.product_id != null) {
                         $('#barcode_variant_id').val('');
                         $('#barcode_variant_id').val(response.id);
-                        $('#itemDropdown').val(response.product_id).trigger('change');
+                        $('#productDropdown').val(response.product_id).trigger('change');
                     } else {
-                        $('#itemDropdown').val(response.id).trigger('change');
+                        $('#productDropdown').val(response.id).trigger('change');
                     }
                 }
             },

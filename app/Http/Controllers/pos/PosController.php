@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
+
 
 class PosController extends Controller
 {
@@ -37,6 +39,9 @@ class PosController extends Controller
 
         // Tanggal hari ini
         $today = Carbon::today()->toDateString();
+
+        // kode sale
+        $Ref = $this->getNumberOrder();
 
         //untuk data staff yang akan melakukan kasir
         $staff = User::role('staff')
@@ -58,7 +63,8 @@ class PosController extends Controller
         $products = Product::all();
         // Ambil semua sale sesuai warehouse yang dilakukan lewat kasir
         $sales = Sale::where('warehouse_id', $warehouse->id)
-                        ->where('is_pos', 1);
+                        ->where('is_pos', 1)
+                        ->get();
 
         // Gabungkan data produk dengan 
         $allProduct = $products->map(function($product) {
@@ -80,7 +86,61 @@ class PosController extends Controller
             'clients' => $clients,
             'warehouse' => $warehouse,
             'staff' => $staff,
+            'user' => $user,
             'sales' => $sales,
+            'ref' => $Ref,
         ]);
+    }
+
+    public function getFromScanner(String $code) {
+        //product
+        $product = Product::where('code', $code)->first();
+        $product_variant = ProductVariant::where('code', $code)->first();
+
+        if ($product_variant) {
+            return response()->json([
+                "id" => $product_variant->id,
+                "product_id" => $product_variant->product_id
+            ]);
+        } elseif ($product) {
+            return response()->json([
+                "id" => $product->id
+            ]);
+        } else {
+            return response()->json([
+                "error" => trans("product not found")
+            ]);
+        }
+    }
+
+    public function getNumberOrder()
+    {
+        $last = Sale::latest()->first();
+        if ($last) {
+            $item = $last->Ref;
+            $nwMsg = explode('_', $item);
+            $inMsg = $nwMsg[1];
+ 
+            // Periksa jika panjang string kurang dari 4
+            if (strlen($inMsg) < 4) {
+                // Tambahkan nol di depan hingga panjangnya menjadi 4
+                $variabelDiformat = str_pad($inMsg, 4, '0', STR_PAD_LEFT);
+            } else {
+                // Jika panjang string lebih dari 4, ambil 4 karakter pertama
+                $variabelDiformat = substr($inMsg, 0, 4);
+            }
+
+            // Tambahkan 1 setelah pemformatan
+            $variabelDiformat = (int)$variabelDiformat + 1;
+
+            // Format kembali menjadi string dengan panjang 4 karakter
+            $variabelDiformat = str_pad($variabelDiformat, 4, '0', STR_PAD_LEFT);
+ 
+            $code = $nwMsg[0].'_'.$variabelDiformat;
+        } else {
+            $code = 'SL_0001';
+        }
+ 
+        return $code;
     }
 }

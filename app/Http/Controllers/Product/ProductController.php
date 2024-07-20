@@ -60,7 +60,7 @@ class ProductController extends Controller
             $item['code'] = $product->code;
             $item['image'] = $product->image ?? 'no-image.png';
             $item['category'] = $product['category']->name;
-            $item['brand'] = $product['brand']->name;
+            $item['brand'] = $product['brand']->name ?? 'N/D';
             $item['TaxNet'] = $product->TaxNet;
             $item['namebase'] = $product->name;
             // untuk product single

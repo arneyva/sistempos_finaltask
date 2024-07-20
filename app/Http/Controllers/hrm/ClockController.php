@@ -144,8 +144,10 @@ class ClockController extends Controller
                     "error" => trans("It's too early to clock in.")
                 ]);
             };
+
             // Jika waktu saat ini berada pada rentang jadwal masuk 30 menit sebelum hingga 20 menit kedepan
             if ($now->between($schedule_in_begin_time, $schedule_in_end_time)) {
+
                 // cek attendance terakhir yang tidak ada admin_id nya, soalnya clock in harus lewat webclock
                 $latestAttendance = Attendance::where('user_id', $user->id)
                                                 ->where('created_at', '<', $today)
@@ -174,6 +176,7 @@ class ClockController extends Controller
                         
                     }
                 }
+
                 // cek attendance user yang belum clock out
                 $attendance_where_clock_out_null=Attendance::where([['user_id', $user->id],['clock_out', null]])->get();
                 if ($attendance_where_clock_out_null) {
@@ -188,7 +191,6 @@ class ClockController extends Controller
                 }
 
                 Attendance::create([
-
                         'user_id' => $user->id,
                         'date' => $today->toDateString(),
                         'clock_in' => $now->toTimeString(),
@@ -212,8 +214,10 @@ class ClockController extends Controller
                         "lastname" => $user->lastname,
                     ]);
                 }
+
             // Jika waktu saat ini berada pada rentang setelah jadwal masuk hingga jadwal keluar
             } elseif ($now->between($schedule_in_late_begin_time, $schedule_in_late_end_time)) {
+
                 // cek attendance terakhir yang tidak ada admin_id nya, soalnya clock in harus lewat webclock
                 $latestAttendance = Attendance::where('user_id', $user->id)
                                                 ->where('created_at', '<', $today)
@@ -243,6 +247,7 @@ class ClockController extends Controller
                     }
                     
                 }
+
                 // cek attendance user yang belum clock out
                 $attendance_where_clock_out_null=Attendance::where([['user_id', $user->id],['clock_out', null]])->get();
                 if ($attendance_where_clock_out_null) {
@@ -280,12 +285,14 @@ class ClockController extends Controller
                         "lastname" => $user->lastname,
                     ]);
                 }
+
             } elseif ($now->greaterThan($schedule_in_late_end_time)) {
                 return response()->json([
                     "error" => trans("It's too late to clock in.")
                 ]);
             }
         }
+
         if ($type == 'clockout') 
         {
             // Membuat objek waktu untuk jadwal masuk
@@ -372,9 +379,6 @@ class ClockController extends Controller
                 ));
             }
         }
-
-
-
     }
 
     public function calculateDistance($targetLat, $targetLng, $userLat, $userLgt)

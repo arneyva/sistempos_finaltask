@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>Create Purchase</h1>
-<p>Create new user purchase</p>
+<h1>Edit Purchase</h1>
+<p>Edit the purchase</p>
 @endsection
 
 @push('style')
@@ -133,28 +133,27 @@
         </div>
         <div class="tab-content">
             <div class="card-body py-5 tab-pane fade active show" id="order">
-            <form method="POST" action="{{ route('purchases.store') }}" id="purchase_order" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('purchases.update', $purchase['id']) }}" id="purchase_order" enctype="multipart/form-data">
                 @csrf
+                @method('PATCH')
                 <div class="row">
                     <div class="form-group col-sm-4">
                         <label class="form-label" for="name">Date:</label>
-                        <input type="date" value="{{ old('date') }}" class="form-control @error('date') is-invalid @enderror" id="date" name="date" required>
+                        <input type="date" value="{{ old('date') ?? $purchase->date->format('Y-m-d') }}" class="form-control @error('date') is-invalid @enderror" id="date" name="date" required>
                     </div>
                     <div class="form-group col-sm-4">
                         <label class="form-label"for="location">Supplier:</label>
-                        <select class="form-control" id="supplier" name="supplier" required>
-                            <option selected disabled hidden value="">Supplier</option>
-                            @foreach($suppliers as $supplier)
-                                <option value="{{ $supplier->id }}" {{ old('supplier') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
-                            @endforeach
+                        <select class="form-control" id="supplier" name="supplier" >
+                            <option selected  hidden value="{{$purchase->provider->id}}">{{$purchase->provider->name}}</option>
                         </select>
                     </div>
                     <div class="form-group col-sm-4">
                         <label class="form-label"for="location">Destination:</label>
-                        <select class="form-control" id="location" name="location" required>
-                                <option value="{{ $warehouse->id }}" selected>{{ $warehouse->name }}</option>
+                        <select class="form-control" id="location" name="location" >
+                                <option selected  hidden value="{{ $purchase->warehouse->id }}" selected>{{ $purchase->warehouse->name }}</option>
                         </select>
                     </div>
+                    @if($purchase->statut == 'pending' || $purchase->statut == 'ordered' || $purchase->statut == 'canceled'|| $purchase->statut == 'refused')
                     <div class="form-group col-sm-12 mt-4">
                         <select id="itemDropdown" style="width: 100%;">
                             <option value=""></option>
@@ -191,11 +190,79 @@
                                 @endif
                             @endforeach
                         </select>
-                        <input type="hidden" id="products" name="products">
-                        <input type="hidden" id="products_with_variant" name="products_with_variant">
-                        <input type="hidden" id="barcode_variant_id" name="barcode_variant_id">
                     </div>
+                    @endif
+                    <input type="hidden" id="products" name="products">
+                    <input type="hidden" id="products_with_variant" name="products_with_variant">
+                    <input type="hidden" id="barcode_variant_id" name="barcode_variant_id">
                     <div class="form-group col-sm-12 mb-3">
+                    @if($purchase->statut !== 'pending' && $purchase->statut !== 'ordered' && $purchase->statut !== 'canceled' && $purchase->statut !== 'refused')
+                    <table class="table table-striped">
+                    <thead>
+                      <tr>
+                          <th>Name</th>
+                          <th class="col-2 text-right">QTY Order</th>
+                          <th class="col-2 text-right">Price</th>
+                          <th class="col-2 text-right">Subtotal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @php
+                          $totalQty = 0;
+                        @endphp
+                        @foreach($products_selected as $product)
+                        <tr>
+                            <td>
+                                <div class="d-flex">
+                                    <div class="ml-2">
+                                        {{$product->product->name}} @if($product->product_variant_id){{$product->product_variant->name}}@endif 
+                                        <div class="text-sm text-gray">{{$product->product_variant_id ? $product->product_variant->code : $product->product->code}}</div>
+                                    </div>
+                            </div>
+                            </td>
+                            <td class="text-right">{{$product->quantity}}</td>
+                            <td class="text-right">{{$product->cost}}</td>
+                            <td class="text-right subtotal">{{$product->total}}</td>
+                        </tr>
+                        @php
+                            $totalQty += $product->quantity; // Add the total to the grand total
+                        @endphp
+                        @endforeach
+                        <tr>
+                            <td class="text-left" style="padding-top:1vw !important;padding-left:14vw !important; "><strong>Total Order</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><strong>{{ number_format($totalQty) }}</strong></td>
+                            <td class="col-1" style="padding-top:1vw !important"></td>
+                            <td class="text-right" style="padding-top:1vw !important"><strong><span class=" text-bold">Rp </span>{{number_format($purchase->subtotal,0,",",".")}}</strong></td>
+                        </tr>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Order Tax</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><strong id="order_tax"></strong></td>
+                            <input type="hidden" name="order_tax_input" id="order_tax_input">
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Order Discount</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><strong id="order_discount"></strong></td>
+                            <input type="hidden" name="order_discount_input" id="order_discount_input">
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Shipping</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><strong id="order_shipping"></strong></td>
+                            <input type="hidden" name="order_shipping_input" id="order_shipping_input">
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Grand Total</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><strong id="order_total"></strong></td>
+                            <input type="hidden" name="order_total_input" id="order_total_input">
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Down Payment</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><strong id="order_down_payment"></strong></td>
+                            <input type="hidden" name="order_down_payment_input" id="order_down_payment_input">
+                        </tr>
+                    </tbody>
+                </table>
+                    @else
                         <table id="selectedItemsTable" class="table table-borderless">
                             <thead>
                                 <tr>
@@ -209,8 +276,61 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            @foreach ($products_selected as $data)
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex flex-column"> 
+                                                <div style="margin-bottom: 5px; word-wrap: break-word; word-break: break-all; white-space: normal;">
+                                                    @if (!empty($data->product_variant_id))
+                                                    <div>{{ $data->product->name }} {{ $data->product_variant->name }}</div>
+                                                    @else
+                                                    <div>{{ $data->product->name }}</div>
+                                                    @endif
+                                                </div>
+                                                @if (!empty($data->product_variant_id))
+                                                <div>{{ $data->product_variant->code }}</div>
+                                                @else
+                                                <div>{{ $data->product->code }}</div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
+                                    @if (!empty($data->product_variant_id))
+                                    <td class="cost">{{ $data->product_variant->cost  }}</td>
+                                    @else
+                                    <td class="cost">{{ $data->product->cost  }}</td>
+                                    @endif
+                                    @if (!empty($data->product_variant_id))
+                                        <td class="variant-id" data-variant="{{ $data->product_variant->id  }}" style="display:none;" hidden></td>
+                                    @endif
+<td>-</td>
+<td>-</td>
+                                    <td style="text-align: start;">
+                                        <input type="number" class="form-control qty px-0" value="1" style="width: 5vw; display: inline-block; text-align: center;">
+                                        <span>{{ $data->unit->ShortName }}</span>
+                                    </td>
+                                    <td class="subtotal">{{ $data->total }}</td>
+                                    <td>
+                                        <div class="flex align-items-center list-user-action">
+                                        <a class="btn btn-sm btn-icon btn-danger delete" 
+                                            data-value="{{ $data->product_id }}" 
+                                            data-code="{{ !empty($data->product_variant_id) ? $data->product_variant->code : $data->product->code }}">
+                                                <span class="btn-inner">
+                                                    <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                                                        <path d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                        <path d="M20.708 6.23975H3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                        <path d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                    </svg>
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
                             </tbody>
                         </table>
+                        @endif
                     </div>
                     <div class="col-sm-6 mb-1">
                         <div class="card-header d-flex justify-content-between px-0">
@@ -226,7 +346,7 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important" required>Email</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float: right;">
-                                            <input type="email" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="email" name="email" required>
+                                            <input type="email" value="{{old('email') ?? $purchase->email}}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="email" name="email" required>
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
@@ -234,7 +354,7 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Contact Person</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float: right;">
-                                            <input type="text" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="contact_person" name="contact_person" >
+                                            <input type="text" value="{{$supplier->nama_kontak_person}}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="contact_person" name="contact_person" >
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
@@ -242,7 +362,7 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">CP Phone</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float: right;">
-                                            <input type="tel" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="cp_phone" name="cp_phone" >
+                                            <input type="tel" value="{{$supplier->nomor_kontak_person}}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="cp_phone" name="cp_phone" >
                                         </div>
                                     </div>
                                 </div>
@@ -261,17 +381,90 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Destination Address</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <textarea class="form-control form-control-sm @error('date') is-invalid @enderror" id="address" name="address" required>{{ old('address') ?? $warehouse->address }}</textarea>
+                                            <textarea class="form-control form-control-sm @error('date') is-invalid @enderror" id="address" name="address" required>{{ old('address') ?? $purchase->address }}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
                                         <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Request Arrive date</label>
+                                            <label class="form-label" placeholder="-" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Request Arrive date</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="date" value="{{ old('req_arrive_date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="req_arrive_date" name="req_arrive_date" >
+                                            <input type="date" value="{{ old('req_arrive_date') ? old('req_arrive_date') : ($purchase->req_arrive_date ? $purchase->req_arrive_date->format('Y-m-d') : '') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="req_arrive_date" name="req_arrive_date" >
                                         </div>
                                     </div>
+                                    @if ($purchase->statut !== "pending" && $purchase->statut !== "ordered")
+                                    <div class="form-group" style="display: flex; align-items: center;">
+                                        <div class="col-sm-3 p-0">
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Courier</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <select name="courier" id="courier" class="form-control form-control-sm"  >
+                                                <option value="" selected disabled hidden>Courier</option>
+                                                <option value="jne" {{ old('courier', $purchase->courier) == 'jne' ? 'selected' : '' }} >JNE</option>
+                                                <option value="j&t" {{ old('courier', $purchase->courier) == 'j&t' ? 'selected' : '' }} >J&T</option>
+                                                <option value="sicepat" {{ old('courier', $purchase->courier) == 'sicepat' ? 'selected' : '' }} >SiCepat</option>
+                                                <option value="anteraja" {{ old('courier', $purchase->courier) == 'anteraja' ? 'selected' : '' }} >Anteraja</option>
+                                                <option value="posindo" {{ old('courier', $purchase->courier) == 'posindo' ? 'selected' : '' }} >Pos Infonesia</option>
+                                                <option value="own" {{ old('courier', $purchase->courier) == 'own' ? 'selected' : '' }} >Own Courier</option>
+                                            </select> 
+                                            <span class="print-value" id="print-courier"></span>                                           
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: none; align-items: center;" id="driver_phone">
+                                        <div class="col-sm-3 p-0">
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Driver Contact</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" id="driver_phone" style="float:right;">
+                                            <input type="tel" value="{{old('driver_phone') ? old('driver_phone') : ($purchase->driver_contact ? $purchase->driver_contact : '')  }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_driver_phone" name="driver_phone">
+                                            <span class="print-value" id="print-driver_phone"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: none; align-items: center;" id="shipment_number">
+                                        <div class="col-sm-3 p-0">
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Shipment Number</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <input type="tel" value="{{ old('shipment_number') ? old('shipment_number') : ($purchase->shipment_number ? $purchase->shipment_number : '')  }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_shipment_number" name="shipment_number">
+                                            <span class="print-value" id="print-shipment_number"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: flex; align-items: center;">
+                                        <div class="col-sm-3 p-0">
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Shipment Cost</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <input type="tel" value="{{old('shipment_cost') ? old('shipment_cost') : ($purchase->shipment_cost ? $purchase->shipment_cost : '')  }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="shipment_cost" name="shipment_cost">
+                                            <span class="print-value" id="print-shipment_cost"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: flex; align-items: center;">
+                                        <div class="col-sm-3 p-0">
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Estimate Arrive Date</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <input type="date" value="{{  old('est_arrive_date') ? old('est_arrive_date') : ($purchase->estimate_arrive_date ? $purchase->estimate_arrive_date->format('Y-m-d') : '') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="est_arrive_date" name="est_arrive_date">
+                                            <span class="print-value" id="print-est_arrive_date"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-2" style="display: flex; align-items: center;">
+                                        <div class="col-sm-3 p-0">
+                                            <label class="form-label custom-file-input" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Delivery File</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <input type="file" onchange="checkFileSize(this)" class="form-control form-control-sm @error('date') is-invalid @enderror" id="delivery_file" name="delivery_file" >
+                                            <span class="print-value" id="print-delivery_file"></span>
+                                        </div>
+                                    </div>
+                                    @if ($purchase->delivery_file)
+                                    <div class="form-group" style="display: flex; align-items: center;">
+                                        <div class="col-sm-3 p-0">
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <p><strong>Download File: </strong><a href="{{route('purchases.file', $purchase['id'])}}">Download</a></p>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -290,7 +483,7 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Tax</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('tax') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="tax" name="tax" >
+                                            <input type="tel" value="{{ old('tax') ? old('tax') : ($purchase->tax_rate ? $purchase->tax_rate : '') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="tax" name="tax" >
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
@@ -298,7 +491,7 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Discount</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('discount') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="discount" name="discount" >
+                                            <input type="tel" value="{{ old('discount') ? old('discount') : ($purchase->discount ? $purchase->discount : '') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="discount" name="discount" >
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
@@ -306,17 +499,35 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Method</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <select name="payment_method" id="payment_method" class="form-control" required>
-                                                <option value="" selected disabled hidden>Payment Method</option>
-                                                <option value="bni">BNI</option>
-                                                <option value="bri">BRI</option>
-                                                <option value="mandiri">Mandiri</option>
-                                                <option value="permata">Permata</option>
-                                                <option value="bca">BCA</option>
-                                                <option value="gopay">Gopay</option>
-                                                <option value="ovo">OVO</option>
-                                                <option value="cash">Cash</option>
-                                            </select>                                            
+                                        <select name="payment_method" id="payment_method" class="form-control">
+                                            <option value="" selected disabled hidden>Payment Method</option>
+                                            <option value="bni" {{ old('payment_method', $purchase->payment_method) == 'bni' ? 'selected' : '' }}>BNI</option>
+                                            <option value="bri" {{ old('payment_method', $purchase->payment_method) == 'bri' ? 'selected' : '' }}>BRI</option>
+                                            <option value="mandiri" {{ old('payment_method', $purchase->payment_method) == 'mandiri' ? 'selected' : '' }}>Mandiri</option>
+                                            <option value="permata" {{ old('payment_method', $purchase->payment_method) == 'permata' ? 'selected' : '' }}>Permata</option>
+                                            <option value="bca" {{ old('payment_method', $purchase->payment_method) == 'bca' ? 'selected' : '' }}>BCA</option>
+                                            <option value="gopay" {{ old('payment_method', $purchase->payment_method) == 'gopay' ? 'selected' : '' }}>Gopay</option>
+                                            <option value="ovo" {{ old('payment_method', $purchase->payment_method) == 'ovo' ? 'selected' : '' }}>OVO</option>
+                                            <option value="cash" {{ old('payment_method', $purchase->payment_method) == 'cash' ? 'selected' : '' }}>Cash</option>
+                                        </select>                                            
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: none; align-items: center; " id="supplier_ewalet">
+                                        <div class="col-sm-3 p-0">
+                                            <label class="form-label" for="name" style="margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">E-Walet Number</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <input type="tel" value="{{old('supplier_ewalet') ? old('supplier_ewalet') : ($purchase->supplier_ewalet ? $purchase->supplier_ewalet : '')  }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_ewalet" name="supplier_ewalet" >
+                                            <span class="print-value" id="print-input_ewalet"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: none; align-items: center;" id="supplier_bank_account">
+                                        <div class="col-sm-3 p-0" >
+                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Bank Account</label>
+                                        </div>
+                                        <div class="col-sm-9 p-0" style="float:right;">
+                                            <input type="tel" value="{{ old('supplier_bank_account') ? old('supplier_bank_account') : ($purchase->supplier_bank_account ? $purchase->supplier_bank_account : '')  }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_bank_account" name="supplier_bank_account">
+                                            <span class="print-value" id="print-input_bank_account"></span>
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
@@ -324,15 +535,15 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Term</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <select name="payment_term" id="payment_term" class="form-control" required>
-                                                <option value="" selected disabled hidden>Payment Term</option>
-                                                <option value="on_invoice">Due on invoice</option>
-                                                <option value="7_invoice">7 days after invoice</option>
-                                                <option value="14_invoice">14 Days after Invoice</option>
-                                                <option value="on_arrive">Due on arrive</option>
-                                                <option value="7_arrive">7 days after arrive</option>
-                                                <option value="14_arrive">14 Days after arrive</option>
-                                            </select>
+                                        <select name="payment_term" id="payment_term" class="form-control">
+                                            <option value="" selected disabled hidden>Payment Term</option>
+                                            <option value="on_invoice" {{ old('payment_term', $purchase->payment_term) == 'on_invoice' ? 'selected' : '' }}>Due on invoice</option>
+                                            <option value="7_invoice" {{ old('payment_term', $purchase->payment_term) == '7_invoice' ? 'selected' : '' }}>7 days after invoice</option>
+                                            <option value="14_invoice" {{ old('payment_term', $purchase->payment_term) == '14_invoice' ? 'selected' : '' }}>14 Days after Invoice</option>
+                                            <option value="on_arrive" {{ old('payment_term', $purchase->payment_term) == 'on_arrive' ? 'selected' : '' }}>Due on arrive</option>
+                                            <option value="7_arrive" {{ old('payment_term', $purchase->payment_term) == '7_arrive' ? 'selected' : '' }}>7 days after arrive</option>
+                                            <option value="14_arrive" {{ old('payment_term', $purchase->payment_term) == '14_arrive' ? 'selected' : '' }}>14 Days after arrive</option>
+                                        </select>
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
@@ -340,12 +551,13 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Down Payment</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('down_payment') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="down_payment" name="down_payment" >
+                                            <input type="tel" value="{{ old('down_payment') ? old('down_payment') : ($purchase->down_payment_rate ? $purchase->down_payment_rate : '') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="down_payment" name="down_payment" >
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        @if($purchase->statut == 'pending'|| $purchase->statut == 'ordered')
                         <div class="card-body py-0" style="padding-left:0px;">
                             <table id="basic-table" class="table table-bordered table-sm"
                                 role="grid">
@@ -366,6 +578,10 @@
                                         <input type="hidden" name="order_discount_input" id="order_discount_input">
                                     </tr>
                                     <tr>
+                                        <td class="col-3">Shipping</td>
+                                        <td id="order_shipping" class="col-7"style="text-align:right;">Rp 0</td>
+                                    </tr>
+                                    <tr>
                                         <td class="col-3">Grand Total</td>
                                         <td id="order_total" class="col-7"style="text-align:right;">Rp 0</td>
                                         <input type="hidden" name="order_total_input" id="order_total_input">
@@ -377,23 +593,30 @@
                                     </tr>
                             </table>
                         </div>
+                        @endif
                     </div>
                     <div class="form-group col-sm-12">
                         <label class="form-label" for="name">Order Note:</label>
-                        <textarea  class="form-control @error('date') is-invalid @enderror" id="notes" name="notes" >{{ old('notes') }}</textarea> 
+                        <textarea  class="form-control @error('date') is-invalid @enderror" id="notes" name="notes" >{{ old('notes') ? old('notes') : ($purchase->notes ? $purchase->notes : '') }}</textarea> 
                     </div>
                     <div class="form-group col-sm-12">
                         <label class="form-label" for="name">Supplier Note:</label>
-                        <textarea  class="form-control @error('date') is-invalid @enderror" id="supplier_notes" name="supplier_notes" >{{ old('supplier_notes') }}</textarea> 
+                        <textarea  class="form-control @error('date') is-invalid @enderror" id="supplier_notes" name="supplier_notes" >{{ old('supplier_notes') ? old('supplier_notes') : ($purchase->supplier_notes ? $purchase->supplier_notes : '') }}</textarea> 
                     </div>
                     <div class="form-group col-sm-12">
-                        <select name="statut" id="statut" class="form-control" required>
-                            <option value="pending">Pending</option>
-                            <option value="ordered">Ordered</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="arrived">Arrived</option>
-                            <option value="complete">Complete</option>
-                        </select>   
+                    <select name="statut" id="statut" class="form-control" required>
+                        @if($purchase->statut == 'pending' || $purchase->statut == 'ordered' || $purchase->statut == 'refused' || $purchase->statut == 'canceled')
+                            @if($purchase->statut == 'refused')
+                                <option value="refused" selected>Refused</option>
+                            @endif
+                            <option value="pending" {{ old('statut', $purchase->statut) == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="ordered" {{ old('statut', $purchase->statut) == 'ordered' ? 'selected' : '' }}>Ordered</option>
+                                <option value="canceled" {{ old('statut', $purchase->statut) == 'canceled' ? 'selected' : '' }}>Canceled</option>
+                        @endif
+                        <option value="shipped" {{ old('statut', $purchase->statut) == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                        <option value="arrived" {{ old('statut', $purchase->statut) == 'arrived' ? 'selected' : '' }}>Arrived</option>
+                        <option value="complete" {{ old('statut', $purchase->statut) == 'completed' ? 'selected' : '' }}>Complete</option>
+                    </select> 
                     </div>
                 </div>
                 <div class="card-footer d-flex" style="float: right;">
@@ -449,14 +672,49 @@
             button.classList.add('loading');
             $(button).attr('disabled', true);
 
-            var formData = $('#purchase_order').serialize();
+            var form = $('#purchase_order')[0];
+            var formData = new FormData(form); // Membuat objek FormData dari form
             var send= $(this).data('send');
+
+             // Menambahkan data tambahan ke FormData
+            formData.append('send', send);
+
+
+            // Mentrigger semua required input ketika tombol #accept ditekan
+            const requiredInputs = document.querySelectorAll('input[required]');
+            const requiredSelects = document.querySelectorAll('select[required]');
+            const requiredText = document.querySelectorAll('textarea[required]');
+            for (const input of requiredInputs) {
+                if (!input.checkValidity()) {
+                    input.reportValidity();
+                    return; // Keluar dari fungsi jika ada input yang tidak valid
+                }
+            }
+            for (const select of requiredSelects) {
+                if (!select.checkValidity()) {
+                    select.reportValidity();
+                    return; // Keluar dari fungsi jika ada input yang tidak valid
+                }
+            }
+            for (const text of requiredText) {
+                if (!text.checkValidity()) {
+                    text.reportValidity();
+                    return; // Keluar dari fungsi jika ada input yang tidak valid
+                }
+            }
+            
+
             // Mengirimkan data menggunakan AJAX
             $.ajax({
                 type: "POST",
-                url: "{{ route('purchases.store') }}",
-                data: formData + '&send=' + send,
-                dataType: "json",
+                url: `/purchases/update/{{$purchase->id}}}`,
+                data: formData,
+                processData: false, // Jangan memproses data menjadi string
+                contentType: false, // Jangan menetapkan jenis konten
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'X-HTTP-Method-Override': 'PATCH' // For Laravel's method spoofing
+                },
                 success: function(response) {
                     if (response.errors) {
                         Swal.fire({
@@ -481,7 +739,7 @@
                             icon: "success",
                             title: response.success
                         });
-                        window.location.href = '/people/users/list';
+                        location.reload();
                     }
                 },
                 error: function (xhr, status, error) {
@@ -562,6 +820,12 @@
         var grandtotal = 0;
         var downPayment = 0;
 
+        function numberFormat(number) {
+            return number.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        setTablePayment();
+
         function setTablePayment() {
             setTimeout(function() {
                 // 1. Akumulasi nilai dari setiap .subtotal
@@ -580,8 +844,12 @@
                 var discountValue = parseFloat($('#discount').val());
                 discount = isNaN(discountValue) ? 0 : discountValue;
 
+                // 3. Ambil nilai shipment
+                var shipment_cost_value = parseFloat($('#shipment_cost').val());
+                var shipment_cost = isNaN(shipment_cost_value) ? 0 : shipment_cost_value;
+
                 // 4. Hitung grandtotal
-                grandtotal = subtotal + tax - discount;
+                grandtotal = subtotal + tax - discount +shipment_cost;
 
                 if (grandtotal < 0) {
                     grandtotal = 0;
@@ -592,11 +860,14 @@
                 var downPaymentPercentage = isNaN(downPaymentValue) ? 0 : downPaymentValue / 100;
                 downPayment = grandtotal * downPaymentPercentage
 
-                $('#order_down_payment').text('Rp ' + downPayment);
-                $('#order_subtotal').text('Rp ' + subtotal);
-                $('#order_discount').text('Rp ' + discount);
-                $('#order_tax').text('Rp ' + tax);
-                $('#order_total').text('Rp ' + grandtotal);
+                
+
+                $('#order_down_payment').text('Rp ' + numberFormat(downPayment));
+                $('#order_discount').text('Rp ' + numberFormat(discount));
+                $('#order_tax').text('Rp ' + numberFormat(tax));
+                $('#order_shipping').text('Rp ' + numberFormat(shipment_cost));
+                $('#order_total').text('Rp ' + numberFormat(grandtotal));
+                $('#order_subtotal').text('Rp ' + numberFormat(subtotal));
                 
                 $('#order_down_payment_input').val(downPayment);
                 $('#order_subtotal_input').val(subtotal);
@@ -620,8 +891,12 @@
         $('#down_payment').change(function() {
             setTablePayment();
         });
-
-
+        $('#shipment_cost').change(function() {
+            setTablePayment();
+        });
+        $(document).on('change', '.qty', function() {
+            setTablePayment();
+        });
         $(document).on('click', '.delete', function() {
             setTablePayment();
         });
@@ -634,13 +909,27 @@
         var products_with_variant = [];
         var productsObj = {};
         var productsWithVariantObj = {};
-        document.addEventListener('change', function(event) {
-            if (event.target.classList.contains('qty')) {
-                if (event.target.value == 0) {
-                    event.target.value = 1;
-                }
+        
+        $('#selectedItemsTable tbody tr').each(function() {
+            var variant_id = $(this).find('.variant-id').data('variant');
+            var currentQty=parseFloat($(this).find('.qty').val());
+            var product_id = $(this).find('.delete').data('value');
+            if (!variant_id ){
+                products.push({ key: product_id, value: currentQty });
+                $.each(products, function (i, value) {
+                    productsObj[value.key] = value.value;
+                })
+                $('#products').val(JSON.stringify(productsObj));
+            } else {
+                products_with_variant.push({ key: variant_id, value: currentQty });
+                $.each(products_with_variant, function (i, value) {
+                    productsWithVariantObj[value.key] = value.value;
+                })
+                $('#products_with_variant').val(JSON.stringify(productsWithVariantObj));
             }
         });
+        console.log(JSON.stringify(productsObj));
+        console.log(JSON.stringify(productsWithVariantObj));
 
         $('#itemDropdown').change(function() {
             var selectedValue = $(this).val();
@@ -682,7 +971,7 @@
                             '<td class="subtotal">' + cost + '</td>' +
                             '<td>' +
                             '<div class="flex align-items-center list-user-action"> ' +
-                            '<a class="btn btn-sm btn-icon btn-danger delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-value="'+selectedValue+'" data-code="'+code+'">' +
+                            '<a class="btn btn-sm btn-icon btn-danger delete"data-value="'+selectedValue+'" data-code="'+code+'">' +
                             '<span class="btn-inner"><svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor"><path d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M20.708 6.23975H3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>' +
                             '</a>' +
                             '</div>' +
@@ -740,6 +1029,7 @@
                 //mengacu jika parameter false maka masukan ke tabel
                 if (!itemExists) {
                     $('#selectedItemsTable tbody').append(newRow);
+
                     if (!id){
                         products.push({ key: selectedValue, value: 1 });
                         $.each(products, function (i, value) {
@@ -753,6 +1043,7 @@
                         })
                         $('#products_with_variant').val(JSON.stringify(productsWithVariantObj));
                     }
+
                 }
                 $('#itemDropdown').val(null).trigger('change');
             console.log(JSON.stringify(productsObj));
@@ -768,7 +1059,9 @@
             var value = row.find('.delete').data('value');
             var variant = row.find('.variant-id').data('variant');
 
-            if (currentQty == 0) {
+            //kalau isnan, berarti untuk menagani input kosong 
+            if (isNaN(currentQty) || currentQty == 0) {
+                $(this).val(1);
                 currentQty = 1;
             }
             subtotalElement.text(cost * currentQty);
@@ -799,7 +1092,6 @@
             console.log(JSON.stringify(productsObj));
             console.log(JSON.stringify(productsWithVariantObj));
         });
-
 
 
         $('#selectedItemsTable').on('click', '.delete', function() {
@@ -919,76 +1211,75 @@
         });
     }
 </script>
-<script>
-    $(document).ready(function() {
-        // Mendefinisikan fungsi getSupplier
-        function getSupplier() {
-            var selectedValue = $('#supplier').val();
 
-            $.ajax({
-                url: `/purchases/supplier/${selectedValue}`,
-                type: 'post',
-                dataType: 'json',
-                data: {
-                    // Tambahkan data yang diperlukan di sini
-                },
-                headers: { 
-                    'X-CSRF-TOKEN': csrfToken // Pastikan csrfToken sudah didefinisikan
-                },
-                success: function (response) {
-                    if (response.error) {
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.onmouseenter = Swal.stopTimer;
-                                toast.onmouseleave = Swal.resumeTimer;
-                            }
-                        });
-                        Toast.fire({
-                            icon: "error",
-                            title: response.error
-                        });
-                    } else {
-                        $('#email').val(response.email);
-                        $('#contact_person').val(response.nama_kontak_person);
-                        $('#cp_phone').val(response.nomor_kontak_person);
-                        $('#payment_method').val(response.payment_method);
-                        $('#payment_term').val(response.payment_term);
-                        $('#courier').val(response.courier);
-                        $('#down_payment').val(response.down_payment).trigger('change');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Terdapat error pada server'
-                    });
-                    // Log the error for debugging
-                    console.error('Error: ', error);
-                    console.error('Response: ', xhr.responseText);
-                }
-            });
-        }
-
-        // Menjalankan fungsi getSupplier ketika halaman pertama kali dimuat
-        // getSupplier();
-
-        // Menetapkan event listener untuk perubahan pada elemen #supplier
-        $('#supplier').change(getSupplier);
-    });
-</script>
 <script>
     function checkFileSize(input) {
-        const maxFileSize = 10 * 1024 * 1024; // 2MB
+        const maxFileSize = 10 * 1024 * 1024; // 10MB
         if (input.files[0].size > maxFileSize) {
             alert("Max File Size is 10 MB");
-            input.value = ""; // 입력을 초기화합니다.
+            input.value = "";
         }
     }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const banks = ['bni', 'bri', 'permata', 'mandiri', 'bca'];
+        const ewalets = ['ovo', 'gopay'];
+        var payment_method = document.getElementById('payment_method');
+        var supplier_bank_account = document.getElementById('supplier_bank_account');
+        var supplier_ewalet = document.getElementById('supplier_ewalet');
+        var input_supplier_bank_account = document.getElementById('input_bank_account'); // Koreksi ID
+        var input_supplier_ewalet = document.getElementById('input_ewalet'); // Koreksi ID
+
+        const own_courier = 'own';
+        var courier = document.getElementById('courier');
+        var driver_phone = document.getElementById('driver_phone');
+        var shipment_number = document.getElementById('shipment_number');
+        var input_driver_phone = document.getElementById('input_driver_phone'); // Koreksi ID
+        var input_shipment_number = document.getElementById('input_shipment_number'); // Koreksi ID
+
+        function setColumn() {
+            if (banks.includes(payment_method.value)) {
+                supplier_bank_account.style.display = 'flex';
+                supplier_ewalet.style.display = 'none';
+                input_supplier_bank_account.setAttribute('required', 'required');
+                input_supplier_ewalet.removeAttribute('required');
+            } else if (ewalets.includes(payment_method.value)) {
+                supplier_ewalet.style.display = 'flex';
+                supplier_bank_account.style.display = 'none';
+                input_supplier_ewalet.setAttribute('required', 'required');
+                input_supplier_bank_account.removeAttribute('required');
+            } else {
+                supplier_bank_account.style.display = 'none';
+                supplier_ewalet.style.display = 'none';
+                add_bottom_padding.style.setProperty('padding-bottom', '4.96vw', 'important');
+                input_supplier_bank_account.removeAttribute('required');
+                input_supplier_ewalet.removeAttribute('required');
+            }
+
+            if (own_courier == courier.value) {
+                driver_phone.style.display = 'flex';
+                shipment_number.style.display = 'none';
+                input_driver_phone.setAttribute('required', 'required');
+                input_shipment_number.removeAttribute('required');
+            } else {
+                shipment_number.style.display = 'flex';
+                driver_phone.style.display = 'none';
+                input_shipment_number.setAttribute('required', 'required');
+                input_driver_phone.removeAttribute('required');
+            }
+        }
+
+        setColumn();
+
+        payment_method.addEventListener('change', function() {
+            setColumn();
+        });
+
+        courier.addEventListener('change', function() {
+            setColumn();
+        });
+    });
 </script>
 @endpush

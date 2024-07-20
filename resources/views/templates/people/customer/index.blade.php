@@ -29,10 +29,10 @@
             <div class="header-title">
             </div>
             <div class="header-title">
-            <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">Filter</button>
+            <!-- <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">Filter</button>
                 <button type="button" class="btn btn-soft-success">Excel</button>
                 <button type="button" class="btn btn-soft-danger">PDF</button>
-                <button type="button" class="btn btn-soft-gray">Import Client</button>
+                <button type="button" class="btn btn-soft-gray">Import Client</button> -->
                 <a href="#" style="margin-left: 30px;">
                     <button type="button" data-bs-toggle="modal" data-bs-target="#createClient" class="btn btn-soft-primary">Create +</button>
                 </a>
@@ -64,7 +64,7 @@
                                 <td>{{ $data->email }}</td>
                                 <td>{{ $data->phone }}</td>
                                 <td>{{ $data->score }}</td>
-                                <td>{{ $data->created_at->format('d, F Y') }}</td>
+                                <td>{{ $data->created_at->translatedFormat('d, F Y') }}</td>
                                 <td>
                                     <div class="inline">
                                         <button class="editBtn" data-id="{{$data['id']}}" data-name="{{$data->name}}" data-email="{{$data->email}}" data-phone="{{$data->phone}}" style="background-color: transparent; border: none; display: inline-block;">

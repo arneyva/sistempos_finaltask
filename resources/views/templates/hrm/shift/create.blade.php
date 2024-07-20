@@ -141,14 +141,18 @@
             const wrapper = document.getElementById(day + '-wrapper');
 
             checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    times.style.display = 'block';
-                    wrapper.classList.add('mt-3');
-                } else {
-                    wrapper.classList.remove('mt-3');
-                    times.style.display = 'none';
-                }
-            });
+                    if (this.checked) {
+                        times.style.display = 'block';
+                        inn.setAttribute('required', 'required');
+                        out.setAttribute('required', 'required');
+                        wrapper.classList.add('mt-3');
+                    } else {
+                        times.style.display = 'none';
+                        inn.removeAttribute('required');
+                        out.removeAttribute('required');
+                        wrapper.classList.remove('mt-3');
+                    }
+                });
         });
     });
     </script>
