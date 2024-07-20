@@ -36,8 +36,6 @@
             -moz-text-security: disc; /* Untuk Firefox */
         }
     </style>
-
-
 </head>
 
 <body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
@@ -191,7 +189,8 @@
                 maximumValue: '999999',
                 modifyValueOnWheel: false,
                 emptyInputBehavior: 'focus',
-                showWarnings: false
+                showWarnings: false,
+                leadingZero: 'keep'
             });
         });
     </script>

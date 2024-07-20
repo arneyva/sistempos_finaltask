@@ -620,7 +620,8 @@
                 maximumValue: '999999',
                 modifyValueOnWheel: false,
                 emptyInputBehavior: 'focus',
-                showWarnings: false
+                showWarnings: false,
+                leadingZero: 'keep'
             });
         });
     </script>

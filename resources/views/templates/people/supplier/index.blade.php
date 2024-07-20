@@ -29,10 +29,10 @@
             <div class="header-title">
             </div>
             <div class="header-title">
-            <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">Filter</button>
+            <!-- <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">Filter</button>
                 <button type="button" class="btn btn-soft-success">Excel</button>
                 <button type="button" class="btn btn-soft-danger">PDF</button>
-                <button type="button" class="btn btn-soft-gray">Import Client</button>
+                <button type="button" class="btn btn-soft-gray">Import Client</button> -->
                 <a href="#" style="margin-left: 30px;">
                     <a href="{{ route('people.suppliers.create') }}">
                         <button type="button" class="btn btn-soft-primary">Create +</button>

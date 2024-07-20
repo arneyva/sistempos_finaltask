@@ -112,7 +112,7 @@
                                 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="codebaseproduct">Email App Password (for server) *</label>
-                                    <input type="password" class="form-control" id="codebaseproduct" required
+                                    <input type="password" class="form-control" id="codebaseproduct"
                                         placeholder="{{empty($company->server_password) ? "App Password doesn't exist" : "change app password" }}" name="server_password">
                                     @error('server_password')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"

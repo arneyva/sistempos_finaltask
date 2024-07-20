@@ -8,6 +8,7 @@ use App\Models\OfficeShift;
 use App\Models\Attendance;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class MyAttendanceController extends Controller
 {
@@ -79,11 +80,28 @@ class MyAttendanceController extends Controller
 
             $clockIn ='-';
             $clockOut ='-';
+            $late_in = null;
+            $late_out = null;
+            $on_time = null;
+
             if (isset($attendances[$date->toDateString()])) {
                 $attendance = $attendances[$date->toDateString()];
                 $clockIn = $attendance->clock_in ?? '-';
                 $clockOut = $attendance->clock_out ?? '-';
                 $status = $attendance->status;
+                //jika status late ada
+                if ($status == "present") {
+                    if ($attendance->late_in) {
+                        $late_in = trans("Late In");
+                    };
+                    if ($attendance->late_out) {
+                        $late_out = trans("Late Out");
+                    };
+                    if (!$attendance->late_out && !$attendance->late_in) {
+                        $on_time = trans("On Time");
+                    };
+                    
+                }
             } elseif ($date < $today && $status !== 'day-off') {
                 $status = 'absent';
             } elseif ($date >= $today && $status !== 'day-off') {
@@ -98,6 +116,9 @@ class MyAttendanceController extends Controller
                 'clock_in' => $clockIn,
                 'clock_out' => $clockOut,
                 'status' => $status,
+                'late_in' => $late_in,
+                'late_out' => $late_out,
+                'on_time' => $on_time,
             ];
         }
 

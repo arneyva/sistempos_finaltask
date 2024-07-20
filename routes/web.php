@@ -321,10 +321,15 @@ Route::prefix('purchases')->middleware(['auth', 'verified'])->name('purchases.')
     Route::delete('destroy/{id}', [PurchaseController::class, 'destroy'])->name('destroy');
     Route::post('scanner/{code}', [PurchaseController::class, 'getFromScanner']);
     Route::post('supplier/{id}', [PurchaseController::class, 'getSupplier']);
+    Route::get('file/download/{id}', [PurchaseController::class, 'download'])->name('file');
 });
 
+//ndak pakai prefix 
 Route::get('cashier', [PosController::class, 'create'])->middleware(['auth', 'verified']);
+//turunan2 cashier jadi pake prefix
 Route::prefix('cashier')->middleware(['auth', 'verified'])->name('cashier.')->group(function () {
+    Route::post('scanner/{code}', [PosController::class, 'getFromScanner']);
+    Route::post('store', [PosController::class, 'store'])->name('store');
 });
 
 Route::middleware('auth')->group(function () {

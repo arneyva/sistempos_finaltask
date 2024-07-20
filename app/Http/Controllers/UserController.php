@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManagerStatic as Image;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -18,11 +19,13 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('role:superadmin');
+        $this->middleware('role:superadmin')->except(['show']);
     }
 
     public function index()
     {
+        $user = Auth::user()->id;
+
         $orderBy = 'firstname';
         $order = 'asc';
 
@@ -55,6 +58,7 @@ class UserController extends Controller
 
         return view('templates.people.user.index', [
             'users' => $users,
+            'user' => $user,
             'allUsers' => User::all(),
             'office_shifts' => OfficeShift::all(),
             'warehouses' => Warehouse::all(),

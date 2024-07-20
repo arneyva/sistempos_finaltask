@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 
 class WarehousesController extends Controller
 {
