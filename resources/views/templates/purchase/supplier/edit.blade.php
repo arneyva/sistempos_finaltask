@@ -588,6 +588,12 @@
                         return; // Keluar dari fungsi jika ada input yang tidak valid
                     }
                 }
+            } else {
+                const supplier_notes=document.getElementById('supplier_notes');
+                if (!supplier_notes.checkValidity()) {
+                    supplier_notes.reportValidity();
+                    return; // Keluar dari fungsi jika ada input yang tidak valid
+                }
             }
 
             // Mengirimkan data menggunakan AJAX

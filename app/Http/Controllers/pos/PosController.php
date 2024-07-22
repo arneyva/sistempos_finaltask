@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Log;
 
 class PosController extends Controller
 {
-    public function create() {
+    public function create(Request $request) {
         //ambil user akun ini 
         $user=Auth::user();
         //ambil warehousenya
