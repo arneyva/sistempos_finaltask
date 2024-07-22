@@ -25,6 +25,7 @@ use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LiveSearchController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Settings\CompanyController;
 use Illuminate\Support\Facades\Route;
@@ -330,6 +331,10 @@ Route::get('cashier', [PosController::class, 'create'])->middleware(['auth', 've
 Route::prefix('cashier')->middleware(['auth', 'verified'])->name('cashier.')->group(function () {
     Route::post('scanner/{code}', [PosController::class, 'getFromScanner']);
     Route::post('store', [PosController::class, 'store'])->name('store');
+});
+
+Route::prefix('search')->middleware(['auth', 'verified'])->name('search.')->group(function () {
+    Route::get('pos_sale_search', [LiveSearchController::class, 'pos_sale_search'])->name('pos_sale_search');
 });
 
 Route::middleware('auth')->group(function () {

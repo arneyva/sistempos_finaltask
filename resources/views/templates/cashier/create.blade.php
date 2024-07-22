@@ -313,6 +313,18 @@
             padding: 1vw 0vw 0vw 1.3vw;
             border-radius: 0.3vw 0.3vw 0px 0px !important;
         }
+        .background {
+        position: fixed; /* atau 'absolute', tergantung kebutuhan */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Warna gelap dengan transparansi */
+        z-index: 1; /* Pastikan lebih tinggi dari elemen lain kecuali modal */
+        }
+        .overlay {
+            z-index: 2; /* Pastikan lebih tinggi dari elemen lain kecuali modal */
+        }
     </style>
 </head>
 <body>
@@ -490,8 +502,13 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-10">
                         <input type="text" placeholder="Search Customer" class="card card-body px-3 py-0" style="background-color: rgba(255, 255, 255, 0.5) ;">
+                    </div>
+                    <div class="col-2">
+                    <a href="#" class="full-width full-height">
+                        <button type="button" id="clientButton" class="btn btn-primary full-width full-height">Create +</button>
+                    </a>
                     </div>
                 </div>
                 <div class="row">
@@ -577,7 +594,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-10">
-                        <input type="text" placeholder="Search Sale by Code or Product Name/Code" class="card card-body px-3 py-0" style="background-color: rgba(255, 255, 255, 0.5) ;">
+                        <input type="text"  id="search-sale" placeholder="Search Sale by Code or Product Name/Code" class="card card-body px-3 py-0" style="background-color: rgba(255, 255, 255, 0.5) ;">
                     </div>
                     <div class="col-2 p-0">
                     <div class="d-flex justify-content-left">
@@ -597,7 +614,8 @@
                     <div class="col-10 tab-pane fade active show" id="pending">
                         <div class="row">
                             @foreach ($sales as $sale)
-                            <div class="col-4 py-4">
+                            @continue ($sale->statut == "completed")
+                            <div class="col-4 py-4 card-sale" >
                                 <p class="mb-0" style="color:black"><strong>{{$sale->Ref}}</strong></p>
                                 <div class="card card-list">
                                     <div class="card-body for-sale card-body-scroll card-body-list mt-0 py-0 px-2">
@@ -624,9 +642,89 @@
                         </div>
                     </div>
                     <div class="col-10 tab-pane fade " id="complete">
-                        
+                        <div class="row">
+                        @foreach ($sales as $sale)
+                            @continue ($sale->statut == "pending")
+                            <div class="col-4 py-4 card-sale" >
+                                <p class="mb-0" style="color:black"><strong>{{$sale->Ref}}</strong></p>
+                                <div class="card card-list">
+                                    <div class="card-body for-sale card-body-scroll card-body-list mt-0 py-0 px-2">
+                                        <ul class="list-group list-group-flush">  
+                                            <ul class="list-group list-group-flush mx-0 mt-2">
+                                            @foreach ($sale->details as $detail)
+                                                <pre class="mb-2">{{ $detail->product->name ?? '' }}{{ $detail->product_variant_id ? ' '.$detail->product_variant->name : '' }}</pre>
+                                                @endforeach
+                                            </ul>
+                                        </ul>
+                                    </div>
+                                    <div class="card-footer pb-0 pt-0">   
+                                        <div class="d-flex flex-wrap align-items-center" style="float: right;">
+                                            <a class="button-edit mb-3 mt-1" href="">
+                                                <p class="mb-0 mt-0">
+                                                    Edit
+                                                </p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
                     <div class="col-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " id="createClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="background">
+        <div class="modal-dialog modal-dialog-centered modal-lg overlay">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:white">
+                    <h5 class="modal-title" id="staticBackdropLabel">Create Customer Membership</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="background-color:white">
+                    <form class="needs-validation" action="{{ route('people.clients.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+                        @csrf
+                        <div class="form-group">
+                            <label class="form-label" for="name">Name:</label>
+                            <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
+                                id="name" name="name_create" placeholder="name" value="{{ old('name_create')}}" required>
+                            <small class=" text-danger font-italic">
+                                @error('name_create')
+                                    {{ $message }}
+                                @enderror
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email:</label>
+                            <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror"
+                                id="email" name="email_create" placeholder="Email" value="{{ old('email_create')}}" required>
+                            <small class=" text-danger font-italic">
+                                @error('email_create')
+                                    {{ $message }}
+                                @enderror
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cname">Phone:</label>
+                            <input type="tel" name="phone_create"
+                                class="form-control bg-transparent @error('phone') is-invalid @enderror"
+                                id="cname" placeholder="Phone"  value="{{ old('phone_create')}}" required>
+                            <small class=" text-danger font-italic">
+                                @error('phone_create')
+                                    {{ $message }}
+                                @enderror
+                            </small>
+                        </div>
+                </div>
+                <div class="modal-footer" style="background-color:white">
+                        <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="submit_create" class="btn btn-soft-success">Save</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -642,6 +740,51 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 {{-- sweetalert2 --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById('clientButton').addEventListener('click', function() {
+        $('#createClient').modal('show');
+    });
+</script>
+
+<!-- <script>
+$(document).ready(function(){    
+    $('#search-sale, #search-customer').on('input', function(){        
+        var query = $(this).val();        
+        if (query.length > 0) {            
+            $.ajax({                
+                url: this.id === 'search-sale' ? '/search/pos_sale_search' : '/search/pos_customer',  //jika searchbar id nya search-sale maka linknya menuju sale search, begitu juga sebaliknya             
+                type: 'GET',                
+                data: { q: query },                
+                success: function(data) {                    
+                    $('#results').html(data);                
+                },                
+                error: function(xhr, status, error) {                    
+                    console.error(error);                
+                }
+            });        
+        } else {            
+            $('#results').html('');        
+        }
+    });
+});
+</script> -->
+
+<script>
+    $(document).ready(function() {
+        $('#search-sale').on('input', function() {
+            var query = $(this).val().toLowerCase(); // Mengambil input pencarian dan mengubahnya menjadi huruf kecil
+            $('.card-sale').filter(function() {
+                // Mengecek apakah nama produk atau referensi penjualan mengandung query
+                var saleRef = $(this).find('strong').text().toLowerCase();
+                var productNames = $(this).find('pre').text().toLowerCase(); // Menggabungkan semua nama produk menjadi satu string
+                
+                // Menampilkan atau menyembunyikan elemen berdasarkan pencarian
+                $(this).toggle(saleRef.indexOf(query) > -1 || productNames.indexOf(query) > -1);
+            });
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {
