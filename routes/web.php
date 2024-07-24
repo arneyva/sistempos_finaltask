@@ -72,6 +72,8 @@ Route::post('/update-alert-stock', [ProductController::class, 'updateAlertStock'
 */
 Route::get('purchases/receipt/edit/{Ref}', [PurchaseController::class, 'editSupplier'])->name('edit.supplier')->middleware('signed');
 Route::patch('purchases/receipt/update/{id}', [PurchaseController::class, 'updateSupplier'])->name('update.supplier')->middleware('signed');
+Route::get('client/{id}', [PosController::class, 'clientLanding'])->name('client.landing')->middleware('signed');
+Route::get('client/{id}/redeem', [PosController::class, 'clientRedeem'])->name('client.redeem')->middleware('signed');
 
 Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
@@ -331,6 +333,7 @@ Route::prefix('cashier')->middleware(['auth', 'verified'])->name('cashier.')->gr
     Route::post('scanner/{code}', [PosController::class, 'getFromScanner']);
     Route::post('store', [PosController::class, 'store'])->name('store');
     Route::post('customer/{email}', [PosController::class, 'getCustomer']);
+    Route::post('customer/email/{email}', [PosController::class, 'sendEmail']);
 });
 
 Route::prefix('search')->middleware(['auth', 'verified'])->name('search.')->group(function () {
