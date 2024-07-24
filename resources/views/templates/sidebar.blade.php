@@ -12,11 +12,11 @@
             <!--Logo start-->
             <div class="logo-main">
                 <div class="logo-normal">
-                    <img src="{{ asset('hopeui/html/assets/images/logota3.png') }}" class="text-primary icon-30"
+                    <img src="{{ asset('hopeui/html/assets/images/avatars/logo-default.png') }}" class="text-primary icon-30"
                         alt="">
                 </div>
                 <div class="logo-mini">
-                    <img src="{{ asset('hopeui/html/assets/images/logota3.png') }}" class="text-primary icon-30"
+                    <img src="{{ asset('hopeui/html/assets/images/avatars/logo-default.png') }}" class="text-primary icon-30"
                         alt="">
                 </div>
             </div>
@@ -855,7 +855,7 @@
                                     </a>
                                 </li>
                             @endrole
-                            @role('superadmin')
+                            @role('underdev')
                                 <li class="nav-item">
                                     <a class="nav-link "href="{{ route('settings.membership.index') }}">
                                         <i class="icon">

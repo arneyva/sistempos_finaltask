@@ -104,7 +104,7 @@
                                         style="max-height: 70px;max-width: 70px">
                                 </div>
                                 <div class="progress-detail">
-                                    <p class="mb-2">{{ __("Today Sales") }}</p>
+                                    <p class="mb-2">{{ __('Today Sales') }}</p>
                                     <h4 class="counter">{{ $report['today_sales'] }}</h4>
                                 </div>
                             </div>
@@ -118,7 +118,7 @@
                                         style="max-height: 70px;max-width: 70px">
                                 </div>
                                 <div class="progress-detail">
-                                    <p class="mb-2">{{ __("Today Sales Returns") }}</p>
+                                    <p class="mb-2">{{ __('Today Sales Returns') }}</p>
                                     <h4 class="counter">{{ $report['return_sales'] }}</h4>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
                                         style="max-height: 70px;max-width: 70px">
                                 </div>
                                 <div class="progress-detail">
-                                    <p class="mb-2">{{ __("Today Purchases") }}</p>
+                                    <p class="mb-2">{{ __('Today Purchases') }}</p>
                                     <h4 class="counter">{{ $report['today_purchases'] }}</h4>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@
                                         style="max-height: 70px;max-width: 70px">
                                 </div>
                                 <div class="progress-detail">
-                                    <p class="mb-2">{{ __("Today Purchases Returns") }}</p>
+                                    <p class="mb-2">{{ __('Today Purchases Returns') }}</p>
                                     <h4 class="counter">{{ $report['return_purchases'] }}</h4>
                                 </div>
                             </div>
@@ -166,7 +166,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h6 class="card-title">{{ __("This Week Payment Sent & Received") }}</h6>
+                            <h6 class="card-title">{{ __('This Week Payment Sent & Received') }}</h6>
                         </div>
                     </div>
                     <div class="card-body">
@@ -179,7 +179,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">{{ __("Stock Alert Products") }}
+                            <h4 class="card-title">{{ __('Stock Alert Products') }}
                             </h4>
                         </div>
                     </div>
@@ -188,10 +188,10 @@
                             <table id="basic-table" class="table table-striped mb-0" role="grid">
                                 <thead>
                                     <tr>
-                                        <th>{{ __("Product") }}</th>
-                                        <th>{{ __("Warehouse/Outlet") }}</th>
-                                        <th>{{ __("Current Stock") }}</th>
-                                        <th style="color: red">{{ __("Stock Alert") }}</th>
+                                        <th>{{ __('Product') }}</th>
+                                        <th>{{ __('Warehouse/Outlet') }}</th>
+                                        <th>{{ __('Current Stock') }}</th>
+                                        <th style="color: red">{{ __('Stock Alert') }}</th>
                                         @role('superadmin|inventaris')
                                             <th>Action</th>
                                         @endrole
@@ -243,7 +243,7 @@
                     <div class="overflow-hidden card" data-aos="fade-up" data-aos-delay="600">
                         <div class="flex-wrap card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="mb-2 card-title">{{ __("Daily Employee Attendance Report") }}</h4>
+                                <h4 class="mb-2 card-title">{{ __('Daily Employee Attendance Report') }}</h4>
                                 <p class="mb-0">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
                                         viewBox="0 0 2048 2048">
@@ -259,11 +259,11 @@
                                 <table id="basic-table" class="table mb-0 table-striped" role="grid">
                                     <thead>
                                         <tr>
-                                            <th>{{ __("Employee Name") }}</th>
-                                            <th>{{ __("Warehouse/Outlet") }}</th>
-                                            <th>{{ __("Clock In") }}</th>
-                                            <th>{{ __("Clock Out") }}</th>
-                                            <th>{{ __("Status") }}</th>
+                                            <th>{{ __('Employee Name') }}</th>
+                                            <th>{{ __('Warehouse/Outlet') }}</th>
+                                            <th>{{ __('Clock In') }}</th>
+                                            <th>{{ __('Clock Out') }}</th>
+                                            <th>{{ __('Status') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -273,11 +273,11 @@
                                                     <div class="d-flex align-items-center">
                                                         @if ($item['employee_image'] == null)
                                                             <img class="rounded bg-soft-primary img-fluid avatar-40 me-3"
-                                                                src="{{ asset('hopeui/html/assets/images/shapes/01.png') }}"
-                                                                alt="profile">
+                                                                src="" alt="profile-ada">
                                                         @else
                                                             <img class="rounded bg-soft-primary img-fluid avatar-40 me-3"
-                                                                src="" alt="profile-ada">
+                                                                src="/hopeui/html/assets/images/avatars/{{ $item['employee_image'] }}"
+                                                                alt="profile">
                                                         @endif
                                                         <h6>{{ $item['employee_name'] }}</h6>
                                                     </div>
@@ -308,7 +308,7 @@
                 <div class="col mb-3">
                     <form action="{{ route('dashboard') }}" method="GET">
                         <select class="form-select" id="selectWarehouse" name="warehouse_id">
-                            <option value="">{{ __("All Warehouse/Outlet") }}</option>
+                            <option value="">{{ __('All Warehouse/Outlet') }}</option>
                             @foreach ($warehouses as $wh)
                                 <option value="{{ $wh->id }}"
                                     {{ request()->input('warehouse_id') == $wh->id ? 'selected' : '' }}>
@@ -323,7 +323,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="900">
                     <div class="flex-wrap card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">{{ __("Top Customers") }} ~ {{ $currentMonth }}</h4>
+                            <h4 class="card-title">{{ __('Top Customers') }} ~ {{ $currentMonth }}</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -349,7 +349,7 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="900">
                     <div class="flex-wrap card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">{{ __("Top Selling Products") }} ~ {{ $currentMonth }}</h4>
+                            <h4 class="card-title">{{ __('Top Selling Products') }} ~ {{ $currentMonth }}</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -379,7 +379,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">{{ __("Recent Sales") }}
+                    <h4 class="card-title">{{ __('Recent Sales') }}
                     </h4>
                 </div>
             </div>
@@ -388,14 +388,14 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>{{ __("Reference") }}</th>
-                                <th>{{ __("Customer") }}</th>
-                                <th>{{ __("Warehouse/Outlet") }}</th>
-                                <th>{{ __("Status") }}</th>
-                                <th>{{ __("Grand Total") }}</th>
-                                <th>{{ __("Paid") }}</th>
-                                <th>{{ __("Due") }}</th>
-                                <th>{{ __("Payment Status") }}s</th>
+                                <th>{{ __('Reference') }}</th>
+                                <th>{{ __('Customer') }}</th>
+                                <th>{{ __('Warehouse/Outlet') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Grand Total') }}</th>
+                                <th>{{ __('Paid') }}</th>
+                                <th>{{ __('Due') }}</th>
+                                <th>{{ __('Payment Status') }}s</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -406,11 +406,11 @@
                                     <td>{{ $item['warehouse_name'] }}</td>
                                     <td>
                                         @if ($item['statut'] == 'completed')
-                                            <span class="status-completed">{{ __("completed") }}</span>
+                                            <span class="status-completed">{{ __('completed') }}</span>
                                         @elseif($item['statut'] == 'ordered')
-                                            <span class="status-ordered">{{ __("ordered") }}</span>
+                                            <span class="status-ordered">{{ __('ordered') }}</span>
                                         @else
-                                            <span class="status-pending">{{ __("pending") }}</span>
+                                            <span class="status-pending">{{ __('pending') }}</span>
                                         @endif
                                     </td>
                                     <td>{{ 'Rp ' . number_format($item['GrandTotal'], 2, ',', '.') }}</td>
@@ -418,9 +418,9 @@
                                     <td>{{ 'Rp ' . number_format($item['due'], 2, ',', '.') }}</td>
                                     <td>
                                         @if ($item['payment_status'] == 'paid')
-                                            <span class="payment-paid">{{ __("paid") }}</span>
+                                            <span class="payment-paid">{{ __('paid') }}</span>
                                         @else
-                                            <span class="payment-unpaid">{{ __("unpaid") }}</span>
+                                            <span class="payment-unpaid">{{ __('unpaid') }}</span>
                                         @endif
                                     </td>
                                 </tr>

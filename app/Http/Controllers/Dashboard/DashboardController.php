@@ -243,7 +243,7 @@ class DashboardController extends Controller
             $item = [
                 'id' => $jadwal->id,
                 'employee_name' => $jadwal->user->username,
-                'employee_image' => $jadwal->user->image,
+                'employee_image' => $jadwal->user->avatar,
                 'warehouse_name' => $warehouseNamesString,
                 'status' => $jadwal->status,
                 'clock_in' => $jadwal->clock_in,

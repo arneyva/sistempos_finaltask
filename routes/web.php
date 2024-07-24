@@ -75,21 +75,21 @@ Route::patch('purchases/receipt/update/{id}', [PurchaseController::class, 'updat
 
 Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
-    Route::get('/detail/{id}', [ProductController::class, 'show'])->name('show');
-    Route::get('/create', [ProductController::class, 'create'])->name('create');
-    Route::post('/store', [ProductController::class, 'store'])->name('store');
-    Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
-    Route::patch('/update/{id}', [ProductController::class, 'update'])->name('update');
-    Route::delete('/destroy/{id}', [ProductController::class, 'destroy'])->name('destroy');
+    Route::get('/detail/{id}', [ProductController::class, 'show'])->middleware('role:superadmin|inventaris')->name('show');
+    Route::get('/create', [ProductController::class, 'create'])->middleware('role:superadmin|inventaris')->name('create');
+    Route::post('/store', [ProductController::class, 'store'])->middleware('role:superadmin|inventaris')->name('store');
+    Route::get('/edit/{id}', [ProductController::class, 'edit'])->middleware('role:superadmin|inventaris')->name('edit');
+    Route::patch('/update/{id}', [ProductController::class, 'update'])->middleware('role:superadmin|inventaris')->name('update');
+    Route::delete('/destroy/{id}', [ProductController::class, 'destroy'])->middleware('role:superadmin|inventaris')->name('destroy');
     Route::get('export', [ProductController::class, 'export'])->name('export');
     Route::get('pdf', [ProductController::class, 'exportToPDF'])->name('pdf');
     Route::post('import/csv', [ProductController::class, 'import_products'])->name('import');
     // catgeory
     Route::prefix('/category')->name('category.')->group(function () {
         Route::get('/list', [CategoryController::class, 'index'])->name('index');
-        Route::post('/store', [CategoryController::class, 'store'])->name('store');
-        Route::delete('/destroy/{id}', [CategoryController::class, 'destroy'])->name('destroy');
-        Route::put('/update/{id}', [CategoryController::class, 'update'])->name('update');
+        Route::post('/store', [CategoryController::class, 'store'])->middleware('role:superadmin|inventaris')->name('store');
+        Route::delete('/destroy/{id}', [CategoryController::class, 'destroy'])->middleware('role:superadmin|inventaris')->name('destroy');
+        Route::put('/update/{id}', [CategoryController::class, 'update'])->middleware('role:superadmin|inventaris')->name('update');
     });
     // brand
     Route::prefix('/brand')->name('brand.')->group(function () {
@@ -128,10 +128,10 @@ Route::prefix('adjustment')->middleware(['auth', 'verified'])->name('adjustment.
 Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->group(function () {
     Route::get('list', [TransferController::class, 'index'])->name('index');
     Route::get('detail/{id}', [TransferController::class, 'show'])->name('show');
-    Route::get('create', [TransferController::class, 'create'])->name('create');
-    Route::post('store', [TransferController::class, 'store'])->name('store');
-    Route::get('edit/{id}', [TransferController::class, 'edit'])->name('edit');
-    Route::patch('update/{id}', [TransferController::class, 'update'])->name('update');
+    Route::get('create', [TransferController::class, 'create'])->middleware('role:superadmin|inventaris')->name('create');
+    Route::post('store', [TransferController::class, 'store'])->middleware('role:superadmin|inventaris')->name('store');
+    Route::get('edit/{id}', [TransferController::class, 'edit'])->middleware('role:superadmin|inventaris')->name('edit');
+    Route::patch('update/{id}', [TransferController::class, 'update'])->middleware('role:superadmin|inventaris')->name('update');
     Route::patch('confirm/{id}', [TransferController::class, 'updateForStaff'])->name('confirm');
     Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
     Route::get('export', [TransferController::class, 'export'])->name('export');
@@ -324,7 +324,6 @@ Route::prefix('purchases')->middleware(['auth', 'verified'])->name('purchases.')
     Route::post('supplier/{id}', [PurchaseController::class, 'getSupplier']);
     Route::get('file/download/{id}', [PurchaseController::class, 'download'])->name('file');
 });
-
 //ndak pakai prefix 
 Route::get('cashier', [PosController::class, 'create'])->middleware(['auth', 'verified']);
 //turunan2 cashier jadi pake prefix

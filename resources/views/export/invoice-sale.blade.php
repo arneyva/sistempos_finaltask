@@ -37,7 +37,7 @@
                                         <div class="invoice-logo">
                                             <!-- logo started -->
                                             <div class="logo">
-                                                {{-- <img src="{{ asset('hopeui/html/assets/images/logota3.png') }}" alt="logo"> --}}
+                                                <img src="{{ asset('hopeui/html/assets/images/avatars/logo-default.png') }}" alt="logo">
                                             </div>
                                             <!-- logo ended -->
                                         </div>
