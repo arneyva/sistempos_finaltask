@@ -337,7 +337,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="codebaseproduct">{{ __('Product Code *') }}</label>
-                    <input type="text" class="form-control" id="codebaseproduct" required
+                    <input type="text" class="form-control" id="codebaseproduct" 
                         placeholder="{{ __('Input Code ...') }}" name="code" value="{{ Session::get('code') }}">
                     @error('code')
                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3" role="alert"
@@ -511,18 +511,22 @@
             var productCostField = document.getElementById("productcost");
             var productPriceField = document.getElementById("productprice");
             var productVariantField = document.getElementById("createvariant");
+            var codebaseproductField = document.getElementById("codebaseproduct");
 
             typeSelect.addEventListener("change", function() {
                 var selectedType = this.value;
                 if (selectedType === "is_variant") {
                     productCostField.value = ""; // Kosongkan nilai input biaya produk
                     productPriceField.value = ""; // Kosongkan nilai input harga produk
+                    codebaseproductField.value = ""; // Kosongkan nilai input harga produk
                     productCostField.disabled = true;
                     productPriceField.disabled = true;
+                    codebaseproductField.disabled = true;
                     productVariantField.style.display = "block";
                 } else {
                     productCostField.disabled = false;
                     productPriceField.disabled = false;
+                    codebaseproductField.disabled = false;
                     productVariantField.style.display = "none";
                 }
             });
