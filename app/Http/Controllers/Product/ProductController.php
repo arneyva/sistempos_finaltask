@@ -533,6 +533,14 @@ class ProductController extends Controller
         $item['type'] = $product->type;
         $item['image'] = $product->image ?? 'no-image.png';
         $item['code'] = $product->code;
+        // buat QR Code
+        $qrCode = QrCode::create($product->code)
+            ->setEncoding(new Encoding('ISO-8859-1'))
+            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
+            ->setSize(125)
+            ->setMargin(10);
+        // Simpan data URI QR Code dalam item array
+        $item['qrCode'] = (new PngWriter())->write($qrCode)->getDataUri();
         $item['Type_barcode'] = $product->Type_barcode;
         $item['name'] = $product->name;
         $item['cost'] =  'Rp ' . number_format($product->cost, 2, ',', '.');
@@ -555,6 +563,14 @@ class ProductController extends Controller
             $productVariants = ProductVariant::where('product_id', $product->id)->where('deleted_at', '=', null)->get();
             foreach ($productVariants as $variant) {
                 $ProductVariant['code'] = $variant->code;
+                // buat QR Code
+                $qrCodeVariant = QrCode::create($variant->code)
+                    ->setEncoding(new Encoding('ISO-8859-1'))
+                    ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
+                    ->setSize(75)
+                    ->setMargin(10);
+                // Simpan data URI QR Code dalam item array
+                $ProductVariant['qrCodeVariant'] = (new PngWriter())->write($qrCodeVariant)->getDataUri();
                 $ProductVariant['name'] = $variant->name;
                 $ProductVariant['cost'] = 'Rp ' . number_format($variant->cost, 2, ',', '.');
                 $ProductVariant['price'] = 'Rp ' . number_format($variant->price, 2, ',', '.');
