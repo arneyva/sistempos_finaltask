@@ -331,6 +331,7 @@ Route::get('cashier', [PosController::class, 'create'])->middleware(['auth', 've
 Route::prefix('cashier')->middleware(['auth', 'verified'])->name('cashier.')->group(function () {
     Route::post('scanner/{code}', [PosController::class, 'getFromScanner']);
     Route::post('store', [PosController::class, 'store'])->name('store');
+    Route::post('customer/{email}', [PosController::class, 'getCustomer']);
 });
 
 Route::prefix('search')->middleware(['auth', 'verified'])->name('search.')->group(function () {
