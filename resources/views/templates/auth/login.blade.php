@@ -32,10 +32,14 @@
 
     <style>
         .password-input {
-            -webkit-text-security: disc; /* Untuk Chrome/Safari */
-            -moz-text-security: disc; /* Untuk Firefox */
+            -webkit-text-security: disc;
+            /* Untuk Chrome/Safari */
+            -moz-text-security: disc;
+            /* Untuk Firefox */
         }
     </style>
+
+
 </head>
 
 <body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
@@ -62,38 +66,43 @@
                                         <!--Logo start-->
                                         <div class="logo-main">
                                             <div class="logo-normal">
-                                                <img src="{{ asset('hopeui/html/assets/images/logota3.png') }}"
+                                                <img src="{{ asset('hopeui/html/assets/images/avatars/logo-default.png') }}"
                                                     class="text-primary icon-30" alt="">
                                             </div>
                                             <div class="logo-mini">
-                                                <img src="{{ asset('hopeui/html/assets/images/logota3.png') }}"
+                                                <img src="{{ asset('hopeui/html/assets/images/avatars/logo-default.png') }}"
                                                     class="text-primary icon-30" alt="">
                                             </div>
                                         </div>
                                         <!--logo End-->
-                                        <h4 class="logo-title ms-3">{{ __("Project TA") }}</h4>
+                                        <h4 class="logo-title ms-3">{{ __('Project TA') }}</h4>
                                     </a>
-                                    <h2 class="mb-2 text-center">{{ __("Sign In") }}</h2>
+                                    <h2 class="mb-2 text-center">{{ __('Sign In') }}</h2>
                                     <!-- <p class="text-center">Login to stay connected.</p> -->
-                                    <p class="text-center my-3">{{ __("Use your PIN") }}</p>
+                                    <p class="text-center my-3">{{ __('Use your PIN') }}</p>
                                     <form method="POST" action="{{ route('login') }}" id="login">
                                         @csrf
                                         <div class="row">
                                             <div class="col-lg-12">
-                                                <input type="tel" name="pin" class="form-control password-input @error('pin') is-invalid @enderror" id="pin" placeholder="{{ __("PIN") }}" autocomplete="off">
+                                                <input type="tel" name="pin"
+                                                    class="form-control password-input @error('pin') is-invalid @enderror"
+                                                    id="pin" placeholder="{{ __('PIN') }}"
+                                                    autocomplete="off">
                                                 @error('pin')
                                                     <p class="text-danger">{{ $message }}</p>
                                                 @enderror
                                             </div>
                                         </div>
-                                        <p class="text-center mt-4">{{ __("Or sign in with email and password") }}</p>
+                                        <p class="text-center mt-4">{{ __('Or sign in with email and password') }}</p>
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="form-group">
-                                                    <label for="email" class="form-label">{{ __("Email") }}</label>
-                                                    <input type="email" class="form-control" placeholder="{{ __("Email") }}"
-                                                        aria-label="{{ __("Email") }}" aria-describedby="email-addon" name="email"
-                                                        :value="old('email')" autofocus
+                                                    <label for="email"
+                                                        class="form-label">{{ __('Email') }}</label>
+                                                    <input type="email" class="form-control"
+                                                        placeholder="{{ __('Email') }}"
+                                                        aria-label="{{ __('Email') }}" aria-describedby="email-addon"
+                                                        name="email" :value="old('email')" autofocus
                                                         autocomplete="username">
                                                 </div>
                                                 @error('email')
@@ -102,10 +111,13 @@
                                             </div>
                                             <div class="col-lg-12">
                                                 <div class="form-group">
-                                                    <label for="password" class="form-label">{{ __("Password") }}</label>
-                                                    <input type="password" class="form-control" placeholder="{{ __("Password") }}"
-                                                        aria-label="{{ __("Password") }}" aria-describedby="password-addon"
-                                                        name="password" autocomplete="current-password">
+                                                    <label for="password"
+                                                        class="form-label">{{ __('Password') }}</label>
+                                                    <input type="password" class="form-control"
+                                                        placeholder="{{ __('Password') }}"
+                                                        aria-label="{{ __('Password') }}"
+                                                        aria-describedby="password-addon" name="password"
+                                                        autocomplete="current-password">
                                                 </div>
                                                 @error('password')
                                                     <p class="text-danger">{{ $message }}</p>
@@ -115,21 +127,29 @@
                                                 <div class="form-check mb-3">
                                                     <input type="checkbox" class="form-check-input" id="remember_me"
                                                         name="remember">
-                                                    <label class="form-check-label" for="customCheck1">{{ __("Remember Me") }}</label>
+                                                    <label class="form-check-label"
+                                                        for="customCheck1">{{ __('Remember Me') }}</label>
                                                 </div>
-                                                <a href="#">{{ __("Forgot Password?") }}</a>
+                                                <a href="#">{{ __('Forgot Password?') }}</a>
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-between">
                                             <a href="{{ url('/webclock') }}">
-                                                <button type="button" class="btn btn-danger" >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"></path>
-                                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"></path>
+                                                <button type="button" class="btn btn-danger">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                        height="16" fill="currentColor" class="bi bi-clock"
+                                                        viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z">
+                                                        </path>
+                                                        <path
+                                                            d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0">
+                                                        </path>
                                                     </svg>
                                                 </button>
                                             </a>
-                                            <button type="submit" class="btn btn-xl btn-primary">{{ __("Sign In") }}</button>
+                                            <button type="submit"
+                                                class="btn btn-xl btn-primary">{{ __('Sign In') }}</button>
                                         </div>
                                     </form>
                                 </div>

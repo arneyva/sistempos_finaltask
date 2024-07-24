@@ -5,39 +5,78 @@
     <p>{{ __('Configure your company profile') }} </p>
 @endsection
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
 <style>
-    .upload-logo {
-        padding: 20px 8px;
-        border: 1px dashed #D5DBE1;
+    .background {
+        position: fixed;
+        /* atau 'absolute', tergantung kebutuhan */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Warna gelap dengan transparansi */
+        z-index: 1;
+        /* Pastikan lebih tinggi dari elemen lain kecuali modal */
     }
 
-    .upload-logo:hover {
-        cursor: pointer;
-        border-color: #D25555;
+    .overlay {
+        z-index: 2;
+        /* Pastikan lebih tinggi dari elemen lain kecuali modal */
     }
 
-    .after-upload-logo {
-        padding: 20px 8px;
-        border: 1px dashed #D25555;
+    img {
+        display: block;
+        max-width: 100%;
     }
 
-    .logo-action {
+    .image-container {
+        overflow: hidden;
+        max-width: 510px !important;
+        max-height: 370px !important;
+    }
+
+    .preview {
         display: none;
-        position: absolute;
     }
 
-    .logo-wrapper:hover {
-        cursor: pointer;
+    @media (min-width: 768px) {
+
+        /* Adjust the large (lg) screen breakpoint */
+        .modal-lg {
+            --bs-modal-width: 700px;
+            /* Set your desired minimum width for large screens (lg) */
+        }
+
+        .preview {
+            display: block;
+            overflow: hidden;
+            width: 210px;
+            height: 210px;
+            border: 1px solid red;
+        }
     }
 
-    .logo-wrapper:hover #previewLogo {
-        position: relative;
-        filter: brightness(50%)
-    }
-
-    .logo-wrapper:hover .logo-action {
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        /* Atur tinggi sesuai kebutuhan */
         display: flex;
-        gap: 5px
+        align-items: center;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 38px !important;
+        /* Sesuaikan dengan tinggi yang diatur */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+        /* Sesuaikan dengan tinggi yang diatur - 2px untuk padding */
+    }
+
+    .select2-container .select2-dropdown .select2-results__options {
+        max-height: 220px;
+        /* Atur tinggi maksimum sesuai kebutuhan */
     }
 </style>
 @section('content')
@@ -95,7 +134,8 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="codebaseproduct">{{ __('Company') }} {{ __('Email') }}
+                                    <label class="form-label" for="codebaseproduct">{{ __('Company') }}
+                                        {{ __('Email') }}
                                         *</label>
                                     <input type="text" class="form-control" id="codebaseproduct" required
                                         placeholder="input code" name="email" value="{{ $company->email }}">
@@ -109,11 +149,13 @@
                                         </div>
                                     @enderror
                                 </div>
-                                
+
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="codebaseproduct">Email App Password (for server) *</label>
+                                    <label class="form-label" for="codebaseproduct">Email App Password (for server)
+                                        *</label>
                                     <input type="password" class="form-control" id="codebaseproduct"
-                                        placeholder="{{empty($company->server_password) ? "App Password doesn't exist" : "change app password" }}" name="server_password">
+                                        placeholder="{{ empty($company->server_password) ? "App Password doesn't exist" : 'change app password' }}"
+                                        name="server_password" value="{{ $company->server_password }}">
                                     @error('server_password')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -127,8 +169,9 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="description">{{ __('Company') }}
                                         {{ __('Address') }}</label>
-                                    <input type="text" class="form-control" id="description" placeholder="a few words..."
-                                        name="CompanyAdress" value="{{ $company->CompanyAdress }}">
+                                    <input type="text" class="form-control" id="description"
+                                        placeholder="a few words..." name="CompanyAdress"
+                                        value="{{ $company->CompanyAdress }}">
                                     @error('CompanyAdress')
                                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
                                             role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -139,7 +182,7 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                {{-- <div class="col-md-6 mb-3">
                                     <label class="form-label" for="type">{{ __('Default Language') }}</label>
                                     <select class="form-select" id="type" name="type">
                                         <option selected disabled value="">{{ __('Choose...') }}</option>
@@ -148,7 +191,7 @@
                                         <option value="is_variant" {{ old('type') == 'is_variant' ? 'selected' : '' }}>
                                             {{ __('Indonesian Language') }}</option>
                                     </select>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-6 mb-3">
                                     {{-- <div class="form-group mt-2" style="margin-top: 10px"> --}}
                                     <button class="btn btn-primary" type="submit"
@@ -161,66 +204,80 @@
             </div>
         </div>
     </div>
-    {{-- Handle Image --}}
     <div class="col-md-12 col-lg-4">
-        <div class="row">
-            <div class="col-md-12 col-lg-12">
-                <div class="card credit-card-widget" data-aos="fade-up" data-aos-delay="900">
-                    <div class="pb-4 border-0 card-header">
-                        <div class="p-4 border border-white rounded primary-gradient-card">
-                            <div class="d-flex justify-content-center align-items-center">
-                                <input type="file" accept="image/*" style="display: none" name="logo"
-                                    id="logo">
-                                <div id="openLogoUpload"
-                                    class="d-flex flex-column justify-content-center align-items-center upload-logo">
-                                    <span style="font-size: 24px; color:#D25555">+</span>
-                                    <span style="font-size: 20px; color:#ffffff">{{ __('Upload Image') }}</span>
-                                    <span
-                                        style="font-size: 20px; color:#ffffff; margin-top: 10px;">{{ __('Max. File Size 15MB') }}</span>
-                                </div>
-                                <div id="afterLogoUpload" style="max-height: 100%;max-width: 100%;"
-                                    class="d-none justify-content-center align-items-center after-upload-logo">
-                                    <div class="logo-wrapper d-flex justify-content-center align-items-center">
-                                        <img style="max-height: 100%;max-width: 100%; object-fit: contain; object-position: center;"
-                                            id="previewLogo">
-                                        <div class="logo-action">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
-                                                viewBox="0 0 24 24" id="viewLogoIcon" alt="View"
-                                                data-bs-toggle="modal" data-bs-target="#viewLogoModal">
-                                                <g fill="none" stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="1.5" color="currentColor">
-                                                    <path
-                                                        d="M21.544 11.045c.304.426.456.64.456.955c0 .316-.152.529-.456.955C20.178 14.871 16.689 19 12 19c-4.69 0-8.178-4.13-9.544-6.045C2.152 12.529 2 12.315 2 12c0-.316.152-.529.456-.955C3.822 9.129 7.311 5 12 5c4.69 0 8.178 4.13 9.544 6.045" />
-                                                    <path d="M15 12a3 3 0 1 0-6 0a3 3 0 0 0 6 0" />
-                                                </g>
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
-                                                viewBox="0 0 24 24" id="deleteLogoIcon" alt="Delete">
-                                                <path fill="currentColor"
-                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                    <h4 class="card-title">{{ __('Update') }} {{ __('Logo') }}</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="card-header pb-4 border-dashed rounded" style="border: 1px dashed rgb(94, 87, 87);">
+                        <div class="profile-img-edit position-relative d-flex justify-content-center align-items-center">
+                            <img src="{{ asset('hopeui/html/assets/images/avatars/' . $company['logo']) }}"
+                                id="firstImage" alt="profile-pic"
+                                class="theme-color-default-img profile-pic rounded avatar-100">
+                            <button type="button" class="upload-icone bg-primary" id="chooseImageButton">
+                                <svg class="upload-button icon-14" width="14" viewBox="0 0 24 24">
+                                    <path fill="#ffffff"
+                                        d="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z" />
+                                </svg>
+                                <input type="file" name="image" class="image" id="imageInput"
+                                    style="display: none;">
+                            </button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="croppedImageData" name="avatar">
+                    <div class="img-extension mt-3">
+                        <div class="d-inline-block align-items-center py-1">
+                            <span>Only</span>
+                            <a href="#">.jpg</a>
+                            <a href="#">.png</a>
+                            <a href="#">.jpeg</a>
+                            <span>allowed</span>
+                        </div>
+                        <div class="d-inline-block align-items-center">
+                            <span>Max. File size</span>
+                            <a href="#">10 MB</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Error message container -->
-    <div id="error-message" class="text-danger mt-2"></div>
-    <!-- Modal for viewing logo -->
-    <div class="modal fade" id="viewLogoModal" tabindex="-1" aria-labelledby="viewLogoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewLogoModalLabel">{{ __('Logo Preview') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <img id="logoExtend" src="" alt="Logo Preview" style="max-width: 100%; height: auto;">
+    <!-- Modal for image preview and cropping -->
+    <div class="modal fade" id="modal" data-bs-backdrop="static" tabindex="-1" role="dialog"
+        aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="background">
+            <div class="modal-dialog modal-dialog-centered modal-lg overlay" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">Crop Image</h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- <div class="img-container"> -->
+                        <!-- <div class="row" style="height: 300px;"> -->
+                        <div class="row">
+                            <div class="col-md-8">
+                                <!-- Default image where we will set the src via jQuery -->
+                                <div class="docs-demo">
+                                    <div class="image-container">
+                                        <img id="image">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 px-0">
+                                <div class="preview"></div>
+                            </div>
+                        </div>
+                        <!-- </div> -->
+                        <!-- </div> -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="crop">Save changes</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -228,61 +285,87 @@
     </form>
 @endsection
 @push('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
-        $(document).ready(function() {
-            var openLogoUpload = $('#openLogoUpload');
-            var afterLogoUpload = $('#afterLogoUpload');
-            var logoUpload = $('#logo');
-            var preview = $('#previewLogo');
-            var previewExtend = $('#logoExtend');
-            var deleteLogoIcon = $('#deleteLogoIcon');
-            var viewLogoIcon = $('#viewLogoIcon');
-            var errorMessage = $('#error-message');
+        var bs_modal = $('#modal');
+        var image = document.getElementById('image');
+        var cropper, reader, file;
 
-            openLogoUpload.click(function() {
-                logoUpload.click();
-            });
+        $("body").on("change", ".image", function(e) {
+            var files = e.target.files;
+            var maxFileSizeInBytes = 10 * 1024 * 1024;
+            var allowedExtensions = ['jpg', 'jpeg', 'png'];
 
-            logoUpload.change(function() {
-                var file = this.files[0];
-                if (file) {
-                    // Check file size
-                    if (file.size > 15728640) { // 15 MB in bytes
-                        errorMessage.text('File size exceeds 15 MB.');
-                        this.value = ''; // Clear the file input
-                        return;
-                    }
+            if (files && files.length > 0) {
+                file = files[0];
 
-                    var img = new Image();
-                    img.src = URL.createObjectURL(file);
+                var fileExtension = file.name.split('.').pop().toLowerCase();
 
-                    img.onload = function() {
-                        errorMessage.text(''); // Clear any error messages
-                        openLogoUpload.removeClass('d-flex').addClass('d-none');
-                        afterLogoUpload.removeClass('d-none').addClass('d-flex');
-                        preview.attr('src', URL.createObjectURL(file));
-                        previewExtend.attr('src', URL.createObjectURL(file));
-                    };
+                if (!allowedExtensions.includes(fileExtension)) {
+                    // Display an error message
+                    alert("Only .jpg, .jpeg, and .png files are allowed.");
 
-                    img.onerror = function() {
-                        errorMessage.text('Error loading image. Please try again.');
-                        logoUpload.val('');
-                    };
+                    // Optionally, clear the file input
+                    $(this).val('');
+                    return; // Exit the function early
                 }
-            });
 
-            deleteLogoIcon.click(function() {
-                afterLogoUpload.removeClass('d-flex').addClass('d-none');
-                openLogoUpload.removeClass('d-none').addClass('d-flex');
-                logoUpload.val('');
-                preview.attr('src', '');
-                previewExtend.attr('src', '');
-                errorMessage.text('');
-            });
+                if (file.size > maxFileSizeInBytes) {
+                    // Display an error message
+                    alert("File size exceeds the maximum allowed size.");
 
-            viewLogoIcon.click(function() {
-                $('#viewLogoModal').modal('show');
-            });
+                    // Optionally, clear the file input
+                    $(this).val('');
+                    return; // Exit the function early
+                }
+
+
+                var done = function(url) {
+                    image.src = url;
+                    bs_modal.modal('show');
+                };
+
+
+                if (URL) {
+                    done(URL.createObjectURL(file));
+                } else if (FileReader) {
+                    reader = new FileReader();
+                    reader.onload = function(e) {
+                        done(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+            // Reset the value of the file input to trigger change event even if the same file is selected again
+            $(this).val('');
         });
+
+        bs_modal.on('shown.bs.modal', function() {
+            cropper = new Cropper(image, {
+                aspectRatio: 1,
+                viewMode: 1,
+                autoCropArea: 1,
+                dragMode: 'move',
+                preview: '.preview'
+            });
+        }).on('hidden.bs.modal', function() {
+            cropper.destroy();
+            cropper = null;
+        });
+
+        $("#crop").click(function() {
+            canvas = cropper.getCroppedCanvas();
+            var croppedImage = canvas.toDataURL(); // Get the cropped image as base64 data URL
+            $("#firstImage").attr("src",
+                croppedImage); // Set the src attribute of the image element on the main page
+            $("#croppedImageData").val(
+                croppedImage); // Set the cropped image data to a hidden input field in the form
+            bs_modal.modal('hide'); // Close the modal
+            // $("#mainPage").show(); // Show the submit button on the main page
+        });
+
+        document.getElementById('chooseImageButton').addEventListener('click', function() {
+            document.getElementById('imageInput').click();
+        })
     </script>
 @endpush
