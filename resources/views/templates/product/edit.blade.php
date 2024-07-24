@@ -377,8 +377,13 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="codebaseproduct">{{ __('Product Code *') }}</label>
-                    <input type="text" class="form-control" id="codebaseproduct" required placeholder="input code"
-                        name="code" value="{{ $product['code'] }}">
+                    @if ($product['type'] == 'is_variant')
+                        <input type="text" class="form-control" id="codebaseproduct"
+                            placeholder="input code" name="code" value="{{ $product['code'] }}" readonly>
+                    @else
+                        <input type="text" class="form-control" id="codebaseproduct" required
+                            placeholder="input code" name="code" value="{{ $product['code'] }}">
+                    @endif
                     @error('code')
                         <div class="alert alert-right alert-warning alert-dismissible fade show mb-3" role="alert"
                             style="padding: 1px 1px 1px 1px; margin-top: 3px">
@@ -621,6 +626,7 @@
             var productCostField = document.getElementById("productcost");
             var productPriceField = document.getElementById("productprice");
             var productVariantField = document.getElementById("createvariant");
+            var codebaseproductField = document.getElementById("codebaseproduct");
 
             typeSelect.addEventListener("change", function() {
                 var selectedType = this.value;
@@ -629,10 +635,12 @@
                     productPriceField.value = ""; // Kosongkan nilai input harga produk
                     productCostField.disabled = true;
                     productPriceField.disabled = true;
+                    codebaseproductField.disabled = true;
                     productVariantField.style.display = "block";
                 } else {
                     productCostField.disabled = false;
                     productPriceField.disabled = false;
+                    codebaseproductField.disabled = false;
                     productVariantField.style.display = "none";
                 }
             });

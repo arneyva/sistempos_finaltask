@@ -320,6 +320,28 @@ class ProductController extends Controller
             'related_units' => $relatedUnits,
         ]);
     }
+    public function getCodeVariant()
+    {
+        // Ambil produk terakhir dengan tipe is_variant yang memiliki kode dengan format VAR-xxx
+        $lastVariant = DB::table('products')
+            ->where('type', 'is_variant')
+            ->where('code', 'like', 'VAR-%')
+            ->latest('id')
+            ->first();
+
+        if ($lastVariant) {
+            // Ambil kode terakhir dan ekstrak angka di belakang
+            $lastCode = $lastVariant->code;
+            $number = (int)substr($lastCode, 4);
+            $newNumber = $number + 1;
+            $code = 'VAR-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        } else {
+            // Jika tidak ada produk variant sebelumnya yang memiliki kode VAR-xxx, mulai dengan VAR-001
+            $code = 'VAR-001';
+        }
+
+        return $code;
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -338,8 +360,17 @@ class ProductController extends Controller
             // rules produk utama
             $productRules = $request->validate([
                 'type' => 'required',
+                // 'code' => [
+                //     'required',
+                //     Rule::unique('products')->where(function ($query) {
+                //         return $query->where('deleted_at', '=', null);
+                //     }),
+                //     Rule::unique('product_variants')->where(function ($query) {
+                //         return $query->where('deleted_at', '=', null);
+                //     }),
+                // ],
                 'code' => [
-                    'required',
+                    Rule::requiredIf($request->type != 'is_variant'),
                     Rule::unique('products')->where(function ($query) {
                         return $query->where('deleted_at', '=', null);
                     }),
@@ -410,7 +441,11 @@ class ProductController extends Controller
             }
             $productValue->name = $request['name'];
             $productValue->image = $filename;
-            $productValue->code = $request['code'];
+            if ($request->type == 'is_variant') {
+                $productValue->code = $this->getCodeVariant();
+            } else {
+                $productValue->code = $request['code'];
+            }
             $productValue->Type_barcode = 'CODE128';
             $productValue->tax_method = 'Exclusive';
             $productValue->category_id = $request['category_id'];
@@ -773,7 +808,7 @@ class ProductController extends Controller
             // rules data product
             $productRules = $request->validate([
                 'code' => [
-                    'required',
+                    Rule::requiredIf($request->type != 'is_variant'),
                     Rule::unique('products')->ignore($id)->where(function ($query) {
                         return $query->where('deleted_at', '=', null);
                     }),
