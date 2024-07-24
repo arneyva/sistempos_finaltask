@@ -237,19 +237,11 @@
                                         @endif
                                     </td>
                                     <td style="text-align: center; vertical-align: middle;">
-                                        @php
-                                            $generatorPNG = new Picqer\Barcode\BarcodeGeneratorPNG();
-                                            $barcodeData = base64_encode(
-                                                $generatorPNG->getBarcode($item['code'], $generatorPNG::TYPE_CODE_128),
-                                            );
-                                            $barcodeUrl = 'data:image/png;base64,' . $barcodeData;
-                                        @endphp
                                         <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <img src="{{ $barcodeUrl }}" alt="Barcode" style="margin-bottom: 5px;">
+                                            <img src="{{ $item['qrCode'] }}" alt="QR Code" style="margin-bottom: 5px;">
                                             <span>{{ $item['code'] }}</span>
                                         </div>
                                     </td>
-
                                     <td>{{ $item['brand'] }}</td>
                                     <td>{{ $item['category'] }}</td>
                                     <td>

@@ -24,6 +24,11 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Intervention\Image\ImageManagerStatic as Image;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
+use Endroid\QrCode\Writer\PngWriter;
 
 class ProductController extends Controller
 {
@@ -63,6 +68,14 @@ class ProductController extends Controller
             $item['brand'] = $product['brand']->name ?? 'N/D';
             $item['TaxNet'] = $product->TaxNet;
             $item['namebase'] = $product->name;
+            // buat QR Code
+            $qrCode = QrCode::create($product->code)
+                ->setEncoding(new Encoding('ISO-8859-1'))
+                ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
+                ->setSize(75)
+                ->setMargin(10);
+            // Simpan data URI QR Code dalam item array
+            $item['qrCode'] = (new PngWriter())->write($qrCode)->getDataUri();
             // untuk product single
             if ($product->type == 'is_single') {
                 $item['name'] = $product->name;
