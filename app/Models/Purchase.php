@@ -53,7 +53,7 @@ class Purchase extends Model
         'estimate_arrive_date' => 'datetime',
         'provider_id' => 'int',
         'warehouse_id' => 'int',
-        'down_payment' => 'int',
+        'down_payment_rate' => 'int',
         'tax_rate' => 'float',
         'TaxNet' => 'float',
         'discount' => 'float',
@@ -61,6 +61,7 @@ class Purchase extends Model
         'GrandTotal' => 'float',
         'subtotal' => 'float',
         'paid_amount' => 'float',
+        'down_payment_net' => 'float',
         'shipment_cost' => 'float'
     ];
 
@@ -85,7 +86,6 @@ class Purchase extends Model
         'payment_method',
         'payment_term',
         'courier',
-        'down_payment',
         'supplier_notes',
         'req_arrive_date',
         'estimate_arrive_date',
@@ -97,6 +97,9 @@ class Purchase extends Model
         'supplier_ewalet',
         'delivery_file',
         'email_pin',
+        'address',
+        'down_payment_rate',
+        'down_payment_net',
     ];
 
     public function provider()

@@ -29,10 +29,10 @@
             <div class="header-title">
             </div>
             <div class="header-title">
-            <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">{{ __("Filter") }}</button>
+            <!-- <button type="button" class="btn btn-soft-primary" id="filterButton" data-bs-toggle="collapse" href="#filter" aria-controls="filter">{{ __("Filter") }}</button>
                 <button type="button" class="btn btn-soft-success">{{ __("Excel") }}</button>
                 <button type="button" class="btn btn-soft-danger">{{ __("PDF") }}</button>
-                <button type="button" class="btn btn-soft-gray">{{ __("Import Category") }}</button>
+                <button type="button" class="btn btn-soft-gray">{{ __("Import Category") }}</button> -->
                 <a href="#" style="margin-left: 30px;">
                     <button type="button" data-bs-toggle="modal" data-bs-target="#createCategory" class="btn btn-soft-primary">{{ __("Create +") }}</button>
                 </a>

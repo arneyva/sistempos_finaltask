@@ -44,7 +44,6 @@ class PurchaseMail extends Mailable
                 'date' => $this->data['date'],
                 'purchase_ref' => $this->data['purchase_ref'],
                 'company_name' => $this->data['company_name'],
-                'email_pin' => $this->data['email_pin'],
                 'status' => $this->data['status'],
                 'url' => $this->data['url'],
             ],

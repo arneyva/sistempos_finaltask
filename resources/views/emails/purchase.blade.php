@@ -127,7 +127,7 @@ To view details and confirm the order, click the following button
     buyer's name    : {{ $company_name }}
     vendor name     : {{ $supplier_name }}
     purchase code   : {{ $purchase_ref }}
-    To view details and confirm the order, click the following button
+To view details and confirm the order, click the following button
 </pre>
             @elseif ($status === 'shipped')
                 <pre>Our company initiate an agreement to purchase order with the following information
@@ -135,7 +135,7 @@ To view details and confirm the order, click the following button
     buyer's name    : {{ $company_name }}
     vendor name     : {{ $supplier_name }}
     purchase code   : {{ $purchase_ref }}
-    To view details and confirm the order, click the following button
+To view details and confirm the order, click the following button
 </pre>
             @elseif ($status === 'arrived')
                 <pre>Our company initiate an agreement to purchase order with the following information
@@ -143,7 +143,7 @@ To view details and confirm the order, click the following button
     buyer's name    : {{ $company_name }}
     vendor name     : {{ $supplier_name }}
     purchase code   : {{ $purchase_ref }}
-    To view details and confirm the order, click the following button
+To view details and confirm the order, click the following button
 </pre>
             @elseif ($status === 'complete')
                 <pre>Our company initiate an agreement to purchase order with the following information
@@ -151,7 +151,7 @@ To view details and confirm the order, click the following button
     buyer's name    : {{ $company_name }}
     vendor name     : {{ $supplier_name }}
     purchase code   : {{ $purchase_ref }}
-    To view details and confirm the order, click the following button
+To view details and confirm the order, click the following button
 </pre>
             @endif
         </div>

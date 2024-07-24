@@ -22,7 +22,7 @@
         current_time.innerHTML = time.format("kk:mm:ss");
 
         // set date in html
-        current_date.innerHTML = time.format('MMMM D, YYYY');
+        current_date.innerHTML = time.format('MMMM D YYYY');
 
         // set day in html
         current_day.innerHTML = time.format('ddd');

@@ -38,7 +38,10 @@
                     <td>{{ $attendance['schedule_out'] }}</td>
                     <td>{{ $attendance['clock_in'] }}</td>
                     <td>{{ $attendance['clock_out'] }}</td>
-                    <td>{{ $attendance['status'] }}</td>
+                    <td>{{ $attendance['status'] }}
+                        {{ $attendance['on_time'] ? ' -> ' . $attendance['on_time'] : '' }}
+                        {{ $attendance['late_in'] ? ' -> ' . $attendance['late_in'] : '' }}{{ $attendance['late_out'] ? ', ' . $attendance['late_out'] : '' }}
+                    </td>
                 </tr>
             @endforeach
         </tbody>
