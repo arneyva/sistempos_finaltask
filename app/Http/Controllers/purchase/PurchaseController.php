@@ -126,7 +126,7 @@ class PurchaseController extends Controller
             if ($request->ajax()) {
                 // Jika validasi gagal, kembalikan pesan error
                 return response()->json([
-                    'errors' => $validator->errors()->all()
+                    'error' => $validator->errors()->all()
                 ]);
             }
  
@@ -137,7 +137,7 @@ class PurchaseController extends Controller
             if ($request->ajax()) {
                 // Jika validasi gagal, kembalikan pesan error
                 return response()->json([
-                    'errors' => trans('Fill the product you want to purchase')
+                    'error' => trans('Fill the product you want to purchase')
                 ]);
             }
             return back()->with('error', 'Fill the product you want to purchase');
@@ -146,7 +146,7 @@ class PurchaseController extends Controller
             if ($request->ajax()) {
                 // Jika validasi gagal, kembalikan pesan error
                 return response()->json([
-                    'errors' => trans('Fill the product you want to purchase')
+                    'error' => trans('Fill the product you want to purchase')
                 ]);
             }
             return back()->with('error', 'Fill the product you want to purchase');
@@ -155,7 +155,7 @@ class PurchaseController extends Controller
             if ($request->ajax()) {
                 // Jika validasi gagal, kembalikan pesan error
                 return response()->json([
-                    'errors' => trans('Fill the product you want to purchase')
+                    'error' => trans('Fill the product you want to purchase')
                 ]);
             }
             return back()->with('error', 'Fill the product you want to purchase');
@@ -164,7 +164,7 @@ class PurchaseController extends Controller
             if ($request->ajax()) {
                 // Jika validasi gagal, kembalikan pesan error
                 return response()->json([
-                    'errors' => trans('Fill the product you want to purchase')
+                    'error' => trans('Fill the product you want to purchase')
                 ]);
             }
             return back()->with('error', 'Fill the product you want to purchase');
@@ -195,19 +195,19 @@ class PurchaseController extends Controller
             //jika setting tidak ditemukan
             if (!$settings) {
                 return response()->json([
-                    "error" => trans("Youe haven't set up your company settings")
+                    'error' => trans("Youe haven't set up your company settings")
                 ]);
             }
             //jika email company belum diset
             if (!$settings->email) {
                 return response()->json([
-                    "error" => trans("Youe haven't set up your company email")
+                    'error' => trans("Youe haven't set up your company email")
                 ]);
             }
             //jika app password dari email company belum di set
             if (!$settings->server_password) {
                 return response()->json([
-                    "error" => trans("Youe haven't set up your company email app password")
+                    'error' => trans("Youe haven't set up your company email app password")
                 ]);
             }
  
@@ -215,7 +215,7 @@ class PurchaseController extends Controller
             $email['company_name']=$settings->CompanyName;
             if (!$email['company_name']) {
                 return response()->json([
-                    "error" => trans("Youe haven't set up your company name")
+                    'error' => trans("Youe haven't set up your company name")
                 ]);
             }
  
@@ -427,7 +427,7 @@ class PurchaseController extends Controller
             if ($request->ajax()) {
                 // Jika validasi gagal, kembalikan pesan error
                 return response()->json([
-                    'errors' => $validator->errors()->all()
+                    'error' => $validator->errors()->all()
                 ]);
             }
  
@@ -463,19 +463,19 @@ class PurchaseController extends Controller
             //jika setting tidak ditemukan
             if (!$settings) {
                 return response()->json([
-                    "error" => trans("Youe haven't set up your company settings")
+                    'error' => trans("Youe haven't set up your company settings")
                 ]);
             }
             //jika email company belum diset
             if (!$settings->email) {
                 return response()->json([
-                    "error" => trans("Youe haven't set up your company email")
+                    'error' => trans("Youe haven't set up your company email")
                 ]);
             }
             //jika app password dari email company belum di set
             if (!$settings->server_password) {
                 return response()->json([
-                    "error" => trans("Youe haven't set up your company email app password")
+                    'error' => trans("Youe haven't set up your company email app password")
                 ]);
             }
  
@@ -483,7 +483,7 @@ class PurchaseController extends Controller
             $email['company_name']=$settings->CompanyName;
             if (!$email['company_name']) {
                 return response()->json([
-                    "error" => trans("Youe haven't set up your company name")
+                    'error' => trans("Youe haven't set up your company name")
                 ]);
             }
  
@@ -770,7 +770,7 @@ class PurchaseController extends Controller
             ]);
         } else {
             return response()->json([
-                "error" => trans("product not found")
+                'error' => trans("product not found")
             ]);
         }
     }
@@ -782,7 +782,7 @@ class PurchaseController extends Controller
             return response()->json($supplier);
         } else {
             return response()->json([
-                "error" => trans("product not found")
+                'error' => trans("product not found")
             ]);
         }
     }

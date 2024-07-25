@@ -48,28 +48,50 @@ class ClientController extends Controller
     public function store(Request $request)
     {
 
-        $rules = [
-            'name_create' => 'required',
-            'email_create' => 'required|email|unique:clients,email',
-            'phone_create' => 'required|numeric|min_digits:12|max_digits:12',
-        ];
-        $message = [
-            'required' => 'Tidak boleh kosong!',
-            'email' => 'Alamat email tidak valid!',
-            'min' => 'Minimal :min karakter',
-            'min_digits' => 'Nomor terdiri dari :min angka',
-            'max' => 'Maksimal :max karakter',
-            'max_digits' => 'Nomor terdiri dari :max angka',
-            'unique' => ':attribute sudah terdaftar',
-        ];
-
-        $validateData = $request->validate($rules, $message);
+        if (!$request->ajax()) {
+            $rules = [
+                'name_create' => 'required',
+                'email_create' => 'required|email|unique:clients,email',
+                'phone_create' => 'required|numeric|min_digits:12|max_digits:12',
+            ];
+            $message = [
+                'required' => 'Tidak boleh kosong!',
+                'email' => 'Alamat email tidak valid!',
+                'min' => 'Minimal :min karakter',
+                'min_digits' => 'Nomor terdiri dari :min angka',
+                'max' => 'Maksimal :max karakter',
+                'max_digits' => 'Nomor terdiri dari :max angka',
+                'unique' => ':attribute sudah terdaftar',
+            ];
+    
+            $validateData = $request->validate($rules, $message);
+        } else {
+            $validate= Client::where('email',$request->email_create)->exists();
+            if ($validate) {
+                return response()->json([
+                    'error' => trans('Email is already taken')
+                ]);
+            };
+        };
 
         $client = new Client;
         $client->name = $request['name_create'];
         $client->email = $request['email_create'];
         $client->phone = $request['phone_create'];
         $client->save();
+
+        $new_client=Client::latest()->first();
+
+        if ($request->ajax()) {
+            return response()->json([
+                "success" => 'Customer Created',
+                "name" => $new_client->name,
+                "email" => $new_client->email,
+                "phone" => $new_client->phone,
+                "score" => $new_client->score,
+                "is_poin_activated" => $new_client->is_poin_activated,
+            ]);
+        };
 
         return redirect()->route('people.clients.index')->with(['success' => 'Client berhasil ditambahkan']);
     }
