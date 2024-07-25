@@ -432,9 +432,13 @@ class SaleController extends Controller
                             //kurangkan score dengan diskon yang sudah diubah ke score
                             $total_score -= $request->discount_client / $one_score_equal;
                         }
+                        // Reset the client score to 0 before adding the new score
+                        $client_sale->score = 0;
 
-                        // Menambahkan total_score ke client score
+                        // Add the new score to the client's score
                         $client_sale->score += $total_score;
+                        // // Menambahkan total_score ke client score
+                        // $client_sale->score += $total_score;
 
                         //mencegah score menjadi negatif
                         if ($client_sale->score <= 0) {

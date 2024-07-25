@@ -55,7 +55,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                {{-- <div class="col-md-4 mb-3">
                                     <label class="form-label" for="customer">{{ __('Customer *') }}</label>
                                     <select class="form-select" id="customer" name="client_id" required>
                                         <option selected disabled value="">{{ __('Choose...') }}</option>
@@ -65,7 +65,25 @@
                                                 {{ $cl->name }}</option>
                                         @endforeach
                                     </select>
+                                </div> --}}
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="customer">{{ __('Customer *') }}</label>
+                                    <select class="form-select" id="customer" name="client_id" required>
+                                        <option selected disabled value="">{{ __('Choose...') }}</option>
+                                        @foreach ($client as $cl)
+                                            <option value="{{ $cl->id }}" data-status="{{ $cl->is_poin_activated }}"
+                                                data-score="{{ $cl->score }}">
+                                                {{ $cl->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="score">{{ __('Score') }}</label>
+                                    <input type="text" id="score" class="form-control">
+                                </div>
+
+
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="exampleInputdate">{{ __('Date *') }}</label>
                                     <input type="date" class="form-control" id="exampleInputdate" name="date"
@@ -118,6 +136,10 @@
                                             </tr>
                                             <tr>
                                                 <td>{{ __('Shipping') }}</td>
+                                                <th></th>
+                                            </tr>
+                                            <tr>
+                                                <td>{{ __('Membership') }}</td>
                                                 <th></th>
                                             </tr>
                                             <tr>
@@ -352,6 +374,14 @@
 @endsection
 
 @push('script')
+    {{-- <script>
+        document.getElementById('customer').addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            var score = selectedOption.getAttribute('data-score');
+            document.getElementById('score').value = score ? score : '';
+        });
+    </script> --}}
+
     <script>
         $(document).ready(function() {
             // Initialize Select2 for Warehouse Dropdown
@@ -361,10 +391,10 @@
             });
 
             // Initialize Select2 for Customer Dropdown
-            $('#customer').select2({
-                placeholder: "Choose a customer...",
-                allowClear: true
-            });
+            // $('#customer').select2({
+            //     placeholder: "Choose a customer...",
+            //     allowClear: true
+            // });
         });
     </script>
     <script>
@@ -769,6 +799,9 @@
                     }
                 });
                 var discount = getNumericValue('discount');
+                var score = getNumericValue('score');
+                var test = score * 100;
+                console.log(test);
                 console.log(discount);
                 var shipping = getNumericValue('shipping');
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
@@ -782,10 +815,14 @@
 
                 // Calculate grand total
                 grandTotal = grandTotal - discount + shipping + taxNet;
+                if (grandTotal >= test) {
+                    grandTotal = grandTotal - test;
+                }
                 $('#basic-table tr:nth-child(1) th').text(formatRupiah(taxNet.toFixed(0))); // Order Tax
                 $('#basic-table tr:nth-child(2) th').text(formatRupiah(discount.toFixed(0))); // Discount
                 $('#basic-table tr:nth-child(3) th').text(formatRupiah(shipping.toFixed(0))); // Shipping
-                $('#basic-table tr:nth-child(4) th').text(formatRupiah(grandTotal.toFixed(0))); // Grand Total
+                $('#basic-table tr:nth-child(4) th').text(formatRupiah(test.toFixed(0))); // Grand Total
+                $('#basic-table tr:nth-child(5) th').text(formatRupiah(grandTotal.toFixed(0))); // Grand Total
                 $('#grandTotal').val(grandTotal.toFixed(2));
                 $('#paying_amount').val(formatRupiah(grandTotal.toFixed(0)));
             }
@@ -801,7 +838,8 @@
 
             // Mengecek nilai dari status dan melakukan aksi berdasarkan nilai tersebut
             if (status === '1') {
-
+                var score = selectedOption.getAttribute('data-score');
+                document.getElementById('score').value = score ? score : '';
 
             } else if (status === '0') {
 
