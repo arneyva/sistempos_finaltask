@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('pages_title')
-    <h1>{{ __('Edit Transfer') }}</h1>
+    <h1>{{ __('Confirm') }}{{ __(' Transfer') }}</h1>
     <p>{{ __('Manage your product transfers easily and efficiently') }}</p>
 @endsection
 <style>
@@ -34,24 +34,19 @@
                 <div class="card" data-aos="fade-up" data-aos-delay="800">
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
-                            <h4 class="card-title">{{ __('Edit Transfer') }}</h4>
+                            <h4 class="card-title">{{ __('Confirm') }}{{ __(' Transfer') }}</h4>
                         </div>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('transfer.update', ['id' => $transfer['id']]) }}" method="POST">
+                        <form action="{{ route('transfer.update-for-staff', ['id' => $transfer['id']]) }}" method="POST">
                             @csrf
                             @method('PATCH')
                             <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label"
-                                        for="selectWarehouse">{{ __('From Warehouse/Outlet *') }}</label>
-                                    <input type="text" class="form-control" id="selectWarehouseName"
-                                        value="{{ $warehouse->firstWhere('id', $transfer['from_warehouse'])->name }}"
-                                        readonly>
+                                <div class="col-md-4 mb-3" style="display: none">
                                     <input type="hidden" id="selectWarehouse" name="transfer[from_warehouse]"
                                         value="{{ $transfer['from_warehouse'] }}">
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" style="display: none">
                                     <label class="form-label"
                                         for="selectToWarehouse">{{ __('To Warehouse/Outlet *') }}</label>
                                     <select class="form-select" id="selectToWarehouse" name="transfer[to_warehouse]"
@@ -63,17 +58,10 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3" style="display: none">
                                     <label class="form-label" for="exampleInputdate">{{ __('Date *') }}</label>
                                     <input type="date" class="form-control" id="exampleInputdate" name="transfer[date]"
                                         value="{{ date('Y-m-d') }}">
-                                </div>
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="selectProduct">{{ __('Product *') }}</label>
-                                    <select class="form-select" id="selectProduct" disabled>
-                                        <option selected disabled value="">
-                                            {{ __('Scan/Search Product by Code or Name') }}.</option>
-                                    </select>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
@@ -83,9 +71,9 @@
                                                     <th>#</th>
                                                     <th>{{ __('Product') }}</th>
                                                     <th>{{ __('Purchases') }} {{ __('Cost') }}</th>
-                                                    <th>{{ __('Initial Stock') }}</th>
-                                                    <th>{{ __('Stock') }}</th>
-                                                    <th>{{ __('Quantity') }}</th>
+                                                    <th></th>
+                                                    <th>{{ __('Shipped Quantity') }}</th>
+                                                    <th>Received {{ __('Quantity') }}</th>
                                                     <th>{{ __('Discount') }}</th>
                                                     <th>{{ __('Tax') }}</th>
                                                     <th>{{ __('Subtotal') }}</th>
@@ -98,9 +86,8 @@
                                                         <td>#</td>
                                                         <td>{{ $detail['code'] }} {{ $detail['name'] }}</td>
                                                         <td>{{ 'Rp ' . number_format($detail['Unit_cost'], 0, ',', '.') }}
-                                                        <td>{{ $detail['initial_stock'] }} {{ $detail['unitPurchase'] }}
-                                                        </td>
-                                                        <td>{{ $detail['stock'] }} {{ $detail['unitPurchase'] }}</td>
+                                                        <td></td>
+                                                        <td>{{ $detail['quantity'] }} {{ $detail['unitPurchase'] }}</td>
                                                         <td>
                                                             <input type="number" class="form-control item-quantity"
                                                                 name="details[{{ $index }}][quantity]"
@@ -108,7 +95,7 @@
                                                                 data-unit-cost="{{ $detail['Unit_cost'] }}"
                                                                 data-tax-percent="{{ $detail['tax_percent'] }}"
                                                                 data-tax-method="{{ $detail['tax_method'] }}"
-                                                                data-max-quantity="{{ $detail['stock'] }}">
+                                                                data-max-quantity="{{ $detail['quantity'] }}">
                                                         </td>
                                                         <td class="item-discount">
                                                             {{ 'Rp ' . number_format($detail['DiscountNet'], 0, ',', '.') }}
@@ -203,6 +190,48 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
+                                            <div class="form-group input-group">
+                                                <input type="text" class="form-control" id="shipping"
+                                                    placeholder="{{ __('input shipping') }}" name="transfer[shipping]"
+                                                    value="{{ $transfer['shipping'] }}" readonly>
+                                                <input type="hidden" id="shipping_value"
+                                                    name="transfer[shipping_value]">
+                                            </div>
+                                            @error('transfer.shipping')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label" for="status">{{ __('Status *') }}</label>
+                                            <select class="form-select select2" id="status" name="transfer[statut]"
+                                                required data-placeholder="Select a Status">
+                                                {{-- <option value="{{ $transfer['statut'] }}">{{ $transfer['statut'] }}
+                                                </option>
+                                                <option value="sent">{{ __('Sent') }}</option> --}}
+                                                <option value="completed">{{ __('Completed') }}</option>
+                                            </select>
+                                            @error('transfer.statut')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-12 mb-3">
                                     <div class="row">
                                         <div class="col-md-4 mb-3" style="display: none">
@@ -234,7 +263,8 @@
                                                 <input type="text" class="form-control" id="discount"
                                                     placeholder="{{ __('input discount') }}" name="transfer[discount]"
                                                     value="{{ $transfer['discount'] }}">
-                                                <input type="hidden" id="discount_value" name="transfer[discount_value]">
+                                                <input type="hidden" id="discount_value"
+                                                    name="transfer[discount_value]">
                                             </div>
                                             @error('transfer.discount')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -246,46 +276,10 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
-                                            <div class="form-group input-group">
-                                                <input type="text" class="form-control" id="shipping"
-                                                    placeholder="{{ __('input shipping') }}" name="transfer[shipping]"
-                                                    value="{{ $transfer['shipping'] }}">
-                                                <input type="hidden" id="shipping_value" name="transfer[shipping_value]">
-                                            </div>
-                                            @error('transfer.shipping')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="status">{{ __('Status *') }}</label>
-                                            <select class="form-select select2" id="status" name="transfer[statut]"
-                                                required data-placeholder="Select a Status">
-                                                <option value="{{ $transfer['statut'] }}">{{ $transfer['statut'] }}
-                                                </option>
-                                                <option value="sent">{{ __('Sent') }}</option>
-                                                <option value="completed">{{ __('Completed') }}</option>
-                                            </select>
-                                            @error('transfer.statut')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
+
                                     </div>
                                 </div>
-                                <div class="col-md-12 mb-3" style="display: none">
+                                <div class="col-md-12 mb-3">
                                     <label class="form-label"
                                         for="exampleFormControlTextarea1">{{ __('Note') }}</label>
                                     <input type="text" class="form-control" id="exampleFormControlTextarea1"
