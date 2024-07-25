@@ -133,7 +133,9 @@ Route::prefix('transfer')->middleware(['auth', 'verified'])->name('transfer.')->
     Route::get('create', [TransferController::class, 'create'])->middleware('role:superadmin|inventaris')->name('create');
     Route::post('store', [TransferController::class, 'store'])->middleware('role:superadmin|inventaris')->name('store');
     Route::get('edit/{id}', [TransferController::class, 'edit'])->middleware('role:superadmin|inventaris')->name('edit');
+    Route::get('edit-for-staff/{id}', [TransferController::class, 'editForStaff'])->middleware('role:staff')->name('edit-for-staff');
     Route::patch('update/{id}', [TransferController::class, 'update'])->middleware('role:superadmin|inventaris')->name('update');
+    Route::patch('update-for-staff/{id}', [TransferController::class, 'updateStaff'])->middleware('role:staff')->name('update-for-staff');
     Route::patch('confirm/{id}', [TransferController::class, 'updateForStaff'])->name('confirm');
     Route::delete('destroy/{id}', [TransferController::class, 'destroy'])->name('destroy');
     Route::get('export', [TransferController::class, 'export'])->name('export');

@@ -121,7 +121,7 @@
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <div class="row">
-                                        <div class="col-md-4 mb-3">
+                                        <div class="col-md-4 mb-3" style="display: none">
                                             <label class="form-label" for="tax_rate">{{ __('Order Tax') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="number" class="form-control" id="tax_rate"
@@ -143,7 +143,7 @@
                                             placeholder="input tax net" name="transfer[TaxNet]"
                                             value="{{ old('transfer.TaxNet') }}">
                                         <input class="" type="hidden" id="grandTotal" name="GrandTotal">
-                                        <div class="col-md-4 mb-3">
+                                        <div class="col-md-4 mb-3" style="display: none">
                                             <label class="form-label" for="discount">{{ __('Discount') }}</label>
                                             <div class="form-group input-group">
                                                 <input type="text" class="form-control" id="discount"
@@ -199,7 +199,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-12 mb-3" style="display: none">
                                     <label class="form-label"
                                         for="exampleFormControlTextarea1">{{ __('Note') }}</label>
                                     <input type="text" class="form-control" id="exampleFormControlTextarea1"
