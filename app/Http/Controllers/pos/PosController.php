@@ -169,9 +169,9 @@ class PosController extends Controller
         ]);
     }
 
-    public function sendEmail (String $email) {
+    public function sendEmail (String $email_client) {
         $email = [];
-        $customer = Client::where('email', $email)->first();
+        $customer = Client::where('email', $email_client)->first();
 
         if (!$customer) {
             return response()->json([
@@ -210,11 +210,12 @@ class PosController extends Controller
         }
 
         //subject email
-        $email['subject']= $email['customer_name']." Claim your discount for shopping at ".$email['company_name'];
+        $email['subject']= $email['customer_name'].", Claim your discount for shopping at ".$email['company_name'];
 
         //set mailing
         $this->Set_config_mail();
 
+        
         //set unik url agar tidak semua tidak bisa mengakses halaman redirect
         $email['url'] = URL::signedRoute('client.landing', ['id' => $customer->id]);
         //kirim email ke email sesuai di purchase

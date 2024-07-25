@@ -81,7 +81,7 @@
 }
 
 .send-email.loading svg {
-    transform: translateX(1.2em) rotate(45deg) scale(1.1);
+    transform: translateX(1.3em) rotate(45deg) scale(1.1);
 }
 
 .send-email.loading span {
@@ -614,7 +614,7 @@
                                                 <button type="button" class="btn btn-sm btn-secondary me-2" >
                                                     Edit
                                                 </button>
-                                                <button type="button" class="send-email" id="send-email" autofocus>
+                                                <button type="button" class="send-email" id="send-email" data-email='{{$client->email}}' autofocus>
                                                     <div class="svg-wrapper-1">
                                                         <div class="svg-wrapper">
                                                         <svg
@@ -925,7 +925,7 @@ $(document).ready(function(){
                                                         '<button type="button" class="btn btn-sm btn-secondary me-2">' +
                                                             'Edit' +
                                                         '</button>' +
-                                                        '<button type="button" class="send-email" id="send-email" autofocus>' +
+                                                        '<button type="button" class="send-email" id="send-email" data-email="' + response.email + '" autofocus>' +
                                                             '<div class="svg-wrapper-1">' +
                                                                 '<div class="svg-wrapper">' +
                                                                     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1vw" height="1vw">' +
@@ -963,13 +963,12 @@ $(document).ready(function(){
 </script>
 
 <script>
-    $('#send-email').click(function() {
+    $(document).on('click', '#send-email', function() {
         var button = this;
         button.classList.add('loading');
         $(button).attr('disabled', true);
         // Mengambil email dari elemen dengan kelas 'client-email'
-        var email = $(this).closest('.card-footer').siblings('.card-body').find('.client-email').text().trim().replace(':', '').trim();
-        console.log(email);
+        var email = $(this).data('email');
         
         // Mengirimkan data menggunakan AJAX
         $.ajax({
