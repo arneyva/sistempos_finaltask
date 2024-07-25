@@ -346,7 +346,7 @@
                                             <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important" required>Email</label>
                                         </div>
                                         <div class="col-sm-9 p-0" style="float: right;">
-                                            <input type="email" value="{{old('email') ?? $purchase->email}}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="email" name="email" required>
+                                            <input type="email" value="{{old('email') ?? $purchase->email}}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: flex; align-items: center;">
@@ -716,11 +716,11 @@
                 'X-HTTP-Method-Override': 'PATCH' // For Laravel's method spoofing
                 },
                 success: function(response) {
-                    if (response.errors) {
+                    if (response.error) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
-                            html: '<ol style="text-align: start">' + response.errors + '</ol>',
+                            html: '<ol style="text-align: start">' + response.error + '</ol>',
                         });
                     }
                     else {

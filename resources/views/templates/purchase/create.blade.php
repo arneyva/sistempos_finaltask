@@ -458,11 +458,11 @@
                 data: formData + '&send=' + send,
                 dataType: "json",
                 success: function(response) {
-                    if (response.errors) {
+                    if (response.error) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
-                            html: '<ol style="text-align: start">' + response.errors + '</ol>',
+                            html: '<ol style="text-align: start">' + response.error + '</ol>',
                         });
                     }
                     else {

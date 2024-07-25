@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\pos;
 
+use Config;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Client;
@@ -10,6 +11,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
 use App\Models\Sale;
+use App\Models\Membership;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseReturn;
 use App\Models\PurchaseReturnDetails;
@@ -22,10 +24,12 @@ use App\Models\Warehouse;
 use App\Models\Attendance;
 use Carbon\Carbon;
 use App\Mail\PurchaseMail;
+use App\Mail\customerMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Log;
 
 
@@ -108,7 +112,7 @@ class PosController extends Controller
             ]);
         } else {
             return response()->json([
-                "error" => trans("product not found")
+                'error' => trans("product not found")
             ]);
         }
     }
@@ -142,5 +146,107 @@ class PosController extends Controller
         }
  
         return $code;
+    }
+
+    public function getCustomer(String $email) {
+        $customer = Client::where('email', $email)->first();
+
+        if (!$customer) {
+            return response()->json([
+                'error' => trans('client not found')
+            ]);
+        }
+
+        //ambil settingan membership
+        $membership_term = Membership::latest()->first();
+        $one_score_equal = $membership_term->one_score_equal;
+
+        $discount_client=$one_score_equal * $customer->score;
+
+        return response()->json([
+            "customer" => $customer,
+            "discount_client" => $discount_client,
+        ]);
+    }
+
+    public function sendEmail (String $email) {
+        $email = [];
+        $customer = Client::where('email', $email)->first();
+
+        if (!$customer) {
+            return response()->json([
+                'error' => trans('client not found')
+            ]);
+        }
+        $email['customer_name'] = $customer->name;
+
+        //cek company setting, karena ini berpengaruh dengan sistem mailing
+        $settings = Setting::where('deleted_at', '=', null)->first();
+        //jika setting tidak ditemukan
+        if (!$settings) {
+            return response()->json([
+                'error' => trans("Youe haven't set up your company settings")
+            ]);
+        }
+        //jika email company belum diset
+        if (!$settings->email) {
+            return response()->json([
+                'error' => trans("Youe haven't set up your company email")
+            ]);
+        }
+        //jika app password dari email company belum di set
+        if (!$settings->server_password) {
+            return response()->json([
+                'error' => trans("Youe haven't set up your company email app password")
+            ]);
+        }
+
+        //nama company
+        $email['company_name']=$settings->CompanyName;
+        if (!$email['company_name']) {
+            return response()->json([
+                'error' => trans("Youe haven't set up your company name")
+            ]);
+        }
+
+        //subject email
+        $email['subject']= $email['customer_name']." Claim your discount for shopping at ".$email['company_name'];
+
+        //set mailing
+        $this->Set_config_mail();
+
+        //set unik url agar tidak semua tidak bisa mengakses halaman redirect
+        $email['url'] = URL::signedRoute('client.landing', ['id' => $customer->id]);
+        //kirim email ke email sesuai di purchase
+        Mail::to($customer->email)->send(new customerMail($email));
+
+        return response()->json([
+            "success" => trans('Email Sended'),
+        ]);
+    }
+
+    // Set config mail
+    public function Set_config_mail()
+    {
+        $settings = Setting::where('deleted_at', '=', null)->first();
+        $config = array(
+            'driver' => 'smtp',
+            'host' => 'smtp.gmail.com',
+            'port' => '587',
+            'from' => array('address' => $settings->email, 'name' => $settings->CompanyName),
+            'encryption' => 'tls',
+            'username' => $settings->email,
+            'password' => $settings->server_password,
+            'sendmail' => '/usr/sbin/sendmail -bs',
+            'pretend' => false,
+            'stream' => [
+                'ssl' => [
+                    'allow_self_signed' => true,
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                ],
+            ],
+        );
+        Config::set('mail', $config);
     }
 }

@@ -39,6 +39,64 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
+.send-email {
+    font-family: inherit;
+    font-size: 0.95vw;
+    background: royalblue;
+    color: white;
+    padding: 0.5vw 1vw;
+    padding-left: 0.9vw;
+    display: flex;
+    align-items: center;
+    border: none;
+    border-radius: 3.5px;
+    overflow: hidden;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+
+.send-email span {
+    display: block;
+    margin-left: 0.46em;
+    transition: all 0.27s ease-in-out;
+}
+
+.send-email svg {
+    display: block;
+    transform-origin: center center;
+    transition: transform 0.1s ease-in-out;
+}
+
+.send-email:hover svg {
+    transform: translateX(0em) rotate(45deg) scale(1.1);
+}
+
+.send-email:hover span {
+    transform: translateX(0em);
+}
+
+.send-email.loading .svg-wrapper {
+    animation: fly-1 0.4s ease-in-out infinite alternate;
+}
+
+.send-email.loading svg {
+    transform: translateX(1.2em) rotate(45deg) scale(1.1);
+}
+
+.send-email.loading span {
+    transform: translateX(12em);
+}
+
+@keyframes fly-1 {
+    from {
+        transform: translateY(-0.1em);
+    }
+
+    to {
+        transform: translateY(0.1em);
+    }
+}
 
         /* Custom CSS to adjust the Bootstrap media query breakpoints */
         body, html, .modal-content {
@@ -366,7 +424,6 @@
                             <div class="col col-staff d-flex align-items-center ps-3" style="color:black;">
                                 {{$ref}}
                             </div>
-                            <input type="hidden" id="ref" name="ref">
                         </div>
                     </div>
                 </div>
@@ -399,6 +456,11 @@
                     <input type="hidden" id="products" name="products">
                     <input type="hidden" id="products_with_variant" name="products_with_variant">
                     <input type="hidden" id="barcode_variant_id" name="barcode_variant_id">
+                    <input type="hidden" id="ref" name="ref">
+                    <input type="hidden" id="discount_client" name="discount_client">
+                    <input type="hidden" name="order_total_input" id="order_total_input">
+                    <input type="hidden" name="order_tax_input" id="order_tax_input">
+                    <input type="hidden" name="order_subtotal_input" id="order_subtotal_input">
                 </div>
                 <div class="card-body p-0">
                     <div class="card-table-wrapper">
@@ -428,22 +490,18 @@
                             <div class="for-text-calculation d-flex justify-content-between">
                                 <p style="font-size:1.17vw; margin-bottom:0.5vw;margin-top:1.5vw;" >subtotal</p>
                                 <p id="order_subtotal" style="font-size:2.8vw;"></p>
-                                <input type="hidden" name="order_subtotal_input" id="order_subtotal_input">
                             </div>
                             <div class="for-text-calculation d-flex justify-content-between">
                                 <p style="font-size:1.17vw;margin-bottom:0.3vw;">tax</p>
                                 <p id="order_tax" style="font-size:1.17vw;margin-bottom:0.3vw;">10 %</p>
-                                <input type="hidden" name="order_tax_input" id="order_tax_input">
                             </div>
                             <div class="for-text-calculation d-flex justify-content-between">
                                 <p style="font-size:1.17vw;margin-bottom:0.1vw;">discount</p>
                                 <p id="order_discount" style="font-size:1.17vw;margin-bottom:0.1vw;"></p>
-                                <input type="hidden" name="order_discount_input" id="order_dicount_input">
                             </div>
                             <div class="for-text-calculation d-flex justify-content-between">
                                 <p style="font-size:1.17vw;margin-bottom:0.7vw;margin-top:0.64vw;">grandtotal</p>
                                 <p id="order_total" style="font-size:1.8vw;margin-bottom:0.7vw;"></p>
-                                <input type="hidden" name="order_total_input" id="order_total_input">
                             </div>
                         </div>
                     </div>
@@ -503,7 +561,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-10">
-                        <input type="text" placeholder="Search Customer" class="card card-body px-3 py-0" style="background-color: rgba(255, 255, 255, 0.5) ;">
+                        <input type="text" placeholder="Search Customer" class="card card-body px-3 py-0" id="search-customer" style="background-color: rgba(255, 255, 255, 0.5) ;">
                     </div>
                     <div class="col-2">
                     <a href="#" class="full-width full-height">
@@ -513,10 +571,10 @@
                 </div>
                 <div class="row">
                     <div class="col-10">
-                        <div class="row">
+                        <div class="row" id="list_customer">
                             @foreach ($clients as $client)
                             @continue ($client->id == 1)
-                            <div class="col-4 py-4">
+                            <div class="col-4 py-4 card-customer">
                                 <div class="card card-list">
                                     <h5 class="for-customer-header"> {{$client->name}} </h5>
                                     <div class="card-body for-client card-body-list mt-0 py-0 px-3">
@@ -525,7 +583,7 @@
                                                 <p class="mb-1">Email</p>
                                             </div>
                                             <div class="col-9">
-                                                <p class="mb-1">: {{$client->email}}</p>
+                                                <p class="mb-1 client-email">: {{$client->email}}</p>
                                             </div>
                                         </div>
                                         <div class="d-flex">
@@ -533,7 +591,7 @@
                                                 <p class="mb-1">Phone</p>
                                             </div>
                                             <div class="col-9">
-                                                <p class="mb-1">: {{$client->phone}}</p>
+                                                <p class="mb-1 client-phone">: {{$client->phone}}</p>
                                             </div>
                                         </div>
                                         <div class="d-flex">
@@ -550,13 +608,35 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-footer pb-0 pt-0">   
-                                        <div class="d-flex flex-wrap align-items-center" style="float: right;">
-                                            <a class="button-edit mb-3 mt-1" href="">
-                                                <p class="mb-0 mt-0">
+                                    <div class="card-footer pb-3 pt-0 px-3">   
+                                        <div class="d-flex flex-wrap align-items-center justify-content-between">
+                                            <div class="d-flex flex-wrap align-items-center">
+                                                <button type="button" class="btn btn-sm btn-secondary me-2" >
                                                     Edit
-                                                </p>
-                                            </a>
+                                                </button>
+                                                <button type="button" class="send-email" id="send-email" autofocus>
+                                                    <div class="svg-wrapper-1">
+                                                        <div class="svg-wrapper">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 24 24"
+                                                            width="1vw"
+                                                            height="1vw"
+                                                        >
+                                                            <path fill="none" d="M0 0h24v24H0z"></path>
+                                                            <path
+                                                            fill="currentColor"
+                                                            d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                                                            ></path>
+                                                        </svg>
+                                                        </div>
+                                                    </div>
+                                                    <span>Email</span>
+                                                </button>
+                                            </div>
+                                            <button type="button" onclick="addcustomer_intosale('{{ $client['email'] }}')" class="btn btn-sm btn-primary" >
+                                                Add
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -611,64 +691,66 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-10 tab-pane fade active show" id="pending">
-                        <div class="row">
-                            @foreach ($sales as $sale)
-                            @continue ($sale->statut == "completed")
-                            <div class="col-4 py-4 card-sale" >
-                                <p class="mb-0" style="color:black"><strong>{{$sale->Ref}}</strong></p>
-                                <div class="card card-list">
-                                    <div class="card-body for-sale card-body-scroll card-body-list mt-0 py-0 px-2">
-                                        <ul class="list-group list-group-flush">  
-                                            <ul class="list-group list-group-flush mx-0 mt-2">
-                                            @foreach ($sale->details as $detail)
-                                                <pre class="mb-2">{{ $detail->product->name ?? '' }}{{ $detail->product_variant_id ? ' '.$detail->product_variant->name : '' }}</pre>
-                                                @endforeach
+                    <div class="tab-content">
+                        <div class="col-10 tab-pane fade active show" id="pending">
+                            <div class="row" id="sale_pending">
+                                @foreach ($sales as $sale)
+                                @continue ($sale->statut == "completed")
+                                <div class="col-4 py-4 card-sale" >
+                                    <p class="mb-0" style="color:black"><strong>{{$sale->Ref}}</strong></p>
+                                    <div class="card card-list">
+                                        <div class="card-body for-sale card-body-scroll card-body-list mt-0 py-0 px-2">
+                                            <ul class="list-group list-group-flush">  
+                                                <ul class="list-group list-group-flush mx-0 mt-2">
+                                                @foreach ($sale->details as $detail)
+                                                    <pre class="mb-2">{{ $detail->product->name ?? '' }}{{ $detail->product_variant_id ? ' '.$detail->product_variant->name : '' }}</pre>
+                                                    @endforeach
+                                                </ul>
                                             </ul>
-                                        </ul>
-                                    </div>
-                                    <div class="card-footer pb-0 pt-0">   
-                                        <div class="d-flex flex-wrap align-items-center" style="float: right;">
-                                            <a class="button-edit mb-3 mt-1" href="">
-                                                <p class="mb-0 mt-0">
-                                                    Edit
-                                                </p>
-                                            </a>
+                                        </div>
+                                        <div class="card-footer pb-0 pt-0">   
+                                            <div class="d-flex flex-wrap align-items-center" style="float: right;">
+                                                <a class="button-edit mb-3 mt-1" href="">
+                                                    <p class="mb-0 mt-0">
+                                                        Edit
+                                                    </p>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                @endforeach
                             </div>
-                            @endforeach
                         </div>
-                    </div>
-                    <div class="col-10 tab-pane fade " id="complete">
-                        <div class="row">
-                        @foreach ($sales as $sale)
-                            @continue ($sale->statut == "pending")
-                            <div class="col-4 py-4 card-sale" >
-                                <p class="mb-0" style="color:black"><strong>{{$sale->Ref}}</strong></p>
-                                <div class="card card-list">
-                                    <div class="card-body for-sale card-body-scroll card-body-list mt-0 py-0 px-2">
-                                        <ul class="list-group list-group-flush">  
-                                            <ul class="list-group list-group-flush mx-0 mt-2">
-                                            @foreach ($sale->details as $detail)
-                                                <pre class="mb-2">{{ $detail->product->name ?? '' }}{{ $detail->product_variant_id ? ' '.$detail->product_variant->name : '' }}</pre>
-                                                @endforeach
+                        <div class="col-10 tab-pane fade " id="complete">
+                            <div class="row" id="sale_complete">
+                            @foreach ($sales as $sale)
+                                @continue ($sale->statut == "pending")
+                                <div class="col-4 py-4 card-sale" >
+                                    <p class="mb-0" style="color:black"><strong>{{$sale->Ref}}</strong></p>
+                                    <div class="card card-list">
+                                        <div class="card-body for-sale card-body-scroll card-body-list mt-0 py-0 px-2">
+                                            <ul class="list-group list-group-flush">  
+                                                <ul class="list-group list-group-flush mx-0 mt-2">
+                                                @foreach ($sale->details as $detail)
+                                                    <pre class="mb-2">{{ $detail->product->name ?? '' }}{{ $detail->product_variant_id ? ' '.$detail->product_variant->name : '' }}</pre>
+                                                    @endforeach
+                                                </ul>
                                             </ul>
-                                        </ul>
-                                    </div>
-                                    <div class="card-footer pb-0 pt-0">   
-                                        <div class="d-flex flex-wrap align-items-center" style="float: right;">
-                                            <a class="button-edit mb-3 mt-1" href="">
-                                                <p class="mb-0 mt-0">
-                                                    Edit
-                                                </p>
-                                            </a>
+                                        </div>
+                                        <div class="card-footer pb-0 pt-0">   
+                                            <div class="d-flex flex-wrap align-items-center" style="float: right;">
+                                                <a class="button-edit mb-3 mt-1" href="">
+                                                    <p class="mb-0 mt-0">
+                                                        Edit
+                                                    </p>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                @endforeach
                             </div>
-                            @endforeach
                         </div>
                     </div>
                     <div class="col-2"></div>
@@ -687,43 +769,31 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="background-color:white">
-                    <form class="needs-validation" action="{{ route('people.clients.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+                    <form id="create_client" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label class="form-label" for="name">Name:</label>
                             <input type="text" class="form-control bg-transparent @error('name') is-invalid @enderror"
-                                id="name" name="name_create" placeholder="name" value="{{ old('name_create')}}" required>
-                            <small class=" text-danger font-italic">
-                                @error('name_create')
-                                    {{ $message }}
-                                @enderror
-                            </small>
+                                id="name" maxlength="12" name="name_create" placeholder="name"  required>
+                            
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="email">Email:</label>
                             <input type="email" class="form-control bg-transparent @error('email') is-invalid @enderror"
-                                id="email" name="email_create" placeholder="Email" value="{{ old('email_create')}}" required>
-                            <small class=" text-danger font-italic">
-                                @error('email_create')
-                                    {{ $message }}
-                                @enderror
-                            </small>
+                                id="email" name="email_create" placeholder="Email" required>
+                            
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cname">Phone:</label>
                             <input type="tel" name="phone_create"
                                 class="form-control bg-transparent @error('phone') is-invalid @enderror"
-                                id="cname" placeholder="Phone"  value="{{ old('phone_create')}}" required>
-                            <small class=" text-danger font-italic">
-                                @error('phone_create')
-                                    {{ $message }}
-                                @enderror
-                            </small>
+                                id="cname" placeholder="Phone"   pattern="\d{12}" maxlength="12" required>
+                            
                         </div>
                 </div>
                 <div class="modal-footer" style="background-color:white">
                         <button type="button" class="btn btn-soft-primary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" id="submit_create" class="btn btn-soft-success">Save</button>
+                        <button type="button" id="submit_create" onclick="save_client()" class="btn btn-soft-success">Save</button>
                     </form>
                 </div>
             </div>
@@ -771,17 +841,267 @@ $(document).ready(function(){
 </script> -->
 
 <script>
+    function save_client() {
+        var formData = $('#create_client').serialize();
+        console.log(formData);
+
+        const requiredInputs = $('#create_client input');
+        for (const input of requiredInputs) {
+            if (!input.checkValidity()) {
+                input.reportValidity();
+                return; // Keluar dari fungsi jika ada input yang tidak valid
+            }
+        }
+
+        // Mengirimkan data menggunakan AJAX
+        $.ajax({
+            type: "POST",
+            url: "{{ route('people.clients.store') }}",
+            data: formData,
+            dataType: "json",
+            success: function(response) {
+                if (response.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: '<ol style="text-align: start">' + response.error + '</ol>',
+                    });
+                }
+                else {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: "success",
+                        title: response.success
+                    });
+                    //sembuyikan modal dan clear form
+                    $('#create_client input').val('');
+                    $('#createClient').modal('hide');
+                    //tambah card client
+                    var newCard = '<div class="col-4 py-4 card-customer">' +
+                                        '<div class="card card-list">' +
+                                            '<h5 class="for-customer-header">' + response.name + '</h5>' +
+                                            '<div class="card-body for-client card-body-list mt-0 py-0 px-3">' +
+                                                '<div class="d-flex">' +
+                                                    '<div class="col-3">' +
+                                                        '<p class="mb-1">Email</p>' +
+                                                    '</div>' +
+                                                    '<div class="col-9">' +
+                                                        '<p class="mb-1 client-email">: ' + response.email + '</p>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                                '<div class="d-flex">' +
+                                                    '<div class="col-3">' +
+                                                        '<p class="mb-1">Phone</p>' +
+                                                    '</div>' +
+                                                    '<div class="col-9">' +
+                                                        '<p class="mb-1 client-phone">: ' + response.phone + '</p>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                                '<div class="d-flex">' +
+                                                    '<div class="col-3">' +
+                                                        '<p class="mb-1">Score</p>' +
+                                                    '</div>' +
+                                                    '<div class="col-9 mb-1">' +
+                                                        ': ' + response.score +
+                                                        (response.is_poin_activated == 1 
+                                                            ? '<span class="badge bg-success" style="margin-left:0.5vw">redeemed</span>' 
+                                                            : '<span class="badge bg-secondary" style="margin-left:0.5vw">unredeemed</span>') +
+                                                    '</div>' +
+                                                '</div>' +
+                                            '</div>' +
+                                            '<div class="card-footer pb-3 pt-0 px-3">' +   
+                                                '<div class="d-flex flex-wrap align-items-center justify-content-between">' +
+                                                    '<div class="d-flex flex-wrap align-items-center">' +
+                                                        '<button type="button" class="btn btn-sm btn-secondary me-2">' +
+                                                            'Edit' +
+                                                        '</button>' +
+                                                        '<button type="button" class="send-email" id="send-email" autofocus>' +
+                                                            '<div class="svg-wrapper-1">' +
+                                                                '<div class="svg-wrapper">' +
+                                                                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1vw" height="1vw">' +
+                                                                        '<path fill="none" d="M0 0h24v24H0z"></path>' +
+                                                                        '<path fill="currentColor" d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path>' +
+                                                                    '</svg>' +
+                                                                '</div>' +
+                                                            '</div>' +
+                                                            '<span>Email</span>' +
+                                                        '</button>' +
+                                                    '</div>' +
+                                                    '<button type="button" onclick="addcustomer_intosale(' + response.email + ')" class="btn btn-sm btn-primary">' +
+                                                        'Add' +
+                                                    '</button>' +
+                                                '</div>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>';
+                    //satukan ke row
+                    $('#list_customer').append(newCard);
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Error in your server code'
+                });
+                // Log the error for debugging
+                console.error('Error: ', error);
+                console.error('Response: ', xhr.responseText);
+            }
+        });
+    }
+</script>
+
+<script>
+    $('#send-email').click(function() {
+        var button = this;
+        button.classList.add('loading');
+        $(button).attr('disabled', true);
+        // Mengambil email dari elemen dengan kelas 'client-email'
+        var email = $(this).closest('.card-footer').siblings('.card-body').find('.client-email').text().trim().replace(':', '').trim();
+        console.log(email);
+        
+        // Mengirimkan data menggunakan AJAX
+        $.ajax({
+            type: "POST",
+            url: `cashier/customer/email/${email}`,
+            headers: { 
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') 
+            },
+            dataType: "json",
+            success: function(response) {
+                if (response.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: '<ol style="text-align: start">' + response.error + '</ol>',
+                    });
+                }
+                else {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: "success",
+                        title: response.success
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'company Email or app password not valid'
+                });
+                // Log the error for debugging
+                console.error('Error: ', error);
+                console.error('Response: ', xhr.responseText);
+            },
+            complete: function() {
+                $(button).attr('disabled', false);
+                button.classList.remove('loading');
+            }
+        });
+    });
+</script>
+
+<script>
+    function addcustomer_intosale(email) {
+        //
+        $.ajax({
+            url: `/cashier/customer/${email}`,
+            type: 'post',
+            dataType: 'json',
+            data: {
+            },
+            headers: { 
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') 
+            },
+            success: function (response) {
+                if (response.error) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: "error",
+                        title: response.error
+                    });
+                } else {
+                    $('#addClient').modal('hide');
+
+                    $('#discount_client').val('').trigger('change');
+
+                    // menambahkan nama customer ke inputan form utama
+                    document.getElementById('customer').value = response.customer.name; //isi dengan respon nama client
+                    document.getElementById('customer').setAttribute('data-id', response.customer.id); //isi dengan respon id client
+                    if (response.customer.is_poin_activated == 1)
+                        $('#discount_client').val(response.discount_client).trigger('change');
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terdapat error pada server'
+                });
+                // Log the error for debugging
+                console.error('Error: ', error);
+                console.error('Response: ', xhr.responseText);
+            }
+        });
+    };
+</script>
+
+<script>
     $(document).ready(function() {
-        $('#search-sale').on('input', function() {
+        $('#search-sale, #search-customer').on('input', function() {
             var query = $(this).val().toLowerCase(); // Mengambil input pencarian dan mengubahnya menjadi huruf kecil
-            $('.card-sale').filter(function() {
-                // Mengecek apakah nama produk atau referensi penjualan mengandung query
-                var saleRef = $(this).find('strong').text().toLowerCase();
-                var productNames = $(this).find('pre').text().toLowerCase(); // Menggabungkan semua nama produk menjadi satu string
-                
-                // Menampilkan atau menyembunyikan elemen berdasarkan pencarian
-                $(this).toggle(saleRef.indexOf(query) > -1 || productNames.indexOf(query) > -1);
-            });
+            if (this.id === 'search-sale') {
+                $('.card-sale').filter(function() {
+                    // Mengecek apakah nama produk atau referensi penjualan mengandung query
+                    var saleRef = $(this).find('strong').text().toLowerCase();
+                    var productNames = $(this).find('pre').text().toLowerCase(); // Menggabungkan semua nama produk menjadi satu string
+                    
+                    // Menampilkan atau menyembunyikan elemen berdasarkan pencarian
+                    $(this).toggle(saleRef.indexOf(query) > -1 || productNames.indexOf(query) > -1);
+                });
+            } else {
+                $('.card-customer').filter(function() {
+                    // Mengecek apakah nama produk atau referensi penjualan mengandung query
+                    var clientName = $(this).find('.for-customer-header').text().toLowerCase();
+                    var email = $(this).find('.client-email').text().toLowerCase(); // Menggabungkan semua nama produk menjadi satu string
+                    var phone = $(this).find('.client-phone').text().toLowerCase(); // Menggabungkan semua nama produk menjadi satu string
+                    
+                    // Menampilkan atau menyembunyikan elemen berdasarkan pencarian
+                    $(this).toggle(clientName.indexOf(query) > -1 || email.indexOf(query) > -1 || phone.indexOf(query) > -1);
+                });
+            };
         });
     });
 </script>
@@ -890,7 +1210,7 @@ $(document).ready(function(){
                 tax = subtotal * 0.1;
 
                 // 3. Ambil nilai diskon
-                var discountValue = parseFloat($('#discount').val());
+                var discountValue = parseFloat($('#discount_client').val());
                 discount = isNaN(discountValue) ? 0 : discountValue;
 
                 // 4. Hitung grandtotal
@@ -906,11 +1226,13 @@ $(document).ready(function(){
                 $('#order_subtotal').text('Rp ' + numberFormat(subtotal));
                 
                 $('#order_subtotal_input').val(subtotal);
-                $('#order_discount_input').val(discount);
                 $('#order_total_input').val(grandtotal);
             }, 320); // Jeda 0,7 detik
         };
         $('#productDropdown').change(function() {
+        setTablePayment();
+        });
+        $('#discount_client').change(function() {
         setTablePayment();
         });
         $(document).on('change', '.qty', function() {
