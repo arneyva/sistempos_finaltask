@@ -73,7 +73,7 @@ Route::post('/update-alert-stock', [ProductController::class, 'updateAlertStock'
 Route::get('purchases/receipt/edit/{Ref}', [PurchaseController::class, 'editSupplier'])->name('edit.supplier')->middleware('signed');
 Route::patch('purchases/receipt/update/{id}', [PurchaseController::class, 'updateSupplier'])->name('update.supplier')->middleware('signed');
 Route::get('client/{id}', [PosController::class, 'clientLanding'])->name('client.landing')->middleware('signed');
-Route::get('client/{id}/redeem', [PosController::class, 'clientRedeem'])->name('client.redeem')->middleware('signed');
+Route::patch('client/{id}/redeem', [PosController::class, 'clientRedeem'])->name('client.redeem')->middleware('signed');
 
 Route::prefix('/product')->middleware(['auth', 'verified'])->name('product.')->group(function () {
     Route::get('/list', [ProductController::class, 'index'])->name('index');
