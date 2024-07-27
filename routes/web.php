@@ -336,6 +336,7 @@ Route::prefix('cashier')->middleware(['auth', 'verified'])->name('cashier.')->gr
     Route::post('store', [PosController::class, 'store'])->name('store');
     Route::post('customer/{email}', [PosController::class, 'getCustomer']);
     Route::post('customer/email/{email}', [PosController::class, 'sendEmail']);
+    Route::get('midtrans', [PosController::class, 'Midtrans']);
 });
 
 Route::prefix('search')->middleware(['auth', 'verified'])->name('search.')->group(function () {
