@@ -60,13 +60,10 @@
                                         value="{{ $sale['client_name'] }}" readonly>
                                     <input type="hidden" id="selectWarehouse" name="client_id"
                                         value="{{ $sale['client_id'] }}">
-                                    {{-- <select class="form-select" id="customer" name="client_id" required>
-                                        <option selected disabled value="">{{ __('Choose...') }}</option>
-                                        @foreach ($client as $cl)
-                                            <option value="{{ $cl->id }}" data-status="{{ $cl->is_poin_activated }}">
-                                                {{ $cl->name }}</option>
-                                        @endforeach
-                                    </select> --}}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="score">{{ __('Score') }}</label>
+                                    <input type="text" id="score" class="form-control" value="{{ $sale['score'] }}">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="exampleInputdate">{{ __('Date *') }}</label>
@@ -198,6 +195,10 @@
                                                 <th></th>
                                             </tr>
                                             <tr>
+                                                <td>{{ __('Membership') }}</td>
+                                                <th></th>
+                                            </tr>
+                                            <tr>
                                                 <td>{{ __('Grand Total') }}</td>
                                                 <th></th>
                                             </tr>
@@ -269,10 +270,12 @@
                                             <select class="form-select select2" id="typeStatus" required name="statut"
                                                 data-placeholder="Select a Status">
                                                 <option value="completed"
-                                                    {{ $sale['statut'] == 'completed' ? 'selected' : '' }}>{{ __('Completed') }}
+                                                    {{ $sale['statut'] == 'completed' ? 'selected' : '' }}>
+                                                    {{ __('Completed') }}
                                                 </option>
                                                 <option value="pending"
-                                                    {{ $sale['statut'] == 'pending' ? 'selected' : '' }}>{{ __('Pending') }}</option>
+                                                    {{ $sale['statut'] == 'pending' ? 'selected' : '' }}>
+                                                    {{ __('Pending') }}</option>
                                             </select>
                                             @error('brand_id')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -285,13 +288,16 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="paymentMethod">
-                                            <label class="form-label" for="payment_method">{{ __('Payment Method *') }}</label>
+                                            <label class="form-label"
+                                                for="payment_method">{{ __('Payment Method *') }}</label>
                                             <select class="form-select select2" name="payment_method" id="payment_method"
                                                 data-placeholder="Select a payment_method">
                                                 <option value="cash"
-                                                    {{ $sale['payment_method'] == 'cash' ? 'selected' : '' }}>{{ __('Cash') }}</option>
+                                                    {{ $sale['payment_method'] == 'cash' ? 'selected' : '' }}>
+                                                    {{ __('Cash') }}</option>
                                                 <option value="midtrans"
-                                                    {{ $sale['payment_method'] == 'midtrans' ? 'selected' : '' }}>{{ __('Via Midtrans') }}
+                                                    {{ $sale['payment_method'] == 'midtrans' ? 'selected' : '' }}>
+                                                    {{ __('Via Midtrans') }}
                                                 </option>
                                             </select>
                                             @error('payment_method')
@@ -305,7 +311,8 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="receivedAmount">
-                                            <label class="form-label" for="received_amount">{{ __('Received Amount') }}</label>
+                                            <label class="form-label"
+                                                for="received_amount">{{ __('Received Amount') }}</label>
                                             <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
@@ -323,7 +330,8 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="payingAmount">
-                                            <label class="form-label" for="paying_amount">{{ __('Paying Amount') }}</label>
+                                            <label class="form-label"
+                                                for="paying_amount">{{ __('Paying Amount') }}</label>
                                             <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
@@ -341,14 +349,16 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-3" id="changeReturn">
-                                            <label class="form-label" for="change_return">{{ __('Change Return') }}</label>
+                                            <label class="form-label"
+                                                for="change_return">{{ __('Change Return') }}</label>
                                             <div class="form-group input-group">
                                                 <span class="input-group-text" id="basic-addon1">Rp. </span>
                                                 <input type="text" class="form-control"
                                                     placeholder="input change return" id="change_return"
                                                     name="change_return" value="{{ Session::get('change_return') }}"
                                                     readonly>
-                                                <input type="hidden" id="change_return_hidden" name="change_return_value">
+                                                <input type="hidden" id="change_return_hidden"
+                                                    name="change_return_value">
                                             </div>
                                             @error('change_return')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -363,7 +373,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label" for="exampleFormControlTextarea1">{{ __('Note') }}</label>
+                                    <label class="form-label"
+                                        for="exampleFormControlTextarea1">{{ __('Note') }}</label>
                                     <input type="text" class="form-control" id="exampleFormControlTextarea1"
                                         rows="3" name="notes" value="{{ $sale['notes'] }}">
                                 </div>
@@ -783,11 +794,17 @@
                         grandTotal += total;
                     }
                 });
+                // var discount = getNumericValue('discount');
+                // console.log(discount);
+                // var shipping = getNumericValue('shipping');
+                // var taxRate = parseFloat($('#tax_rate').val()) || 0;
                 var discount = getNumericValue('discount');
+                var score = getNumericValue('score');
+                var test = score * 100;
+                console.log(test);
                 console.log(discount);
                 var shipping = getNumericValue('shipping');
                 var taxRate = parseFloat($('#tax_rate').val()) || 0;
-
                 // Update hidden fields with numeric values
                 $('#discount_value').val(discount);
                 $('#shipping_value').val(shipping);
@@ -796,14 +813,43 @@
                 $('#tax_net').val(taxNet.toFixed(2));
 
                 // Calculate grand total
+                // grandTotal = grandTotal - discount + shipping + taxNet;
+                // Calculate grand total
                 grandTotal = grandTotal - discount + shipping + taxNet;
+                if (grandTotal >= test) {
+                    grandTotal = grandTotal - test;
+                }
                 $('#basic-table tr:nth-child(1) th').text(formatRupiah(taxNet.toFixed(0))); // Order Tax
                 $('#basic-table tr:nth-child(2) th').text(formatRupiah(discount.toFixed(0))); // Discount
                 $('#basic-table tr:nth-child(3) th').text(formatRupiah(shipping.toFixed(0))); // Shipping
-                $('#basic-table tr:nth-child(4) th').text(formatRupiah(grandTotal.toFixed(0))); // Grand Total
+                $('#basic-table tr:nth-child(4) th').text(formatRupiah(test.toFixed(0)));
+                $('#basic-table tr:nth-child(5) th').text(formatRupiah(grandTotal.toFixed(0))); // Grand Total
                 $('#grandTotal').val(grandTotal.toFixed(2));
+                $('#membership').val(test.toFixed(2));
                 $('#paying_amount').val(formatRupiah(grandTotal.toFixed(0)));
             }
+            // Event handler for score input change
+            $('#score').on('input', function() {
+                updateGrandTotal();
+            });
+            // Event handler for customer change
+            $('#customer').on('change', function() {
+                // Mengambil elemen option yang dipilih
+                var selectedOption = this.options[this.selectedIndex];
+
+                // Mengambil data-status dari option yang dipilih
+                var status = selectedOption.getAttribute('data-status');
+
+                // Mengecek nilai dari status dan melakukan aksi berdasarkan nilai tersebut
+                if (status === '1') {
+                    var score = selectedOption.getAttribute('data-score');
+                    $('#score').val(score ? score : '');
+                    updateGrandTotal(); // Tambahkan ini untuk memperbarui grand total setelah score diubah
+                } else {
+                    $('#score').val('0'); // Set score ke 0 jika statusnya 0
+                    updateGrandTotal(); // Tambahkan ini untuk memperbarui grand total setelah score diubah
+                }
+            });
         });
     </script>
 @endpush

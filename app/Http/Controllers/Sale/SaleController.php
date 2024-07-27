@@ -275,6 +275,7 @@ class SaleController extends Controller
                 $order->tax_rate = $request->tax_rate;
                 $order->TaxNet = $request->TaxNet;
                 $order->discount = $request->discount_value;
+                $order->membership = $request->membership;
                 $order->shipping = $request->shipping_value;
                 $order->statut = $request->statut;
                 // handle status pending
@@ -793,6 +794,7 @@ class SaleController extends Controller
             $sale['statut'] = $Sale_data->statut;
             $sale['client_id'] = $Sale_data->client_id;
             $sale['client_name'] = $Sale_data->client->name;
+            $sale['score'] = $Sale_data->client->score;
             $sale['payment_method'] = $Sale_data->payment_method ?? null;
             $sale['notes'] = $Sale_data->notes;
 
@@ -1118,6 +1120,7 @@ class SaleController extends Controller
                             }
                         }
                     }
+                    // dd($new_detail);
                     // Initialize $updateData array
                     $payment_method = $request['payment_method'] ? $request['payment_method'] : $current_Sale->payment_method;
                     $updateData = [
@@ -1148,6 +1151,52 @@ class SaleController extends Controller
                             ]);
                         }
                     } elseif ($statut == 'completed') {
+                        // ==============================
+
+                        $clientId = $current_Sale->client_id;
+
+                        if ($clientId != 1) {
+                            $client_sale = Client::find($clientId);
+                            $initial_poin = $client_sale->score;
+                            $total_spend = 0;
+
+                            foreach ($request->details as $detail) {
+                                // Pastikan kunci-kunci yang diperlukan ada
+                                if (isset($detail['subtotal'], $detail['Unit_price'], $detail['tax_percent'])) {
+                                    $total_spend += $detail['subtotal'] - ($detail['Unit_price'] * ($detail['tax_percent'] / 100));
+                                }
+                            }
+                            // Kurangi total spend dengan discount
+                            $total_spend -= $request->discount_value; // Pastikan variabel discount yang benar
+                            $membership_term = Membership::latest()->first();
+
+                            $spend_every = $membership_term->spend_every;
+                            $score_to_email = $membership_term->score_to_email;
+                            $one_score_equal = $membership_term->one_score_equal;
+
+                            //hitung score yang didapat berdasarkan total yang dibealanjakan
+                            $total_score = intdiv($total_spend, $spend_every);
+                            // Reset the client score to 0 before adding the new score
+                            $client_sale->score = 0;
+
+                            // Add the new score to the client's score
+                            $client_sale->score += $total_score;
+                            // // Menambahkan total_score ke client score
+                            // $client_sale->score += $total_score;
+
+                            //mencegah score menjadi negatif
+                            if ($client_sale->score <= 0) {
+                                $client_sale->score = 0;
+                            }
+
+                            if ($client_sale->score >= $score_to_email) {
+                                if ($client_sale->is_poin_activated == 0) {
+                                    //kirim email ke client
+                                }
+                            }
+                            $client_sale->save();
+                        }
+                        // ==============================
                         if ($payment_method == 'cash') {
                             $updateData['paid_amount'] = $request['GrandTotal'];
                             $updateData['payment_statut'] = 'paid';
@@ -1199,7 +1248,7 @@ class SaleController extends Controller
             return redirect()->route('sale.index')->with('success', 'Sale Updated Successfully');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Sale Updated failed');
+            // return redirect()->back()->with('error', 'Sale Updated failed');
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }

@@ -170,6 +170,8 @@
                                         </div>
                                         <input type="hidden" class="form-control" id="tax_net"
                                             placeholder="input tax net" name="TaxNet" value="{{ old('sale.TaxNet') }}">
+                                        <input type="hidden" class="form-control" id="membership"
+                                            placeholder="" name="membership">
                                         <input class="" type="hidden" id="grandTotal" name="GrandTotal">
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label" for="discount">{{ __('Discount') }}</label>
@@ -374,14 +376,6 @@
 @endsection
 
 @push('script')
-    {{-- <script>
-        document.getElementById('customer').addEventListener('change', function() {
-            var selectedOption = this.options[this.selectedIndex];
-            var score = selectedOption.getAttribute('data-score');
-            document.getElementById('score').value = score ? score : '';
-        });
-    </script> --}}
-
     <script>
         $(document).ready(function() {
             // Initialize Select2 for Warehouse Dropdown
@@ -824,6 +818,7 @@
                 $('#basic-table tr:nth-child(4) th').text(formatRupiah(test.toFixed(0))); // Grand Total
                 $('#basic-table tr:nth-child(5) th').text(formatRupiah(grandTotal.toFixed(0))); // Grand Total
                 $('#grandTotal').val(grandTotal.toFixed(2));
+                $('#membership').val(test.toFixed(2));
                 $('#paying_amount').val(formatRupiah(grandTotal.toFixed(0)));
             }
             // Event handler for score input change
