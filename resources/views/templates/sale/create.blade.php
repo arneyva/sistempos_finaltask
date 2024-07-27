@@ -826,24 +826,45 @@
                 $('#grandTotal').val(grandTotal.toFixed(2));
                 $('#paying_amount').val(formatRupiah(grandTotal.toFixed(0)));
             }
+            // Event handler for score input change
+            $('#score').on('input', function() {
+                updateGrandTotal();
+            });
+            // Event handler for customer change
+            $('#customer').on('change', function() {
+                // Mengambil elemen option yang dipilih
+                var selectedOption = this.options[this.selectedIndex];
+
+                // Mengambil data-status dari option yang dipilih
+                var status = selectedOption.getAttribute('data-status');
+
+                // Mengecek nilai dari status dan melakukan aksi berdasarkan nilai tersebut
+                if (status === '1') {
+                    var score = selectedOption.getAttribute('data-score');
+                    $('#score').val(score ? score : '');
+                    updateGrandTotal(); // Tambahkan ini untuk memperbarui grand total setelah score diubah
+                } else {
+                    $('#score').val('0'); // Set score ke 0 jika statusnya 0
+                    updateGrandTotal(); // Tambahkan ini untuk memperbarui grand total setelah score diubah
+                }
+            });
         });
-    </script>
-    <script>
-        document.getElementById('customer').addEventListener('change', function() {
-            // Mengambil elemen option yang dipilih
-            var selectedOption = this.options[this.selectedIndex];
 
-            // Mengambil data-status dari option yang dipilih
-            var status = selectedOption.getAttribute('data-status');
+        // document.getElementById('customer').addEventListener('change', function() {
+        //     // Mengambil elemen option yang dipilih
+        //     var selectedOption = this.options[this.selectedIndex];
 
-            // Mengecek nilai dari status dan melakukan aksi berdasarkan nilai tersebut
-            if (status === '1') {
-                var score = selectedOption.getAttribute('data-score');
-                document.getElementById('score').value = score ? score : '';
+        //     // Mengambil data-status dari option yang dipilih
+        //     var status = selectedOption.getAttribute('data-status');
 
-            } else if (status === '0') {
+        //     // Mengecek nilai dari status dan melakukan aksi berdasarkan nilai tersebut
+        //     if (status === '1') {
+        //         var score = selectedOption.getAttribute('data-score');
+        //         document.getElementById('score').value = score ? score : '';
 
-            }
-        })
+
+
+        //     } else if (status === '0') {}
+        // })
     </script>
 @endpush

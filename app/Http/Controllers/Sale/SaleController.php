@@ -214,9 +214,26 @@ class SaleController extends Controller
         }
         // $warehouse = Warehouse::query()->get();
         $client = Client::query()->get();
-
-        return view('templates.sale.create', ['warehouse' => $warehouses, 'client' => $client]);
+        $membership = Membership::query()->get();
+        $one_score_equal = $membership->first()->one_score_equal;
+        // dd($one_score_equal);
+        return view('templates.sale.create', ['warehouse' => $warehouses, 'client' => $client, 'one_score_equal' => $one_score_equal]);
     }
+    public function getCustomerScore($id)
+    {
+        $client = Client::find($id);
+        $score = $client->score;
+        $membership = Membership::query()->get();
+        $one_score_equal = $membership->first()->one_score_equal;
+        $diskon_membership = $score * $one_score_equal;
+
+        return response()->json([
+            'score' => $score,
+            'one_score_equal' => $one_score_equal,
+            'diskon_membership' => $diskon_membership
+        ]);
+    }
+
     //------------- Reference Number Order SALE -----------\\
 
     public function getNumberOrder()
@@ -396,67 +413,71 @@ class SaleController extends Controller
                 //{{=============================== ROPIQ ==============================}}\\
                 //{{==================================================================}}\\
                 // Mengambil client_id dari sale
-                $clientId = $sale->client_id;
-                // Cek apakah client_id bukan default
-                if ($clientId != 1) {
-                    // Mengambil client dari sale
-                    $client_sale = Client::find($clientId);
-                    if ($client_sale) {
-                        //ambil poin awal client
-                        $initial_poin =  $client_sale->score;
+                if ($order->statut == 'completed') {
+                    # code...
 
-                        //hitung harga bersih barang
-                        if ($detail_sale) {
-                            //awali total belanja dari nol 
-                            $total_spend = 0;
-                            //setiap barang dikurangkan taxnya
-                            foreach ($detail_sale->details as $detail) {
-                                $total_spend += $detail->total - ($detail->price * ($detail->TaxNet / 100));
+                    $clientId = $sale->client_id;
+                    // Cek apakah client_id bukan default
+                    if ($clientId != 1) {
+                        // Mengambil client dari sale
+                        $client_sale = Client::find($clientId);
+                        if ($client_sale) {
+                            //ambil poin awal client
+                            $initial_poin =  $client_sale->score;
+
+                            //hitung harga bersih barang
+                            if ($detail_sale) {
+                                //awali total belanja dari nol 
+                                $total_spend = 0;
+                                //setiap barang dikurangkan taxnya
+                                foreach ($detail_sale->details as $detail) {
+                                    $total_spend += $detail->total - ($detail->price * ($detail->TaxNet / 100));
+                                }
+                                //kurangkan total belanja dengan diskon dari sale
+                                $total_spend -= $sale->discount;
                             }
-                            //kurangkan total belanja dengan diskon dari sale
-                            $total_spend -= $sale->discount;
-                        }
 
-                        //ambil settingan membershgip
-                        $membership_term = Membership::latest()->first();
+                            //ambil settingan membershgip
+                            $membership_term = Membership::latest()->first();
 
-                        $spend_every = $membership_term->spend_every;
-                        $score_to_email = $membership_term->score_to_email;
-                        $one_score_equal = $membership_term->one_score_equal;
+                            $spend_every = $membership_term->spend_every;
+                            $score_to_email = $membership_term->score_to_email;
+                            $one_score_equal = $membership_term->one_score_equal;
 
-                        //hitung score yang didapat berdasarkan total yang dibealanjakan
-                        $total_score = intdiv($total_spend, $spend_every);
+                            //hitung score yang didapat berdasarkan total yang dibealanjakan
+                            $total_score = intdiv($total_spend, $spend_every);
 
-                        //ambil diskon sale dari membership
-                        if ($request->discount_client) {
-                            //kurangkan score dengan diskon yang sudah diubah ke score
-                            $total_score -= $request->discount_client / $one_score_equal;
-                        }
-                        // Reset the client score to 0 before adding the new score
-                        $client_sale->score = 0;
-
-                        // Add the new score to the client's score
-                        $client_sale->score += $total_score;
-                        // // Menambahkan total_score ke client score
-                        // $client_sale->score += $total_score;
-
-                        //mencegah score menjadi negatif
-                        if ($client_sale->score <= 0) {
+                            //ambil diskon sale dari membership
+                            if ($request->discount_client) {
+                                //kurangkan score dengan diskon yang sudah diubah ke score
+                                $total_score -= $request->discount_client / $one_score_equal;
+                            }
+                            // Reset the client score to 0 before adding the new score
                             $client_sale->score = 0;
-                        }
 
-                        if ($client_sale->score >= $score_to_email) {
-                            if ($client_sale->is_poin_activated == 0) {
-                                //kirim email ke client
+                            // Add the new score to the client's score
+                            $client_sale->score += $total_score;
+                            // // Menambahkan total_score ke client score
+                            // $client_sale->score += $total_score;
+
+                            //mencegah score menjadi negatif
+                            if ($client_sale->score <= 0) {
+                                $client_sale->score = 0;
                             }
-                        }
-                        // elseif ($client_sale->score / $initial_poin < 0.4) {
-                        //     //score sudah terlalu kecil sehingga diskon ditutup untuk transaksi berikutnya
-                        //     $client_sale->is_poin_activated == 0;
-                        // }
 
-                        // Menyimpan perubahan pada client
-                        $client_sale->save();
+                            if ($client_sale->score >= $score_to_email) {
+                                if ($client_sale->is_poin_activated == 0) {
+                                    //kirim email ke client
+                                }
+                            }
+                            // elseif ($client_sale->score / $initial_poin < 0.4) {
+                            //     //score sudah terlalu kecil sehingga diskon ditutup untuk transaksi berikutnya
+                            //     $client_sale->is_poin_activated == 0;
+                            // }
+
+                            // Menyimpan perubahan pada client
+                            $client_sale->save();
+                        }
                     }
                 }
                 //{{=========================================================================}}\\
