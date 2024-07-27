@@ -855,7 +855,7 @@
                                     </a>
                                 </li>
                             @endrole
-                            @role('underdev')
+                            {{-- @role('underdev') --}}
                                 <li class="nav-item">
                                     <a class="nav-link "href="{{ route('settings.membership.index') }}">
                                         <i class="icon">
@@ -871,7 +871,7 @@
                                         <span class="item-name">{{ __('Membership') }}</span>
                                     </a>
                                 </li>
-                            @endrole
+                            {{-- @endrole --}}
                             @role('superadmin')
                                 <li class="nav-item">
                                     <a class="nav-link " href="{{ route('settings.company.edit') }}">
