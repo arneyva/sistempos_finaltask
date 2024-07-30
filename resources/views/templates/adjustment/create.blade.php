@@ -24,6 +24,10 @@
     .hidden-input {
         display: none;
     }
+
+    /* .swal2-container {
+    width: 620px !important;
+} */
 </style>
 @section('content')
     {{-- part 1 --}}
@@ -198,8 +202,11 @@
                             .val() || null;
                         if (existingProductId == productId && existingVariantId == variantId) {
                             isDuplicate = true;
+                            var quantityInput = $(this).find('input[name$="[quantity]"]');
+                            var currentQuantity = parseInt(quantityInput.val());
+                            quantityInput.val(currentQuantity + 1); // Increase the quantity by 1
                             $('#selectProduct').val('').trigger('change');
-                            return false; // Hentikan loop
+                            return false; // Stop the loop
                         }
                     });
                     if (isDuplicate) {
@@ -207,9 +214,10 @@
                             toast: true,
                             position: 'top-end',
                             icon: 'warning',
-                            title: 'Produk sudah ditambahkan.',
+                            title: 'Produk sudah ditambahkan. Jumlah produk telah ditingkatkan.',
                             showConfirmButton: false,
                             timer: 3000,
+
                             timerProgressBar: true,
                             didOpen: (toast) => {
                                 toast.addEventListener('mouseenter', Swal.stopTimer)
