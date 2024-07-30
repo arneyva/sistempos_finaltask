@@ -170,8 +170,8 @@
                                         </div>
                                         <input type="hidden" class="form-control" id="tax_net"
                                             placeholder="input tax net" name="TaxNet" value="{{ old('sale.TaxNet') }}">
-                                        <input type="hidden" class="form-control" id="membership"
-                                            placeholder="" name="membership">
+                                        <input type="hidden" class="form-control" id="membership" placeholder=""
+                                            name="membership">
                                         <input class="" type="hidden" id="grandTotal" name="GrandTotal">
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label" for="discount">{{ __('Discount') }}</label>
@@ -552,30 +552,62 @@
 
                 if (productId && warehouseId) {
                     var isDuplicate = false;
+                    var isMaxQuantityExceeded = false;
                     $('#product-table-body tr').each(function() {
                         var existingProductId = $(this).find('input[name$="[product_id]"]').val();
                         var existingVariantId = $(this).find('input[name$="[product_variant_id]"]')
                             .val() || null;
                         if (existingProductId == productId && existingVariantId == variantId) {
                             isDuplicate = true;
+                            var quantityInput = $(this).find('input[name$="[quantity]"]');
+                            var currentQuantity = parseInt(quantityInput.val());
+                            console.log('current', currentQuantity);
+                            var maxQuantity = parseInt(quantityInput.data('max-quantity'));
+                            console.log('max', maxQuantity);
+
+                            if (currentQuantity + 1 > maxQuantity) {
+                                isMaxQuantityExceeded = true;
+                                quantityInput.val(maxQuantity); // Set to max quantity if exceeded
+                            } else {
+                                quantityInput.val(currentQuantity +
+                                    1); // Increase the quantity by 1
+                            }
+
                             $('#selectProduct').val('').trigger('change');
-                            return false; // Hentikan loop
+                            return false; // Stop the loop
                         }
                     });
+
                     if (isDuplicate) {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'warning',
-                            title: 'Produk sudah ditambahkan.',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
-                        });
+                        if (isMaxQuantityExceeded) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'warning',
+                                title: 'Jumlah produk tidak dapat melebihi stok yang tersedia.',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'warning',
+                                title: 'Produk sudah ditambahkan. Jumlah produk telah ditingkatkan.',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            });
+                        }
                     } else {
                         $.ajax({
                             url: '/adjustment/show_product_data/' + productId + '/' + variantId +
