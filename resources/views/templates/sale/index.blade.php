@@ -394,11 +394,10 @@
                                                             <div class="col mb-3">
                                                                 <label class="form-label"
                                                                     for="status">{{ __('Status *') }}</label>
-                                                                <select class="form-select" id="status"
-                                                                    name="status">
+                                                                <select class="form-select" id="status" name="status"
+                                                                    {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>
                                                                     <option selected disabled value="">
-                                                                        {{ __('Choose...') }}
-                                                                    </option>
+                                                                        {{ __('Choose...') }}</option>
                                                                     <option value="shipped"
                                                                         {{ $item->shipment && $item->shipment->status == 'shipped' ? 'selected' : '' }}>
                                                                         {{ __('Shipped') }}</option>
@@ -416,7 +415,8 @@
                                                                 <input type="text" class="form-control"
                                                                     id="delivered_to" required name="delivered_to"
                                                                     value="{{ $item->shipment ? $item->shipment->delivered_to : '' }}"
-                                                                    placeholder="{{ __('Input...') }}">
+                                                                    placeholder="{{ __('Input...') }}"
+                                                                    {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>
                                                             </div>
                                                             <div class="col mb-3">
                                                                 <label class="form-label"
@@ -424,7 +424,8 @@
                                                                 <input type="text" class="form-control"
                                                                     id="shipping_address" required name="shipping_address"
                                                                     value="{{ $item->shipment ? $item->shipment->shipping_address : '' }}"
-                                                                    placeholder="{{ __('Input...') }}">
+                                                                    placeholder="{{ __('Input...') }}"
+                                                                    {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>
                                                             </div>
                                                             <div class="col mb-3">
                                                                 <label class="form-label"
@@ -432,19 +433,21 @@
                                                                 <input type="text" class="form-control"
                                                                     id="shipping_details" required name="shipping_details"
                                                                     value="{{ $item->shipment ? $item->shipment->shipping_details : '' }}"
-                                                                    placeholder="{{ __('Input...') }}">
+                                                                    placeholder="{{ __('Input...') }}"
+                                                                    {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>
                                                             </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal">{{ __('Close') }}</button>
-                                                        <button type="submit"
-                                                            class="btn btn-primary">{{ __('Save changes') }}</button>
+                                                        <button type="submit" class="btn btn-primary"
+                                                            {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>{{ __('Save changes') }}</button>
                                                     </div>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="modal fade" id="invoiceModal{{ $item->id }}" tabindex="-1"
                                             role="dialog" aria-labelledby="invoiceModalLabel" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
