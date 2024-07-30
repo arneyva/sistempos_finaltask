@@ -63,6 +63,12 @@
                                     <input type="date" class="form-control" id="exampleInputdate" name="date"
                                         value="{{ date('Y-m-d') }}">
                                 </div>
+                                {{-- <div class="col-md-12 mb-3">
+                                    <label class="form-label" for="selectProduct">{{ __('Product') }} *</label>
+
+                                    <input type="text" id="productCodeInput" placeholder="Enter or Scan Product Code">
+
+                                </div> --}}
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label" for="selectProduct">{{ __('Product') }} *</label>
                                     <select class="form-select" id="selectProduct" disabled>
@@ -71,6 +77,7 @@
                                         </option>
                                     </select>
                                 </div>
+
                                 <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
                                         <table id="product-table" class="table table-striped mb-0" role="grid">
@@ -101,6 +108,7 @@
                                 <button class="btn btn-primary" type="submit">{{ __('Submit form') }}</button>
                             </div>
                         </form>
+                        <input type="text" id="scannerInput" style="position: absolute; left: -9999px;" />
                     </div>
                 </div>
             </div>
@@ -115,16 +123,6 @@
             $('#selectWarehouse').select2({
                 placeholder: "Choose a warehouse...",
                 allowClear: true
-            });
-        });
-    </script>
-    <script>
-        // Fungsi untuk menambahkan event listener untuk tombol delete di dalam tbody
-        $(document).ready(function() {
-            $('#product-table-body').on('click', '.delete-row', function() {
-                $(this).closest('tr')
-                    .remove(); // Menghapus baris tabel yang berisi tombol delete yang diklik
-                $('#selectProduct').val('').trigger('change');
             });
             $('#selectWarehouse').on('change', function() {
                 // Kosongkan tabel produk ketika warehouse diubah
@@ -152,13 +150,12 @@
                 }
             });
 
-            // Tambahkan event listener untuk fokus pada input pencarian saat dropdown dibuka
             $('#selectProduct').on('select2:open', function() {
                 setTimeout(function() {
                     document.querySelector('.select2-search__field').focus();
-                }, 100); // Penundaan 100ms sebelum fokus pada input pencarian
+                }, 100);
             });
-            // Event listener untuk perubahan pada pilihan gudang
+
             $('#selectWarehouse').on('change', function() {
                 var warehouseId = $(this).val();
                 if (warehouseId) {
@@ -177,6 +174,7 @@
                                     .name + '</option>');
                             });
                             $('#selectProduct').prop('disabled', false);
+                            $('#scannerInput').focus();
                         }
                     });
                 } else {
@@ -184,13 +182,11 @@
                 }
             });
 
-            // Event listener untuk perubahan pada pilihan produk
             $('#selectProduct').on('change', function() {
                 var productId = $(this).val();
                 var warehouseId = $('#selectWarehouse').val();
                 var variantId = $(this).find(':selected').data('variant-id');
 
-                // Periksa jika variantId adalah null, maka atur nilai variantId menjadi null
                 if (!variantId) {
                     variantId = null;
                 }
@@ -217,90 +213,159 @@
                             title: 'Produk sudah ditambahkan. Jumlah produk telah ditingkatkan.',
                             showConfirmButton: false,
                             timer: 3000,
-
                             timerProgressBar: true,
                             didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                toast.addEventListener('mouseenter', Swal.stopTimer);
+                                toast.addEventListener('mouseleave', Swal.resumeTimer);
                             }
                         });
                     } else {
-                        $.ajax({
-                            url: '/adjustment/show_product_data/' + productId + '/' + variantId +
-                                '/' + warehouseId,
-                            type: "GET",
-                            dataType: "json",
-                            success: function(data) {
-                                var initialQuantity = 1;
-                                var row = '<tr>';
-                                row += '<td>#</td>';
-                                row += '<td>' + data.code + '</td>';
-                                row += '<td>' + data.name + '</td>';
-                                row += '<td>' + data.qty + ' ' + data.unit + '</td>';
-                                row +=
-                                    '<td><input type="number" class="form-control item-quantity" name="details[' +
-                                    data.id + '_' + variantId + '][quantity]" value="' +
-                                    initialQuantity +
-                                    '" data-min-quantity="1" ></td>';
-                                row +=
-                                    '<td><select class="form-select" name="details[' +
-                                    data
-                                    .id +
-                                    '_' + variantId +
-                                    '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
-                                row +=
-                                    '<td><button type="button" class="btn btn-danger btn-sm delete-row">';
-                                row +=
-                                    '<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 48 48">';
-                                row +=
-                                    '<g fill="none" stroke="#FFFFFF" stroke-linejoin="round" stroke-width="4">';
-                                row += '<path d="M9 10v34h30V10z" />';
-                                row +=
-                                    '<path stroke-linecap="round" d="M20 20v13m8-13v13M4 10h40" />';
-                                row += '<path d="m16 10l3.289-6h9.488L32 10z" />';
-                                row += '</g>';
-                                row += '</svg>';
-                                row += '</button></td>';
-                                row += '<td class="hidden-input">';
-                                row += '<input type="hidden" name="details[' + data.id + '_' +
-                                    variantId + '][product_id]" value="' + data.id + '">';
-                                row += '<input type="hidden" name="details[' + data.id + '_' +
-                                    variantId + '][product_variant_id]" value="' + (variantId ||
-                                        '') + '">';
-                                row += '</td>';
-                                row += '</tr>';
-                                $('#product-table-body').append(row);
-                                // Reset dropdown produk setelah menambahkan produk ke tabel
-                                $('#selectProduct').val('').trigger('change');
-                            }
-                        });
-
+                        addProductToTable(productId, variantId, warehouseId);
                     }
                 }
             });
-            // Item quantity change event handler
-            $('#product-table-body').on('input', '.item-quantity', function() {
-                var row = $(this).closest('tr');
-                var quantity = parseFloat($(this).val()) || 0;
-                var minQuantity = parseFloat($(this).data('min-quantity')) || 1;
-                if (quantity < minQuantity) {
+
+            function addProductToTable(productId, variantId, warehouseId) {
+                var productRowSelector = '#product-table-body tr[data-product-id="' + productId +
+                    '"][data-variant-id="' + (variantId || '') + '"]';
+
+                if ($(productRowSelector).length > 0) {
+                    // Jika baris produk sudah ada, tingkatkan kuantitasnya
+                    var quantityInput = $(productRowSelector).find('.item-quantity');
+                    var currentQuantity = parseInt(quantityInput.val());
+                    quantityInput.val(currentQuantity + 1); // Tambahkan kuantitas
                     Swal.fire({
                         toast: true,
                         position: 'top-end',
                         icon: 'warning',
-                        title: 'The quantity cannot be less than 1.',
+                        title: 'Produk sudah ditambahkan. Jumlah produk telah ditingkatkan.',
                         showConfirmButton: false,
                         timer: 3000,
+
                         timerProgressBar: true,
                         didOpen: (toast) => {
                             toast.addEventListener('mouseenter', Swal.stopTimer)
                             toast.addEventListener('mouseleave', Swal.resumeTimer)
                         }
                     });
-                    $(this).val(minQuantity);
-                    quantity = minQuantity;
+                    return;
+
                 }
+
+                // Jika baris produk belum ada, ambil data produk dari server
+                $.ajax({
+                    url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' + warehouseId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        var initialQuantity = 1;
+                        var row = '<tr data-product-id="' + data.id + '" data-variant-id="' + (
+                            variantId || '') + '">';
+                        row += '<td>#</td>';
+                        row += '<td>' + data.code + '</td>';
+                        row += '<td>' + data.name + '</td>';
+                        row += '<td>' + data.qty + ' ' + data.unit + '</td>';
+                        row +=
+                            '<td><input type="number" class="form-control item-quantity" name="details[' +
+                            data.id + '_' + variantId + '][quantity]" value="' + initialQuantity +
+                            '" data-min-quantity="1"></td>';
+                        row += '<td><select class="form-select" name="details[' + data.id + '_' +
+                            variantId +
+                            '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
+                        row +=
+                            '<td><button type="button" class="btn btn-danger btn-sm delete-row"><svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 48 48"><g fill="none" stroke="#FFFFFF" stroke-linejoin="round" stroke-width="4"><path d="M9 10v34h30V10z" /><path stroke-linecap="round" d="M20 20v13m8-13v13M4 10h40" /><path d="m16 10l3.289-6h9.488L32 10z" /></g></svg></button></td>';
+                        row += '<td class="hidden-input"><input type="hidden" name="details[' + data
+                            .id + '_' + variantId + '][product_id]" value="' + data.id +
+                            '"><input type="hidden" name="details[' + data.id + '_' + variantId +
+                            '][product_variant_id]" value="' + (variantId || '') + '"></td>';
+                        row += '</tr>';
+                        $('#product-table-body').append(row);
+                        $('#selectProduct').val('').trigger('change');
+                    }
+                });
+            }
+            // Debouncing function to limit rapid input processing
+            function debounce(func, wait) {
+                var timeout;
+                return function() {
+                    clearTimeout(timeout);
+                    var context = this,
+                        args = arguments;
+                    timeout = setTimeout(function() {
+                        func.apply(context, args);
+                    }, wait);
+                };
+            }
+
+            // Apply debounce to scanner input
+            $('#scannerInput').on('input', debounce(function(event) {
+                event.preventDefault(); // Prevent default behavior to avoid form submission
+
+                var scannerCode = $(this).val().trim();
+                console.log('Scanner Code:', scannerCode); // Debugging line
+
+                if (scannerCode) {
+                    var warehouseId = $('#selectWarehouse').val();
+                    console.log('Warehouse ID:', warehouseId); // Debugging line
+
+                    if (warehouseId) {
+                        var matchedProduct = $('#selectProduct option').filter(function() {
+                            return $(this).data('code') == scannerCode;
+                        }).first();
+
+                        if (matchedProduct.length > 0) {
+                            var productId = matchedProduct.val();
+                            var variantId = matchedProduct.data('variant-id') || null;
+                            console.log('Product ID:', productId); // Debugging line
+
+                            // Process and add product to table
+                            addProductToTable(productId, variantId, warehouseId);
+
+                            // Reset input scanner only after processing
+                            $(this).val('');
+                        } else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Produk tidak ditemukan.',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                                }
+                            });
+
+                            // Reset input scanner if product not found
+                            $(this).val('');
+                        }
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'warning',
+                            title: 'Pilih gudang terlebih dahulu.',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer);
+                                toast.addEventListener('mouseleave', Swal.resumeTimer);
+                            }
+                        });
+
+                        // Reset input scanner if no warehouse selected
+                        $(this).val('');
+                    }
+                }
+            }, 300)); // Adjust debounce time as needed
+
+            $('#product-table-body').on('click', '.delete-row', function() {
+                $(this).closest('tr').remove();
             });
+
         });
     </script>
 @endpush
