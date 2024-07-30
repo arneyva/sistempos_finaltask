@@ -374,7 +374,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="modal fade" id="shippingmodal{{ $item->id }}" tabindex="-1"
+                                        {{-- <div class="modal fade" id="shippingmodal{{ $item->id }}" tabindex="-1"
                                             aria-labelledby="shippingmodalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
@@ -444,7 +444,81 @@
                                                     </form>
                                                 </div>
                                             </div>
+                                        </div> --}}
+                                        <div class="modal fade" id="shippingmodal{{ $item->id }}" tabindex="-1"
+                                            aria-labelledby="shippingmodalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="shippingmodalLabel">
+                                                            {{ __('Shipping') }}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{{ route('sale.shipment.store') }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="sale_id"
+                                                                value="{{ $item->id }}">
+                                                            <input type="hidden" name="Ref"
+                                                                value="SM-{{ $item->Ref }}">
+                                                            <div class="col mb-3">
+                                                                <label class="form-label"
+                                                                    for="status">{{ __('Status *') }}</label>
+                                                                <select class="form-select" id="status" name="status"
+                                                                    {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>
+                                                                    <option selected disabled value="">
+                                                                        {{ __('Choose...') }}</option>
+                                                                    <option value="shipped"
+                                                                        {{ $item->shipment && $item->shipment->status == 'shipped' ? 'selected' : '' }}>
+                                                                        {{ __('Shipped') }}</option>
+                                                                    <option value="delivered"
+                                                                        {{ $item->shipment && $item->shipment->status == 'delivered' ? 'selected' : '' }}>
+                                                                        {{ __('Delivered') }}</option>
+                                                                    <option value="cancelled"
+                                                                        {{ $item->shipment && $item->shipment->status == 'cancelled' ? 'selected' : '' }}>
+                                                                        {{ __('Cancelled') }}</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col mb-3">
+                                                                <label class="form-label"
+                                                                    for="delivered_to">{{ __('Delivered To *') }}</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="delivered_to" required name="delivered_to"
+                                                                    value="{{ $item->shipment ? $item->shipment->delivered_to : '' }}"
+                                                                    placeholder="{{ __('Input...') }}"
+                                                                    {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>
+                                                            </div>
+                                                            <div class="col mb-3">
+                                                                <label class="form-label"
+                                                                    for="shipping_address">{{ __('Address *') }}</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="shipping_address" required name="shipping_address"
+                                                                    value="{{ $item->shipment ? $item->shipment->shipping_address : '' }}"
+                                                                    placeholder="{{ __('Input...') }}"
+                                                                    {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>
+                                                            </div>
+                                                            <div class="col mb-3">
+                                                                <label class="form-label"
+                                                                    for="shipping_details">{{ __('Details Note') }}</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="shipping_details" required name="shipping_details"
+                                                                    value="{{ $item->shipment ? $item->shipment->shipping_details : '' }}"
+                                                                    placeholder="{{ __('Input...') }}"
+                                                                    {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>
+                                                            </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                                        <button type="submit" class="btn btn-primary"
+                                                            {{ $item->shipment && ($item->shipment->status == 'delivered' || $item->shipment->status == 'cancelled') ? 'disabled' : '' }}>{{ __('Save changes') }}</button>
+                                                    </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
+
                                         <div class="modal fade" id="invoiceModal{{ $item->id }}" tabindex="-1"
                                             role="dialog" aria-labelledby="invoiceModalLabel" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
