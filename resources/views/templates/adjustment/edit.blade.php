@@ -148,6 +148,7 @@
             </div>
         </div>
     </div>
+    <input type="text" id="scannerInput" style="position: absolute; left: -9999px;" />
 @endsection
 
 @push('script')
@@ -210,6 +211,10 @@
                         if (existingProductId == productId && existingVariantId == variantId) {
                             isDuplicate = true;
                             $('#selectProduct').val('').trigger('change');
+                            var quantityInput = $(this).find('input[name$="[quantity]"]');
+                            var currentQuantity = parseInt(quantityInput.val());
+                            quantityInput.val(currentQuantity + 1); // Increase the quantity by 1
+                            $('#selectProduct').val('').trigger('change');
                             return false; // Hentikan loop
                         }
                     });
@@ -218,7 +223,7 @@
                             toast: true,
                             position: 'top-end',
                             icon: 'warning',
-                            title: 'Produk sudah ditambahkan.',
+                            title: 'Produk sudah ditambahkan. Jumlah produk telah ditingkatkan.',
                             showConfirmButton: false,
                             timer: 3000,
                             timerProgressBar: true,
@@ -228,57 +233,169 @@
                             }
                         });
                     } else {
-                        $.ajax({
-                            url: '/adjustment/show_product_data/' + productId + '/' + variantId +
-                                '/' + warehouseId,
-                            type: "GET",
-                            dataType: "json",
-                            success: function(data) {
-                                var initialQuantity = 1;
-                                var row = '<tr>';
-                                row += '<td>#</td>';
-                                row += '<td>' + data.code + '</td>';
-                                row += '<td>' + data.name + '</td>';
-                                row += '<td>' + 'New Data' + '</td>';
-                                row += '<td>' + data.qty + ' ' + data.unit + '</td>';
-                                row +=
-                                    '<td><input type="number" class="form-control item-quantity" name="details[new-' +
-                                    newIndex + '][quantity]" value="' + initialQuantity +
-                                    '" data-min-quantity="1"></td>';
-                                row += '<td><select class="form-select" name="details[new-' +
-                                    newIndex +
-                                    '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
-                                row +=
-                                    '<td><button type="button" class="btn btn-danger btn-sm delete-row">';
-                                row +=
-                                    '<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 48 48">';
-                                row +=
-                                    '<g fill="none" stroke="#FFFFFF" stroke-linejoin="round" stroke-width="4">';
-                                row += '<path d="M9 10v34h30V10z" />';
-                                row +=
-                                    '<path stroke-linecap="round" d="M20 20v13m8-13v13M4 10h40" />';
-                                row += '<path d="m16 10l3.289-6h9.488L32 10z" />';
-                                row += '</g>';
-                                row += '</svg>';
-                                row += '</button></td>';
-                                row += '<td class="hidden-input">';
-                                row += '<input type="hidden" name="details[new-' + newIndex +
-                                    '][id]" value="new">';
-                                row += '<input type="hidden" name="details[new-' + newIndex +
-                                    '][product_id]" value="' + data.id + '">';
-                                row += '<input type="hidden" name="details[new-' + newIndex +
-                                    '][product_variant_id]" value="' + (variantId || '') +
-                                    '">';
-                                row += '</td>';
-                                row += '</tr>';
-                                $('#product-table-body').append(row);
-                                // Reset dropdown produk setelah menambahkan produk ke tabel
-                                $('#selectProduct').val('').trigger('change');
-                            }
-                        });
+                        addProductToTable(productId, variantId, warehouseId);
                     }
                 }
             });
+
+            function addProductToTable(productId, variantId, warehouseId) {
+                var productRowSelector = '#product-table-body tr[data-product-id="' + productId +
+                    '"][data-variant-id="' + (variantId || '') + '"]';
+
+                if ($(productRowSelector).length > 0) {
+                    // Jika baris produk sudah ada, tingkatkan kuantitasnya
+                    var quantityInput = $(productRowSelector).find('.item-quantity');
+                    var currentQuantity = parseInt(quantityInput.val());
+                    quantityInput.val(currentQuantity + 1); // Tambahkan kuantitas
+                    return;
+                }
+
+                // Jika baris produk belum ada, ambil data produk dari server
+                $.ajax({
+                    url: '/adjustment/show_product_data/' + productId + '/' + variantId + '/' + warehouseId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        var initialQuantity = 1;
+                        var newIndex = Date.now(); // Unique identifier for new row
+                        var row = '<tr data-product-id="' + data.id + '" data-variant-id="' + (
+                            variantId || '') + '">';
+                        row += '<td>#</td>';
+                        row += '<td>' + data.code + '</td>';
+                        row += '<td>' + data.name + '</td>';
+                        row += '<td>' + 'New Data' + '</td>';
+                        row += '<td>' + data.qty + ' ' + data.unit + '</td>';
+                        row +=
+                            '<td><input type="number" class="form-control item-quantity" name="details[new-' +
+                            newIndex + '][quantity]" value="' + initialQuantity +
+                            '" data-min-quantity="1"></td>';
+                        row += '<td><select class="form-select" name="details[new-' + newIndex +
+                            '][type]"><option value="add">Add</option><option value="sub">Subtract</option></select></td>';
+                        row += '<td><button type="button" class="btn btn-danger btn-sm delete-row">';
+                        row +=
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 48 48">';
+                        row +=
+                            '<g fill="none" stroke="#FFFFFF" stroke-linejoin="round" stroke-width="4">';
+                        row += '<path d="M9 10v34h30V10z" />';
+                        row += '<path stroke-linecap="round" d="M20 20v13m8-13v13M4 10h40" />';
+                        row += '<path d="m16 10l3.289-6h9.488L32 10z" />';
+                        row += '</g>';
+                        row += '</svg>';
+                        row += '</button></td>';
+                        row += '<td class="hidden-input">';
+                        row += '<input type="hidden" name="details[new-' + newIndex +
+                            '][id]" value="new">';
+                        row += '<input type="hidden" name="details[new-' + newIndex +
+                            '][product_id]" value="' + data.id + '">';
+                        row += '<input type="hidden" name="details[new-' + newIndex +
+                            '][product_variant_id]" value="' + (variantId || '') + '">';
+                        row += '</td>';
+                        row += '</tr>';
+                        $('#product-table-body').append(row);
+                        // Reset dropdown produk setelah menambahkan produk ke tabel
+                        $('#selectProduct').val('').trigger('change');
+                    }
+                });
+            }
+
+            // Debouncing function to limit rapid input processing
+            function debounce(func, wait) {
+                var timeout;
+                return function() {
+                    clearTimeout(timeout);
+                    var context = this,
+                        args = arguments;
+                    timeout = setTimeout(function() {
+                        func.apply(context, args);
+                    }, wait);
+                };
+            }
+
+            // Apply debounce to scanner input
+            $('#scannerInput').on('input', debounce(function(event) {
+                event.preventDefault(); // Prevent default behavior to avoid form submission
+
+                var scannerCode = $(this).val().trim();
+                console.log('Scanner Code:', scannerCode); // Debugging line
+
+                if (scannerCode) {
+                    var warehouseId = $('#selectWarehouse').val();
+                    console.log('Warehouse ID:', warehouseId); // Debugging line
+
+                    if (warehouseId) {
+                        var matchedProduct = $('#selectProduct option').filter(function() {
+                            return $(this).data('code') == scannerCode;
+                        }).first();
+
+                        if (matchedProduct.length > 0) {
+                            var productId = matchedProduct.val();
+                            var variantId = matchedProduct.data('variant-id') || null;
+                            console.log('Product ID:', productId); // Debugging line
+
+                            // Check if product is already in the table
+                            var productRowSelector = '#product-table-body tr[data-product-id="' +
+                                productId + '"][data-variant-id="' + (variantId || '') + '"]';
+                            var productRow = $(productRowSelector);
+
+                            if (productRow.length > 0) {
+                                // If product row already exists, increase the quantity
+                                var quantityInput = productRow.find('.item-quantity');
+                                var currentQuantity = parseInt(quantityInput.val());
+                                quantityInput.val(currentQuantity + 1); // Increment quantity
+
+                                // Optionally, you might want to update the total price or other fields here
+
+                                // Reset input scanner only after processing
+                                $(this).val('');
+                                return; // Exit function to prevent adding new row
+                            }
+
+                            // Process and add product to table if not already present
+                            addProductToTable(productId, variantId, warehouseId);
+
+                            // Reset input scanner only after processing
+                            $(this).val('');
+                        } else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Produk tidak ditemukan.',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                                }
+                            });
+
+                            // Reset input scanner if product not found
+                            $(this).val('');
+                        }
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'warning',
+                            title: 'Pilih gudang terlebih dahulu.',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer);
+                                toast.addEventListener('mouseleave', Swal.resumeTimer);
+                            }
+                        });
+
+                        // Reset input scanner if no warehouse selected
+                        $(this).val('');
+                    }
+                }
+            }, 300)); // Adjust debounce delay as needed
+
+
+
             // Item quantity change event handler
             $('#product-table-body').on('input', '.item-quantity', function() {
                 var row = $(this).closest('tr');
@@ -320,6 +437,7 @@
                                     .name + '</option>');
                             });
                             $('#selectProduct').prop('disabled', false);
+                            $('#scannerInput').focus();
                         }
                     });
                 } else {
