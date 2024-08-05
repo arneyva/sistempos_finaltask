@@ -35,4 +35,9 @@ class Transfer extends Model
     {
         return $this->belongsTo(Warehouse::class, 'to_warehouse_id', 'id');
     }
+    // app/Models/Transfer.php
+    public function notes()
+    {
+        return $this->hasMany(NotesTransfer::class);
+    }
 }

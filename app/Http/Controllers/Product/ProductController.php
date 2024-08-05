@@ -72,8 +72,8 @@ class ProductController extends Controller
             $qrCode = QrCode::create($product->code)
                 ->setEncoding(new Encoding('ISO-8859-1'))
                 ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
-                ->setSize(75)
-                ->setMargin(10);
+                ->setSize(50);
+                // ->setMargin(10);
             // Simpan data URI QR Code dalam item array
             $item['qrCode'] = (new PngWriter())->write($qrCode)->getDataUri();
             // untuk product single
@@ -95,7 +95,6 @@ class ProductController extends Controller
                 }
             } elseif ($product->type == 'is_variant') {
                 //untuk product variant
-
                 $item['type'] = 'Variant Product';
                 $item['unit'] = $product['unit']->ShortName;
                 $product_variant_data = ProductVariant::where('product_id', $product->id)
@@ -104,14 +103,27 @@ class ProductController extends Controller
                 $variant_costs = [];
                 $variant_price = [];
                 $variant_name = [];
+                $variant_code = [];
+                $variant_code = [];
+                $variant_qrCodes = [];
                 foreach ($product_variant_data as $product_variant) {
                     $variant_costs[] = $product_variant->cost;
                     $variant_price[] = $product_variant->price;
                     $variant_name[] = $product_variant->name;
+                    $variant_code[] = $product_variant->code;
+                    // Buat QR Code untuk setiap varian
+                    $qrCode = QrCode::create($product_variant->code)
+                        ->setEncoding(new Encoding('ISO-8859-1'))
+                        ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
+                        ->setSize(50);
+                        // ->setMargin(10);
+                    $variant_qrCodes[] = (new PngWriter())->write($qrCode)->getDataUri();
                 }
                 $item['cost'] = $variant_costs;
                 $item['price'] = $variant_price;
                 $item['name'] = $variant_name;
+                $item['code'] = $variant_code;
+                $item['qrCode'] = $variant_qrCodes;
                 // handle jumlah barang dan stock alert
                 if ($user_auth->hasRole(['superadmin', 'inventaris'])) {
                     $product_warehouse_total_qty = ProductWarehouse::where('product_id', $product->id)->where('deleted_at', '=', null)->sum('qty');
@@ -567,7 +579,7 @@ class ProductController extends Controller
                 $qrCodeVariant = QrCode::create($variant->code)
                     ->setEncoding(new Encoding('ISO-8859-1'))
                     ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
-                    ->setSize(75)
+                    ->setSize(125)
                     ->setMargin(10);
                 // Simpan data URI QR Code dalam item array
                 $ProductVariant['qrCodeVariant'] = (new PngWriter())->write($qrCodeVariant)->getDataUri();

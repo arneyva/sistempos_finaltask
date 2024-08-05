@@ -236,10 +236,27 @@
                                             {{ __('Product') }} {{ __('Single') }}
                                         @endif
                                     </td>
-                                    <td style="text-align: center; vertical-align: middle;">
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <img src="{{ $item['qrCode'] }}" alt="QR Code" style="margin-bottom: 5px;">
-                                            <span>{{ $item['code'] }}</span>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex flex-column">
+                                                @if ($item['type'] === 'Variant Product')
+                                                    @foreach ($item['code'] as $index => $code)
+                                                        <div
+                                                            style="display: flex; flex-direction: column; align-items: center;">
+                                                            <img src="{{ $item['qrCode'][$index] }}" alt="QR Code"
+                                                                style="margin-bottom: 5px;">
+                                                            <span>{{ $code }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <div
+                                                        style="display: flex; flex-direction: column; align-items: center;">
+                                                        <img src="{{ $item['qrCode'] }}" alt="QR Code"
+                                                            style="margin-bottom: 5px;">
+                                                        <span>{{ $item['code'] }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
                                     <td>{{ $item['brand'] }}</td>

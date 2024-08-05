@@ -24,9 +24,96 @@
     .hidden-input {
         display: none;
     }
+
+    .chat-online {
+        color: #34ce57
+    }
+
+    .chat-offline {
+        color: #e4606d
+    }
+
+    .chat-messages {
+        display: flex;
+        flex-direction: column;
+        max-height: 800px;
+        overflow-y: scroll
+    }
+
+    .chat-message-left,
+    .chat-message-right {
+        display: flex;
+        flex-shrink: 0
+    }
+
+    .chat-message-left {
+        margin-right: auto
+    }
+
+    .chat-message-right {
+        flex-direction: row-reverse;
+        margin-left: auto
+    }
+
+    .py-3 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .px-4 {
+        padding-right: 1.5rem !important;
+        padding-left: 1.5rem !important;
+    }
+
+    .flex-grow-0 {
+        flex-grow: 0 !important;
+    }
+
+    .border-top {
+        border-top: 1px solid #dee2e6 !important;
+    }
 </style>
 @section('content')
     <div class="col-md-12 col-lg-12">
+    </div>
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">History Notes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container p-0">
+                        <button type="button" class="btn btn-primary">{{ $transfer['Ref'] }}</button>
+                        <div class="card">
+                            <div class="col-12 col-lg-7 col-xl-12">
+                                <div class="position-relative">
+                                    <div class="chat-messages p-4">
+                                        @foreach ($formattedNotes as $formattedNotes)
+                                            <div class="chat-message-right pb-4">
+                                                <div style="margin-left: 20px">
+                                                    <img src="{{ asset('hopeui/html/assets/images/avatars/' . $formattedNotes['avatar']) }}"
+                                                        alt="User-Profile" class="rounded-circle mr-1" alt="Chris Wood"
+                                                        width="50" height="50">
+                                                    <div class="text-muted small text-nowrap mt-2">
+                                                        {{ $formattedNotes['created_at'] }}</div>
+                                                </div>
+                                                <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-5">
+                                                    <div class="font-weight-bold mb-1">{{ $formattedNotes['user'] }}</div>
+                                                    {{ $formattedNotes['content'] }}
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="col-md-12">
         <div class="row">
@@ -35,6 +122,10 @@
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
                             <h4 class="card-title">{{ __('Edit Transfer') }}</h4>
+                        </div>
+                        <div class="header-title">
+                            <button type="button" class="btn rounded-pill btn-soft-danger" data-bs-toggle="modal"
+                                data-bs-target="#createModal">{{ __('Notes') }}</button>
                         </div>
                     </div>
                     <div class="card-body">
@@ -203,6 +294,48 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
+                                            <div class="form-group input-group">
+                                                <input type="text" class="form-control" id="shipping"
+                                                    placeholder="{{ __('input shipping') }}" name="transfer[shipping]"
+                                                    value="{{ $transfer['shipping'] }}">
+                                                <input type="hidden" id="shipping_value"
+                                                    name="transfer[shipping_value]">
+                                            </div>
+                                            @error('transfer.shipping')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label" for="status">{{ __('Status *') }}</label>
+                                            <select class="form-select select2" id="status" name="transfer[statut]"
+                                                required data-placeholder="Select a Status">
+                                                <option value="{{ $transfer['statut'] }}">{{ $transfer['statut'] }}
+                                                </option>
+                                                <option value="sent">{{ __('Sent') }}</option>
+                                                <option value="completed">{{ __('Completed') }}</option>
+                                            </select>
+                                            @error('transfer.statut')
+                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
+                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
+                                                    <span style="margin-left: 3px"> {{ $message }}</span>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="alert" aria-label="Close"
+                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-12 mb-3">
                                     <div class="row">
                                         <div class="col-md-4 mb-3" style="display: none">
@@ -234,7 +367,8 @@
                                                 <input type="text" class="form-control" id="discount"
                                                     placeholder="{{ __('input discount') }}" name="transfer[discount]"
                                                     value="{{ $transfer['discount'] }}">
-                                                <input type="hidden" id="discount_value" name="transfer[discount_value]">
+                                                <input type="hidden" id="discount_value"
+                                                    name="transfer[discount_value]">
                                             </div>
                                             @error('transfer.discount')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -246,46 +380,10 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="shipping">{{ __('Shipping') }}</label>
-                                            <div class="form-group input-group">
-                                                <input type="text" class="form-control" id="shipping"
-                                                    placeholder="{{ __('input shipping') }}" name="transfer[shipping]"
-                                                    value="{{ $transfer['shipping'] }}">
-                                                <input type="hidden" id="shipping_value" name="transfer[shipping_value]">
-                                            </div>
-                                            @error('transfer.shipping')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label" for="status">{{ __('Status *') }}</label>
-                                            <select class="form-select select2" id="status" name="transfer[statut]"
-                                                required data-placeholder="Select a Status">
-                                                <option value="{{ $transfer['statut'] }}">{{ $transfer['statut'] }}
-                                                </option>
-                                                <option value="sent">{{ __('Sent') }}</option>
-                                                <option value="completed">{{ __('Completed') }}</option>
-                                            </select>
-                                            @error('transfer.statut')
-                                                <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
-                                                    role="alert" style="padding: 1px 1px 1px 1px; margin-top: 3px">
-                                                    <span style="margin-left: 3px"> {{ $message }}</span>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="alert" aria-label="Close"
-                                                        style="padding: 1px 1px 1px 1px; margin-top: 7px; margin-right: 3px;height: 10px"></button>
-                                                </div>
-                                            @enderror
-                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mb-3" style="display: none">
+
+                                <div class="col-md-12 mb-3">
                                     <label class="form-label"
                                         for="exampleFormControlTextarea1">{{ __('Note') }}</label>
                                     <input type="text" class="form-control" id="exampleFormControlTextarea1"

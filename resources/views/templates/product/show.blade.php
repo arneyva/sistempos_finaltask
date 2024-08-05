@@ -162,16 +162,14 @@
                                     <tr>
                                         @if ($data[0]['type'] == 'is_single')
                                             <td>{{ __('Code') }}</td>
-                                        @else
-                                            <td>{{ __('Code Base Product') }}</td>
+                                            <th>
+                                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                                    <img src="{{ $data[0]['qrCode'] }}" alt="QR Code"
+                                                        style="margin-bottom: 5px;">
+                                                    <span>{{ $data[0]['code'] }}</span>
+                                                </div>
+                                            </th>
                                         @endif
-                                        <th>
-                                            <div style="display: flex; flex-direction: column; align-items: center;"> <img
-                                                    src="{{ $data[0]['qrCode'] }}" alt="QR Code"
-                                                    style="margin-bottom: 5px;">
-                                                <span>{{ $data[0]['code'] }}</span>
-                                            </div>
-                                        </th>
                                     </tr>
                                     <tr>
                                         <td>{{ __('Category') }}</td>

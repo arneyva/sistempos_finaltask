@@ -199,7 +199,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mb-3" style="display: none">
+                                <div class="col-md-12 mb-3">
                                     <label class="form-label"
                                         for="exampleFormControlTextarea1">{{ __('Note') }}</label>
                                     <input type="text" class="form-control" id="exampleFormControlTextarea1"
