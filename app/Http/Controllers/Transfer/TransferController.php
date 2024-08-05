@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Transfer;
 
 use App\Exports\TransfersExport;
 use App\Http\Controllers\Controller;
+use App\Models\NotesTransfer;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
@@ -173,10 +174,16 @@ class TransferController extends Controller
                 $order->discount = $request->discount_value ? $request->discount_value : 0;
                 $order->shipping = $request->shipping_value ? $request->shipping_value : 0;
                 $order->statut = $request->transfer['statut'];
-                $order->notes = $request->transfer['notes'];
+                // $order->notes = $request->transfer['notes'];
                 $order->GrandTotal = $request['GrandTotal'];
                 $order->user_id = Auth::user()->id;
                 $order->save();
+                // 
+                NotesTransfer::create([
+                    'transfer_id' => $order->id,
+                    'user_id' => Auth::user()->id,
+                    'note' => $request->transfer['notes'],
+                ]);
                 // proses penyimpanan detail transfer
                 $data = $request['details'];
                 foreach ($data as $key => $value) {
@@ -293,8 +300,8 @@ class TransferController extends Controller
             return redirect()->route('transfer.index')->with('success', 'Transfer created successfully');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Transfer created failed');
             return response()->json(['error' => $e->getMessage()], 400);
+            return redirect()->back()->with('error', 'Transfer created failed');
         }
     }
 
@@ -314,7 +321,23 @@ class TransferController extends Controller
         $Transfer_data = Transfer::with('details.product.unit')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
+        // Ambil semua catatan untuk transfer yang diberikan
+        $notes = NotesTransfer::where('transfer_id', $id)
+            ->with('user') // Memuat relasi pengguna
+            ->get();
 
+        // Format catatan dalam bentuk array yang mudah digunakan untuk tampilan
+        $formattedNotes = $notes->map(function ($note) {
+            return [
+                'content' => $note->note,
+                'created_at' => $note->created_at->format('m-d H:i'),
+                'user' => $note->user->firstname, // Asumsi bahwa user memiliki atribut 'name'
+                'avatar' => $note->user->avatar, // Asumsi bahwa user memiliki atribut 'name'
+            ];
+        });
+
+        // Debug output untuk memastikan data yang benar
+        // dd($formattedNotes);
         $details = [];
         if ($Transfer_data->from_warehouse_id) {
             if (Warehouse::where('id', $Transfer_data->from_warehouse_id)
@@ -339,6 +362,7 @@ class TransferController extends Controller
             $transfer['to_warehouse'] = '';
         }
         $transfer['id'] = $Transfer_data->id;
+        $transfer['Ref'] = $Transfer_data->Ref;
         $transfer['GrandTotal'] = $Transfer_data->GrandTotal;
         $transfer['statut'] = $Transfer_data->statut;
         $transfer['notes'] = $Transfer_data->notes;
@@ -485,10 +509,28 @@ class TransferController extends Controller
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
         // return response()->json(['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses]);
-        return view('templates.transfer.edit', ['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses]);
+        return view('templates.transfer.edit', ['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses, 'formattedNotes' => $formattedNotes]);
     }
     public function editForStaff(Request $request, $id)
     {
+        // Ambil semua catatan untuk transfer yang diberikan
+        $notes = NotesTransfer::where('transfer_id', $id)
+            ->with('user') // Memuat relasi pengguna
+            ->get();
+
+        // Format catatan dalam bentuk array yang mudah digunakan untuk tampilan
+        $formattedNotes = $notes->map(function ($note) {
+            return [
+                'content' => $note->note,
+                'created_at' => $note->created_at->format('Y-m-d H:i:s'),
+                'user' => $note->user->firstname, // Asumsi bahwa user memiliki atribut 'name'
+                'avatar' => $note->user->avatar,
+            ];
+        });
+
+        // Debug output untuk memastikan data yang benar
+        // dd($formattedNotes);
+
         $Transfer_data = Transfer::with('details.product.unit')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
@@ -517,6 +559,7 @@ class TransferController extends Controller
             $transfer['to_warehouse'] = '';
         }
         $transfer['id'] = $Transfer_data->id;
+        $transfer['Ref'] = $Transfer_data->Ref;
         $transfer['GrandTotal'] = $Transfer_data->GrandTotal;
         $transfer['statut'] = $Transfer_data->statut;
         $transfer['notes'] = $Transfer_data->notes;
@@ -663,7 +706,7 @@ class TransferController extends Controller
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
         // return response()->json(['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses]);
-        return view('templates.transfer.confirm-staff', ['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses]);
+        return view('templates.transfer.confirm-staff', ['transfer' => $transfer, 'details' => $details, 'warehouse' => $warehouses, 'formattedNotes' => $formattedNotes]);
     }
 
     /**
@@ -931,7 +974,7 @@ class TransferController extends Controller
                     'to_warehouse_id' => $Trans['to_warehouse'],
                     'from_warehouse_id' => $Trans['from_warehouse'],
                     'date' => $Trans['date'],
-                    'notes' => $Trans['notes'],
+                    // 'notes' => $Trans['notes'],
                     'statut' => $Trans['statut'],
                     'items' => count($request['details']),
                     'tax_rate' => $Trans['tax_rate'] ? $Trans['tax_rate'] : 0,
@@ -939,6 +982,12 @@ class TransferController extends Controller
                     'discount' => $Trans['discount_value'] ? $Trans['discount_value'] : 0,
                     'shipping' => $Trans['shipping_value'] ? $Trans['shipping_value'] : 0,
                     'GrandTotal' => $request['GrandTotal'],
+                ]);
+                // 
+                NotesTransfer::create([
+                    'transfer_id' => $current_Transfer->id,
+                    'user_id' => Auth::user()->id,
+                    'note' => $request->transfer['notes'],
                 ]);
             }, 10);
             return redirect()->route('transfer.index')->with('success', 'Transfer updated successfully');
@@ -951,11 +1000,6 @@ class TransferController extends Controller
     public function updateStaff(Request $request, $id)
     {
         try {
-            // request()->validate([
-            //     'transfer.to_warehouse' => 'required',
-            //     'transfer.from_warehouse' => 'required',
-            // ]);
-            
             \DB::transaction(function () use ($request, $id) {
 
                 $current_Transfer = Transfer::findOrFail($id);
@@ -1210,7 +1254,7 @@ class TransferController extends Controller
                     'to_warehouse_id' => $Trans['to_warehouse'],
                     'from_warehouse_id' => $Trans['from_warehouse'],
                     'date' => $Trans['date'],
-                    'notes' => $Trans['notes'],
+                    // 'notes' => $Trans['notes'],
                     'statut' => $Trans['statut'],
                     'items' => count($request['details']),
                     'tax_rate' => $Trans['tax_rate'] ? $Trans['tax_rate'] : 0,
@@ -1220,12 +1264,17 @@ class TransferController extends Controller
                     'GrandTotal' => $request['GrandTotal'],
                 ]);
                 // dd($request->all());
+                NotesTransfer::create([
+                    'transfer_id' => $current_Transfer->id,
+                    'user_id' => Auth::user()->id,
+                    'note' => $request->transfer['notes'],
+                ]);
             }, 10);
             return redirect()->route('transfer.index')->with('success', 'Transfer updated successfully');
         } catch (\Throwable $e) {
             DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 400);
             return redirect()->back()->with('error', 'Transfer updated failed');
-            // return response()->json(['error' => $e->getMessage()], 400);
         }
     }
     public function updateForStaff(Request $request, $id)

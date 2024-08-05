@@ -24,9 +24,128 @@
     .hidden-input {
         display: none;
     }
+
+    .chat-online {
+        color: #34ce57
+    }
+
+    .chat-offline {
+        color: #e4606d
+    }
+
+    .chat-messages {
+        display: flex;
+        flex-direction: column;
+        max-height: 800px;
+        overflow-y: scroll
+    }
+
+    .chat-message-left,
+    .chat-message-right {
+        display: flex;
+        flex-shrink: 0
+    }
+
+    .chat-message-left {
+        margin-right: auto
+    }
+
+    .chat-message-right {
+        flex-direction: row-reverse;
+        margin-left: auto
+    }
+
+    .py-3 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .px-4 {
+        padding-right: 1.5rem !important;
+        padding-left: 1.5rem !important;
+    }
+
+    .flex-grow-0 {
+        flex-grow: 0 !important;
+    }
+
+    .border-top {
+        border-top: 1px solid #dee2e6 !important;
+    }
 </style>
 @section('content')
     <div class="col-md-12 col-lg-12">
+    </div>
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">History Notes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container p-0">
+                        <button type="button" class="btn btn-primary">{{ $transfer['Ref'] }}</button>
+                        <div class="card">
+                            <div class="col-12 col-lg-7 col-xl-12">
+                                <div class="position-relative">
+                                    <div class="chat-messages p-4">
+                                        @foreach ($formattedNotes as $formattedNotes)
+                                            <div class="chat-message-right pb-4">
+                                                <div style="margin-left: 20px">
+                                                    <img src="{{ asset('hopeui/html/assets/images/avatars/' . $formattedNotes['avatar']) }}"
+                                                        alt="User-Profile" class="rounded-circle mr-1" alt="Chris Wood"
+                                                        width="50" height="50">
+                                                    <div class="text-muted small text-nowrap mt-2">
+                                                        {{ $formattedNotes['created_at'] }}</div>
+                                                </div>
+                                                <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-5">
+                                                    <div class="font-weight-bold mb-1">{{ $formattedNotes['user'] }}</div>
+                                                    {{ $formattedNotes['content'] }}
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="ImportProduct" tabindex="-1" aria-labelledby="ImportProduct" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">{{ __('Instructions') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="col-sm-12 col-form-label"
+                        for="name">{{ __('* Pastikan anda telah mengecek barang,sebelum melakukan konfirmasi data Transfer') }}</label>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                disabled>{{ __('Re-Check Admin Required') }}</button>
+                        </div>
+                        <label class="col-sm-8 col-form-label"
+                            for="codeProduct">{{ __('Jika Quantity Tidak Sesuai, anda dapat memilih status ini') }}</label>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-outline-success btn-sm"
+                                disabled>{{ __('Completed') }}</button>
+                        </div>
+                        <label class="col-sm-8 col-form-label"
+                            for="codeProduct">{{ __('Jika Quantity Sesuai, anda dapat memilih status ini') }}</label>
+                    </div>
+                    <label class="col-sm-12 col-form-label"
+                        for="name">{{ __('* Selalu gunakan fitur notes dalam setiap aksi') }}</label>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-md-12">
         <div class="row">
@@ -35,6 +154,12 @@
                     <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                         <div class="header-title">
                             <h4 class="card-title">{{ __('Confirm') }}{{ __(' Transfer') }}</h4>
+                        </div>
+                        <div class="header-title">
+                            <button type="button" class="btn rounded-pill btn-soft-danger" data-bs-toggle="modal"
+                                data-bs-target="#ImportProduct">{{ __('Instructions') }}</button>
+                            <button type="button" class="btn rounded-pill btn-soft-primary" data-bs-toggle="modal"
+                                data-bs-target="#createModal">{{ __('Notes') }}</button>
                         </div>
                     </div>
                     <div class="card-body">
@@ -60,8 +185,8 @@
                                 </div>
                                 <div class="col-md-4 mb-3" style="display: none">
                                     <label class="form-label" for="exampleInputdate">{{ __('Date *') }}</label>
-                                    <input type="date" class="form-control" id="exampleInputdate" name="transfer[date]"
-                                        value="{{ date('Y-m-d') }}">
+                                    <input type="date" class="form-control" id="exampleInputdate"
+                                        name="transfer[date]" value="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
@@ -215,10 +340,9 @@
                                             <label class="form-label" for="status">{{ __('Status *') }}</label>
                                             <select class="form-select select2" id="status" name="transfer[statut]"
                                                 required data-placeholder="Select a Status">
-                                                {{-- <option value="{{ $transfer['statut'] }}">{{ $transfer['statut'] }}
-                                                </option>
-                                                <option value="sent">{{ __('Sent') }}</option> --}}
                                                 <option value="completed">{{ __('Completed') }}</option>
+                                                <option value="Re-Check Admin Required">
+                                                    {{ __('Re-Check Admin Required') }}</option>
                                             </select>
                                             @error('transfer.statut')
                                                 <div class="alert alert-right alert-warning alert-dismissible fade show mb-3"
@@ -298,6 +422,29 @@
 @endsection
 
 @push('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusSelect = document.getElementById('status');
+            const inputs = document.querySelectorAll('#product-table input');
+            const buttons = document.querySelectorAll('#product-table button');
+
+            statusSelect.addEventListener('change', function() {
+                if (statusSelect.value === 'Re-Check Admin Required') {
+                    inputs.forEach(input => input.setAttribute('readonly', 'true'));
+                    buttons.forEach(button => button.setAttribute('disabled', 'true'));
+                } else {
+                    inputs.forEach(input => input.removeAttribute('readonly'));
+                    buttons.forEach(button => button.removeAttribute('disabled'));
+                }
+            });
+
+            // Initial check to disable inputs if needed when the page loads
+            // if (statusSelect.value === 'Re-Check Admin Required') {
+            //     inputs.forEach(input => input.setAttribute('disabled', 'true'));
+            //     buttons.forEach(button => button.setAttribute('disabled', 'true'));
+            // }
+        });
+    </script>
     <script>
         $(document).ready(function() {
             // Initialize Select2 for Warehouse Dropdown
