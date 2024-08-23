@@ -212,11 +212,9 @@ class SaleController extends Controller
             $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id');
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
-        // $warehouse = Warehouse::query()->get();
         $client = Client::query()->get();
         $membership = Membership::query()->get();
         $one_score_equal = $membership->first()->one_score_equal;
-        // dd($one_score_equal);
         return view('templates.sale.create', ['warehouse' => $warehouses, 'client' => $client, 'one_score_equal' => $one_score_equal]);
     }
     public function getCustomerScore($id)

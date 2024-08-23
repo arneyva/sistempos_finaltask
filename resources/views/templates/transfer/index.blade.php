@@ -236,7 +236,7 @@
                                                 </div>
                                             </div>
                                             @role('superadmin|inventaris')
-                                                <a href="{{ $item['statut'] !== 'completed' ? route('transfer.edit', $item['id']) : '#' }}"
+                                                {{-- <a href="{{ $item['statut'] !== 'completed' ? route('transfer.edit', $item['id']) : '#' }}"
                                                     class="{{ $item['statut'] === 'completed' ? 'disabled' : '' }}">
                                                     <svg class="icon-32 {{ $item['statut'] === 'completed' ? 'text-danger' : '' }}"
                                                         width="32" viewBox="0 0 24 24" fill="none"
@@ -256,7 +256,24 @@
                                                     </svg>
                                                 </a>
                                                 @if ($item['statut'] !== 'completed')
-                                                @endif
+                                                @endif --}}
+                                                <a href="{{ route('transfer.edit', $item['id']) }}">
+                                                    <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
+                                                            stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                        </path>
+                                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                                            d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
+                                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round"></path>
+                                                        <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
+                                                            stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                        </path>
+                                                    </svg>
+                                                </a>
                                                 <button type="button" data-bs-toggle="modal"
                                                     data-bs-target="#modaldeleteTransfer{{ $item['id'] }}"
                                                     style="border: none; background: none; padding: 0; margin: 0;color:red">
@@ -312,58 +329,6 @@
                                                     </div>
                                                 </div>
                                             @endrole
-                                            {{-- @role('staff')
-                                                <button type="button" data-bs-toggle="modal"
-                                                    data-bs-target="#modaldelete{{ $item['id'] }}"
-                                                    style="border: none; background: none; padding: 0; margin: 0; color: {{ $item['statut'] == 'completed' ? 'red' : '#3a57e8' }};">
-                                                    <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M13.7476 20.4428H21.0002" stroke="currentColor"
-                                                            stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round"></path>
-                                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                                            d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
-                                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round"></path>
-                                                        <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor"
-                                                            stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round"></path>
-                                                    </svg>
-                                                </button>
-                                                <div class="modal fade" id="modaldelete{{ $item['id'] }}"
-                                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                    aria-labelledby="staticBackdropLabel{{ $item['id'] }}"
-                                                    aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title"
-                                                                    id="staticBackdropLabel{{ $item['id'] }}">
-                                                                    {{ __('Transfer Confirmation') }}
-                                                                </h5>
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>{{ __('Are you sure you want to confirm this Transfer?') }}
-                                                                </p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">{{ __('Close') }}</button>
-                                                                <button type="button" class="btn btn-primary"
-                                                                    onclick="document.getElementById('confirm-form-{{ $item['id'] }}').submit();">{{ __('Confirm') }}</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <form id="confirm-form-{{ $item['id'] }}"
-                                                    action="{{ route('transfer.confirm', $item['id']) }}" method="POST"
-                                                    style="display: none;">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                </form>
-                                            @endrole --}}
                                             @role('staff')
                                                 <a href="{{ $item['statut'] !== 'completed' ? route('transfer.edit-for-staff', $item['id']) : '#' }}"
                                                     class="{{ $item['statut'] === 'completed' ? 'disabled' : '' }}">
