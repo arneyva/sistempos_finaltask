@@ -89,16 +89,25 @@ class MyAttendanceController extends Controller
                 $clockIn = $attendance->clock_in ?? '-';
                 $clockOut = $attendance->clock_out ?? '-';
                 $status = $attendance->status;
+                if ($attendance->status == 'absent') {
+                    $requestButton = 'yes';
+                    $attendanceId= $attendance->id;
+                }
                 //jika status late ada
                 if ($status == "present") {
                     if ($attendance->late_in) {
                         $late_in = trans("Late In");
+                        $requestButton = 'yes';
+                        $attendanceId= $attendance->id;
                     };
                     if ($attendance->late_out) {
                         $late_out = trans("Late Out");
+                        $requestButton = 'yes';
+                        $attendanceId= $attendance->id;
                     };
                     if (!$attendance->late_out && !$attendance->late_in) {
                         $on_time = trans("On Time");
+                        $requestButton = 'no';
                     };
                     
                 }
@@ -119,6 +128,8 @@ class MyAttendanceController extends Controller
                 'late_in' => $late_in,
                 'late_out' => $late_out,
                 'on_time' => $on_time,
+                'requestButton' => $requestButton,
+                'attendanceId' => $attendanceId,
             ];
         }
 

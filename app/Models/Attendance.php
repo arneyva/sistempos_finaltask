@@ -64,6 +64,7 @@ class Attendance extends Model
         'admin_id',
     ];
 
+    // Log::info('Request data:', [$request->all()]);
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

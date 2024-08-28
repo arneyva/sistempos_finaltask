@@ -114,325 +114,291 @@
 </style>
 <div class="col-lg-12">
     <div class="card">
-        <div class="card-header">
+        
+        <div class="card-body py-5 tab-pane fade active show" id="order">
+        <form method="POST" action="{{ route('purchases.store') }}" id="purchase_order" enctype="multipart/form-data">
+            @csrf
             <div class="row">
-                <div class="d-flex col justify-content-left">
-                    <ul class=" nav nav-pills mb-0 text-center profile-tab " data-toggle="slider-tab" id="profile-pills-tab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active show" data-bs-toggle="tab" href="#order" role="tab" aria-selected="false">Order</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#return" role="tab" aria-selected="false">Return</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#payment" role="tab" aria-selected="false">Payment</a>
-                        </li>
-                    </ul>
+                <div class="form-group col-sm-4">
+                    <label class="form-label" for="name">Date:</label>
+                    <input type="date" value="{{ old('date') }}" class="form-control @error('date') is-invalid @enderror" id="date" name="date" required>
                 </div>
-            </div>
-        </div>
-        <div class="tab-content">
-            <div class="card-body py-5 tab-pane fade active show" id="order">
-            <form method="POST" action="{{ route('purchases.store') }}" id="purchase_order" enctype="multipart/form-data">
-                @csrf
-                <div class="row">
-                    <div class="form-group col-sm-4">
-                        <label class="form-label" for="name">Date:</label>
-                        <input type="date" value="{{ old('date') }}" class="form-control @error('date') is-invalid @enderror" id="date" name="date" required>
-                    </div>
-                    <div class="form-group col-sm-4">
-                        <label class="form-label"for="location">Supplier:</label>
-                        <select class="form-control" id="supplier" name="supplier" required>
-                            <option selected disabled hidden value="">Supplier</option>
-                            @foreach($suppliers as $supplier)
-                                <option value="{{ $supplier->id }}" {{ old('supplier') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group col-sm-4">
-                        <label class="form-label"for="location">Destination:</label>
-                        <select class="form-control" id="location" name="location" required>
-                                <option value="{{ $warehouse->id }}" selected>{{ $warehouse->name }}</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-sm-12 mt-4">
-                        <select id="itemDropdown" style="width: 100%;">
-                            <option value=""></option>
-                            @foreach($products as $product)
-                                @if ($product['variant']->isEmpty())
+                <div class="form-group col-sm-4">
+                    <label class="form-label"for="location">Supplier:</label>
+                    <select class="form-control" id="supplier" name="supplier" required>
+                        <option selected disabled hidden value="">Supplier</option>
+                        @foreach($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}" {{ old('supplier') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-sm-4">
+                    <label class="form-label"for="location">Destination:</label>
+                    <select class="form-control" id="location" name="location" required>
+                            <option value="{{ $warehouse->id }}" selected>{{ $warehouse->name }}</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-12 mt-4">
+                    <select id="itemDropdown" style="width: 100%;">
+                        <option value=""></option>
+                        @foreach($products as $product)
+                            @if ($product['variant']->isEmpty())
+                                <option 
+                                    value="{{ $product['productData']->id}}" 
+                                    data-image="{{ $product['productData']->image }}" 
+                                    data-unitpurchase="{{ $product['productData']->unitPurchase->ShortName ?? '' }}" 
+                                    data-unitsale="{{ $product['productData']->unitSale->ShortName ?? '' }}" 
+                                    data-code="{{$product['productData']->code}}" 
+                                    data-onorder="{{ $product['quantity_on_order'] }}" 
+                                    data-available="{{ $product['quantity_available'] }}" 
+                                    data-remainder="{{ $product['quantityRemainder'] }}" 
+                                    data-cost="{{$product['productData']->cost }}">
+                                {{ $product['productData']->name }}
+                                </option>
+                            @else
+                                @foreach($product['variant'] as $variant)
                                     <option 
                                         value="{{ $product['productData']->id}}" 
                                         data-image="{{ $product['productData']->image }}" 
                                         data-unitpurchase="{{ $product['productData']->unitPurchase->ShortName ?? '' }}" 
                                         data-unitsale="{{ $product['productData']->unitSale->ShortName ?? '' }}" 
-                                        data-code="{{$product['productData']->code}}" 
-                                        data-onorder="{{ $product['quantity_on_order'] }}" 
-                                        data-available="{{ $product['quantity_available'] }}" 
-                                        data-remainder="{{ $product['quantityRemainder'] }}" 
-                                        data-cost="{{$product['productData']->cost }}">
-                                    {{ $product['productData']->name }}
+                                        data-code="{{$variant['variantData']->code}}" 
+                                        data-onorder="{{ $variant['variantOnOrder']}}" 
+                                        data-available="{{ $variant['variantAvailable']}}" 
+                                        data-remainder="{{ $variant['variantRemainder']}}" 
+                                        data-cost="{{ $variant['variantData']->cost }}"
+                                        data-id="{{ $variant['variantData']->id}}">
+                                    {{ $product['productData']->name }} {{  $variant['variantData']->name }}
                                     </option>
-                                @else
-                                    @foreach($product['variant'] as $variant)
-                                        <option 
-                                            value="{{ $product['productData']->id}}" 
-                                            data-image="{{ $product['productData']->image }}" 
-                                            data-unitpurchase="{{ $product['productData']->unitPurchase->ShortName ?? '' }}" 
-                                            data-unitsale="{{ $product['productData']->unitSale->ShortName ?? '' }}" 
-                                            data-code="{{$variant['variantData']->code}}" 
-                                            data-onorder="{{ $variant['variantOnOrder']}}" 
-                                            data-available="{{ $variant['variantAvailable']}}" 
-                                            data-remainder="{{ $variant['variantRemainder']}}" 
-                                            data-cost="{{ $variant['variantData']->cost }}"
-                                            data-id="{{ $variant['variantData']->id}}">
-                                        {{ $product['productData']->name }} {{  $variant['variantData']->name }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            @endforeach
-                        </select>
-                        <input type="hidden" id="products" name="products">
-                        <input type="hidden" id="products_with_variant" name="products_with_variant">
-                        <input type="hidden" id="barcode_variant_id" name="barcode_variant_id">
+                                @endforeach
+                            @endif
+                        @endforeach
+                    </select>
+                    <input type="hidden" id="products" name="products">
+                    <input type="hidden" id="products_with_variant" name="products_with_variant">
+                    <input type="hidden" id="barcode_variant_id" name="barcode_variant_id">
+                </div>
+                <div class="form-group col-sm-12 mb-3">
+                    <table id="selectedItemsTable" class="table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="col-3">Name</th>
+                                <th class="col-1">Price</th>
+                                <th class="col-1">on Order</th>
+                                <th class="col-1">Available</th>
+                                <th class="col-2">Qty</th>
+                                <th class="col-1">Subtotal</th>
+                                <th class="col-1"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm-6 mb-1">
+                    <div class="card-header d-flex justify-content-between px-0">
+                        <div class="header-title">
+                            <h6 class="card-title">Supplier Information</h6>
+                        </div>
                     </div>
-                    <div class="form-group col-sm-12 mb-3">
-                        <table id="selectedItemsTable" class="table table-borderless">
-                            <thead>
-                                <tr>
-                                    <th class="col-3">Name</th>
-                                    <th class="col-1">Price</th>
-                                    <th class="col-1">on Order</th>
-                                    <th class="col-1">Available</th>
-                                    <th class="col-2">Qty</th>
-                                    <th class="col-1">Subtotal</th>
-                                    <th class="col-1"></th>
-                                </tr>
-                            </thead>
+                    <div class="card-body py-3" style="padding-left:0px;">
+                        <div class="new-user-info">
+                            <div class="row">
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important" required>Email</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float: right;">
+                                        <input type="email" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="email" name="email" required>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Contact Person</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float: right;">
+                                        <input type="text" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="contact_person" name="contact_person" >
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">CP Phone</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float: right;">
+                                        <input type="tel" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="cp_phone" name="cp_phone" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-header d-flex justify-content-between p-0">
+                        <div class="header-title">
+                            <h6 class="card-title">Shipping Information</h6>
+                        </div>
+                    </div>
+                    <div class="card-body py-3" style="padding-left:0px;">
+                        <div class="new-user-info">
+                            <div class="row">
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Destination Address</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float:right;">
+                                        <textarea class="form-control form-control-sm @error('date') is-invalid @enderror" id="address" name="address" required>{{ old('address') ?? $warehouse->address }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Request Arrive date</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float:right;">
+                                        <input type="date" value="{{ old('req_arrive_date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="req_arrive_date" name="req_arrive_date" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 mb-1">
+                    <div class="card-header d-flex justify-content-between px-0">
+                        <div class="header-title">
+                            <h6 class="card-title">Payment Information</h6>
+                        </div>
+                    </div>
+                    <div class="card-body py-3" style="padding-left:0px;">
+                        <div class="new-user-info">
+                            <div class="row">
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Tax</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float:right;">
+                                        <input type="tel" value="{{ old('tax') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="tax" name="tax" >
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Discount</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float:right;">
+                                        <input type="tel" value="{{ old('discount') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="discount" name="discount" >
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Method</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float:right;">
+                                        <select name="payment_method" id="payment_method" class="form-control" required>
+                                            <option value="" selected disabled hidden>Payment Method</option>
+                                            <option value="bni">BNI</option>
+                                            <option value="bri">BRI</option>
+                                            <option value="mandiri">Mandiri</option>
+                                            <option value="permata">Permata</option>
+                                            <option value="bca">BCA</option>
+                                            <option value="gopay">Gopay</option>
+                                            <option value="ovo">OVO</option>
+                                            <option value="cash">Cash</option>
+                                        </select>                                            
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Term</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float:right;">
+                                        <select name="payment_term" id="payment_term" class="form-control" required>
+                                            <option value="" selected disabled hidden>Payment Term</option>
+                                            <option value="on_invoice">Due on invoice</option>
+                                            <option value="7_invoice">7 days after invoice</option>
+                                            <option value="14_invoice">14 Days after Invoice</option>
+                                            <option value="on_arrive">Due on arrive</option>
+                                            <option value="7_arrive">7 days after arrive</option>
+                                            <option value="14_arrive">14 Days after arrive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <div class="col-sm-3 p-0">
+                                        <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Down Payment</label>
+                                    </div>
+                                    <div class="col-sm-9 p-0" style="float:right;">
+                                        <input type="tel" value="{{ old('down_payment') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="down_payment" name="down_payment" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body py-0" style="padding-left:0px;">
+                        <table id="basic-table" class="table table-bordered table-sm"
+                            role="grid">
                             <tbody>
-                            </tbody>
+                                <tr>
+                                    <td class="col-3">Order Subtotal</td>
+                                    <td id="order_subtotal" class="col-7"style="text-align:right;">Rp 0</td>
+                                    <input type="hidden" name="order_subtotal_input" id="order_subtotal_input">
+                                </tr>
+                                <tr>
+                                    <td class="col-3">Order Tax</td>
+                                    <td id="order_tax" class="col-7"style="text-align:right;">Rp 0</td>
+                                    <input type="hidden" name="order_tax_input" id="order_tax_input">
+                                </tr>
+                                <tr>
+                                    <td class="col-3">Discount</td>
+                                    <td id="order_discount" class="col-7"style="text-align:right;">Rp 0</td>
+                                    <input type="hidden" name="order_discount_input" id="order_discount_input">
+                                </tr>
+                                <tr>
+                                    <td class="col-3">Grand Total</td>
+                                    <td id="order_total" class="col-7"style="text-align:right;">Rp 0</td>
+                                    <input type="hidden" name="order_total_input" id="order_total_input">
+                                </tr>
+                                <tr>
+                                    <td class="col-3">Down Payment</td>
+                                    <td id="order_down_payment" class="col-7"style="text-align:right;"> Rp 0</td>
+                                    <input type="hidden" name="order_down_payment_input" id="order_down_payment_input">
+                                </tr>
                         </table>
                     </div>
-                    <div class="col-sm-6 mb-1">
-                        <div class="card-header d-flex justify-content-between px-0">
-                            <div class="header-title">
-                                <h6 class="card-title">Supplier Information</h6>
-                            </div>
-                        </div>
-                        <div class="card-body py-3" style="padding-left:0px;">
-                            <div class="new-user-info">
-                                <div class="row">
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important" required>Email</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float: right;">
-                                            <input type="email" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="email" name="email" required>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Contact Person</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float: right;">
-                                            <input type="text" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="contact_person" name="contact_person" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">CP Phone</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float: right;">
-                                            <input type="tel" value="{{ old('date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="cp_phone" name="cp_phone" >
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-header d-flex justify-content-between p-0">
-                            <div class="header-title">
-                                <h6 class="card-title">Shipping Information</h6>
-                            </div>
-                        </div>
-                        <div class="card-body py-3" style="padding-left:0px;">
-                            <div class="new-user-info">
-                                <div class="row">
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Destination Address</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <textarea class="form-control form-control-sm @error('date') is-invalid @enderror" id="address" name="address" required>{{ old('address') ?? $warehouse->address }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Request Arrive date</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="date" value="{{ old('req_arrive_date') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="req_arrive_date" name="req_arrive_date" >
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 mb-1">
-                        <div class="card-header d-flex justify-content-between px-0">
-                            <div class="header-title">
-                                <h6 class="card-title">Payment Information</h6>
-                            </div>
-                        </div>
-                        <div class="card-body py-3" style="padding-left:0px;">
-                            <div class="new-user-info">
-                                <div class="row">
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Tax</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('tax') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="tax" name="tax" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Discount</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('discount') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="discount" name="discount" >
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Method</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <select name="payment_method" id="payment_method" class="form-control" required>
-                                                <option value="" selected disabled hidden>Payment Method</option>
-                                                <option value="bni">BNI</option>
-                                                <option value="bri">BRI</option>
-                                                <option value="mandiri">Mandiri</option>
-                                                <option value="permata">Permata</option>
-                                                <option value="bca">BCA</option>
-                                                <option value="gopay">Gopay</option>
-                                                <option value="ovo">OVO</option>
-                                                <option value="cash">Cash</option>
-                                            </select>                                            
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Term</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <select name="payment_term" id="payment_term" class="form-control" required>
-                                                <option value="" selected disabled hidden>Payment Term</option>
-                                                <option value="on_invoice">Due on invoice</option>
-                                                <option value="7_invoice">7 days after invoice</option>
-                                                <option value="14_invoice">14 Days after Invoice</option>
-                                                <option value="on_arrive">Due on arrive</option>
-                                                <option value="7_arrive">7 days after arrive</option>
-                                                <option value="14_arrive">14 Days after arrive</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                        <div class="col-sm-3 p-0">
-                                            <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Down Payment</label>
-                                        </div>
-                                        <div class="col-sm-9 p-0" style="float:right;">
-                                            <input type="tel" value="{{ old('down_payment') }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="down_payment" name="down_payment" >
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body py-0" style="padding-left:0px;">
-                            <table id="basic-table" class="table table-bordered table-sm"
-                                role="grid">
-                                <tbody>
-                                    <tr>
-                                        <td class="col-3">Order Subtotal</td>
-                                        <td id="order_subtotal" class="col-7"style="text-align:right;">Rp 0</td>
-                                        <input type="hidden" name="order_subtotal_input" id="order_subtotal_input">
-                                    </tr>
-                                    <tr>
-                                        <td class="col-3">Order Tax</td>
-                                        <td id="order_tax" class="col-7"style="text-align:right;">Rp 0</td>
-                                        <input type="hidden" name="order_tax_input" id="order_tax_input">
-                                    </tr>
-                                    <tr>
-                                        <td class="col-3">Discount</td>
-                                        <td id="order_discount" class="col-7"style="text-align:right;">Rp 0</td>
-                                        <input type="hidden" name="order_discount_input" id="order_discount_input">
-                                    </tr>
-                                    <tr>
-                                        <td class="col-3">Grand Total</td>
-                                        <td id="order_total" class="col-7"style="text-align:right;">Rp 0</td>
-                                        <input type="hidden" name="order_total_input" id="order_total_input">
-                                    </tr>
-                                    <tr>
-                                        <td class="col-3">Down Payment</td>
-                                        <td id="order_down_payment" class="col-7"style="text-align:right;"> Rp 0</td>
-                                        <input type="hidden" name="order_down_payment_input" id="order_down_payment_input">
-                                    </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="form-group col-sm-12">
-                        <label class="form-label" for="name">Order Note:</label>
-                        <textarea  class="form-control @error('date') is-invalid @enderror" id="notes" name="notes" >{{ old('notes') }}</textarea> 
-                    </div>
-                    <div class="form-group col-sm-12">
-                        <label class="form-label" for="name">Supplier Note:</label>
-                        <textarea  class="form-control @error('date') is-invalid @enderror" id="supplier_notes" name="supplier_notes" >{{ old('supplier_notes') }}</textarea> 
-                    </div>
-                    <div class="form-group col-sm-12">
-                        <select name="statut" id="statut" class="form-control" required>
-                            <option value="pending">Pending</option>
-                            <option value="ordered">Ordered</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="arrived">Arrived</option>
-                            <option value="complete">Complete</option>
-                        </select>   
-                    </div>
                 </div>
-                <div class="card-footer d-flex" style="float: right;">
-                    <button type="button" class="send-email" data-send="send_email" id="send-email" autofocus>
-                        <div class="svg-wrapper-1">
-                            <div class="svg-wrapper">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                width="24"
-                                height="24"
-                            >
-                                <path fill="none" d="M0 0h24v24H0z"></path>
-                                <path
-                                fill="currentColor"
-                                d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                                ></path>
-                            </svg>
-                            </div>
-                        </div>
-                        <span>Save and Send Email</span>
-                    </button>
-
-                    <button type="submit" class="btn btn-primary ms-2">Save</button>
+                <div class="form-group col-sm-12">
+                    <label class="form-label" for="name">Order Note:</label>
+                    <textarea  class="form-control @error('date') is-invalid @enderror" id="notes" name="notes" >{{ old('notes') }}</textarea> 
                 </div>
-            </form>
-            </div>
-
-            <div class="card-body py-5 tab-pane fade" id="return">
-                <div class="card-footer" style="float: right;">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                <div class="form-group col-sm-12">
+                    <select name="statut" id="statut" class="form-control" required>
+                        <option value="pending">Pending</option>
+                        <option value="ordered">Ordered</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="arrived">Arrived</option>
+                        <option value="completed">Complete</option>
+                    </select>   
                 </div>
             </div>
+            <div class="card-footer d-flex" style="float: right;">
+                <button type="button" class="send-email" data-send="send_email" id="send-email" autofocus>
+                    <div class="svg-wrapper-1">
+                        <div class="svg-wrapper">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            height="24"
+                        >
+                            <path fill="none" d="M0 0h24v24H0z"></path>
+                            <path
+                            fill="currentColor"
+                            d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                            ></path>
+                        </svg>
+                        </div>
+                    </div>
+                    <span>Save and Send Email</span>
+                </button>
 
-            <div class="card-body py-5 tab-pane fade" id="payment">
-                <div class="card-footer" style="float: right;">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+                <button type="submit" class="btn btn-primary ms-2">Save</button>
             </div>
+        </form>
         </div>
     </div>
 </div>
@@ -481,7 +447,7 @@
                             icon: "success",
                             title: response.success
                         });
-                        window.location.href = '/people/users/list';
+                        location.reload();
                     }
                 },
                 error: function (xhr, status, error) {
@@ -820,7 +786,7 @@
 
                 // Menghapus key dari productsObj yang tidak ada di products
                 Object.keys(productsObj).forEach(function(key) {
-                    if (!products.some(product => product.key === key)) {
+                    if (!products.some(product => product.key == key)) {
                         delete productsObj[key];
                     }
                 });
@@ -837,7 +803,7 @@
 
                 // Menghapus key dari productsWithVariantObj yang tidak ada di products_with_variant
                 Object.keys(productsWithVariantObj).forEach(function(key) {
-                    if (!products_with_variant.some(product => product.key === key)) {
+                    if (!products_with_variant.some(product => product.key == key)) {
                         delete productsWithVariantObj[key];
                     }
                 });

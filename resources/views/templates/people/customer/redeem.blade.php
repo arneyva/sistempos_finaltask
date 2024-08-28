@@ -160,7 +160,7 @@
         @media (min-width: 577px) {
             /* Adjust the large (lg) screen breakpoint */
             .otp-Form h1 {
-                font-size:6vw; 
+                font-size:4vw; 
             }
             .otp-Form h2 {
                 font-size:2.3vw; 
@@ -174,7 +174,7 @@
             }
             .ButtonContainer {
                 gap:1vw;
-                margin-top:1.5vw;
+                margin-top:0.2vw;
             }
 
             .verifyButton {
@@ -225,7 +225,7 @@
         @media (min-width: 768px) {
             /* Adjust the large (lg) screen breakpoint */
             .otp-Form h1 {
-                font-size:5vw; 
+                font-size:3vw; 
             }
             .otp-Form h2 {
                 font-size:1.7vw; 
@@ -290,7 +290,7 @@
             }
             /* Adjust the large (lg) screen breakpoint */
             .otp-Form h1 {
-                font-size:5vw; 
+                font-size:3vw; 
             }
             .otp-Form h2 {
                 font-size:1.7vw; 
@@ -424,29 +424,30 @@
         }
 
     </style>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
-
 </head>
 
 <body>
-    <div class=" position-absolute container top-50 start-50 translate-middle font-sans">
-        <form class="otp-Form" action="" method="get" autocomplete="off">
-            <h2 id="current-day" class="text-capitalize inline-block"></h2> <h2 class="inline-block">, </h2> <h2 id="current-date" class="text-capitalize inline-block"></h2>
-            <h1 id="current-time"></h1>
-            <div style="display:flex; justify-content:center; margin-bottom:2.2vw;">
-                <div class="" id="map"></div>
-            </div>
-            <div  style="display:flex; justify-content:center; margin-bottom:2.2vw;">
-                <input type="tel" id="numeric-input" class="password-input" style="caret-color: transparent;" placeholder="Enter your PIN here" name="pin" autocomplete="off">
-            </div>
-            <div  style="display:flex; justify-content:center;" class="ButtonContainer">
-                <button id="btn-clockin" data-method="clockin" class="verifyButton" type="button">Clock-In</button>
-                <button id="btn-clockout" data-method="clockout" class="verifyButton out" type="button">Clock-Out</button>
-            </div>
-            </div>
+    <div class="position-absolute container top-50 start-50 translate-middle font-sans">
+        <form class="otp-Form" action="{{ $update_url }}" method="POST" autocomplete="off">
+            @csrf
+            @method('patch')
+            @if($client->is_poin_activated == 1)
+                <h1 id="current-time">You've Redeem your Score</h1>
+            @elseif ($score < 1)
+                <h1 id="current-time">Make some purchase first</h1>
+            @else
+                <h1 id="current-time">Congratulations!</h1>
+            @endif
+
+            <p>You have : {{$score}} score</p>
+            <p>Potential Discount : Rp <strong>{{number_format($discount,0,",",".")}}</strong></p>
+
+            @if ($score > 0 && $client->is_poin_activated == 0) <!-- Kondisi untuk menampilkan tombol -->
+                <p class="mt-2">Click this button to apply your discount on the next sale</p>
+                <div style="display:flex; justify-content:center;" class="ButtonContainer">
+                    <button type="submit" class="verifyButton out">Redeem Points</button>
+                </div>
+            @endif
         </form>
     </div>
 
@@ -482,155 +483,60 @@
     <!-- App Script -->
     <script src="{{ asset('hopeui/html/assets/js/hope-ui.js') }}" defer></script>
 
-    <!-- clock Script -->
-    <script src="{{ asset('hopeui/html/assets/js/real-time-clock.js') }}"></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.6.0"></script>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-        var map = L.map('map').setView([-7.535912, 110.783188], 15); // Set view default map
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        var lang_clockin = "{{ __('Clock In at') }}";
-        var lang_clockout ="{{ __('Clock Out at') }}";
-        var userMarker, line; // Variabel untuk menyimpan marker dan garis pengguna
-
-        function updateLocationAndSendRequest(method, pin) {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    var userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
-                    
-
-                    $.ajax({
-                        url: '/webclock/clocking',
-                        type: 'post',
-                        dataType: 'json',
-                        data: {
-                            type: method,
-                            pin: pin,
-                            latitude: userLatLng.lat,
-                            longitude: userLatLng.lng
-                        },
-                        headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
-                        success: function (response) {
-                            if (response.error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    html: '<ol style="text-align: start">' + response.error + '</ol>',
-                                });
-                            } else {
-                                function type(clocktype) {
-                                    if (clocktype == "clockin") {
-                                        return lang_clockin;
-                                    } else {
-                                        return lang_clockout;
-                                    }
-                                }
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-end',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true,
-                                    didOpen: (toast) => {
-                                        toast.onmouseenter = Swal.stopTimer;
-                                        toast.onmouseleave = Swal.resumeTimer;
-                                    }
-                                });
-                                Toast.fire({
-                                    icon: "success",
-                                    title: response.firstname + ' ' + response.lastname + ' success ' + type(response.type) + ' ' + response.time
-                                });
-                            }
-                            if (response.targetLat != null && response.targetLng != null) {
-                                // Hapus marker dan garis sebelumnya jika ada
-                                if (userMarker) {
-                                    map.removeLayer(userMarker);
-                                }
-                                if (line) {
-                                    map.removeLayer(line);
-                                }
-
-                                // Tambahkan marker untuk lokasi pengguna
-                                userMarker = L.marker(userLatLng).addTo(map).bindPopup("Lokasi Anda").openPopup();
-
-                                var targetLatLng = L.latLng(response.targetLat, response.targetLng);
-
-                                L.marker(targetLatLng).addTo(map).bindPopup("Lokasi Kerja").openPopup();
-
-                                line = L.polyline([targetLatLng, userLatLng], { color: 'blue' }).addTo(map);
-
-                                map.fitBounds(line.getBounds());
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Terdapat error pada server'
-                            });
-                            // Log the error for debugging
-                console.error('Error: ', error);
-                console.error('Response: ', xhr.responseText);
-                        }
-                    });
-
-                    $('input[name="pin"]').val("");
-                    $('input[name="pin"]').focus();
-
-                }, function (error) {
-                    alert("Gagal mendapatkan lokasi. Pastikan GPS aktif dan berikan izin akses lokasi.");
-                }, {
-                    enableHighAccuracy: true, // Pastikan menggunakan GPS untuk akurasi tinggi
-                    timeout: 10000, // Waktu tunggu maksimal
-                    maximumAge: 0 // Jangan menggunakan cache lokasi
-                });
-            } else {
-                alert("Browser Anda tidak mendukung geolokasi.");
-            }
-        }
-
-        $('#btn-clockin, #btn-clockout').on('click', function (event) {
-            event.preventDefault();
-            var method = $(this).data("method");
-            var pin = $('input[name="pin"]').val().toUpperCase(); // Pastikan pin diubah menjadi huruf besar
-            updateLocationAndSendRequest(method, pin);
-        });
-    </script>
-
-    <script>
-        document.getElementById('numeric-input').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-            }
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            new AutoNumeric('#numeric-input', {
-                digitGroupSeparator: '',
-                decimalPlaces: 0,
-                minimumValue: '0',
-                maximumValue: '999999',
-                modifyValueOnWheel: false,
-                emptyInputBehavior: 'focus',
-                showWarnings: false,
-                leadingZero: 'keep'
+<script>
+        @if (session('success'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'my-custom-swal'
+                },
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
             });
-        });
+            Toast.fire({
+                icon: "success",
+                title: "{{ session('success') }}"
+            });
+        @endif
+        @if ($errors->any())
+            let errors = {!! json_encode($errors->all()) !!};
+            let errorList = '<ol>' + errors.map(function(error) {
+                return '<li style="text-align: start">' + error + '</li>';
+            }).join('') + '</ol>';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                html: errorList,
+
+            });
+        @endif
+        @if (session('warning'))
+            let error = '{{ session('warning') }}';
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
+            });
+        @endif
+        @if (session('error'))
+            let error = '{{ session('error') }}';
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
+            });
+        @endif
     </script>
-
-    <script>
-
-    </script>
-
 </body>
 
 </html>

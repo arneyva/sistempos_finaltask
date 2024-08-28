@@ -39,21 +39,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
-
-@media print {
-            body * {
-                display: none; /* Menyembunyikan semua elemen */
-            }
-            #facture, #facture * {
-                display: block; /* Menampilkan hanya elemen faktur */
-            }
-        }
-
-.width-full {
-    width: 100%;
-
-}
-
 .send-email {
     font-family: inherit;
     font-size: 0.95vw;
@@ -418,61 +403,6 @@
         #snap-midtrans {
             height: 39rem !important;
         }
-        .button-edit {
-    padding: 0;
-    margin: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    }
-
-    .button-edit {
-    --primary-color: #eecd72;
-    --hovered-color: #eab934;
-    position: relative;
-    display: flex;
-    font-weight: 600;
-    font-size: 20px;
-    gap: 0.5rem;
-    align-items: center;
-    }
-
-    .button-edit p {
-    margin: 0;
-    position: relative;
-    font-size: 20px;
-    color: var(--primary-color);
-    }
-
-    .button-edit::after {
-    position: absolute;
-    content: "";
-    width: 0;
-    left: 0;
-    bottom: -4px;
-    background: var(--hovered-color);
-    height: 2px;
-    transition: 0.15s ease-out;
-    }
-
-    .button-edit p::before {
-    position: absolute;
-    /*   box-sizing: border-box; */
-    content: "Edit";
-    width: 0%;
-    inset: 0;
-    color: var(--hovered-color);
-    overflow: hidden;
-    transition: 0.15s ease-out;
-    }
-
-    .button-edit:hover::after {
-    width: 100%;
-    }
-
-    .button-edit:hover p::before {
-    width: 100%;
-    }
     </style>
 </head>
 <body>
@@ -512,7 +442,7 @@
                         <div class="col col-custom px-0 background-color-1">
                             <div class="col col-custom-header">Transaction Code</div>
                             <div class="col col-staff d-flex align-items-center ps-3" style="color:black;">
-                                {{$ref}}
+                                {{$currentSale->Ref}}
                             </div>
                         </div>
                     </div>
@@ -546,7 +476,7 @@
                     <input type="hidden" id="products" name="products">
                     <input type="hidden" id="products_with_variant" name="products_with_variant">
                     <input type="hidden" id="barcode_variant_id" name="barcode_variant_id">
-                    <input type="hidden" id="ref" name="ref" value="{{$ref}}">
+                    <input type="hidden" id="ref" name="ref" value="{{$currentSale->Ref}}">
                     <input type="hidden" id="clientId" name="clientId">
                     <input type="hidden" id="discount_client" name="discount_client">
                     <input type="hidden" name="order_total_input" id="order_total_input">
@@ -567,6 +497,51 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            @foreach ($products_selected as $data)
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="d-flex flex-column">
+                                            <div style="margin-bottom: 5px; word-wrap: break-word; word-break: break-all;white-space: normal;">
+                                                @if (!empty($data->product_variant_id))
+                                                    <h6>{{ $data->product->name }} {{ $data->product_variant->name }}</h6>
+                                                @else
+                                                    <h6>{{ $data->product->name }}</h6>
+                                                @endif
+                                            </div>
+                                            @if (!empty($data->product_variant_id))
+                                                <div>{{ $data->product_variant->code }}</div>
+                                            @else
+                                                <div>{{ $data->product->code }}</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                                @if (!empty($data->product_variant_id))
+                                    <td class="cost" hidden>{{ $data->product_variant->price  }}</td>
+                                @else
+                                    <td class="cost"hidden>{{ $data->product->price  }}</td>
+                                @endif
+                                @if (!empty($data->product_variant_id))
+                                    <td class="variant-id" data-variant="{{ $data->product_variant->id  }}" style="display:none;" hidden></td>
+                                @endif
+
+                                <td style="text-align: start;">
+                                    <input type="number" class="form-control qty px-0" value="1" style="width: 5vw; display: inline-block; text-align: center;background-color: transparent; border-color: grey; color: black;"> 
+                                        <span>{{ $data->unit->ShortName }}</span> 
+                                </td>
+                                <td class="subtotal">{{ $data->total }}</td>
+                                <td>
+                                    <div class="flex align-items-center list-user-action"> 
+                                        <a class="btn btn-sm btn-icon delete" data-value="{{ $data->product_id }}" style="background-color: #dbdbdb; color: darkgoldenrod;" data-code="{{ !empty($data->product_variant_id) ? $data->product_variant->code : $data->product->code }}">
+                                            <span class="btn-inner">
+                                                <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor"><path d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M20.708 6.23975H3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -823,6 +798,7 @@
                             <div class="row" id="sale_pending">
                                 @foreach ($sales as $sale)
                                 @continue ($sale->statut == "completed")
+                                @continue ($sale->id == $currentSale->id)
                                 <div class="col-4 py-4 card-sale" >
                                     <p class="mb-0" style="color:black"><strong>{{$sale->Ref}}</strong></p>
                                     <div class="card card-list">
@@ -838,7 +814,7 @@
                                         <div class="card-footer pb-0 pt-0">   
                                             <div class="d-flex flex-wrap align-items-center" style="float: right;">
                                                 <a class="button-edit mb-3 mt-1" data-sale="{{$sale->id}}">
-                                                    <p class="">
+                                                    <p class="mb-0 mt-0">
                                                         Edit
                                                     </p>
                                                 </a>
@@ -853,6 +829,7 @@
                             <div class="row" id="sale_complete">
                             @foreach ($sales as $sale)
                                 @continue ($sale->statut == "pending")
+                                @continue ($sale->id == $currentSale->id)
                                 <div class="col-4 py-4 card-sale" >
                                     <p class="mb-0" style="color:black"><strong>{{$sale->Ref}}</strong></p>
                                     <div class="card card-list">
@@ -868,7 +845,7 @@
                                         <div class="card-footer pb-0 pt-0">   
                                             <div class="d-flex flex-wrap align-items-center" style="float: right;">
                                                 <a class="button-edit mb-3 mt-1" data-sale="{{$sale->id}}">
-                                                    <p class="">
+                                                    <p class="mb-0 mt-0">
                                                         Edit
                                                     </p>
                                                 </a>
@@ -886,7 +863,6 @@
         </div>
     </div>
 </div>
-
 
 <div class="modal fade " id="createClient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="background">
@@ -1401,8 +1377,8 @@ $(document).ready(function(){
 <script>
     function newSale() {
         Swal.fire({
-            title: '{{ __("Are you sure?") }}',
-            text: "{{ __('Current Sale '.$ref.' will be pending!') }}",
+            title: '{{ __("Save this Transaction?") }}',
+            text: "{{ __('Current Sale '.$currentSale->Ref.' will be pending!') }}",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -1416,7 +1392,7 @@ $(document).ready(function(){
 
                 $.ajax({
                 type: "POST",
-                url: "{{ route('cashier.store') }}",
+                url: "{{ route('cashier.update', $currentSale['id']) }}",
                 data: formData + '&pending=true',
                 dataType: "json",
                 success: function(response) {
@@ -1428,7 +1404,7 @@ $(document).ready(function(){
                         });
                     }
                     else {
-                        location.reload();
+                        window.location.href = `/cashier/`;
                     }
                 },
                 error: function (xhr, status, error) {
@@ -1442,6 +1418,8 @@ $(document).ready(function(){
                     console.error('Response: ', xhr.responseText);
                 },
                 });
+            } else {
+                window.location.href = `/cashier/`;
             }
         });
     }
@@ -1451,13 +1429,13 @@ $(document).ready(function(){
     function editSale(saleId) {
         Swal.fire({
             title: '{{ __("Save this Transaction?") }}',
-            text: "{{ __('Current Sale '.$ref.' will be pending!') }}",
+            text: "{{ __('Current Sale '.$currentSale->Ref.' will be pending!') }}",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: '{{ __("Yes!") }}',
-            cancelButtonText: '{{ __("No") }}'
+            cancelButtonText: '{{ __("Cancel") }}'
         }).then((result) => {
             if (result.isConfirmed) {
                 
@@ -1465,7 +1443,7 @@ $(document).ready(function(){
 
                 $.ajax({
                 type: "POST",
-                url: "{{ route('cashier.store') }}",
+                url: "{{ route('cashier.update', $currentSale['id']) }}",
                 data: formData + '&pending=true',
                 dataType: "json",
                 success: function(response) {
@@ -1520,6 +1498,27 @@ $(document).ready(function(){
         var products_with_variant = [];
         var productsObj = {};
         var productsWithVariantObj = {};
+
+        $('#selectedItemsTable tbody tr').each(function() {
+            var variant_id = $(this).find('.variant-id').data('variant');
+            var currentQty=parseFloat($(this).find('.qty').val());
+            var product_id = $(this).find('.delete').data('value');
+            if (!variant_id ){
+                products.push({ key: product_id, value: currentQty });
+                $.each(products, function (i, value) {
+                    productsObj[value.key] = value.value;
+                })
+                $('#products').val(JSON.stringify(productsObj));
+            } else {
+                products_with_variant.push({ key: variant_id, value: currentQty });
+                $.each(products_with_variant, function (i, value) {
+                    productsWithVariantObj[value.key] = value.value;
+                })
+                $('#products_with_variant').val(JSON.stringify(productsWithVariantObj));
+            }
+        });
+        console.log(JSON.stringify(productsObj));
+        console.log(JSON.stringify(productsWithVariantObj));
 
         $('#productDropdown').change(function() {
             var selectedValue = $(this).val();
@@ -1803,7 +1802,7 @@ $(document).ready(function(){
 
         $.ajax({
         type: "POST",
-        url: "{{ route('cashier.store') }}",
+        url: "{{ route('cashier.update', $currentSale['id']) }}",
         data: formData + '&pending=false&order_id=' + order_id + '&paying_amount=' + paying_amount + '&change_return=' + change_return,
         dataType: "json",
         success: function(response) {

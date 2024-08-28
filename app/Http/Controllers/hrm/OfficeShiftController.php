@@ -26,6 +26,9 @@ class OfficeShiftController extends Controller
         return view('templates.hrm.shift.index', [
             'shifts' => OfficeShift::all(),
         ]);
+        // return view('templates.purchase.p', [
+        //     'shifts' => OfficeShift::all(),
+        // ]);
     }
 
     /**
