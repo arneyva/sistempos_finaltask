@@ -10,6 +10,7 @@ use App\Models\OfficeShift;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class ClockController extends Controller
 {
@@ -75,6 +76,7 @@ class ClockController extends Controller
             $userLgt = $request->input('longitude');
             //ukur jarak dengan calculateDistance function
             $distance = $this->calculateDistance($targetLat, $targetLng, $userLat, $userLgt);
+            
             //cek jarak berhasil didapat tidak
             if($distance ==  null) 
             {
@@ -110,6 +112,55 @@ class ClockController extends Controller
         
         if ($type == 'clockin') 
         {
+            // cek attendance terakhir yang tidak ada admin_id nya, soalnya clock in harus lewat webclock
+            $latestAttendance = Attendance::where('user_id', $user->id)
+                                            ->where('created_at', '<', $today)
+                                            ->latest()
+                                            ->first();
+            if ($latestAttendance) {
+                $latestAttendance_date=$latestAttendance->date;
+                //ambil date setelahnya, jadikan start date
+                $startDate = $latestAttendance_date->addDay();
+                //maju satu2 hingga sebelum date sekarang
+                for ($date = $startDate; $date < $today; $date->addDay()) { 
+
+                    $dayOfWeek = strtolower($date->format('l'));
+                    if ($officeShift->{$dayOfWeek . '_in'} == null) {
+                        //lanjutkan ke loop berikutnya
+                        continue;
+                    };
+
+                    //periksa apakah sudah ada attendance sesuai datenya
+                    if (! Attendance::where([['user_id', $user->id],['date', $date->toDateString()]])->first()) {
+                        //jika tidak buat att dengan clock in dan out '-' dan status absent
+                        Attendance::create([
+                                'user_id' => $user->id,
+                                'date' => $date->toDateString(),
+                                'clock_in' => '-',
+                                'clock_out' => '-',
+                                'late_in' => 'yes',
+                                'late_out' => 'yes',
+                                'status' => "absent",
+                        ]);
+                    }
+                    
+                }
+                
+            }
+
+            // cek attendance user yang belum clock out
+            $attendance_where_clock_out_null=Attendance::where([['user_id', $user->id],['clock_out', null]])->get();
+            if ($attendance_where_clock_out_null) {
+                foreach ($attendance_where_clock_out_null as $attendance) { 
+                    //ubah value clock-out menjadi '-' dan status present
+                    $attendance->update(array(
+                        'clock_out' => '-',
+                        'late_out' => 'yes',
+                        'status' => 'present',
+                    ));
+                }
+            }
+            
             //periksa apakah hari libur
             if($scheduleIn == ':00' || $scheduleOut == ':00' ){
                 return response()->json([
@@ -148,48 +199,6 @@ class ClockController extends Controller
             // Jika waktu saat ini berada pada rentang jadwal masuk 30 menit sebelum hingga 20 menit kedepan
             if ($now->between($schedule_in_begin_time, $schedule_in_end_time)) {
 
-                // cek attendance terakhir yang tidak ada admin_id nya, soalnya clock in harus lewat webclock
-                $latestAttendance = Attendance::where('user_id', $user->id)
-                                                ->where('created_at', '<', $today)
-                                                ->latest()
-                                                ->first();
-                if ($latestAttendance) {
-                    $latestAttendance_date=$latestAttendance->date;
-                    //ambil date setelahnya, jadikan start date
-                    $startDate = $latestAttendance_date->addDay();
-                    //maju satu2 hingga sebelum date sekarang
-                    for ($date = $startDate; $date < $today; $date->addDay()) { 
-                        
-                        //periksa apakah sudah ada attendance sesuai datenya
-                        if (! Attendance::where([['user_id', $user->id],['date', $date->toDateString()]])->first()) {
-                            //jika tidak buat att dengan clock in dan out '-' dan status absent
-                            Attendance::create([
-                                    'user_id' => $user->id,
-                                    'date' => $date->toDateString(),
-                                    'clock_in' => '-',
-                                    'clock_out' => '-',
-                                    'late_in' => 'yes',
-                                    'late_out' => 'yes',
-                                    'status' => "absent",
-                            ]);
-                        }
-                        
-                    }
-                }
-
-                // cek attendance user yang belum clock out
-                $attendance_where_clock_out_null=Attendance::where([['user_id', $user->id],['clock_out', null]])->get();
-                if ($attendance_where_clock_out_null) {
-                    foreach ($attendance_where_clock_out_null as $attendance) { 
-                        //ubah value clock-out menjadi '-' dan status present
-                        $attendance->update(array(
-                            'clock_out' => '-',
-                            'late_out' => 'yes',
-                            'status' => 'present',
-                        ));
-                    }
-                }
-
                 Attendance::create([
                         'user_id' => $user->id,
                         'date' => $today->toDateString(),
@@ -217,49 +226,6 @@ class ClockController extends Controller
 
             // Jika waktu saat ini berada pada rentang setelah jadwal masuk hingga jadwal keluar
             } elseif ($now->between($schedule_in_late_begin_time, $schedule_in_late_end_time)) {
-
-                // cek attendance terakhir yang tidak ada admin_id nya, soalnya clock in harus lewat webclock
-                $latestAttendance = Attendance::where('user_id', $user->id)
-                                                ->where('created_at', '<', $today)
-                                                ->latest()
-                                                ->first();
-                if ($latestAttendance) {
-                    $latestAttendance_date=$latestAttendance->date;
-                    //ambil date setelahnya, jadikan start date
-                    $startDate = $latestAttendance_date->addDay();
-                    //maju satu2 hingga sebelum date sekarang
-                    for ($date = $startDate; $date < $today; $date->addDay()) { 
-                        
-                        //periksa apakah sudah ada attendance sesuai datenya
-                        if (! Attendance::where([['user_id', $user->id],['date', $date->toDateString()]])->first()) {
-                            //jika tidak buat att dengan clock in dan out '-' dan status absent
-                            Attendance::create([
-                                    'user_id' => $user->id,
-                                    'date' => $date->toDateString(),
-                                    'clock_in' => '-',
-                                    'clock_out' => '-',
-                                    'late_in' => 'yes',
-                                    'late_out' => 'yes',
-                                    'status' => "absent",
-                            ]);
-                        }
-                        
-                    }
-                    
-                }
-
-                // cek attendance user yang belum clock out
-                $attendance_where_clock_out_null=Attendance::where([['user_id', $user->id],['clock_out', null]])->get();
-                if ($attendance_where_clock_out_null) {
-                    foreach ($attendance_where_clock_out_null as $attendance) { 
-                        //ubah value clock-out menjadi '-' dan status present
-                        $attendance->update(array(
-                            'clock_out' => '-',
-                            'late_out' => 'yes',
-                            'status' => 'present',
-                        ));
-                    }
-                }
 
                 Attendance::create([
                         'user_id' => $user->id,

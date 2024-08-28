@@ -44,4 +44,8 @@ class SaleDetail extends Model
 	{
 		return $this->belongsTo(ProductVariant::class);
 	}
+    public function unit()
+	{
+		return $this->belongsTo(Unit::class, 'sale_unit_id');
+	}
 }

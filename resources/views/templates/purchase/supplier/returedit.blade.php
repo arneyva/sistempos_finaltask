@@ -199,16 +199,16 @@
                     <table class="table table-striped">
                     <thead>
                       <tr>
-                          <th>Name</th>
-                          <th class="col-2 text-right">QTY Order</th>
+                          <th class="col-6">Name</th>
+                          <th class="col-2 text-right">QTY Unpassed</th>
+                          <th class="col-2 text-right">QTY Return</th>
+                          <th class="col-2 text-right">QTY Request</th>
                           <th class="col-2 text-right">Price</th>
                           <th class="col-2 text-right">Subtotal</th>
                         </tr>
                       </thead>
                       <tbody>
-                        @php
-                          $totalQty = 0;
-                        @endphp
+                        
                         @foreach($products as $product)
                         <tr>
                             <td>
@@ -219,46 +219,49 @@
                                     </div>
                             </div>
                             </td>
-                            <td class="text-right">{{$product->quantity}}</td>
-                            <td class="text-right"><span class=" text-bold">Rp </span>{{$product->cost}}</td>
+                            <td class="text-right">{{$product->qty_unpassed}}</td>
+                            <td class="text-right">{{$product->qty_return}}</td>
+                            <td class="text-right">{{$product->qty_request}}</td>
+                            <td class="text-right"><span class=" text-bold">Rp </span>{{$product->product_variant_id ? $product->product_variant->cost : $product->product->cost}}</td>
                             <td class="text-right"><span class=" text-bold">Rp </span>{{$product->total}}</td>
                         </tr>
-                        @php
-                            $totalQty += $product->quantity; // Add the total to the grand total
-                        @endphp
+                        
                         @endforeach
                         <tr>
-                            <td class="text-left" style="padding-top:1vw !important;padding-left:14vw !important; "><strong>Total Order</strong></td>
-                            <td class="text-right" style="padding-top:1vw !important"><strong>{{ number_format($totalQty) }}</strong></td>
+                            <td colspan="4" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important; "><strong>Total Order</strong></td>
                             <td class="col-1" style="padding-top:1vw !important"></td>
                             <td class="text-right" style="padding-top:1vw !important"><strong><span class=" text-bold">Rp </span>{{number_format($purchase->subtotal,0,",",".")}}</strong></td>
                         </tr>
                         </tr>
+                        
+                        
                         <tr>
-                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Order Tax</strong></td>
-                            <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_tax">{{number_format($purchase->TaxNet,0,",",".")}}</strong></td>
-                            <input type="hidden" name="order_tax_input" id="order_tax_input">
-                        </tr>
-                        <tr>
-                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Order Discount</strong></td>
-                            <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_discount">{{number_format($purchase->discount,0,",",".")}}</strong></td>
-                            <input type="hidden" name="order_discount_input" id="order_discount_input">
-                        </tr>
-                        <tr>
-                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Shipping</strong></td>
+                            <td colspan="5" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Shipping</strong></td>
                             <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_shipping">{{number_format($purchase->shipment_cost,0,",",".")}}</strong></td>
                             <input type="hidden" name="order_shipping_input" id="order_shipping_input">
                         </tr>
                         <tr>
-                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Grand Total</strong></td>
+                            <td colspan="5" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Return Grand Total</strong></td>
                             <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_total">{{number_format($purchase->GrandTotal,0,",",".")}}</strong></td>
                             <input type="hidden" name="order_total_input" id="order_total_input">
                         </tr>
                         <tr>
-                            <td colspan="3" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Down Payment</strong></td>
-                            <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_down_payment">{{number_format($purchase->down_payment_net,0,",",".")}}</strong></td>
-                            <input type="hidden" name="order_down_payment_input" id="order_down_payment_input">
+                            <td colspan="5" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Order Grand Total</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_total">{{number_format($purchase_instance->GrandTotal,0,",",".")}}</strong></td>
                         </tr>
+                        <tr>
+                            <td colspan="5" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Client Paid</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_total">{{number_format($total_paid,0,",",".")}}</strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Return Paid</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_total">{{number_format($total_return_paid,0,",",".")}}</strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Must Pay</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_total">{{number_format($supplier_must_pay,0,",",".")}}</strong></td>
+                        </tr>
+                        
                     </tbody>
                 </table>
                 </div>
@@ -266,57 +269,10 @@
                 </div>
                         </div>
                         <div class="col-sm-6 mb-1">
-                            <div class="card-header d-flex justify-content-between px-0">
+                            <div class="" id="shipping-request">
+                            <div class="card-header d-flex justify-content-between px-0" id="shipping-1">
                                 <div class="header-title">
-                                    <h6 class="card-title">Payment Information</h6>
-                                </div>
-                            </div>
-                            <div class="card-body py-3" style="padding-left:0px;">
-                                <div class="new-user-info">
-                                    <div class="row">
-                                    <div class="form-group" style="display: flex; align-items: center;">
-                                            <div class="col-sm-3 p-0">
-                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Tax</label>
-                                            </div>
-                                            <div class="col-sm-9 p-0" style="float:right;">
-                                                <div class="input-group input-group-sm">
-                                                    <input type="tel"  aria-describedby="basic-addon2" class="form-control form-control-sm @error('date') is-invalid @enderror" id="tax" name="tax" value="{{old('tax') ?? $purchase->tax_rate}}" required>
-                                                    <span class="input-group-text" id="basic-addon2">%</span>
-                                                    <span class="print-value" id="print-tax"></span> 
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" style="display: flex; align-items: center;">
-                                            <div class="col-sm-3 p-0">
-                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Discount</label>
-                                            </div>
-                                            <div class="col-sm-9 p-0" style="float:right;">
-                                                <div class="input-group input-group-sm">
-                                                    <span class="input-group-text" id="basic-addon2">Rp</span>
-                                                    <input type="tel"  aria-describedby="basic-addon2" class="form-control form-control-sm @error('date') is-invalid @enderror" id="discount" name="discount" value="{{old('discount') ?? $purchase->discount}}" required>
-                                                    <span class="print-value" id="print-discount"></span> 
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" style="display: flex; align-items: center;">
-                                            <div class="col-sm-3 p-0">
-                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Down Payment</label>
-                                            </div>
-                                            <div class="col-sm-9 p-0" style="float:right;">
-                                                <div class="input-group input-group-sm">
-                                                    <input type="tel" aria-describedby="basic-addon2"  class="form-control form-control-sm @error('date') is-invalid @enderror" id="down_payment" name="down_payment" value="{{old('down_payment') ?? $purchase->down_payment_rate}}" required>
-                                                    <span class="input-group-text" id="basic-addon2">%</span>
-                                                    <span class="print-value" id="print-down_payment"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @if($purchase->statut !== "pending")
-                            <div class="card-header d-flex justify-content-between p-0" id="shipping-1">
-                                <div class="header-title">
-                                    <h6 class="card-title">Shipping Information</h6>
+                                    <h6 class="card-title">Shipping Request Information</h6>
                                 </div>
                             </div>
                             <div class="card-body py-3" style="padding-left:0px;" id="shipping-2">
@@ -327,7 +283,7 @@
                                                 <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Destination Address</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <textarea class="form-control" id="address" name="address" disabled>{{ $purchase->address ?? '' }}</textarea>
+                                                <textarea class="form-control" id="address" name="address" disabled>{{ $purchase->request_address ? $purchase->request_address : '' }}</textarea>
                                                 <span class="print-value" id="print-address"></span>
                                             </div>
                                         </div>
@@ -336,7 +292,7 @@
                                                 <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important" >Request Arrive date</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <input type="text" value="{{ $purchase->req_arrive_date ? $purchase->req_arrive_date->translatedFormat('d, F Y') : '-' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="req_arrive_date" name="req_arrive_date" disabled>
+                                                <input type="text" value="{{ $purchase->request_req_arrive_date ? $purchase->request_req_arrive_date->translatedFormat('d, F Y') : '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="req_arrive_date" name="req_arrive_date" disabled>
                                                 <span class="print-value" id="print-req_arrive_date"></span>
                                             </div>
                                         </div>
@@ -347,12 +303,12 @@
                                             <div class="col-sm-9 p-0" style="float:right;">
                                                 <select name="courier" id="courier" class="form-control form-control-sm" required >
                                                     <option value="" selected disabled hidden>Courier</option>
-                                                    <option value="jne" {{ old('courier', $purchase->courier) == 'jne' ? 'selected' : '' }} >JNE</option>
-                                                    <option value="j&t" {{ old('courier', $purchase->courier) == 'j&t' ? 'selected' : '' }} >J&T</option>
-                                                    <option value="sicepat" {{ old('courier', $purchase->courier) == 'sicepat' ? 'selected' : '' }} >SiCepat</option>
-                                                    <option value="anteraja" {{ old('courier', $purchase->courier) == 'anteraja' ? 'selected' : '' }} >Anteraja</option>
-                                                    <option value="posindo" {{ old('courier', $purchase->courier) == 'posindo' ? 'selected' : '' }} >Pos Infonesia</option>
-                                                    <option value="own" {{ old('courier', $purchase->courier) == 'own' ? 'selected' : '' }} >Own Courier</option>
+                                                    <option value="jne" {{ old('courier', $purchase->request_courier) == 'jne' ? 'selected' : '' }} >JNE</option>
+                                                    <option value="j&t" {{ old('courier', $purchase->request_courier) == 'j&t' ? 'selected' : '' }} >J&T</option>
+                                                    <option value="sicepat" {{ old('courier', $purchase->request_courier) == 'sicepat' ? 'selected' : '' }} >SiCepat</option>
+                                                    <option value="anteraja" {{ old('courier', $purchase->request_courier) == 'anteraja' ? 'selected' : '' }} >Anteraja</option>
+                                                    <option value="posindo" {{ old('courier', $purchase->request_courier) == 'posindo' ? 'selected' : '' }} >Pos Infonesia</option>
+                                                    <option value="own" {{ old('courier', $purchase->request_courier) == 'own' ? 'selected' : '' }} >Own Courier</option>
                                                 </select> 
                                                 <span class="print-value" id="print-courier"></span>                                           
                                             </div>
@@ -362,7 +318,7 @@
                                                 <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Driver Contact</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <input type="tel" value="{{$purchase->driver_contact ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_driver_phone" name="driver_phone" >
+                                                <input type="tel" value="{{ $purchase->request_driver_contact ? $purchase->request_driver_contact : '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_driver_phone" name="driver_phone" >
                                                 <span class="print-value" id="print-driver_phone"></span>
                                             </div>
                                         </div>
@@ -371,41 +327,51 @@
                                                 <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Shipment Number</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <input type="tel" value="{{$purchase->shipment_number ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_shipment_number" name="shipment_number" >
+                                                <input type="tel" value="{{ $purchase->request_shipment_number ? $purchase->request_shipment_number : '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_shipment_number" name="shipment_number" >
                                                 <span class="print-value" id="print-shipment_number"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display: flex; align-items: center;">
+                                            <div class="col-sm-3 p-0">
+                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Shipment Cost</label>
+                                            </div>
+                                            <div class="col-sm-9 p-0" style="float:right;">
+                                                <input type="tel" value="{{$purchase->request_shipment_cost ? $purchase->request_shipment_cost : '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="shipment_cost" name="shipment_cost" required>
+                                                <span class="print-value" id="print-shipment_cost"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display: flex; align-items: center;">
+                                            <div class="col-sm-3 p-0">
+                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Estimate Arrive Date</label>
+                                            </div>
+                                            <div class="col-sm-9 p-0" style="float:right;">
+                                                <input type="date" value="{{ $purchase->request_estimate_arrive_date ? $purchase->request_estimate_arrive_date : ''}}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="est_arrive_date" name="est_arrive_date" >
+                                                <span class="print-value" id="print-est_arrive_date"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display: flex; align-items: center;">
+                                            <div class="col-sm-3 p-0">
+                                                <label class="form-label custom-file-input" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Delivery File</label>
+                                            </div>
+                                            <div class="col-sm-9 p-0" style="float:right;">
+                                                <input type="file" onchange="checkFileSize(this)" class="form-control form-control-sm @error('date') is-invalid @enderror" id="delivery_file" name="delivery_file" >
+                                                <span class="print-value" id="print-delivery_file"></span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            @endif
+                            </div>
                         </div>
                         <div class="col-sm-6 mb-1">
                             <div class="card-header d-flex justify-content-between px-0">
                                 <div class="header-title">
-                                    <h6 class="card-title mb-2"></h6>
+                                    <h6 class="card-title">Payment Information</h6>
                                 </div>
                             </div>
                             <div class="card-body py-3" style="padding-left:0px;" id="shipping-3">
                                 <div class="new-user-info">
                                     <div class="row">
-                                        <div class="form-group" style="display: flex; align-items: center;">
-                                            <div class="col-sm-3 p-0">
-                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Term</label>
-                                            </div>
-                                            <div class="col-sm-9 p-0" style="float:right;">
-                                                <select name="payment_term" id="payment_term" class="form-control form-control-sm" required>
-                                                <option value="" selected disabled hidden>Payment Term</option>
-                                                <option value="on_invoice" {{ old('payment_term', $purchase->payment_term) == 'on_invoice' ? 'selected' : '' }}>Due on invoice</option>
-                                                <option value="7_invoice" {{ old('payment_term', $purchase->payment_term) == '7_invoice' ? 'selected' : '' }}>7 days after invoice</option>
-                                                <option value="14_invoice" {{ old('payment_term', $purchase->payment_term) == '14_invoice' ? 'selected' : '' }}>14 Days after Invoice</option>
-                                                <option value="on_arrive" {{ old('payment_term', $purchase->payment_term) == 'on_arrive' ? 'selected' : '' }}>Due on arrive</option>
-                                                <option value="7_arrive" {{ old('payment_term', $purchase->payment_term) == '7_arrive' ? 'selected' : '' }}>7 days after arrive</option>
-                                                <option value="14_arrive" {{ old('payment_term', $purchase->payment_term) == '14_arrive' ? 'selected' : '' }}>14 Days after arrive</option>
-                                                </select>
-                                                <span class="print-value" id="print-payment_term"></span>
-                                            </div>
-                                        </div>
                                         <div class="form-group" style="display: flex; align-items: center;">
                                             <div class="col-sm-3 p-0">
                                                 <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Payment Method</label>
@@ -430,7 +396,7 @@
                                                 <label class="form-label" for="name" style="margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">E-Walet Number</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <input type="tel" value="{{$purchase->supplier_ewalet ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_ewalet" name="supplier_ewalet" >
+                                                <input type="tel" value="{{ $purchase->supplier_ewalet ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_ewalet" name="supplier_ewalet" >
                                                 <span class="print-value" id="print-input_ewalet"></span>
                                             </div>
                                         </div>
@@ -439,50 +405,84 @@
                                                 <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Bank Account</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <input type="tel" value="{{$purchase->supplier_bank_account ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_bank_account" name="supplier_bank_account">
+                                                <input type="tel" value="{{ $purchase->supplier_bank_account ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_bank_account" name="supplier_bank_account">
                                                 <span class="print-value" id="print-input_bank_account"></span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            @if($purchase->statut !== "pending")
-                            <div class="card-body py-3" style="padding-left:0px; padding-top:2vw !important;">
+                            <div class="" id="shipping-return">
+                            <div class="card-header d-flex justify-content-between p-0" id="shipping-1">
+                                <div class="header-title">
+                                    <h6 class="card-title">Shipping Return Information</h6>
+                                </div>
+                            </div>
+                            <div class="card-body py-3" style="padding-left:0px;" id="shipping-2">
                                 <div class="new-user-info">
                                     <div class="row">
+                                        <div class="form-group" style="display: flex; align-items: center;">
+                                            <div class="col-sm-3 p-0">
+                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Destination Address</label>
+                                            </div>
+                                            <div class="col-sm-9 p-0" style="float:right;">
+                                                <textarea class="form-control" id="returaddress" name="returaddress" disabled>{{ $purchase->address ?? ''}}</textarea>
+                                                <span class="print-value" id="print-address"></span>
+                                            </div>
+                                        </div>
                                         <div class="form-group" style="display: flex; align-items: center;">
                                             <div class="col-sm-3 p-0">
                                                 <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Shipment Cost</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <input type="tel" value="{{$purchase->shipment_cost ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="shipment_cost" name="shipment_cost" required>
+                                                <input disabled type="tel" value="{{$purchase->shipment_cost ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="returshipment_cost" name="returshipment_cost" required>
                                                 <span class="print-value" id="print-shipment_cost"></span>
                                             </div>
                                         </div>
                                         <div class="form-group" style="display: flex; align-items: center;">
                                             <div class="col-sm-3 p-0">
-                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Estimate Arrive Date</label>
+                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Courier</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <input type="date" value="{{$purchase->est_arrive_date ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="est_arrive_date" name="est_arrive_date" >
-                                                <span class="print-value" id="print-est_arrive_date"></span>
+                                                <select disabled name="returcourier" id="returcourier" class="form-control form-control-sm" required >
+                                                    <option value="" selected disabled hidden>Courier</option>
+                                                    <option value="jne" {{ old('returcourier', $purchase->courier) == 'jne' ? 'selected' : '' }} >JNE</option>
+                                                    <option value="j&t" {{ old('returcourier', $purchase->courier) == 'j&t' ? 'selected' : '' }} >J&T</option>
+                                                    <option value="sicepat" {{ old('returcourier', $purchase->courier) == 'sicepat' ? 'selected' : '' }} >SiCepat</option>
+                                                    <option value="anteraja" {{ old('returcourier', $purchase->courier) == 'anteraja' ? 'selected' : '' }} >Anteraja</option>
+                                                    <option value="posindo" {{ old('returcourier', $purchase->courier) == 'posindo' ? 'selected' : '' }} >Pos Infonesia</option>
+                                                    <option value="own" {{ old('returcourier', $purchase->courier) == 'own' ? 'selected' : '' }} >Own Courier</option>
+                                                </select> 
+                                                <span class="print-value" id="print-courier"></span>                                           
                                             </div>
                                         </div>
-                                        <div class="form-group" style="display: flex; align-items: center;">
+                                        <div class="form-group" style="display: none; align-items: center;" id="driver_phone">
                                             <div class="col-sm-3 p-0">
-                                                <label class="form-label custom-file-input" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Delivery File</label>
+                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Driver Contact</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <input type="file" onchange="checkFileSize(this)" class="form-control form-control-sm @error('date') is-invalid @enderror" id="delivery_file" name="delivery_file" >
-                                                <span class="print-value" id="print-delivery_file"></span>
+                                                <input disabled type="tel" value="{{ $purchase->driver_contact ?? '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="returinput_driver_phone" name="returdriver_phone" >
+                                                <span class="print-value" id="print-driver_phone"></span>
                                             </div>
                                         </div>
-                                        
+                                        <div class="form-group" style="display: none; align-items: center;" id="shipment_number">
+                                            <div class="col-sm-3 p-0">
+                                                <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Shipment Number</label>
+                                            </div>
+                                            <div class="col-sm-9 p-0" style="float:right;">
+                                                <input disabled type="tel" value="{{$purchase->shipment_number ?? ''}}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="returinput_shipment_number" name="returshipment_number" >
+                                                <span class="print-value" id="print-shipment_number"></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            @endif
+                            </div>
                         </div>
+                        <div class="form-group col-sm-12 mb-2">
+                        <label class="form-label custom-file-input mb-2" for="name">Return Proof:</label>
+                                <p><strong>Download File: </strong><a href="{{route('purchases.file', $purchase['id'])}}">Download</a></p>
+                    </div>
                         <div class="form-group col-sm-12">
                             <label class="form-label" for="name">Order Note:</label>
                             <textarea class="form-control" id="notes" name="notes" disabled>{{ $purchase->notes ?? '' }}</textarea> 
@@ -495,17 +495,25 @@
                         </div>
 
                     </div>
-                    @if($purchase->statut !== "pending")
                     <div class="card-footer d-flex justify-content-start pt-0 px-0">
                         <button type="button" class="btn btn-secondary" style="background-color: #dbdbdb; color: white;" onclick="printPage()">Print Receipt</button>
                     </div>
-                    @endif
-                    @if($purchase->statut == "pending" || $purchase->statut == "ordered" )
-                    <div class="card-footer d-flex justify-content-center pt-0">                        
-                        <button type="button" id="accept" data-response="accept" class="btn btn-success me-4">@if($purchase->statut == "pending") Accept @elseif($purchase->statut == "ordered") Confirm Shipped @endif</button>
-                        <button type="button" id="refuse" data-response="refuse" class="btn btn-danger ">@if($purchase->statut == "pending") Refuse @elseif($purchase->statut == "ordered") Cancel @endif</button>
+                    <div class="card-footer d-flex justify-content-center pt-0">    
+                        @if ($purchase->statut == "pending")
+                            <button type="button" id="accept" data-response="accept" class="btn btn-success me-4">Accept</button>
+                        @endif                    
+                        @if ($purchase->statut == "ordered" && $purchase->qty_request_total > 0)                   
+                        <button type="button" id="accept" data-response="accept" class="btn btn-success me-4">Confirm Shipped</button>
+                        @endif                    
+                        @if ($purchase->statut !== "refused" && $purchase->statut !== "canceled" && $purchase->statut !== "pending" && $purchase_instance->payment_statut !== "return paid")
+                        @if ($supplier_must_pay > 0)
+                        <button type="button" id="pay" value="pay" class="btn btn-secondary me-2">Pay</button>
+                        @endif
+                        @endif                   
+                        @if ($purchase->statut == "pending" || $purchase->statut == "ordered" )
+                            <button type="button" id="refuse" data-response="refuse" class="btn btn-danger me-4">Cancel</button>
+                        @endif                    
                     </div>
-                    @endif
                 </div>
             </form>
                             </div>
@@ -553,6 +561,10 @@
 
     {{-- sweetalert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- midtrans --}}
+<script type="text/javascript"
+		src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="SB-Mid-client-PmpGyvBq3pdaXTA0"></script>
 
     <script>
     $(document).ready(function() {
@@ -632,6 +644,7 @@
                             title: response.success
                         });
                         
+                        location.reload();
                     }
                 },
                 error: function (xhr, status, error) {
@@ -647,6 +660,114 @@
             });
         });
     });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#pay').click(function() {
+            makePayment();
+        })
+    })
+</script>
+<script>
+    function savePayment(payment_id) {
+        var ispay= $('#pay').val();
+        $.ajax({
+            type: "post",
+            url: "{{ $update_url }}",
+            dataType: 'json',
+            data: {
+                payment_id: payment_id,
+                ispay: ispay,
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'X-HTTP-Method-Override': 'PATCH' // For Laravel's method spoofing
+            },
+            success: function (response) {
+                    if (response.error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            html: '<ol style="text-align: start">' + response.error + '</ol>',
+                        });
+                    }
+                    else {
+                        const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                        });
+                        Toast.fire({
+                            icon: "success",
+                            title: response.success
+                        });
+                        setTimeout(function() {
+                            location.reload();
+                        }, 700); // Jeda 0,7 detik
+                    }                    
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terdapat error pada server'
+                });
+                // Log the error for debugging
+                console.error('Error: ', error);
+                console.error('Response: ', xhr.responseText);
+            }
+        });
+    }
+</script>
+
+<script>
+    function makePayment() {
+        var balance = {{$supplier_must_pay}} ?? 0;
+        $.ajax({
+            url: `/purchases/midtrans/`,
+            type: 'get',
+            dataType: 'json',
+            data: {
+                GrandTotal: balance
+            },
+            headers: { 
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function (response) {
+                snap.pay(response.token, {
+                    onSuccess: function (result) {
+                    
+                        savePayment(result.order_id);
+                    
+                    },
+                    onError: function (result) {
+                        /* You may add your own implementation here */
+                        alert("payment failed!"); console.log(result);
+                    },
+                    onClose: function (result) {
+                        snap.hide();
+                    },
+                });
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terdapat error pada server'
+                });
+                // Log the error for debugging
+                console.error('Error: ', error);
+                console.error('Response: ', xhr.responseText);
+            }
+        });
+    }
 </script>
 
 <script>
@@ -688,62 +809,37 @@
 
 <script>
     $(document).ready(function() {
-        var subtotal = {{$purchase->subtotal}};
+        var subtotal = {{$purchase->subtotal ?? 0}}; // Asumsikan subtotal adalah angka
 
         function numberFormat(number) {
             return number.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
         }
 
         function setTablePayment() {
-            // 2. Hitung nilai pajak (tax) dari subtotal
-            var taxValue = parseFloat($('#tax').val());
-            var taxPercentage = isNaN(taxValue) ? 0 : taxValue / 100;
-            var tax = subtotal * taxPercentage;
-
-            // 3. Ambil nilai diskon
-            var discountValue = parseFloat($('#discount').val());
-            var discount = isNaN(discountValue) ? 0 : discountValue;
+            
 
             // 3. Ambil nilai shipment
             var shipment_cost_value = parseFloat($('#shipment_cost').val());
-            var shipment_cost = isNaN(shipment_cost_value) ? 0 : shipment_cost_value;
+            var retur_shipment_cost_value = parseFloat({{$purchase->shipment_cost ?? 0}});
+            var shipment_cost = (isNaN(shipment_cost_value) ? 0 : shipment_cost_value) + retur_shipment_cost_value;
 
             // 4. Hitung grandtotal
-            var grandtotal = subtotal + tax - discount + shipment_cost;
+            var grandtotal = subtotal + shipment_cost;
 
             if (grandtotal < 0) {
                 grandtotal = 0;
             }
 
-            // 5. Hitung down payment (dp) dari grandtotal
-            var downPaymentValue = parseFloat($('#down_payment').val());
-            var downPaymentPercentage = isNaN(downPaymentValue) ? 0 : downPaymentValue / 100;
-            var downPayment = grandtotal * downPaymentPercentage;
+          
 
-            $('#order_down_payment').text(numberFormat(downPayment));
-            $('#order_discount').text(numberFormat(discount));
-            $('#order_tax').text(numberFormat(tax));
             $('#order_shipping').text(numberFormat(shipment_cost));
             $('#order_total').text(numberFormat(grandtotal));
             
-            $('#order_down_payment_input').val(downPayment);
             $('#order_shipping_input').val(shipment_cost);
-            $('#order_discount_input').val(discount);
-            $('#order_tax_input').val(tax);
             $('#order_total_input').val(grandtotal);
         }
 
-        $('#tax').change(function() {
-            setTablePayment();
-        });
-
-        $('#discount').change(function() {
-            setTablePayment();
-        });
-
-        $('#down_payment').change(function() {
-            setTablePayment();
-        });
+ 
         $('#shipment_cost').change(function() {
             setTablePayment();
         });
@@ -821,6 +917,100 @@
         courier.addEventListener('change', function() {
             setColumn();
         });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const banks = ['bni', 'bri', 'permata', 'mandiri', 'bca'];
+        const ewalets = ['ovo', 'gopay'];
+        var payment_method = document.getElementById('payment_method');
+        var supplier_bank_account = document.getElementById('supplier_bank_account');
+        var supplier_ewalet = document.getElementById('supplier_ewalet');
+        var input_supplier_bank_account = document.getElementById('input_bank_account'); // Koreksi ID
+        var input_supplier_ewalet = document.getElementById('input_ewalet'); // Koreksi ID
+        var add_bottom_padding = document.getElementById('shipping-3'); // Koreksi ID
+
+        const own_courier = 'own';
+        var courier = document.getElementById('courier');
+        var driver_phone = document.getElementById('driver_phone');
+        var shipment_number = document.getElementById('shipment_number');
+        var input_driver_phone = document.getElementById('input_driver_phone'); // Koreksi ID
+        var input_shipment_number = document.getElementById('input_shipment_number'); // Koreksi ID
+
+        function setColumn() {
+            if (banks.includes(payment_method.value)) {
+                supplier_bank_account.style.display = 'flex';
+                supplier_ewalet.style.display = 'none';
+                input_supplier_bank_account.setAttribute('required', 'required');
+                input_supplier_ewalet.removeAttribute('required');
+                add_bottom_padding.style.setProperty('padding-bottom', '1.24vw', 'important');
+            } else if (ewalets.includes(payment_method.value)) {
+                supplier_ewalet.style.display = 'flex';
+                supplier_bank_account.style.display = 'none';
+                input_supplier_ewalet.setAttribute('required', 'required');
+                input_supplier_bank_account.removeAttribute('required');
+                add_bottom_padding.style.setProperty('padding-bottom', '1.24vw', 'important');
+            } else {
+                supplier_bank_account.style.display = 'none';
+                supplier_ewalet.style.display = 'none';
+                add_bottom_padding.style.setProperty('padding-bottom', '4.96vw', 'important');
+                input_supplier_bank_account.removeAttribute('required');
+                input_supplier_ewalet.removeAttribute('required');
+            }
+
+            if (own_courier == courier.value) {
+                driver_phone.style.display = 'flex';
+                shipment_number.style.display = 'none';
+                input_driver_phone.setAttribute('required', 'required');
+                input_shipment_number.removeAttribute('required');
+            } else {
+                shipment_number.style.display = 'flex';
+                driver_phone.style.display = 'none';
+                input_shipment_number.setAttribute('required', 'required');
+                input_driver_phone.removeAttribute('required');
+            }
+        }
+
+        setColumn();
+
+        payment_method.addEventListener('change', function() {
+            setColumn();
+        });
+
+        courier.addEventListener('change', function() {
+            setColumn();
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        // Variabel dari server (pastikan nilai ini sudah disertakan dari controller)
+        const serverData = {
+            returnQty: @json($purchase->qty_return_total),
+            requestQty: @json($purchase->qty_request_total)
+        };
+
+        function updateDisplay() {
+                // Array pasangan variabel dan elemen id
+            const pairs = [
+                { value: serverData.returnQty, elementId: '#shipping-return' },
+                { value: serverData.requestQty, elementId: '#shipping-request' }
+            ];
+
+            // Loop melalui setiap pasangan
+            pairs.forEach(function(pair) {
+                // Tampilkan atau sembunyikan elemen berdasarkan nilai dari server
+                if (pair.value > 0) {
+                    $(pair.elementId).css('display', 'block');
+                } else {
+                    $(pair.elementId).css('display', 'none');
+                }
+            });
+        }
+
+        // Panggil fungsi updateDisplay pada awalnya
+        updateDisplay();
     });
 </script>
 

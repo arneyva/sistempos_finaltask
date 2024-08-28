@@ -1,8 +1,8 @@
 @extends('templates.main')
 
 @section('pages_title')
-<h1>All User Employee</h1>
-<p>Do Something with all your employee</p>
+<h1>All Purchases</h1>
+<p>Do Something with all your purchases</p>
 @endsection
 
 @section('content')
@@ -38,7 +38,7 @@
                 <button type="button" class="btn btn-soft-danger">PDF</button>
                 <button type="button" class="btn btn-soft-gray">Import Client</button> -->
                 <a href="#" style="margin-left: 30px;">
-                    <a href="{{ route('people.users.create') }}">
+                    <a href="{{ route('purchases.create') }}">
                         <button type="button" class="btn btn-soft-primary">Create +</button>
                     </a>
                 </a>
@@ -54,31 +54,42 @@
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Position</th>
-                            <th>Gender</th>
+                            <th>Date</th>
+                            <th>Reference</th>
+                            <th>Supplier</th>
+                            <th>Status</th>
+                            <th>Payment Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($users as $data)
-                        @continue ($data->id == $user)
+                        @foreach ($purchases as $data)
                             <tr>
+                                <td>{{ $data->date->translatedFormat('d, F Y') }}</td>
+                                <td>{{ $data->Ref }}</td>
+                                <td>{{ $data->provider->name }}</td>
+                                <td>{{ $data->statut }}</td>
+                                <td>{{ $data->payment_statut }}</td>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary"
-                                            src="/hopeui/html/assets/images/avatars/{{ $data->avatar }}" alt="profile">
-                                        <div class="d-flex flex-column">
-                                            <h6>{{ ucfirst($data->firstname) }} {{ ucfirst($data->lastname) }}</h6>
-                                        </div>
+                                    <div class="dropdown">
+                                        <a href="#" class="text-gray dropdown-toggle" id="dropdownMenuButton22" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                                            </svg>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton22">
+                                            <li><a class="dropdown-item" href="{{ route('purchases.edit', $data['id']) }}">Edit</a></li>
+                                            @if ($data->statut == "completed" || $data->purchase_returns->isNotEmpty())
+                                            <li><a class="dropdown-item" href="{{ route('purchases.edit', $data['id']) }}#return">Return</a></li>
+                                            @endif
+                                            @if ($data->statut !== "pending" && 
+                                                $data->statut !== "canceled" && 
+                                                $data->statut !== "refused")
+                                            <li><a class="dropdown-item" href="{{ route('purchases.edit', $data['id']) }}#payment">Payment</a></li>
+                                            @endif
+                                        </ul>
                                     </div>
-                                </td>
-                                <td>{{ $data->email }}</td>
-                                <td>{{ ucfirst(substr($data->getRoleNames(), 2, -2)) }}</td>
-                                <td>{{ $data->gender }}</td>
-                                <td>
-                                    <div class="inline">
+                                    <!-- <div class="inline">
                                         <a href="{{ route('people.users.show', $data['id']) }}">
                                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -120,14 +131,14 @@
                                             @csrf
                                             @method('DELETE')
                                         </form>
-                                    </div>
+                                    </div> -->
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
                 <div class="bd-example" style="margin-left: 10px; margin-top:10px; margin-right:10px">
-                    {{ $users->links() }}
+                    {{ $purchases->links() }}
                 </div>
             </div>
         </div>

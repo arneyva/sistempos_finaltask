@@ -25,6 +25,7 @@ use App\Http\Controllers\Settings\MembershipController;
 use App\Http\Controllers\Settings\WarehousesController;
 use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RequestAttendanceController;
 use App\Http\Controllers\LiveSearchController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Settings\CompanyController;
@@ -72,6 +73,9 @@ Route::post('/update-alert-stock', [ProductController::class, 'updateAlertStock'
 */
 Route::get('purchases/receipt/edit/{Ref}', [PurchaseController::class, 'editSupplier'])->name('edit.supplier')->middleware('signed');
 Route::patch('purchases/receipt/update/{id}', [PurchaseController::class, 'updateSupplier'])->name('update.supplier')->middleware('signed');
+Route::get('purchases/return/receipt/edit/{Ref}', [PurchaseController::class, 'editreturSupplier'])->name('edit.retur.supplier')->middleware('signed');
+Route::get('purchases/midtrans', [PurchaseController::class, 'Midtrans']);
+Route::patch('purchases/return/receipt/update/{id}', [PurchaseController::class, 'updatereturSupplier'])->name('update.retur.supplier')->middleware('signed');
 Route::get('client/{id}', [PosController::class, 'clientLanding'])->name('client.landing')->middleware('signed');
 Route::patch('client/{id}/redeem', [PosController::class, 'clientRedeem'])->name('client.redeem')->middleware('signed');
 
@@ -315,6 +319,15 @@ Route::prefix('hrm')->middleware(['auth', 'verified'])->name('hrm.')->group(func
         Route::get('list', [MyAttendanceController::class, 'index'])->name('index');
         Route::post('list', [MyAttendanceController::class, 'checkAttendance'])->name('check');
     });
+    Route::prefix('request')->name('request.')->group(function () {
+        Route::get('list', [RequestAttendanceController::class, 'index'])->name('index');
+        Route::get('create/{id}', [RequestAttendanceController::class, 'create'])->name('create');
+        Route::post('store', [RequestAttendanceController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [RequestAttendanceController::class, 'edit'])->name('edit');
+        Route::patch('update/{id}', [RequestAttendanceController::class, 'update'])->name('update');
+        Route::delete('destroy/{id}', [RequestAttendanceController::class, 'destroy'])->name('destroy');
+        Route::get('file/download/{id}', [RequestAttendanceController::class, 'download'])->name('file');
+    });
 });
 Route::prefix('purchases')->middleware(['auth', 'verified'])->name('purchases.')->group(function () {
     Route::get('list', [PurchaseController::class, 'index'])->name('index');
@@ -323,16 +336,22 @@ Route::prefix('purchases')->middleware(['auth', 'verified'])->name('purchases.')
     Route::get('detail/{id}', [PurchaseController::class, 'show'])->name('show');
     Route::get('edit/{id}', [PurchaseController::class, 'edit'])->name('edit');
     Route::patch('update/{id}', [PurchaseController::class, 'update'])->name('update');
+    Route::patch('makepayment/{id}', [PurchaseController::class, 'makePayment'])->name('makePayment');
+    Route::patch('makereturn/{id}', [PurchaseController::class, 'makeReturn'])->name('makeReturn');
+    Route::patch('updatereturn/{id}', [PurchaseController::class, 'updateReturn'])->name('updateReturn');
     Route::delete('destroy/{id}', [PurchaseController::class, 'destroy'])->name('destroy');
     Route::post('scanner/{code}', [PurchaseController::class, 'getFromScanner']);
     Route::post('supplier/{id}', [PurchaseController::class, 'getSupplier']);
     Route::get('file/download/{id}', [PurchaseController::class, 'download'])->name('file');
+
 });
 //ndak pakai prefix 
 Route::get('cashier', [PosController::class, 'create'])->middleware(['auth', 'verified']);
 //turunan2 cashier jadi pake prefix
 Route::prefix('cashier')->middleware(['auth', 'verified'])->name('cashier.')->group(function () {
     Route::post('scanner/{code}', [PosController::class, 'getFromScanner']);
+    Route::get('edit/{saleId}', [PosController::class, 'edit'])->name('edit');
+    Route::post('update/{saleId}', [PosController::class, 'update'])->name('update');
     Route::post('store', [PosController::class, 'store'])->name('store');
     Route::post('customer/{email}', [PosController::class, 'getCustomer']);
     Route::post('customer/email/{email}', [PosController::class, 'sendEmail']);
