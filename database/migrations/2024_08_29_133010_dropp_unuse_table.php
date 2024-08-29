@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::dropIfExists('employee_accounts');
         Schema::dropIfExists('employee_experiences');
         Schema::dropIfExists('holidays');
-        Schema::dropIfExists('leave_types');
         Schema::dropIfExists('leaves');
+        Schema::dropIfExists('leave_types');
         Schema::dropIfExists('payment_with_credit_card');
         Schema::dropIfExists('pos_settings');
         Schema::dropIfExists('quotation_details');
