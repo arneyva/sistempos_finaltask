@@ -11,6 +11,16 @@ Nama             : Mujahid Alauddin Rafiq <br/>
 NIM              : V3421066 <br/>
 Dosen Pembimbing : Yudho Yudhanto, S.Kom.,M.Kom. <br/>
 
+## Cara Instalasi Aplikasi
+- Git clone ke directory local komputer anda
+- Masuk ke Terminal pada path lokasi aplikasi
+- masukkan command composer install
+- setelah itu, masukkan command php artisan migrate
+- setelah itu, masukkan command php artisan db:seed
+- setelah itu, masukkan command php artisan optimize cache:clear
+- setelah itu, masukkan command php artisan serve
+- Aplikasi dapat digunakan
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
