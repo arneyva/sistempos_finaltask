@@ -3,7 +3,7 @@ Sebuah solusi terintegrasi yang dirancang untuk mengatasi tiga masalah utama dal
 Dilengkapi dengan fitur multi-language yang mendukung berbagai bahasa serta tampilan yang kompatibel dengan format RTL (Right-to-Left) dan LTR (Left-to-Right), sistem ini menawarkan fleksibilitas dalam penggunaan di berbagai wilayah. Selain itu, pengguna dapat mengakses berbagai menu penting seperti produk, penyesuaian (adjustment), transfer, penjualan (sales), retur penjualan (sales return), pengaturan (settings), laporan (report), HRM, Purchase, Expenses, People, Membership, dan Kasir yang semuanya dirancang untuk meningkatkan efisiensi operasional dan memudahkan pengambilan keputusan berbasis data.
 
 ## Informasi Developer Aplikasi
-Nama             : Mohamad Wijdan Arif
+Nama             : Mohamad Wijdan Arif <br/>
 NIM              : V3421061
 Dosen Pembimbing : Nurul Firdaus, S.Kom., M.Info.Tech.
 
