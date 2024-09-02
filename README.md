@@ -1,3 +1,16 @@
+Informasi Terkait Aplikasi
+Sebuah solusi terintegrasi yang dirancang untuk mengatasi tiga masalah utama dalam operasional bisnis, yaitu manajemen perkasiran, manajemen karyawan, dan manajemen inventaris. Dengan menggunakan teknologi Progressive Web App (PWA), sistem ini memungkinkan pengelolaan outlet secara efisien dan real-time, baik dari desktop maupun perangkat mobile.
+Dilengkapi dengan fitur multi-language yang mendukung berbagai bahasa serta tampilan yang kompatibel dengan format RTL (Right-to-Left) dan LTR (Left-to-Right), sistem ini menawarkan fleksibilitas dalam penggunaan di berbagai wilayah. Selain itu, pengguna dapat mengakses berbagai menu penting seperti produk, penyesuaian (adjustment), transfer, penjualan (sales), retur penjualan (sales return), pengaturan (settings), laporan (report), HRM, Purchase, Expenses, People, Membership, dan Kasir yang semuanya dirancang untuk meningkatkan efisiensi operasional dan memudahkan pengambilan keputusan berbasis data.
+
+Informasi Developer Aplikasi
+Nama             : Mohamad Wijdan Arif
+NIM              : V3421061
+Dosen Pembimbing : Nurul Firdaus, S.Kom., M.Info.Tech.
+
+Nama             : Mujahid Alauddin Rafiq
+NIM              : V3421066
+Dosen Pembimbing : Yudho Yudhanto, S.Kom.,M.Kom.
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
