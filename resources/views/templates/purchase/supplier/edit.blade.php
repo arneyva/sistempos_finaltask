@@ -631,7 +631,7 @@
                             icon: "success",
                             title: response.success
                         });
-                        
+                        location.reload();
                     }
                 },
                 error: function (xhr, status, error) {
@@ -759,9 +759,9 @@
         });
     });
 </script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    // Deklarasikan fungsi setColumn di luar, agar bisa digunakan di kedua script
+    function setColumn() {
         const banks = ['bni', 'bri', 'permata', 'mandiri', 'bca'];
         const ewalets = ['ovo', 'gopay'];
         var payment_method = document.getElementById('payment_method');
@@ -778,51 +778,76 @@
         var input_driver_phone = document.getElementById('input_driver_phone'); // Koreksi ID
         var input_shipment_number = document.getElementById('input_shipment_number'); // Koreksi ID
 
-        function setColumn() {
-            if (banks.includes(payment_method.value)) {
-                supplier_bank_account.style.display = 'flex';
-                supplier_ewalet.style.display = 'none';
-                input_supplier_bank_account.setAttribute('required', 'required');
-                input_supplier_ewalet.removeAttribute('required');
-                add_bottom_padding.style.setProperty('padding-bottom', '1.24vw', 'important');
-            } else if (ewalets.includes(payment_method.value)) {
-                supplier_ewalet.style.display = 'flex';
-                supplier_bank_account.style.display = 'none';
-                input_supplier_ewalet.setAttribute('required', 'required');
-                input_supplier_bank_account.removeAttribute('required');
-                add_bottom_padding.style.setProperty('padding-bottom', '1.24vw', 'important');
-            } else {
-                supplier_bank_account.style.display = 'none';
-                supplier_ewalet.style.display = 'none';
-                add_bottom_padding.style.setProperty('padding-bottom', '4.96vw', 'important');
-                input_supplier_bank_account.removeAttribute('required');
-                input_supplier_ewalet.removeAttribute('required');
-            }
-
-            if (own_courier == courier.value) {
-                driver_phone.style.display = 'flex';
-                shipment_number.style.display = 'none';
-                input_driver_phone.setAttribute('required', 'required');
-                input_shipment_number.removeAttribute('required');
-            } else {
-                shipment_number.style.display = 'flex';
-                driver_phone.style.display = 'none';
-                input_shipment_number.setAttribute('required', 'required');
-                input_driver_phone.removeAttribute('required');
-            }
+        if (banks.includes(payment_method.value)) {
+            supplier_bank_account.style.display = 'flex';
+            supplier_ewalet.style.display = 'none';
+            input_supplier_bank_account.setAttribute('required', 'required');
+            input_supplier_ewalet.removeAttribute('required');
+            add_bottom_padding.style.setProperty('padding-bottom', '1.24vw', 'important');
+        } else if (ewalets.includes(payment_method.value)) {
+            supplier_ewalet.style.display = 'flex';
+            supplier_bank_account.style.display = 'none';
+            input_supplier_ewalet.setAttribute('required', 'required');
+            input_supplier_bank_account.removeAttribute('required');
+            add_bottom_padding.style.setProperty('padding-bottom', '1.24vw', 'important');
+        } else {
+            supplier_bank_account.style.display = 'none';
+            supplier_ewalet.style.display = 'none';
+            add_bottom_padding.style.setProperty('padding-bottom', '4.96vw', 'important');
+            input_supplier_bank_account.removeAttribute('required');
+            input_supplier_ewalet.removeAttribute('required');
         }
 
-        setColumn();
+        if (own_courier == courier.value) {
+            driver_phone.style.display = 'flex';
+            shipment_number.style.display = 'none';
+            input_driver_phone.setAttribute('required', 'required');
+            input_shipment_number.removeAttribute('required');
+        } else {
+            shipment_number.style.display = 'flex';
+            driver_phone.style.display = 'none';
+            input_shipment_number.setAttribute('required', 'required');
+            input_driver_phone.removeAttribute('required');
+        }
+    }
 
+    // Event listener untuk ketika DOM sudah selesai dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        var payment_method = document.getElementById('payment_method');
+        var courier = document.getElementById('courier');
+        
+        // Jalankan setColumn saat halaman pertama kali dimuat
+        setColumn();
+    });
+
+    // Event listener untuk ketika DOM sudah selesai dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        var payment_method = document.getElementById('payment_method');
+        var courier = document.getElementById('courier');
+        
+
+        // Tambahkan event listener untuk perubahan metode pembayaran
         payment_method.addEventListener('change', function() {
+            console.log('pppp');
             setColumn();
         });
 
+    });
+
+    // Event listener untuk ketika DOM sudah selesai dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        var payment_method = document.getElementById('payment_method');
+        var courier = document.getElementById('courier');
+
+        // Tambahkan event listener untuk perubahan kurir
         courier.addEventListener('change', function() {
             setColumn();
         });
     });
 </script>
+
+
+
 
 </body>
 

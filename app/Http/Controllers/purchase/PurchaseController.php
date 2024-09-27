@@ -855,6 +855,7 @@ class PurchaseController extends Controller
                 'retur_proof' => $request->retur_proof,            
                 'shipment_number' => $request->returshipment_number,            
                 'shipment_cost' => $request->returshipment_cost,            
+                'shipping' => $request->returshipment_cost,            
                 'driver_contact' => $request->returdriver_phone,            
                 'courier' => $request->returcourier,            
         ]);
@@ -1104,8 +1105,7 @@ class PurchaseController extends Controller
         };
 
         $returpurchase->update(array(
-            'user_id' => $user->id,
-            'date' => $request->returdate,
+            'shipping' => $request->order_shipping_input,
             'address' => $request->returaddress,
             'tax_rate' => $request->tax ?? 0,
             'TaxNet' => $request->order_tax_input ?? 0,
@@ -1262,21 +1262,22 @@ class PurchaseController extends Controller
             $filename = $current;
         }
 
+        
+
         $purchase->update(array(
-            'request_req_arrive_date' => $request->req_arrive_date,
-            'request_driver_contact' => $request->driver_phone,
+            'shipping' => abs($request->order_shipping_input),
+            'GrandTotal' => abs($request->order_total_input),
+            'payment_method' => $request->payment_method,
+            'supplier_bank_account' => $request->supplier_bank_account ?? null,
+            'supplier_ewalet' => $request->supplier_ewalet ?? null,
+            'supplier_notes' => $request->supplier_notes,
+            'request_delivery_file' => $filename ?? null,
+            'request_courier' => $request->courier,
             'request_shipment_number' => $request->shipment_number,
+            'request_driver_contact' => $request->driver_phone,
             'request_shipment_cost' => $request->shipment_cost,
             'request_estimate_arrive_date' => $request->est_arrive_date,
-            'shipment_cost' => $request->returshipment_cost,
-            'driver_contact' => $request->returdriver_phone,
-            'shipment_number' => $request->returshipment_number,
-            'request_courier' => $request->courier,
-            'payment_method' => $request->payment_method,
-            'courier' => $request->returcourier,
-            'request_delivery_file' => $filename ?? null,
         ));
- 
  
         if ( $purchase->statut == "pending") {
  
@@ -1634,7 +1635,7 @@ class PurchaseController extends Controller
     public function makePayment(Request $request, String $id)
     {
         $purchase = Purchase::find($id);
-        $purchase_return = PurchaseReturn::where('purchase_id', $purchase->id);
+        $purchase_return = PurchaseReturn::where('purchase_id', $purchase->id)->first();
         if (! $purchase) {
             return back()->with('warning', 'Data tidak ditemukan');
         }
@@ -1805,6 +1806,6 @@ class PurchaseController extends Controller
         $err = curl_error($curl);
 
         curl_close($curl);
-        dd($response);
+        // dd($response);
     }
 }

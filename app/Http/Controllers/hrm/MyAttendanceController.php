@@ -128,8 +128,8 @@ class MyAttendanceController extends Controller
                 'late_in' => $late_in,
                 'late_out' => $late_out,
                 'on_time' => $on_time,
-                'requestButton' => $requestButton,
-                'attendanceId' => $attendanceId,
+                'requestButton' => $requestButton ?? 'no',
+                'attendanceId' => $attendanceId ?? null,
             ];
         }
 
