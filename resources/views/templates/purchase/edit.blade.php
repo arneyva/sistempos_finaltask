@@ -1625,7 +1625,7 @@
                 const payCash = document.getElementById('pay-cash');
                 const unenough = document.getElementById('excess');
 
-                if (pay < bal) {
+                if (pay <= bal) {
                     due = bal - pay;
                     //tampil tombol bayar
                     payCash.style.display = 'block';

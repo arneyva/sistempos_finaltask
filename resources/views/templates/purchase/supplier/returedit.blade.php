@@ -237,7 +237,7 @@
                         
                         <tr>
                             <td colspan="5" class="text-left" style="padding-top:1vw !important;padding-left:14vw !important;"><strong>Shipping</strong></td>
-                            <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_shipping">{{number_format($purchase->shipment_cost,0,",",".")}}</strong></td>
+                            <td class="text-right" style="padding-top:1vw !important"><span class=" text-bold">Rp </span><strong id="order_shipping">{{number_format($purchase->shipping,0,",",".")}}</strong></td>
                             <input type="hidden" name="order_shipping_input" id="order_shipping_input">
                         </tr>
                         <tr>
@@ -327,7 +327,7 @@
                                                 <label class="form-label" for="name" style=" margin-right: 10px; margin-bottom: 0px !important;  font-size: 15px !important">Shipment Number</label>
                                             </div>
                                             <div class="col-sm-9 p-0" style="float:right;">
-                                                <input type="tel" value="{{ $purchase->request_shipment_number ? $purchase->request_shipment_number : '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_shipment_number" name="shipment_number" >
+                                                <input type="tel" value="{{ $purchase->request_shipment_number ? $purchase->request_shipment_number : '' }}" class="form-control form-control-sm @error('date') is-invalid @enderror" id="input_shipment_number" name="shipment_number">
                                                 <span class="print-value" id="print-shipment_number"></span>
                                             </div>
                                         </div>
@@ -572,9 +572,10 @@
             var form = $('#purchase_order')[0];
             var formData = new FormData(form); // Membuat objek FormData dari form
             var response= $(this).data('response');
-
-             // Menambahkan data tambahan ke FormData
+            
+            // Menambahkan data tambahan ke FormData
             formData.append('response', response);
+            
 
             // Cek apakah tombol yang ditekan adalah #accept
             if (this.id === 'accept') {
@@ -583,20 +584,32 @@
                 const requiredSelects = document.querySelectorAll('select[required]');
                 const requiredText = document.querySelectorAll('textarea[required]');
                 for (const input of requiredInputs) {
+                    if (input.offsetParent === null) {
+                        continue; // Lewatkan input yang tersembunyi
+                    }
                     if (!input.checkValidity()) {
                         input.reportValidity();
+                        console.log(input.id)
                         return; // Keluar dari fungsi jika ada input yang tidak valid
                     }
                 }
                 for (const select of requiredSelects) {
+                    if (select.offsetParent === null) {
+                        continue; // Lewatkan input yang tersembunyi
+                    }
                     if (!select.checkValidity()) {
                         select.reportValidity();
+                        console.log(select.id)
                         return; // Keluar dari fungsi jika ada input yang tidak valid
                     }
                 }
                 for (const text of requiredText) {
+                    if (text.offsetParent === null) {
+                        continue; // Lewatkan input yang tersembunyi
+                    }
                     if (!text.checkValidity()) {
                         text.reportValidity();
+                        console.log(text.id)
                         return; // Keluar dari fungsi jika ada input yang tidak valid
                     }
                 }
@@ -604,11 +617,14 @@
                 const supplier_notes=document.getElementById('supplier_notes');
                 if (!supplier_notes.checkValidity()) {
                     supplier_notes.reportValidity();
+                    console.log('supplier_notes')
                     return; // Keluar dari fungsi jika ada input yang tidak valid
                 }
             }
+            console.log('ppppp')
 
             // Mengirimkan data menggunakan AJAX
+            
             $.ajax({
                 type: "post",
                 url: "{{ $update_url }}",
@@ -839,6 +855,7 @@
             $('#order_total_input').val(grandtotal);
         }
 
+        setTablePayment();
  
         $('#shipment_cost').change(function() {
             setTablePayment();
