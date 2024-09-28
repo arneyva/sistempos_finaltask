@@ -21,6 +21,7 @@ use App\Models\UserWarehouse;
 use App\Models\Warehouse;
 use Carbon\Carbon;
 use App\Mail\PurchaseMail;
+use App\Mail\returpurchaseMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Picqer\Barcode\BarcodeGeneratorPNG;
@@ -947,9 +948,9 @@ class PurchaseController extends Controller
         
         if ($request->send == 'send_email') {
             //nama instansi supplier
-            $email['supplier_name'] = Provider::where('id', $request->supplier)->first()->name;
+            $email['supplier_name'] = Provider::where('id', $purchase->provider_id)->first()->name;
             //alamat instansi supplier
-            $email['supplier_adresse'] = Provider::where('id', $request->supplier)->first()->adresse;
+            $email['supplier_adresse'] = Provider::where('id', $purchase->provider_id)->first()->adresse;
             //tanggal purchase
                 $date=$request->date;
                 // Ubah tanggal menjadi instance Carbon
@@ -1018,6 +1019,7 @@ class PurchaseController extends Controller
             $email['url'] = URL::signedRoute('edit.retur.supplier', ['Ref' => $email['purchase_ref']]);
             //kirim email ke email sesuai di purchase
             Mail::to($purchase->email)->send(new returpurchaseMail($email));
+            
         }
 
         $current = $returpurchase->retur_proof;
@@ -1038,7 +1040,7 @@ class PurchaseController extends Controller
         } else {
             $filename = $current;
         };
-
+        
         $current_file = $returpurchase->request_delivery_file;
         if ($request->retur_requestdelivery_file != null) {
  

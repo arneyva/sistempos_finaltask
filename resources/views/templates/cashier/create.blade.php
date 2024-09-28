@@ -500,6 +500,7 @@
                                                 {{$user->firstname}} {{$user->lastname}}
                                             </option>
                                         @foreach($staff as $data)
+                                        @continue($data->id == $user->id)
                                             <option 
                                                 value="{{$data->id}}" 
                                                 data-avatar="{{$data->avatar}}">
@@ -1065,7 +1066,7 @@ $(document).ready(function(){
                                                             '<span>Email</span>' +
                                                         '</button>' +
                                                     '</div>' +
-                                                    '<button type="button" onclick="addcustomer_intosale(' + response.email + ')" class="btn btn-sm btn-primary">' +
+                                                    '<button type="button" onclick="addcustomer_intosale(\'' + response.email + '\')" class="btn btn-sm btn-primary">' +
                                                         'Add' +
                                                     '</button>' +
                                                 '</div>' +

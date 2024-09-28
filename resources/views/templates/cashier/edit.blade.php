@@ -39,6 +39,16 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
+
+@media print {
+            body * {
+                display: none; /* Menyembunyikan semua elemen */
+            }
+            #facture, #facture * {
+                display: block; /* Menampilkan hanya elemen faktur */
+            }
+        }
+
 .send-email {
     font-family: inherit;
     font-size: 0.95vw;
@@ -430,6 +440,7 @@
                                                 {{$user->firstname}} {{$user->lastname}}
                                             </option>
                                         @foreach($staff as $data)
+                                        @continue($data->id == $user->id)
                                             <option 
                                                 value="{{$data->id}}" 
                                                 data-avatar="{{$data->avatar}}">
@@ -1041,7 +1052,7 @@ $(document).ready(function(){
                                                             '<span>Email</span>' +
                                                         '</button>' +
                                                     '</div>' +
-                                                    '<button type="button" onclick="addcustomer_intosale(' + response.email + ')" class="btn btn-sm btn-primary">' +
+                                                    '<button type="button" onclick="addcustomer_intosale(\'' + response.email + '\')" class="btn btn-sm btn-primary">' +
                                                         'Add' +
                                                     '</button>' +
                                                 '</div>' +
@@ -1865,7 +1876,7 @@ $(document).ready(function(){
                 fakturDiv.style.display = 'none';
 
                 setTimeout(function() {
-                    location.reload();
+                    window.location.href = '/cashier';;
                 }, 1000); // Jeda 0,7 detik
             }
         },
